@@ -3,12 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Website</title>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1850217813586802" crossorigin="anonymous"></script>
-</head>
-<body>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Surah Content</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -234,6 +228,7 @@
             const searchInput = document.getElementById('search-input');
             const searchButton = document.getElementById('search-button');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
+            let autoNextSurahTimeout;
 
             function loadSurah(surahNumber) {
                 surahContent.style.display = 'none';
@@ -275,6 +270,8 @@
                         audio.addEventListener('ended', () => {
                             if (index < audios.length - 1) {
                                 audios[index + 1].play();
+                            } else {
+                                autoNextSurah();
                             }
                         });
                     });
@@ -283,13 +280,25 @@
                 .catch(error => console.error('Error fetching surah:', error));
             }
 
+            function autoNextSurah() {
+                clearTimeout(autoNextSurahTimeout);
+                autoNextSurahTimeout = setTimeout(() => {
+                    const nextSurahNumber = parseInt(surahNumber) + 1;
+                    window.location.href = `surah.html?surah=${nextSurahNumber}`;
+                }, 3000);
+            }
+
             loadSurah(surahNumber);
+            autoNextSurah(); // start the auto-next countdown
 
             document.getElementById('repeat-surah').addEventListener('click', () => {
+                clearTimeout(autoNextSurahTimeout);
                 loadSurah(surahNumber);
+                autoNextSurah(); // restart the auto-next countdown
             });
 
             document.getElementById('next-surah').addEventListener('click', () => {
+                clearTimeout(autoNextSurahTimeout);
                 const nextSurahNumber = parseInt(surahNumber) + 1;
                 window.location.href = `surah.html?surah=${nextSurahNumber}`;
             });
