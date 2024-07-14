@@ -103,6 +103,7 @@
                 .then(response => response.json())
                 .then(data => {
                     loader.style.display = 'none';
+                    const fragment = document.createDocumentFragment();
                     data.data.forEach(surah => {
                         const surahDiv = document.createElement('div');
                         surahDiv.classList.add('surah');
@@ -110,8 +111,9 @@
                         surahDiv.addEventListener('click', () => {
                             window.location.href = `surah.html?surah=${surah.number}`;
                         });
-                        surahList.appendChild(surahDiv);
+                        fragment.appendChild(surahDiv);
                     });
+                    surahList.appendChild(fragment);
                 })
                 .catch(error => console.error('Error fetching surahs:', error));
         });
