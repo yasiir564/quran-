@@ -289,12 +289,10 @@
             }
 
             loadSurah(surahNumber);
-            autoNextSurah(); // start the auto-next countdown
 
             document.getElementById('repeat-surah').addEventListener('click', () => {
                 clearTimeout(autoNextSurahTimeout);
                 loadSurah(surahNumber);
-                autoNextSurah(); // restart the auto-next countdown
             });
 
             document.getElementById('next-surah').addEventListener('click', () => {
