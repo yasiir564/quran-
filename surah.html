@@ -108,10 +108,6 @@
             color: #555;
             border-bottom: 1px dashed #ddd;
             padding-bottom: 10px;
-            overflow: hidden;
-            white-space: nowrap;
-            border-right: 2px solid black;
-            animation: typing 3s steps(30, end), blink-caret .5s step-end infinite;
         }
 
         .audio {
@@ -159,16 +155,6 @@
             height: 120px;
             animation: spin 2s linear infinite;
             margin: 50px auto;
-        }
-
-        @keyframes typing {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-
-        @keyframes blink-caret {
-            from, to { border-color: transparent; }
-            50% { border-color: black; }
         }
 
         @keyframes spin {
@@ -231,17 +217,21 @@
             const darkModeToggle = document.getElementById('dark-mode-toggle');
             const darkModeIcon = darkModeToggle.querySelector('i');
 
-            function loadSurah(surahNumber) {
+            async function loadSurah(surahNumber) {
                 surahContent.style.display = 'none';
                 loader.style.display = 'block';
 
-                Promise.all([
-                    fetch(`https://api.quran.com/api/v4/chapters/${surahNumber}`),
-                    fetch(`https://api.quran.com/api/v4/quran/translations/131?chapter_number=${surahNumber}`),
-                    fetch(`https://api.quran.com/api/v4/quran/verses/uthmani?chapter_number=${surahNumber}`)
-                ])
-                .then(responses => Promise.all(responses.map(response => response.json())))
-                .then(([surahData, translationData, verseData]) => {
+                try {
+                    const [surahResponse, translationResponse, verseResponse] = await Promise.all([
+                        fetch(`https://api.quran.com/api/v4/chapters/${surahNumber}`),
+                        fetch(`https://api.quran.com/api/v4/quran/translations/131?chapter_number=${surahNumber}`),
+                        fetch(`https://api.quran.com/api/v4/quran/verses/uthmani?chapter_number=${surahNumber}`)
+                    ]);
+
+                    const surahData = await surahResponse.json();
+                    const translationData = await translationResponse.json();
+                    const verseData = await verseResponse.json();
+
                     loader.style.display = 'none';
                     surahContent.style.display = 'block';
 
@@ -275,8 +265,10 @@
                         });
                     });
                     audios[0].play();
-                })
-                .catch(error => console.error('Error fetching surah:', error));
+                } catch (error) {
+                    loader.style.display = 'none';
+                    console.error('Error fetching surah:', error);
+                }
             }
 
             loadSurah(surahNumber);
