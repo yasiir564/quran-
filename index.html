@@ -25,11 +25,42 @@
         header {
             text-align: center;
             margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         h1 {
             font-size: 2.5em;
             color: #fff;
+        }
+
+        .search-container {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-container input {
+            padding: 10px;
+            font-size: 1em;
+            width: 80%;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .search-container button {
+            padding: 10px;
+            font-size: 1em;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+
+        #dark-mode-toggle {
+            margin: 10px 0;
+            cursor: pointer;
         }
 
         #surah-list {
@@ -83,12 +114,35 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        body.dark-mode {
+            background: linear-gradient(to right, #0f0f0f, #434343);
+            color: #ddd;
+        }
+
+        body.dark-mode .surah {
+            background-color: #333;
+            color: #ddd;
+        }
+
+        body.dark-mode .surah:hover {
+            background-color: #444;
+        }
+
+        body.dark-mode h1 {
+            color: #ddd;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Quran Reader</h1>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search for a Surah...">
+                <button id="search-button">Search</button>
+            </div>
+            <button id="dark-mode-toggle">Toggle Dark Mode</button>
         </header>
         <div id="surah-list"></div>
         <div class="loader" id="loader"></div>
@@ -97,6 +151,10 @@
         document.addEventListener('DOMContentLoaded', function () {
             const surahList = document.getElementById('surah-list');
             const loader = document.getElementById('loader');
+            const searchInput = document.getElementById('search-input');
+            const searchButton = document.getElementById('search-button');
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+
             loader.style.display = 'block';
 
             fetch('https://api.alquran.cloud/v1/surah')
@@ -108,6 +166,7 @@
                         const surahDiv = document.createElement('div');
                         surahDiv.classList.add('surah');
                         surahDiv.innerText = `${surah.number}. ${surah.englishName}`;
+                        surahDiv.setAttribute('data-name', surah.englishName.toLowerCase());
                         surahDiv.addEventListener('click', () => {
                             window.location.href = `surah.html?surah=${surah.number}`;
                         });
@@ -116,7 +175,24 @@
                     surahList.appendChild(fragment);
                 })
                 .catch(error => console.error('Error fetching surahs:', error));
+
+            searchButton.addEventListener('click', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const surahDivs = surahList.querySelectorAll('.surah');
+                surahDivs.forEach(div => {
+                    if (div.getAttribute('data-name').includes(searchTerm)) {
+                        div.style.display = 'block';
+                    } else {
+                        div.style.display = 'none';
+                    }
+                });
+            });
+
+            darkModeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+            });
         });
     </script>
 </body>
 </html>
+
