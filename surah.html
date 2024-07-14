@@ -181,8 +181,16 @@
             color: #ddd;
         }
 
-        body.dark-mode .ayah {
+        body.dark-mode .container {
+            color: #ddd;
+        }
+
+        body.dark-mode #surah-content {
             background-color: #333;
+            color: #ddd;
+        }
+
+        body.dark-mode .ayah {
             color: #ddd;
         }
 
@@ -228,27 +236,27 @@
                 loader.style.display = 'block';
 
                 Promise.all([
-                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`),
-                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`),
-                    fetch(`https://api.quran.com/api/v4/chapters/${surahNumber}/verses?language=en`)
+                    fetch(`https://api.quran.com/api/v4/chapters/${surahNumber}`),
+                    fetch(`https://api.quran.com/api/v4/quran/translations/131?chapter_number=${surahNumber}`),
+                    fetch(`https://api.quran.com/api/v4/quran/verses/uthmani?chapter_number=${surahNumber}`)
                 ])
                 .then(responses => Promise.all(responses.map(response => response.json())))
-                .then(([surahData, translationData, audioData]) => {
+                .then(([surahData, translationData, verseData]) => {
                     loader.style.display = 'none';
                     surahContent.style.display = 'block';
 
                     surahContent.innerHTML = `
-                        <h2>${surahData.data.englishName} (${surahData.data.name})</h2>
-                        <p>${surahData.data.englishNameTranslation}</p>
-                        ${surahData.data.ayahs.map((ayah, index) => `
+                        <h2>${surahData.chapter.name_simple} (${surahData.chapter.name_arabic})</h2>
+                        <p>${surahData.chapter.translated_name.name}</p>
+                        ${verseData.verses.map((verse, index) => `
                             <div class="ayah" id="ayah-${index}">
-                                ${ayah.text}<span class="separator">۞</span>
+                                ${verse.text_uthmani}<span class="separator">۞</span>
                             </div>
                             <div class="translation typewriter-text" id="translation-${index}">
-                                ${translationData.data.ayahs[index].text}
+                                ${translationData.translations[index].text}
                             </div>
                             <audio class="audio" id="audio-${index}" controls>
-                                <source src="${audioData.verses[index].audio.primary}" type="audio/mpeg">
+                                <source src="https://verses.quran.com/${verse.audio.url}" type="audio/mpeg">
                                 Your browser does not support the audio element.
                             </audio>`).join('')}
                     `;
