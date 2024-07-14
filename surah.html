@@ -60,13 +60,6 @@
         #dark-mode-toggle {
             margin: 10px 0;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #dark-mode-toggle i {
-            margin-right: 5px;
         }
 
         #surah-content {
@@ -186,9 +179,25 @@
             color: #ddd;
         }
 
+        body.dark-mode .ayah.playing {
+            background-color: #555;
+        }
+
         body.dark-mode .translation {
-            border-bottom: 1px dashed #555;
-            color: #bbb;
+            color: #ccc;
+            border-color: #666;
+        }
+
+        body.dark-mode .buttons button {
+            background-color: #444;
+        }
+
+        body.dark-mode .buttons button:hover {
+            background-color: #555;
+        }
+
+        body.dark-mode h1 {
+            color: #ddd;
         }
     </style>
 </head>
@@ -197,12 +206,10 @@
         <header>
             <h1>Surah</h1>
             <div class="search-container">
-                <input type="text" id="search-input" placeholder="Search Ayah...">
+                <input type="text" id="search-input" placeholder="Search for an Ayah...">
                 <button id="search-button">Search</button>
             </div>
-            <div id="dark-mode-toggle">
-                <i class="fas fa-moon"></i> Dark Mode
-            </div>
+            <button id="dark-mode-toggle">Toggle Dark Mode</button>
             <span class="close-button" onclick="window.location.href='index.html'">×</span>
         </header>
         <div id="surah-content"></div>
@@ -221,7 +228,6 @@
             const searchInput = document.getElementById('search-input');
             const searchButton = document.getElementById('search-button');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
-            const darkModeIcon = darkModeToggle.querySelector('i');
 
             function loadSurah(surahNumber) {
                 surahContent.style.display = 'none';
@@ -230,7 +236,7 @@
                 Promise.all([
                     fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`),
                     fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`),
-                    fetch(`https://api.quran.com/api/v4/chapters/${surahNumber}/verses?language=en`)
+                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`)
                 ])
                 .then(responses => Promise.all(responses.map(response => response.json())))
                 .then(([surahData, translationData, audioData]) => {
@@ -248,7 +254,7 @@
                                 ${translationData.data.ayahs[index].text}
                             </div>
                             <audio class="audio" id="audio-${index}" controls>
-                                <source src="${audioData.verses[index].audio.primary}" type="audio/mpeg">
+                                <source src="${audioData.data.ayahs[index].audio}" type="audio/mpeg">
                                 Your browser does not support the audio element.
                             </audio>`).join('')}
                     `;
@@ -296,13 +302,6 @@
 
             darkModeToggle.addEventListener('click', () => {
                 document.body.classList.toggle('dark-mode');
-                if (document.body.classList.contains('dark-mode')) {
-                    darkModeIcon.classList.remove('fa-moon');
-                    darkModeIcon.classList.add('fa-sun');
-                } else {
-                    darkModeIcon.classList.remove('fa-sun');
-                    darkModeIcon.classList.add('fa-moon');
-                }
             });
         });
     </script>
