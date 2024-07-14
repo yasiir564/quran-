@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quran Reader</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
+    <style>
+        body {
+            font-family: 'Amiri', serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #2c3e50;
+        }
+
+        #surah-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .surah {
+            background-color: #fff;
+            padding: 15px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            flex: 1 1 calc(25% - 20px);
+            box-sizing: border-box;
+            text-align: center;
+            margin: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .surah:hover {
+            transform: scale(1.05);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #surah-content {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .close-button {
+            cursor: pointer;
+            color: #ff0000;
+            float: right;
+            font-size: 1.5em;
+        }
+
+        h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: #2980b9;
+        }
+
+        .ayah {
+            font-size: 1.5em;
+            line-height: 2em;
+            text-align: right;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            position: relative;
+        }
+
+        .ayah.playing {
+            background-color: #e0f7fa;
+        }
+
+        .translation {
+            font-size: 1em;
+            line-height: 1.5em;
+            text-align: left;
+            margin-bottom: 20px;
+            color: #555;
+            border-bottom: 1px dashed #ddd;
+            padding-bottom: 10px;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid black;
+            animation: typing 3s steps(30, end), blink-caret .5s step-end infinite;
+        }
+
+        .audio {
+            display: block;
+            margin: 10px 0;
+        }
+
+        .separator {
+            display: inline-block;
+            margin-left: 10px;
+            color: #2c3e50;
+            font-size: 1.2em;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .buttons button {
+            background-color: #2980b9;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .buttons button:hover {
+            background-color: #3498db;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: black; }
+        }
+
+        @media (max-width: 768px) {
+            .surah {
+                flex: 1 1 calc(50% - 20px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .surah {
+                flex: 1 1 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quran Reader</h1>
+        </header>
+        <div id="surah-list"></div>
+        <div id="surah-content" class="hidden"></div>
+        <div class="buttons hidden">
+            <button id="repeat-surah">Repeat Surah</button>
+            <button id="next-surah">Next Surah</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const surahList = document.getElementById('surah-list');
+            const surahContent = document.getElementById('surah-content');
+            const buttons = document.querySelector('.buttons');
+
+            fetch('https://api.alquran.cloud/v1/surah')
+                .then(response => response.json())
+                .then(data => {
+                    data.data.forEach(surah => {
+                        const surahDiv = document.createElement('div');
+                        surahDiv.classList.add('surah');
+                        surahDiv.innerText = `${surah.number}. ${surah.englishName}`;
+                        surahDiv.addEventListener('click', () => loadSurah(surah.number));
+                        surahList.appendChild(surahDiv);
+                    });
+                })
+                .catch(error => console.error('Error fetching surahs:', error));
+
+            function loadSurah(surahNumber) {
+                Promise.all([
+                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`),
+                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`),
+                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`)
+                ])
+                .then(responses => Promise.all(responses.map(response => response.json())))
+                .then(([surahData, translationData, audioData]) => {
+                    surahList.classList.add('hidden');
+                    surahContent.classList.remove('hidden');
+                    buttons.classList.remove('hidden');
+                    surahContent.innerHTML = `
+                        <span class="close-button" onclick="document.getElementById('surah-list').classList.remove('hidden'); document.getElementById('surah-content').classList.add('hidden'); buttons.classList.add('hidden');">×</span>
+                        <h2>${surahData.data.englishName} (${surahData.data.name})</h2>
+                        <p>${surahData.data.englishNameTranslation}</p>
+                        ${surahData.data.ayahs.map((ayah, index) => `
+                            <div class="ayah" id="ayah-${index}">
+                                ${ayah.text}<span class="separator">۞</span>
+                            </div>
+                            <div class="translation typewriter-text" id="translation-${index}">
+                                ${translationData.data.ayahs[index].text}
+                            </div>
+                            <audio class="audio" id="audio-${index}" controls>
+                                <source src="${audioData.data.ayahs[index].audio}" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>`).join('')}
+                    `;
+
+                    const audios = document.querySelectorAll('.audio');
+                    const ayahs = document.querySelectorAll('.ayah');
+                    audios.forEach((audio, index) => {
+                        audio.addEventListener('play', () => {
+                            ayahs.forEach(ayah => ayah.classList.remove('playing'));
+                            document.getElementById('ayah-' + index).classList.add('playing');
+                        });
+                        audio.addEventListener('pause', () => {
+                            document.getElementById('ayah-' + index).classList.remove('playing');
+                        });
+                        audio.addEventListener('ended', () => {
+                            if (index < audios.length - 1) {
+                                audios[index + 1].play();
+                            }
+                        });
+                    });
+                    audios[0].play();
+                })
+                .catch(error => console.error('Error fetching surah:', error));
+            }
+
+            document.getElementById('repeat-surah').addEventListener('click', () => {
+                const surahNumber = surahContent.querySelector('h2').textContent.split('.')[0];
+                loadSurah(surahNumber);
+            });
+
+            document.getElementById('next-surah').addEventListener('click', () => {
+                const surahNumber = parseInt(surahContent.querySelector('h2').textContent.split('.')[0]);
+                loadSurah(surahNumber + 1);
+            });
+        });
+    </script>
+</body>
+</html>
