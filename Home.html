@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quran App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quran App</h1>
+    <div class="container">
+        <button id="readQuranWithAudioTranslation">Read Quran with Audio and Translation</button>
+        <button id="doTasbih">Do Tasbih</button>
+        <button id="listenQuranAudio">Listen to Quran Audio</button>
+        <button id="readQuranOnly">Read Quran Only</button>
+    </div>
+    <script>
+        document.getElementById('readQuranWithAudioTranslation').addEventListener('click', function() {
+            window.location.href = 'surah.html';
+        });
+
+        document.getElementById('doTasbih').addEventListener('click', function() {
+            // Use API to fetch Tasbih data
+            fetch('https://api.example.com/tasbih')
+                .then(response => response.json())
+                .then(data => {
+                    // Process and display the Tasbih data
+                    console.log(data);
+                    alert('Tasbih data fetched. Check the console for details.');
+                })
+                .catch(error => console.error('Error fetching Tasbih data:', error));
+        });
+
+        document.getElementById('listenQuranAudio').addEventListener('click', function() {
+            // Use API to fetch Quran audio data
+            fetch('https://api.example.com/quran-audio')
+                .then(response => response.json())
+                .then(data => {
+                    // Process and play the Quran audio
+                    console.log(data);
+                    alert('Quran audio fetched. Check the console for details.');
+                })
+                .catch(error => console.error('Error fetching Quran audio data:', error));
+        });
+
+        document.getElementById('readQuranOnly').addEventListener('click', function() {
+            // Use API to fetch Quran text data
+            fetch('https://api.example.com/quran-text')
+                .then(response => response.json())
+                .then(data => {
+                    // Process and display the Quran text
+                    console.log(data);
+                    alert('Quran text fetched. Check the console for details.');
+                })
+                .catch(error => console.error('Error fetching Quran text data:', error));
+        });
+    </script>
+</body>
+</html>
