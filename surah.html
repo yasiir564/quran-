@@ -33,6 +33,35 @@
             color: #fff;
         }
 
+        .search-container {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-container input {
+            padding: 10px;
+            font-size: 1em;
+            width: 70%;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .search-container button {
+            padding: 10px;
+            font-size: 1em;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+
+        #dark-mode-toggle {
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
         #surah-content {
             background-color: #fff;
             padding: 20px;
@@ -139,12 +168,48 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        body.dark-mode {
+            background: linear-gradient(to right, #0f0f0f, #434343);
+            color: #ddd;
+        }
+
+        body.dark-mode .ayah {
+            background-color: #333;
+            color: #ddd;
+        }
+
+        body.dark-mode .ayah.playing {
+            background-color: #555;
+        }
+
+        body.dark-mode .translation {
+            color: #ccc;
+            border-color: #666;
+        }
+
+        body.dark-mode .buttons button {
+            background-color: #444;
+        }
+
+        body.dark-mode .buttons button:hover {
+            background-color: #555;
+        }
+
+        body.dark-mode h1 {
+            color: #ddd;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Surah</h1>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search for an Ayah...">
+                <button id="search-button">Search</button>
+            </div>
+            <button id="dark-mode-toggle">Toggle Dark Mode</button>
             <span class="close-button" onclick="window.location.href='index.html'">×</span>
         </header>
         <div id="surah-content"></div>
@@ -160,10 +225,13 @@
             const loader = document.getElementById('loader');
             const urlParams = new URLSearchParams(window.location.search);
             const surahNumber = urlParams.get('surah');
+            const searchInput = document.getElementById('search-input');
+            const searchButton = document.getElementById('search-button');
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
 
             function loadSurah(surahNumber) {
-                loader.style.display = 'block';
                 surahContent.style.display = 'none';
+                loader.style.display = 'block';
 
                 Promise.all([
                     fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`),
@@ -216,7 +284,24 @@
             });
 
             document.getElementById('next-surah').addEventListener('click', () => {
-                loadSurah(parseInt(surahNumber) + 1);
+                const nextSurahNumber = parseInt(surahNumber) + 1;
+                window.location.href = `surah.html?surah=${nextSurahNumber}`;
+            });
+
+            searchButton.addEventListener('click', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const translations = surahContent.querySelectorAll('.translation');
+                translations.forEach(translation => {
+                    if (translation.innerText.toLowerCase().includes(searchTerm)) {
+                        translation.style.display = 'block';
+                    } else {
+                        translation.style.display = 'none';
+                    }
+                });
+            });
+
+            darkModeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
             });
         });
     </script>
