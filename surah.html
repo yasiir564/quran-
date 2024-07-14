@@ -108,6 +108,10 @@
             color: #555;
             border-bottom: 1px dashed #ddd;
             padding-bottom: 10px;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid black;
+            animation: typing 3s steps(30, end), blink-caret .5s step-end infinite;
         }
 
         .audio {
@@ -157,6 +161,16 @@
             margin: 50px auto;
         }
 
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: black; }
+        }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -167,16 +181,8 @@
             color: #ddd;
         }
 
-        body.dark-mode .container {
-            color: #ddd;
-        }
-
-        body.dark-mode #surah-content {
-            background-color: #333;
-            color: #ddd;
-        }
-
         body.dark-mode .ayah {
+            background-color: #333;
             color: #ddd;
         }
 
@@ -217,36 +223,32 @@
             const darkModeToggle = document.getElementById('dark-mode-toggle');
             const darkModeIcon = darkModeToggle.querySelector('i');
 
-            async function loadSurah(surahNumber) {
+            function loadSurah(surahNumber) {
                 surahContent.style.display = 'none';
                 loader.style.display = 'block';
 
-                try {
-                    const [surahResponse, translationResponse, verseResponse] = await Promise.all([
-                        fetch(`https://api.quran.com/api/v4/chapters/${surahNumber}`),
-                        fetch(`https://api.quran.com/api/v4/quran/translations/131?chapter_number=${surahNumber}`),
-                        fetch(`https://api.quran.com/api/v4/quran/verses/uthmani?chapter_number=${surahNumber}`)
-                    ]);
-
-                    const surahData = await surahResponse.json();
-                    const translationData = await translationResponse.json();
-                    const verseData = await verseResponse.json();
-
+                Promise.all([
+                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`),
+                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`),
+                    fetch(`https://api.quran.com/api/v4/chapters/${surahNumber}/verses?language=en`)
+                ])
+                .then(responses => Promise.all(responses.map(response => response.json())))
+                .then(([surahData, translationData, audioData]) => {
                     loader.style.display = 'none';
                     surahContent.style.display = 'block';
 
                     surahContent.innerHTML = `
-                        <h2>${surahData.chapter.name_simple} (${surahData.chapter.name_arabic})</h2>
-                        <p>${surahData.chapter.translated_name.name}</p>
-                        ${verseData.verses.map((verse, index) => `
+                        <h2>${surahData.data.englishName} (${surahData.data.name})</h2>
+                        <p>${surahData.data.englishNameTranslation}</p>
+                        ${surahData.data.ayahs.map((ayah, index) => `
                             <div class="ayah" id="ayah-${index}">
-                                ${verse.text_uthmani}<span class="separator">۞</span>
+                                ${ayah.text}<span class="separator">۞</span>
                             </div>
                             <div class="translation typewriter-text" id="translation-${index}">
-                                ${translationData.translations[index].text}
+                                ${translationData.data.ayahs[index].text}
                             </div>
                             <audio class="audio" id="audio-${index}" controls>
-                                <source src="https://verses.quran.com/${verse.audio.url}" type="audio/mpeg">
+                                <source src="${audioData.verses[index].audio.primary}" type="audio/mpeg">
                                 Your browser does not support the audio element.
                             </audio>`).join('')}
                     `;
@@ -265,10 +267,8 @@
                         });
                     });
                     audios[0].play();
-                } catch (error) {
-                    loader.style.display = 'none';
-                    console.error('Error fetching surah:', error);
-                }
+                })
+                .catch(error => console.error('Error fetching surah:', error));
             }
 
             loadSurah(surahNumber);
