@@ -99,17 +99,17 @@
             const loader = document.getElementById('loader');
             loader.style.display = 'block';
 
-            fetch('https://api.alquran.cloud/v1/surah')
+            fetch('https://api.quran.com/api/v4/chapters')
                 .then(response => response.json())
                 .then(data => {
                     loader.style.display = 'none';
                     const fragment = document.createDocumentFragment();
-                    data.data.forEach(surah => {
+                    data.chapters.forEach(surah => {
                         const surahDiv = document.createElement('div');
                         surahDiv.classList.add('surah');
-                        surahDiv.innerText = `${surah.number}. ${surah.englishName}`;
+                        surahDiv.innerText = `${surah.id}. ${surah.name_simple}`;
                         surahDiv.addEventListener('click', () => {
-                            window.location.href = `surah.html?surah=${surah.number}`;
+                            window.location.href = `surah.html?surah=${surah.id}`;
                         });
                         fragment.appendChild(surahDiv);
                     });
@@ -120,3 +120,4 @@
     </script>
 </body>
 </html>
+
