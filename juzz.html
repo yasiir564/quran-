@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juzz Details</title>
+    <title>Juzz List</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             font-family: 'Amiri', serif;
@@ -23,6 +22,37 @@
             text-align: center;
         }
 
+        nav {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin: 0 10px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 1.2em;
+            padding: 10px 20px;
+            display: block;
+        }
+
+        nav ul li a:hover {
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+
         header {
             text-align: center;
             margin-bottom: 20px;
@@ -33,129 +63,41 @@
             color: #fff;
         }
 
-        .search-container {
-            margin: 10px 0;
+        .juzz-list {
             display: flex;
-            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
             justify-content: center;
         }
 
-        .search-container input {
-            padding: 10px;
-            font-size: 1em;
-            width: 70%;
-            border: none;
-            border-radius: 5px;
-        }
-
-        .search-container button {
-            padding: 10px;
-            font-size: 1em;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            margin-left: 10px;
-        }
-
-        #dark-mode-toggle {
-            margin: 10px 0;
-            cursor: pointer;
-        }
-
-        #juzz-content {
+        .juzz {
             background-color: #fff;
-            padding: 20px;
+            padding: 15px;
             border: 1px solid #ddd;
-            margin-top: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow-y: auto;
-            max-height: 600px;
-        }
-
-        .close-button {
             cursor: pointer;
-            color: #ff0000;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.5em;
-        }
-
-        .ayah {
-            font-size: 1.5em;
-            line-height: 2em;
-            text-align: right;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            position: relative;
-        }
-
-        .ayah.playing {
-            background-color: #e0f7fa;
-        }
-
-        .translation {
-            font-size: 1em;
-            line-height: 1.5em;
-            text-align: left;
-            margin-bottom: 20px;
-            color: #555;
-            border-bottom: 1px dashed #ddd;
-            padding-bottom: 10px;
-            overflow: hidden;
-            white-space: nowrap;
-            border-right: 2px solid black;
-            animation: typing 3s steps(30, end), blink-caret .5s step-end infinite;
-        }
-
-        .audio {
-            display: block;
-            margin: 10px 0;
-        }
-
-        .audio.loading::after {
-            content: ' Loading...';
-            font-size: 1em;
-            color: #3498db;
-            animation: blink 1s linear infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        .separator {
-            display: inline-block;
-            margin-left: 10px;
-            color: #2c3e50;
-            font-size: 1.2em;
-        }
-
-        .buttons {
-            margin-top: 20px;
+            flex: 1 1 calc(25% - 20px);
+            box-sizing: border-box;
             text-align: center;
-        }
-
-        .buttons button {
-            background-color: #2980b9;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1em;
-            cursor: pointer;
             margin: 5px;
-            display: inline-flex;
-            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, background-color 0.3s;
         }
 
-        .buttons button:hover {
-            background-color: #3498db;
+        .juzz:hover {
+            transform: scale(1.05);
+            background-color: #f0f0f0;
         }
 
-        .buttons i {
-            margin-right: 5px;
+        @media (max-width: 768px) {
+            .juzz {
+                flex: 1 1 calc(50% - 20px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .juzz {
+                flex: 1 1 100%;
+            }
         }
 
         .loader {
@@ -168,16 +110,6 @@
             margin: 50px auto;
         }
 
-        @keyframes typing {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-
-        @keyframes blink-caret {
-            from, to { border-color: transparent; }
-            50% { border-color: black; }
-        }
-
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -188,26 +120,13 @@
             color: #ddd;
         }
 
-        body.dark-mode .ayah {
+        body.dark-mode .juzz {
             background-color: #333;
             color: #ddd;
         }
 
-        body.dark-mode .ayah.playing {
-            background-color: #555;
-        }
-
-        body.dark-mode .translation {
-            color: #ccc;
-            border-color: #666;
-        }
-
-        body.dark-mode .buttons button {
+        body.dark-mode .juzz:hover {
             background-color: #444;
-        }
-
-        body.dark-mode .buttons button:hover {
-            background-color: #555;
         }
 
         body.dark-mode h1 {
@@ -216,175 +135,46 @@
     </style>
 </head>
 <body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Read Quran</a></li>
+            <li><a href="juzz.html">Juzz</a></li>
+        </ul>
+    </nav>
     <div class="container">
         <header>
-            <h1>Juzz</h1>
-            <div id="calendar"></div>
-            <div class="search-container">
-                <input type="text" id="search-input" placeholder="Search for an Ayah...">
-                <button id="search-button">Search</button>
-            </div>
-            <button id="dark-mode-toggle"><i class="fas fa-moon"></i></button>
-            <span class="close-button" onclick="window.location.href='index.html'">×</span>
+            <h1>Juzz List</h1>
         </header>
-        <div id="juzz-content"></div>
+        <div id="juzz-list" class="juzz-list"></div>
         <div class="loader" id="loader"></div>
-        <div class="buttons">
-            <button id="repeat-juzz"><i class="fas fa-redo"></i> Repeat Juzz</button>
-            <button id="next-juzz"><i class="fas fa-arrow-right"></i> Next Juzz</button>
-        </div>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const juzzContent = document.getElementById('juzz-content');
+            const juzzList = document.getElementById('juzz-list');
             const loader = document.getElementById('loader');
-            const urlParams = new URLSearchParams(window.location.search);
-            const juzzNumber = urlParams.get('juzz');
-            const searchInput = document.getElementById('search-input');
-            const searchButton = document.getElementById('search-button');
-            const darkModeToggle = document.getElementById('dark-mode-toggle');
-            let autoNextJuzzTimeout;
-            let wakeLock = null;
 
-            async function requestWakeLock() {
-                try {
-                    wakeLock = await navigator.wakeLock.request('screen');
-                    console.log('Wake lock is active');
-                } catch (err) {
-                    console.error(`${err.name}, ${err.message}`);
-                }
-            }
+            loader.style.display = 'block';
 
-            function releaseWakeLock() {
-                if (wakeLock) {
-                    wakeLock.release().then(() => {
-                        wakeLock = null;
-                        console.log('Wake lock released');
-                    });
-                }
-            }
-
-            function handleVisibilityChange() {
-                if (document.visibilityState === 'visible') {
-                    requestWakeLock();
-                } else {
-                    releaseWakeLock();
-                }
-            }
-
-            document.addEventListener('visibilitychange', handleVisibilityChange);
-            requestWakeLock();
-
-            function loadJuzz(juzzNumber) {
-                juzzContent.style.display = 'none';
-                loader.style.display = 'block';
-
-                Promise.all([
-                    fetch(`https://api.alquran.cloud/v1/juz/${juzzNumber}`),
-                    fetch(`https://api.alquran.cloud/v1/juz/${juzzNumber}/en.sahih`),
-                    fetch(`https://api.alquran.cloud/v1/juz/${juzzNumber}/ar.alafasy`)
-                ])
-                .then(responses => Promise.all(responses.map(response => response.json())))
-                .then(([juzzData, translationData, audioData]) => {
+            fetch('https://api.alquran.cloud/v1/juz')
+                .then(response => response.json())
+                .then(data => {
                     loader.style.display = 'none';
-                    juzzContent.style.display = 'block';
-
-                    juzzContent.innerHTML = `
-                        <h2>Juzz ${juzzNumber}</h2>
-                        ${juzzData.data.ayahs.map((ayah, index) => `
-                            <div class="ayah" data-index="${index}">
-                                <div class="arabic">${ayah.text}</div>
-                                <div class="translation">${translationData.data.ayahs[index].text}</div>
-                                <audio class="audio" src="${audioData.data.ayahs[index].audioSecondary[0]}" controls></audio>
-                            </div>
-                        `).join('')}
-                    `;
-
-                    const ayahElements = juzzContent.querySelectorAll('.ayah');
-                    const audioElements = juzzContent.querySelectorAll('.audio');
-
-                    audioElements.forEach((audio, index) => {
-                        audio.addEventListener('play', () => {
-                            clearTimeout(autoNextJuzzTimeout);
-                            ayahElements[index].classList.add('playing');
+                    const fragment = document.createDocumentFragment();
+                    data.data.forEach(juzz => {
+                        const juzzDiv = document.createElement('div');
+                        juzzDiv.classList.add('juzz');
+                        juzzDiv.innerText = `Juzz ${juzz.number}`;
+                        juzzDiv.addEventListener('click', () => {
+                            window.location.href = `juzz_detail.html?juzz=${juzz.number}`;
                         });
-
-                        audio.addEventListener('pause', () => {
-                            ayahElements[index].classList.remove('playing');
-                        });
-
-                        audio.addEventListener('ended', () => {
-                            ayahElements[index].classList.remove('playing');
-                            const nextAudio = audioElements[index + 1];
-                            if (nextAudio) {
-                                nextAudio.play();
-                            } else {
-                                autoNextJuzzTimeout = setTimeout(() => {
-                                    Swal.fire({
-                                        title: 'Repeat Juzz?',
-                                        text: "Do you want to repeat the current Juzz?",
-                                        icon: 'question',
-                                        showCancelButton: true,
-                                        confirmButtonText: 'Yes',
-                                        cancelButtonText: 'No, Next Juzz'
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            loadJuzz(juzzNumber);
-                                        } else {
-                                            loadJuzz(parseInt(juzzNumber) + 1);
-                                        }
-                                    });
-                                }, 3000);
-                            }
-                        });
+                        fragment.appendChild(juzzDiv);
                     });
+                    juzzList.appendChild(fragment);
                 })
-                .catch(error => console.error('Error loading Juzz:', error));
-            }
-
-            searchButton.addEventListener('click', () => {
-                const searchTerm = searchInput.value.toLowerCase();
-                const ayahElements = juzzContent.querySelectorAll('.ayah');
-                ayahElements.forEach(ayah => {
-                    if (ayah.innerText.toLowerCase().includes(searchTerm)) {
-                        ayah.style.display = 'block';
-                    } else {
-                        ayah.style.display = 'none';
-                    }
+                .catch(error => {
+                    loader.style.display = 'none';
+                    console.error('Error fetching Juzz:', error);
                 });
-            });
-
-            darkModeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('dark-mode');
-            });
-
-            loadJuzz(juzzNumber);
-
-            document.getElementById('repeat-juzz').addEventListener('click', () => {
-                loadJuzz(juzzNumber);
-            });
-
-            document.getElementById('next-juzz').addEventListener('click', () => {
-                loadJuzz(parseInt(juzzNumber) + 1);
-            });
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const hijriDate = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            }).format(new Date());
-
-            const hijriDateArabic = new Intl.DateTimeFormat('ar-TN-u-ca-islamic', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            }).format(new Date());
-
-            document.getElementById('calendar').innerHTML = `
-                <p>Hijri Date: ${hijriDate} / ${hijriDateArabic}</p>
-            `;
         });
     </script>
 </body>
