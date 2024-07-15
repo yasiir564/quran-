@@ -114,8 +114,8 @@
             margin: 10px 0;
         }
 
-        .audio.loading::before {
-            content: 'Loading...';
+        .audio.loading::after {
+            content: ' Loading...';
             font-size: 1em;
             color: #3498db;
             animation: blink 1s linear infinite;
@@ -243,6 +243,36 @@
             const searchButton = document.getElementById('search-button');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
             let autoNextSurahTimeout;
+            let wakeLock = null;
+
+            async function requestWakeLock() {
+                try {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    console.log('Wake lock is active');
+                } catch (err) {
+                    console.error(`${err.name}, ${err.message}`);
+                }
+            }
+
+            function releaseWakeLock() {
+                if (wakeLock) {
+                    wakeLock.release().then(() => {
+                        wakeLock = null;
+                        console.log('Wake lock released');
+                    });
+                }
+            }
+
+            function handleVisibilityChange() {
+                if (document.visibilityState === 'visible') {
+                    requestWakeLock();
+                } else {
+                    releaseWakeLock();
+                }
+            }
+
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            requestWakeLock();
 
             function loadSurah(surahNumber) {
                 surahContent.style.display = 'none';
@@ -277,11 +307,6 @@
                     const audios = document.querySelectorAll('.audio');
                     const ayahs = document.querySelectorAll('.ayah');
 
-                    function scrollToAyah(index) {
-                        const ayahElement = document.getElementById(`ayah-${index}`);
-                        ayahElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-
                     audios.forEach((audio, index) => {
                         audio.addEventListener('play', () => {
                             ayahs.forEach(ayah => ayah.classList.remove('playing'));
@@ -305,9 +330,15 @@
                             }
                         });
                     });
+
                     audios[0].play();
                 })
                 .catch(error => console.error('Error fetching surah:', error));
+            }
+
+            function scrollToAyah(index) {
+                const ayahElement = document.getElementById(`ayah-${index}`);
+                ayahElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
 
             function autoNextSurah() {
