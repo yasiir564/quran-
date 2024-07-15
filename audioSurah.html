@@ -126,6 +126,29 @@
             margin-top: 5px;
             color: #fff;
         }
+
+        .audio-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .audio-controls button {
+            background-color: #2980b9;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 5px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .audio-controls button:hover {
+            background-color: #3498db;
+        }
     </style>
 </head>
 <body>
@@ -144,6 +167,10 @@
             <button id="repeat-surah"><i class="fas fa-redo"></i> Repeat Surah</button>
             <button id="next-surah"><i class="fas fa-arrow-right"></i> Next Surah</button>
         </div>
+        <div class="audio-controls" id="audio-controls" style="display:none;">
+            <button id="play-pause-button"><i class="fas fa-play"></i> Play</button>
+            <button id="stop-button"><i class="fas fa-stop"></i> Stop</button>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
@@ -154,16 +181,20 @@
             const darkModeToggle = document.getElementById('dark-mode-toggle');
             const repeatSurahButton = document.getElementById('repeat-surah');
             const nextSurahButton = document.getElementById('next-surah');
+            const playPauseButton = document.getElementById('play-pause-button');
+            const stopButton = document.getElementById('stop-button');
+            const audioControls = document.getElementById('audio-controls');
 
             const sheikhs = [
-                { name: 'Abdul Basit Abdus Samad', imageUrl: 'https://example.com/image1.jpg', id: '1' },
-                { name: 'Mishary Rashid Alafasy', imageUrl: 'https://example.com/image2.jpg', id: '2' },
-                { name: 'Saad Al-Ghamdi', imageUrl: 'https://example.com/image3.jpg', id: '3' },
-                { name: 'Maher Al-Muaiqly', imageUrl: 'https://example.com/image4.jpg', id: '4' },
-                { name: 'Salah Bukhatir', imageUrl: 'https://example.com/image5.jpg', id: '5' }
+                { name: 'Abdul Basit Abdus Samad', imageUrl: 'https://i.imgur.com/nQ7xkV0.jpg', id: '1' },
+                { name: 'Mishary Rashid Alafasy', imageUrl: 'https://i.imgur.com/B9z84G8.jpg', id: '4' },
+                { name: 'Saad Al-Ghamdi', imageUrl: 'https://i.imgur.com/8uZv2Y6.jpg', id: '5' },
+                { name: 'Maher Al-Muaiqly', imageUrl: 'https://i.imgur.com/bIf1xZ8.jpg', id: '6' },
+                { name: 'Salah Bukhatir', imageUrl: 'https://i.imgur.com/twxxp1Y.jpg', id: '8' }
             ];
 
-            let autoNextSurahTimeout;
+            let audioElement = null;
+            let isPlaying = false;
 
             function requestWakeLock() {
                 try {
@@ -200,60 +231,67 @@
             document.addEventListener('visibilitychange', handleVisibilityChange);
             requestWakeLock();
 
-            function playSurahAudio(audioUrl) {
-                const audio = new Audio(audioUrl);
-                audio.controls = true;
-                audio.autoplay = true;
-                audio.classList.add('audio');
-
-                audio.addEventListener('play', () => {
-                    scrollToTop();
-                });
-
-                audio.addEventListener('ended', () => {
-                    autoNextSurah();
-                });
-
-                audio.addEventListener('error', () => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Failed to load audio. Please try again later.',
+            function playAudio(audioUrl) {
+                if (!audioElement) {
+                    audioElement = new Audio(audioUrl);
+                    audioElement.addEventListener('ended', () => {
+                        stopAudio();
                     });
-                });
+                    audioElement.addEventListener('error', () => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to load audio. Please try again later.',
+                        });
+                    });
+                }
 
-                audioContainer.innerHTML = ''; // Clear previous audio
-                audioContainer.appendChild(audio);
+                if (!isPlaying) {
+                    audioElement.play();
+                    isPlaying = true;
+                    playPauseButton.innerHTML = '<i class="fas fa-pause"></i> Pause';
+                } else {
+                    audioElement.pause();
+                    isPlaying = false;
+                    playPauseButton.innerHTML = '<i class="fas fa-play"></i> Play';
+                }
             }
 
-            async function loadSurahAudio(surahName, audioUrl) {
+            function stopAudio() {
+                if (audioElement) {
+                    audioElement.pause();
+                    audioElement.currentTime = 0;
+                    isPlaying = false;
+                    playPauseButton.innerHTML = '<i class="fas fa-play"></i> Play';
+                }
+            }
+
+            async function loadSurahAudio(surahName, sheikhId) {
                 loader.style.display = 'block';
 
-                Swal.fire({
-                    title: `Playing Surah ${surahName}`,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    },
-                    allowOutsideClick: false
-                });
-
-                playSurahAudio(audioUrl);
-
-                audio.addEventListener('loadedmetadata', () => {
+                try {
+                    const response = await fetch(`https://api.alquran.cloud/v1/ayah/${surahName}/recitation/${sheikhId}`);
+                    const data = await response.json();
+                    if (data && data.data && data.data.audio) {
+                        playAudio(data.data.audio);
+                        audioControls.style.display = 'flex'; // Show audio controls
+                    } else {
+                        throw new Error('Audio URL not found');
+                    }
+                } catch (error) {
+                    console.error('Error fetching audio URL:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Unable to fetch Surah audio. Please try again later.',
+                    });
+                } finally {
                     loader.style.display = 'none';
-                    Swal.close();
-                });
+                }
             }
 
             function scrollToTop() {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-
-            function autoNextSurah() {
-                clearTimeout(autoNextSurahTimeout);
-                autoNextSurahTimeout = setTimeout(() => {
-                    window.location.href = 'audio.html'; // Redirect to audio selection page
-                }, 3000);
             }
 
             darkModeToggle.addEventListener('click', () => {
@@ -268,15 +306,16 @@
             });
 
             repeatSurahButton.addEventListener('click', () => {
-                clearTimeout(autoNextSurahTimeout);
-                window.location.reload(); // Reload the page to repeat the Surah
+                stopAudio();
             });
 
             nextSurahButton.addEventListener('click', () => {
-                clearTimeout(autoNextSurahTimeout);
-                window.location.href = 'audio.html'; // Redirect to audio selection page for next Surah
+                stopAudio();
+                // Redirect to audio selection page for next Surah
+                window.location.href = 'audio.html';
             });
 
+            // Populate sheikh list
             sheikhs.forEach(sheikh => {
                 const sheikhItem = document.createElement('div');
                 sheikhItem.classList.add('sheikh-item');
@@ -284,54 +323,17 @@
                     <img src="${sheikh.imageUrl}" alt="${sheikh.name}">
                     <span>${sheikh.name}</span>
                 `;
-                sheikhItem.addEventListener('click', async () => {
+                sheikhItem.addEventListener('click', () => {
                     const selectedSurah = localStorage.getItem('selectedSurah');
-                    const audioUrl = await fetchAudioUrl(selectedSurah, sheikh.id);
-                    if (audioUrl) {
-                        loadSurahAudio(selectedSurah, audioUrl);
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Unable to fetch Surah audio. Please try again later.',
-                        });
-                    }
+                    loadSurahAudio(selectedSurah, sheikh.id);
                 });
                 sheikhList.appendChild(sheikhItem);
             });
 
-            async function fetchAudioUrl(surah, sheikhId) {
-                try {
-                    const response = await fetch(`https://api.alquran.cloud/v1/ayah/${surah}/recitation/${sheikhId}`);
-                    const data = await response.json();
-                    if (data && data.data && data.data.audio) {
-                        return data.data.audio;
-                    } else {
-                        throw new Error('Audio URL not found');
-                    }
-                } catch (error) {
-                    console.error('Error fetching audio URL:', error);
-                    return null;
-                }
-            }
-
             // Initial load
-            const initialSheikh = sheikhs[0].id;
+            const initialSheikhId = sheikhs[0].id;
             const selectedSurah = localStorage.getItem('selectedSurah');
-            const selectedSurahAudio = await fetchAudioUrl(selectedSurah, initialSheikh);
-
-            if (selectedSurah && selectedSurahAudio) {
-                loadSurahAudio(selectedSurah, selectedSurahAudio);
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Unable to fetch Surah audio. Please try again later.',
-                    onClose: () => {
-                        window.location.href = 'audio.html'; // Redirect to audio selection page on error
-                    }
-                });
-            }
+            loadSurahAudio(selectedSurah, initialSheikhId);
         });
     </script>
 </body>
