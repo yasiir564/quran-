@@ -310,7 +310,7 @@
                     sheikhDiv.classList.add('sheikh');
                     sheikhDiv.innerText = sheikh.name;
                     sheikhDiv.addEventListener('click', () => {
-                        const audioUrl = `https://cdn.alquran.cloud/media/audio/ayah/${sheikh.id}/${surahNumber}`;
+                        const audioUrl = `https://cdn.alquran.cloud/media/audio/ayah/${sheikh.id}/${surahNumber}/1`;
                         audioControl.src = audioUrl;
                         audioPlayer.style.display = 'block';
                         currentSurah.innerText = `Playing: ${surahName} by ${sheikh.name}`;
