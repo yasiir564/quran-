@@ -3,64 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quran Audio - Surah</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&family=Roboto:wght@400;700&display=swap">
+    <title>Surah Content</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Amiri', serif;
             background: linear-gradient(to right, #6a11cb, #2575fc);
             color: #333;
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
 
         .container {
             max-width: 800px;
-            margin: 20px auto;
+            margin: 0 auto;
             padding: 20px;
             text-align: center;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        nav {
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            border-radius: 10px;
-        }
-
-        nav ul {
-            list-style: none;
-            padding: 10px;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-        }
-
-        nav ul li {
-            margin: 0 10px;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: #333;
-            font-size: 1.2em;
-            padding: 10px 20px;
-            display: block;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        nav ul li a:hover {
-            background-color: #f0f0f0;
-            border-radius: 5px;
-            color: #6a11cb;
         }
 
         header {
@@ -71,59 +31,50 @@
 
         h1 {
             font-size: 2.5em;
-            color: #333;
+            color: #fff;
         }
 
-        .audio-controls {
-            margin-top: 20px;
+        .search-container {
+            margin: 10px 0;
             display: flex;
-            justify-content: center;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
         }
 
-        .audio-controls select {
+        .search-container input {
             padding: 10px;
             font-size: 1em;
+            width: 70%;
+            border: none;
             border-radius: 5px;
-            border: 1px solid #ccc;
-            transition: border-color 0.3s;
+            max-width: 300px;
         }
 
-        .audio-controls select:focus {
-            border-color: #6a11cb;
-        }
-
-        .audio-controls button {
-            padding: 10px 20px;
+        .search-container button {
+            padding: 10px;
             font-size: 1em;
             border: none;
             cursor: pointer;
             border-radius: 5px;
-            background: #6a11cb;
+            margin-left: 10px;
+        }
+
+        #dark-mode-toggle {
+            margin: 10px 0;
+            cursor: pointer;
+            font-size: 1.5em;
             color: #fff;
-            transition: background-color 0.3s, transform 0.2s;
         }
 
-        .audio-controls button:hover {
-            background: #2575fc;
-            transform: scale(1.05);
-        }
-
-        .loader {
-            border: 16px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 16px solid #3498db;
-            width: 120px;
-            height: 120px;
-            animation: spin 2s linear infinite;
-            margin: 50px auto;
-            display: none;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        #surah-content {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow-y: auto;
+            max-height: 600px;
         }
 
         .close-button {
@@ -135,93 +86,310 @@
             font-size: 1.5em;
         }
 
+        .ayah {
+            font-size: 1.5em;
+            line-height: 2em;
+            text-align: right;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            position: relative;
+        }
+
+        .ayah.playing {
+            background-color: #e0f7fa;
+        }
+
+        .translation {
+            font-size: 1em;
+            line-height: 1.5em;
+            text-align: left;
+            margin-bottom: 20px;
+            color: #555;
+            border-bottom: 1px dashed #ddd;
+            padding-bottom: 10px;
+        }
+
+        .audio {
+            display: block;
+            margin: 10px 0;
+        }
+
+        .audio.loading::after {
+            content: ' Loading...';
+            font-size: 1em;
+            color: #3498db;
+            animation: blink 1s linear infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .separator {
+            display: inline-block;
+            margin-left: 10px;
+            color: #2c3e50;
+            font-size: 1.2em;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .buttons button {
+            background-color: #2980b9;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 5px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .buttons button:hover {
+            background-color: #3498db;
+        }
+
+        .buttons i {
+            margin-right: 5px;
+        }
+
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            margin: 50px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         body.dark-mode {
             background: linear-gradient(to right, #0f0f0f, #434343);
             color: #ddd;
+        }
+
+        body.dark-mode .ayah {
+            background-color: #333;
+            color: #ddd;
+        }
+
+        body.dark-mode .ayah.playing {
+            background-color: #555;
+        }
+
+        body.dark-mode .translation {
+            color: #ccc;
+            border-color: #666;
+        }
+
+        body.dark-mode .buttons button {
+            background-color: #444;
+        }
+
+        body.dark-mode .buttons button:hover {
+            background-color: #555;
         }
 
         body.dark-mode h1 {
             color: #ddd;
         }
 
-        .dark-mode-toggle {
-            margin: 10px 0;
-            cursor: pointer;
-            font-size: 1.5em;
-            color: #fff;
-            position: absolute;
-            top: 10px;
-            left: 10px;
+        @media (max-width: 600px) {
+            .search-container input {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .search-container button {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="index.html">Read Quran</a></li>
-            <li><a href="juzz.html">Juzz</a></li>
-            <li><a href="audio.html">Quran Audio</a></li>
-        </ul>
-    </nav>
     <div class="container">
         <header>
-            <h1>Quran Audio - Surah <span id="surah-name"></span></h1>
-            <i id="dark-mode-toggle" class="fas fa-moon dark-mode-toggle"></i>
-            <span class="close-button" onclick="window.location.href='audio.html'">×</span>
+            <h1>Surah</h1>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search for an Ayah...">
+                <button id="search-button">Search</button>
+            </div>
+            <i id="dark-mode-toggle" class="fas fa-moon"></i>
+            <span class="close-button" onclick="window.location.href='index.html'">×</span>
         </header>
-        <div class="audio-controls">
-            <select id="sheikh-select">
-                <option value="ar.alafasy">Alafasy</option>
-                <option value="ar.ahmedajamy">Ahmed Ajmy</option>
-                <option value="ar.husary">Husary</option>
-                <option value="ar.minshawi">Minshawi</option>
-                <option value="ar.muhammadayyub">Muhammad Ayyub</option>
-                <option value="ar.saoodshuraym">Saood Shuraym</option>
-                <option value="ar.sudais">Sudais</option>
-            </select>
-            <button id="play-button">Play</button>
+        <div id="surah-content"></div>
+        <div class="loader" id="loader"></div>
+        <div class="buttons">
+            <button id="repeat-surah"><i class="fas fa-redo"></i> Repeat Surah</button>
+            <button id="next-surah"><i class="fas fa-arrow-right"></i> Next Surah</button>
         </div>
-        <div id="loader" class="loader"></div>
-        <audio id="audio-player" controls></audio>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const surahContent = document.getElementById('surah-content');
+            const loader = document.getElementById('loader');
             const urlParams = new URLSearchParams(window.location.search);
             const surahNumber = urlParams.get('surah');
-            const surahName = document.getElementById('surah-name');
-            const sheikhSelect = document.getElementById('sheikh-select');
-            const playButton = document.getElementById('play-button');
-            const audioPlayer = document.getElementById('audio-player');
-            const loader = document.getElementById('loader');
+            const searchInput = document.getElementById('search-input');
+            const searchButton = document.getElementById('search-button');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
+            let autoNextSurahTimeout;
+            let wakeLock = null;
 
-            fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`)
-                .then(response => response.json())
-                .then(data => {
-                    surahName.innerText = data.data.englishName;
-                })
-                .catch(error => console.error('Error fetching Surah data:', error));
+            async function requestWakeLock() {
+                try {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    console.log('Wake lock is active');
+                } catch (err) {
+                    console.error(`${err.name}, ${err.message}`);
+                }
+            }
 
-            playButton.addEventListener('click', () => {
-                const sheikh = sheikhSelect.value;
-                audioPlayer.src = `https://api.alquran.cloud/v1/surah/${surahNumber}/${sheikh}`;
-                audioPlayer.load();
+            function releaseWakeLock() {
+                if (wakeLock) {
+                    wakeLock.release().then(() => {
+                        wakeLock = null;
+                        console.log('Wake lock released');
+                    });
+                }
+            }
+
+            function handleVisibilityChange() {
+                if (document.visibilityState === 'visible') {
+                    requestWakeLock();
+                } else {
+                    releaseWakeLock();
+                }
+            }
+
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            requestWakeLock();
+
+            function loadSurah(surahNumber) {
+                surahContent.style.display = 'none';
                 loader.style.display = 'block';
 
-                audioPlayer.addEventListener('canplaythrough', () => {
-                    loader.style.display = 'none';
-                    audioPlayer.play();
+                Swal.fire({
+                    title: 'Loading...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading()
+                    }
                 });
 
-                audioPlayer.addEventListener('error', () => {
+                Promise.all([
+                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`),
+                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`),
+                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`)
+                ])
+                .then(responses => Promise.all(responses.map(response => response.json())))
+                .then(([surahData, translationData, audioData]) => {
                     loader.style.display = 'none';
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'There was an issue loading the audio. Please try again later.',
-                        icon: 'error',
-                        confirmButtonText: 'Okay'
+                    Swal.close();
+                    surahContent.style.display = 'block';
+
+                    surahContent.innerHTML = `
+                        <h2>${surahData.data.englishName} (${surahData.data.name})</h2>
+                        <p>${surahData.data.englishNameTranslation}</p>
+                        ${surahData.data.ayahs.map((ayah, index) => `
+                            <div class="ayah" id="ayah-${index}">
+                                ${ayah.text}<span class="separator">۞</span>
+                            </div>
+                            <div class="translation" id="translation-${index}">
+                                ${translationData.data.ayahs[index].text}
+                            </div>
+                            <audio class="audio" id="audio-${index}" controls>
+                                <source src="${audioData.data.ayahs[index].audio}" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>`).join('')}
+                    `;
+
+                    const audios = document.querySelectorAll('.audio');
+                    const ayahs = document.querySelectorAll('.ayah');
+
+                    audios.forEach((audio, index) => {
+                        audio.addEventListener('play', () => {
+                            ayahs.forEach(ayah => ayah.classList.remove('playing'));
+                            document.getElementById('ayah-' + index).classList.add('playing');
+                            scrollToAyah(index);
+                        });
+
+                        audio.addEventListener('waiting', () => {
+                            audio.classList.add('loading');
+                        });
+
+                        audio.addEventListener('playing', () => {
+                            audio.classList.remove('loading');
+                        });
+
+                        audio.addEventListener('ended', () => {
+                            if (index < audios.length - 1) {
+                                audios[index + 1].play();
+                            } else {
+                                autoNextSurah();
+                            }
+                        });
                     });
+
+                    audios[0].play();
+                })
+                .catch(error => {
+                    Swal.close();
+                    console.error('Error fetching surah:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    });
+                });
+            }
+
+            function scrollToAyah(index) {
+                const ayahElement = document.getElementById(`ayah-${index}`);
+                ayahElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            function autoNextSurah() {
+                clearTimeout(autoNextSurahTimeout);
+                autoNextSurahTimeout = setTimeout(() => {
+                    const nextSurahNumber = parseInt(surahNumber) + 1;
+                    window.location.href = `surah.html?surah=${nextSurahNumber}`;
+                }, 3000);
+            }
+
+            loadSurah(surahNumber);
+
+            document.getElementById('repeat-surah').addEventListener('click', () => {
+                clearTimeout(autoNextSurahTimeout);
+                loadSurah(surahNumber);
+            });
+
+            document.getElementById('next-surah').addEventListener('click', () => {
+                clearTimeout(autoNextSurahTimeout);
+                const nextSurahNumber = parseInt(surahNumber) + 1;
+                window.location.href = `surah.html?surah=${nextSurahNumber}`;
+            });
+
+            searchButton.addEventListener('click', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const translations = surahContent.querySelectorAll('.translation');
+                translations.forEach(translation => {
+                    if (translation.innerText.toLowerCase().includes(searchTerm)) {
+                        translation.style.display = 'block';
+                    } else {
+                        translation.style.display = 'none';
+                    }
                 });
             });
 
@@ -239,4 +407,5 @@
     </script>
 </body>
 </html>
+
 
