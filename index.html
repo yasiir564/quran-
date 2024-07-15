@@ -7,6 +7,7 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1850217813586802" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         body {
             font-family: 'Amiri', serif;
@@ -62,6 +63,14 @@
         #dark-mode-toggle {
             margin: 10px 0;
             cursor: pointer;
+            font-size: 1.5em;
+            color: #fff;
+        }
+
+        #calendar {
+            margin: 10px 0;
+            font-size: 1.2em;
+            color: #fff;
         }
 
         #surah-list {
@@ -139,15 +148,17 @@
     <div class="container">
         <header>
             <h1>Quran Reader</h1>
+            <div id="calendar"></div>
             <div class="search-container">
                 <input type="text" id="search-input" placeholder="Search for a Surah...">
                 <button id="search-button">Search</button>
             </div>
-            <button id="dark-mode-toggle">Toggle Dark Mode</button>
+            <i id="dark-mode-toggle" class="fas fa-moon"></i>
         </header>
         <div id="surah-list"></div>
         <div class="loader" id="loader"></div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const surahList = document.getElementById('surah-list');
@@ -155,6 +166,20 @@
             const searchInput = document.getElementById('search-input');
             const searchButton = document.getElementById('search-button');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const calendar = document.getElementById('calendar');
+
+            // Fetch Islamic Date
+            async function fetchIslamicDate() {
+                const response = await fetch('http://api.aladhan.com/v1/gToH');
+                const data = await response.json();
+                const { hijri, gregorian } = data.data;
+                calendar.innerHTML = `
+                    <p>${gregorian.day} ${gregorian.month.en} ${gregorian.year} | ${hijri.day} ${hijri.month.en} ${hijri.year}</p>
+                    <p>${gregorian.day} ${gregorian.month.ar} ${gregorian.year} | ${hijri.day} ${hijri.month.ar} ${hijri.year}</p>
+                `;
+            }
+
+            fetchIslamicDate();
 
             loader.style.display = 'block';
 
@@ -166,7 +191,10 @@
                     data.data.forEach(surah => {
                         const surahDiv = document.createElement('div');
                         surahDiv.classList.add('surah');
-                        surahDiv.innerText = `${surah.number}. ${surah.englishName}`;
+                        surahDiv.innerHTML = `
+                            <p>${surah.number}. ${surah.englishName}</p>
+                            <p>${surah.name}</p>
+                        `;
                         surahDiv.setAttribute('data-name', surah.englishName.toLowerCase());
                         surahDiv.addEventListener('click', () => {
                             window.location.href = `surah.html?surah=${surah.number}`;
@@ -178,19 +206,46 @@
                 .catch(error => console.error('Error fetching surahs:', error));
 
             searchButton.addEventListener('click', () => {
+                Swal.fire({
+                    title: 'Searching...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
                 const searchTerm = searchInput.value.toLowerCase();
                 const surahDivs = surahList.querySelectorAll('.surah');
+                let found = false;
                 surahDivs.forEach(div => {
                     if (div.getAttribute('data-name').includes(searchTerm)) {
                         div.style.display = 'block';
+                        found = true;
                     } else {
                         div.style.display = 'none';
                     }
                 });
+
+                Swal.close();
+
+                if (!found) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'No Surah Found',
+                        text: 'Please try another search term.',
+                    });
+                }
             });
 
             darkModeToggle.addEventListener('click', () => {
                 document.body.classList.toggle('dark-mode');
+                if (document.body.classList.contains('dark-mode')) {
+                    darkModeToggle.classList.remove('fa-moon');
+                    darkModeToggle.classList.add('fa-sun');
+                } else {
+                    darkModeToggle.classList.remove('fa-sun');
+                    darkModeToggle.classList.add('fa-moon');
+                }
             });
         });
     </script>
