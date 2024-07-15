@@ -166,6 +166,7 @@
             height: 120px;
             animation: spin 2s linear infinite;
             margin: 50px auto;
+            display: none;
         }
 
         @keyframes spin {
@@ -236,7 +237,7 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', async function () {
             const juzzContent = document.getElementById('juzz-content');
             const loader = document.getElementById('loader');
             const urlParams = new URLSearchParams(window.location.search);
@@ -246,7 +247,7 @@
             const darkModeToggle = document.getElementById('dark-mode-toggle');
             let autoNextJuzzTimeout;
 
-            function loadJuzz(juzzNumber) {
+            async function loadJuzz(juzzNumber) {
                 juzzContent.style.display = 'none';
                 loader.style.display = 'block';
 
@@ -258,83 +259,74 @@
                     }
                 });
 
-                fetch(`https://api.alquran.cloud/v1/juz/${juzzNumber}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const ayahsPromises = data.data.ayahs.map(ayah => {
-                            return fetch(`https://api.alquran.cloud/v1/ayah/${ayah.number}/en.sahih`);
+                try {
+                    const juzzResponse = await fetch(`https://api.alquran.cloud/v1/juz/${juzzNumber}`);
+                    const juzzData = await juzzResponse.json();
+
+                    const ayahsPromises = juzzData.data.ayahs.map(ayah =>
+                        fetch(`https://api.alquran.cloud/v1/ayah/${ayah.number}/en.sahih`)
+                    );
+
+                    const responses = await Promise.all(ayahsPromises);
+                    const translationData = await Promise.all(responses.map(response => response.json()));
+
+                    loader.style.display = 'none';
+                    Swal.close();
+                    juzzContent.style.display = 'block';
+
+                    juzzContent.innerHTML = `
+                        <h2>Juzz ${juzzNumber}</h2>
+                        ${juzzData.data.ayahs.map((ayah, index) => `
+                            <div class="ayah" id="ayah-${index}">
+                                ${ayah.text}<span class="separator">۞</span>
+                            </div>
+                            <div class="translation" id="translation-${index}">
+                                ${translationData[index].data.text}
+                            </div>
+                            <audio class="audio" id="audio-${index}" controls>
+                                <source src="https://verses.quran.com/${ayah.number}.mp3" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                        `).join('')}
+                    `;
+
+                    const audios = document.querySelectorAll('.audio');
+                    const ayahs = document.querySelectorAll('.ayah');
+
+                    audios.forEach((audio, index) => {
+                        audio.addEventListener('play', () => {
+                            ayahs.forEach(ayah => ayah.classList.remove('playing'));
+                            document.getElementById('ayah-' + index).classList.add('playing');
+                            scrollToAyah(index);
                         });
 
-                        Promise.all(ayahsPromises)
-                            .then(responses => Promise.all(responses.map(response => response.json())))
-                            .then(translationData => {
-                                loader.style.display = 'none';
-                                Swal.close();
-                                juzzContent.style.display = 'block';
+                        audio.addEventListener('waiting', () => {
+                            audio.classList.add('loading');
+                        });
 
-                                juzzContent.innerHTML = `
-                                    <h2>Juzz ${juzzNumber}</h2>
-                                    ${data.data.ayahs.map((ayah, index) => `
-                                        <div class="ayah" id="ayah-${index}">
-                                            ${ayah.text}<span class="separator">۞</span>
-                                        </div>
-                                        <div class="translation" id="translation-${index}">
-                                            ${translationData[index].data.text}
-                                        </div>
-                                        <audio class="audio" id="audio-${index}" controls>
-                                            <source src="https://verses.quran.com/${ayah.number}.mp3" type="audio/mpeg">
-                                            Your browser does not support the audio element.
-                                        </audio>`).join('')}
-                                `;
+                        audio.addEventListener('playing', () => {
+                            audio.classList.remove('loading');
+                        });
 
-                                const audios = document.querySelectorAll('.audio');
-                                const ayahs = document.querySelectorAll('.ayah');
-
-                                audios.forEach((audio, index) => {
-                                    audio.addEventListener('play', () => {
-                                        ayahs.forEach(ayah => ayah.classList.remove('playing'));
-                                        document.getElementById('ayah-' + index).classList.add('playing');
-                                        scrollToAyah(index);
-                                    });
-
-                                    audio.addEventListener('waiting', () => {
-                                        audio.classList.add('loading');
-                                    });
-
-                                    audio.addEventListener('playing', () => {
-                                        audio.classList.remove('loading');
-                                    });
-
-                                    audio.addEventListener('ended', () => {
-                                        if (index < audios.length - 1) {
-                                            audios[index + 1].play();
-                                        } else {
-                                            autoNextJuzz();
-                                        }
-                                    });
-                                });
-
-                                audios[0].play();
-                            })
-                            .catch(error => {
-                                Swal.close();
-                                console.error('Error fetching translation:', error);
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Oops...',
-                                    text: 'Something went wrong!',
-                                });
-                            });
-                    })
-                    .catch(error => {
-                        Swal.close();
-                        console.error('Error fetching juzz:', error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Something went wrong!',
+                        audio.addEventListener('ended', () => {
+                            if (index < audios.length - 1) {
+                                audios[index + 1].play();
+                            } else {
+                                autoNextJuzz();
+                            }
                         });
                     });
+
+                    audios[0].play();
+                } catch (error) {
+                    Swal.close();
+                    console.error('Error fetching juzz:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    });
+                }
             }
 
             function scrollToAyah(index) {
