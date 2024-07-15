@@ -36,44 +36,6 @@
             color: #fff;
         }
 
-        .card-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            margin: 20px 0;
-        }
-
-        .card {
-            background-color: #fff;
-            padding: 20px;
-            margin: 10px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: calc(45% - 20px);
-            cursor: pointer;
-            transition: transform 0.2s, background-color 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .card i {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        .card:hover {
-            transform: scale(1.05);
-            background-color: #f0f0f0;
-        }
-
-        @media (max-width: 768px) {
-            .card {
-                width: calc(100% - 20px);
-            }
-        }
-
         .search-container {
             margin: 10px 0;
             display: flex;
@@ -102,14 +64,14 @@
             cursor: pointer;
         }
 
-        #content {
-            display: none;
+        #surah-list {
+            display: flex;
             flex-wrap: wrap;
             gap: 10px;
             justify-content: center;
         }
 
-        .surah, .audio, .quran-page, .sheikh {
+        .surah {
             background-color: #fff;
             padding: 15px;
             border: 1px solid #ddd;
@@ -122,25 +84,24 @@
             transition: transform 0.2s, background-color 0.3s;
         }
 
-        .surah:hover, .audio:hover, .quran-page:hover, .sheikh:hover {
+        .surah:hover {
             transform: scale(1.05);
             background-color: #f0f0f0;
         }
 
         @media (max-width: 768px) {
-            .surah, .audio, .quran-page, .sheikh {
+            .surah {
                 flex: 1 1 calc(50% - 20px);
             }
         }
 
         @media (max-width: 480px) {
-            .surah, .audio, .quran-page, .sheikh {
+            .surah {
                 flex: 1 1 100%;
             }
         }
 
         .loader {
-            display: none;
             border: 16px solid #f3f3f3;
             border-radius: 50%;
             border-top: 16px solid #3498db;
@@ -155,61 +116,22 @@
             100% { transform: rotate(360deg); }
         }
 
-        .audio-player {
-            display: none;
-            background: #fff;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .audio-player audio {
-            width: 100%;
-            outline: none;
-        }
-
         body.dark-mode {
             background: linear-gradient(to right, #0f0f0f, #434343);
             color: #ddd;
         }
 
-        body.dark-mode .surah, body.dark-mode .audio, body.dark-mode .quran-page, body.dark-mode .sheikh {
+        body.dark-mode .surah {
             background-color: #333;
             color: #ddd;
         }
 
-        body.dark-mode .surah:hover, body.dark-mode .audio:hover, body.dark-mode .quran-page:hover, body.dark-mode .sheikh:hover {
+        body.dark-mode .surah:hover {
             background-color: #444;
         }
 
         body.dark-mode h1 {
             color: #ddd;
-        }
-
-        body.dark-mode .audio-player {
-            background: #333;
-            color: #ddd;
-        }
-
-        body.dark-mode .audio-player audio {
-            background: #444;
-        }
-
-        .home-button {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background: #f44336;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .home-button:hover {
-            background: #d32f2f;
         }
     </style>
 </head>
@@ -218,156 +140,47 @@
         <header>
             <h1>Quran Reader</h1>
             <div class="search-container">
-                <input type="text" id="search-input" placeholder="Search...">
+                <input type="text" id="search-input" placeholder="Search for a Surah...">
                 <button id="search-button">Search</button>
             </div>
             <button id="dark-mode-toggle">Toggle Dark Mode</button>
         </header>
-        <div class="card-container">
-            <div class="card" id="read-quran">
-                <i class="fas fa-book-open"></i>
-                Read Quran Translation and Audio
-            </div>
-            <div class="card" id="do-tasbih">
-                <i class="fas fa-pray"></i>
-                Do Tasbih
-            </div>
-            <div class="card" id="read-quran-only">
-                <i class="fas fa-quran"></i>
-                Read Quran Only
-            </div>
-            <div class="card" id="listen-audio">
-                <i class="fas fa-headphones"></i>
-                Listen to Audio from Different Sheikhs
-            </div>
-        </div>
-        <button class="home-button" id="home-button" style="display: none;">Home</button>
-        <div id="content"></div>
-        <div class="audio-player" id="audio-player">
-            <div id="current-surah"></div>
-            <audio controls id="audio-control">
-                <source src="" type="audio/mp3">
-            </audio>
-        </div>
+        <div id="surah-list"></div>
         <div class="loader" id="loader"></div>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const content = document.getElementById('content');
+            const surahList = document.getElementById('surah-list');
             const loader = document.getElementById('loader');
             const searchInput = document.getElementById('search-input');
             const searchButton = document.getElementById('search-button');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
-            const cardContainer = document.querySelector('.card-container');
-            const audioPlayer = document.getElementById('audio-player');
-            const audioControl = document.getElementById('audio-control');
-            const currentSurah = document.getElementById('current-surah');
-            const homeButton = document.getElementById('home-button');
 
-            const sheikhs = [
-                { name: 'Alafasy', id: 'ar.alafasy' },
-                { name: 'Sudais', id: 'ar.sudais' },
-                { name: 'Shuraim', id: 'ar.shuraim' },
-            ];
+            loader.style.display = 'block';
 
-            function showHomeButton() {
-                homeButton.style.display = 'block';
-                homeButton.addEventListener('click', () => {
-                    content.innerHTML = '';
-                    cardContainer.style.display = 'flex';
-                    homeButton.style.display = 'none';
-                    audioPlayer.style.display = 'none';
-                });
-            }
-
-            function loadSurahs() {
-                loader.style.display = 'block';
-                fetch('https://api.alquran.cloud/v1/surah')
-                    .then(response => response.json())
-                    .then(data => {
-                        loader.style.display = 'none';
-                        const fragment = document.createDocumentFragment();
-                        data.data.forEach(surah => {
-                            const surahDiv = document.createElement('div');
-                            surahDiv.classList.add('surah');
-                            surahDiv.innerText = `${surah.number}. ${surah.englishName}`;
-                            surahDiv.setAttribute('data-name', surah.englishName.toLowerCase());
-                            surahDiv.addEventListener('click', () => {
-                                loadSheikhs(surah.number, surah.englishName);
-                            });
-                            fragment.appendChild(surahDiv);
+            fetch('https://api.alquran.cloud/v1/surah')
+                .then(response => response.json())
+                .then(data => {
+                    loader.style.display = 'none';
+                    const fragment = document.createDocumentFragment();
+                    data.data.forEach(surah => {
+                        const surahDiv = document.createElement('div');
+                        surahDiv.classList.add('surah');
+                        surahDiv.innerText = ${surah.number}. ${surah.englishName};
+                        surahDiv.setAttribute('data-name', surah.englishName.toLowerCase());
+                        surahDiv.addEventListener('click', () => {
+                            window.location.href = surah.html?surah=${surah.number};
                         });
-                        content.appendChild(fragment);
-                    })
-                    .catch(error => console.error('Error fetching surahs:', error));
-            }
-
-            function loadSheikhs(surahNumber, surahName) {
-                content.innerHTML = '';
-                const fragment = document.createDocumentFragment();
-                sheikhs.forEach(sheikh => {
-                    const sheikhDiv = document.createElement('div');
-                    sheikhDiv.classList.add('sheikh');
-                    sheikhDiv.innerText = sheikh.name;
-                    sheikhDiv.addEventListener('click', () => {
-                        const audioUrl = `https://cdn.alquran.cloud/media/audio/ayah/${sheikh.id}/${surahNumber}/1`;
-                        audioControl.src = audioUrl;
-                        audioPlayer.style.display = 'block';
-                        currentSurah.innerText = `Playing: ${surahName} by ${sheikh.name}`;
-                        audioControl.play();
+                        fragment.appendChild(surahDiv);
                     });
-                    fragment.appendChild(sheikhDiv);
-                });
-                content.appendChild(fragment);
-            }
-
-            function loadQuranPages() {
-                loader.style.display = 'block';
-                fetch('https://api.alquran.cloud/v1/quran/quran-uthmani')
-                    .then(response => response.json())
-                    .then(data => {
-                        loader.style.display = 'none';
-                        const fragment = document.createDocumentFragment();
-                        data.data.surahs.forEach(surah => {
-                            const pageDiv = document.createElement('div');
-                            pageDiv.classList.add('quran-page');
-                            pageDiv.innerHTML = `<h3>${surah.name}</h3><p>${surah.ayahs.map(ayah => ayah.text).join(' ')}</p>`;
-                            pageDiv.setAttribute('data-name', surah.englishName.toLowerCase());
-                            fragment.appendChild(pageDiv);
-                        });
-                        content.appendChild(fragment);
-                    })
-                    .catch(error => console.error('Error fetching Quran pages:', error));
-            }
-
-            document.getElementById('read-quran').addEventListener('click', function () {
-                cardContainer.style.display = 'none';
-                content.innerHTML = '';
-                content.style.display = 'flex';
-                loadSurahs();
-                showHomeButton();
-            });
-
-            document.getElementById('listen-audio').addEventListener('click', function () {
-                cardContainer.style.display = 'none';
-                content.innerHTML = '';
-                content.style.display = 'flex';
-                loadSurahs();
-                showHomeButton();
-            });
-
-            document.getElementById('read-quran-only').addEventListener('click', function () {
-                cardContainer.style.display = 'none';
-                content.innerHTML = '';
-                content.style.display = 'flex';
-                loadQuranPages();
-                showHomeButton();
-            });
+                    surahList.appendChild(fragment);
+                })
+                .catch(error => console.error('Error fetching surahs:', error));
 
             searchButton.addEventListener('click', () => {
                 const searchTerm = searchInput.value.toLowerCase();
-                const contentDivs = content.querySelectorAll('.surah, .audio, .quran-page, .sheikh');
-                contentDivs.forEach(div => {
+                const surahDivs = surahList.querySelectorAll('.surah');
+                surahDivs.forEach(div => {
                     if (div.getAttribute('data-name').includes(searchTerm)) {
                         div.style.display = 'block';
                     } else {
