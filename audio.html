@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quran Audio</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Amiri', serif;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        nav {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin: 0 10px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 1.2em;
+            padding: 10px 20px;
+            display: block;
+        }
+
+        nav ul li a:hover {
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #fff;
+        }
+
+        #surah-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .surah {
+            background-color: #fff;
+            padding: 15px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            flex: 1 1 calc(25% - 20px);
+            box-sizing: border-box;
+            text-align: center;
+            margin: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        .surah:hover {
+            transform: scale(1.05);
+            background-color: #f0f0f0;
+        }
+
+        @media (max-width: 768px) {
+            .surah {
+                flex: 1 1 calc(50% - 20px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .surah {
+                flex: 1 1 100%;
+            }
+        }
+
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            margin: 50px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        body.dark-mode {
+            background: linear-gradient(to right, #0f0f0f, #434343);
+            color: #ddd;
+        }
+
+        body.dark-mode .surah {
+            background-color: #333;
+            color: #ddd;
+        }
+
+        body.dark-mode .surah:hover {
+            background-color: #444;
+        }
+
+        body.dark-mode h1 {
+            color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Read Quran</a></li>
+            <li><a href="juzz.html">Juzz</a></li>
+            <li><a href="audio.html">Quran Audio</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <header>
+            <h1>Quran Audio</h1>
+        </header>
+        <div id="surah-list"></div>
+        <div class="loader" id="loader"></div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const surahList = document.getElementById('surah-list');
+            const loader = document.getElementById('loader');
+
+            loader.style.display = 'block';
+
+            fetch('https://api.alquran.cloud/v1/surah')
+                .then(response => response.json())
+                .then(data => {
+                    loader.style.display = 'none';
+                    const fragment = document.createDocumentFragment();
+                    data.data.forEach(surah => {
+                        const surahDiv = document.createElement('div');
+                        surahDiv.classList.add('surah');
+                        surahDiv.innerText = surah.englishName;
+                        surahDiv.addEventListener('click', () => {
+                            window.location.href = `audioSurah.html?surah=${surah.number}`;
+                        });
+                        fragment.appendChild(surahDiv);
+                    });
+                    surahList.appendChild(fragment);
+                })
+                .catch(error => {
+                    loader.style.display = 'none';
+                    console.error('Error fetching Surahs:', error);
+                });
+        });
+    </script>
+</body>
+</html>
