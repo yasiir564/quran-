@@ -36,6 +36,35 @@
             color: #fff;
         }
 
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+
+        .card {
+            background-color: #fff;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: calc(45% - 20px);
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            background-color: #f0f0f0;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                width: calc(100% - 20px);
+            }
+        }
+
         .search-container {
             margin: 10px 0;
             display: flex;
@@ -65,7 +94,7 @@
         }
 
         #surah-list {
-            display: flex;
+            display: none;
             flex-wrap: wrap;
             gap: 10px;
             justify-content: center;
@@ -102,6 +131,7 @@
         }
 
         .loader {
+            display: none;
             border: 16px solid #f3f3f3;
             border-radius: 50%;
             border-top: 16px solid #3498db;
@@ -145,6 +175,12 @@
             </div>
             <button id="dark-mode-toggle">Toggle Dark Mode</button>
         </header>
+        <div class="card-container">
+            <div class="card" id="read-quran">Read Quran Translation and Audio</div>
+            <div class="card">Do Tasbih</div>
+            <div class="card">Read Quran Only</div>
+            <div class="card">Listen to Audio from Different Sheikhs</div>
+        </div>
         <div id="surah-list"></div>
         <div class="loader" id="loader"></div>
     </div>
@@ -155,27 +191,33 @@
             const searchInput = document.getElementById('search-input');
             const searchButton = document.getElementById('search-button');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const readQuranCard = document.getElementById('read-quran');
+            const cardContainer = document.querySelector('.card-container');
 
-            loader.style.display = 'block';
+            readQuranCard.addEventListener('click', function () {
+                cardContainer.style.display = 'none';
+                loader.style.display = 'block';
+                surahList.style.display = 'flex';
 
-            fetch('https://api.alquran.cloud/v1/surah')
-                .then(response => response.json())
-                .then(data => {
-                    loader.style.display = 'none';
-                    const fragment = document.createDocumentFragment();
-                    data.data.forEach(surah => {
-                        const surahDiv = document.createElement('div');
-                        surahDiv.classList.add('surah');
-                        surahDiv.innerText = `${surah.number}. ${surah.englishName}`;
-                        surahDiv.setAttribute('data-name', surah.englishName.toLowerCase());
-                        surahDiv.addEventListener('click', () => {
-                            window.location.href = `surah.html?surah=${surah.number}`;
+                fetch('https://api.alquran.cloud/v1/surah')
+                    .then(response => response.json())
+                    .then(data => {
+                        loader.style.display = 'none';
+                        const fragment = document.createDocumentFragment();
+                        data.data.forEach(surah => {
+                            const surahDiv = document.createElement('div');
+                            surahDiv.classList.add('surah');
+                            surahDiv.innerText = `${surah.number}. ${surah.englishName}`;
+                            surahDiv.setAttribute('data-name', surah.englishName.toLowerCase());
+                            surahDiv.addEventListener('click', () => {
+                                window.location.href = `surah.html?surah=${surah.number}`;
+                            });
+                            fragment.appendChild(surahDiv);
                         });
-                        fragment.appendChild(surahDiv);
-                    });
-                    surahList.appendChild(fragment);
-                })
-                .catch(error => console.error('Error fetching surahs:', error));
+                        surahList.appendChild(fragment);
+                    })
+                    .catch(error => console.error('Error fetching surahs:', error));
+            });
 
             searchButton.addEventListener('click', () => {
                 const searchTerm = searchInput.value.toLowerCase();
