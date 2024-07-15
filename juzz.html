@@ -155,26 +155,21 @@
 
             loader.style.display = 'block';
 
-            fetch('https://api.alquran.cloud/v1/juz')
-                .then(response => response.json())
-                .then(data => {
-                    loader.style.display = 'none';
-                    const fragment = document.createDocumentFragment();
-                    data.data.forEach(juzz => {
-                        const juzzDiv = document.createElement('div');
-                        juzzDiv.classList.add('juzz');
-                        juzzDiv.innerText = `Juzz ${juzz.number}`;
-                        juzzDiv.addEventListener('click', () => {
-                            window.location.href = `juzz_detail.html?juzz=${juzz.number}`;
-                        });
-                        fragment.appendChild(juzzDiv);
-                    });
-                    juzzList.appendChild(fragment);
-                })
-                .catch(error => {
-                    loader.style.display = 'none';
-                    console.error('Error fetching Juzz:', error);
+            const juzzArray = Array.from({length: 30}, (_, i) => i + 1); // Array of 30 Juzz
+
+            const fragment = document.createDocumentFragment();
+            juzzArray.forEach(juzzNumber => {
+                const juzzDiv = document.createElement('div');
+                juzzDiv.classList.add('juzz');
+                juzzDiv.innerText = `Juzz ${juzzNumber}`;
+                juzzDiv.addEventListener('click', () => {
+                    window.location.href = `juzz_detail.html?juzz=${juzzNumber}`;
                 });
+                fragment.appendChild(juzzDiv);
+            });
+            juzzList.appendChild(fragment);
+
+            loader.style.display = 'none';
         });
     </script>
 </body>
