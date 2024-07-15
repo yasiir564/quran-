@@ -188,9 +188,9 @@
             const sheikhs = [
                 { name: 'Abdul Basit Abdus Samad', imageUrl: 'https://i.imgur.com/nQ7xkV0.jpg', id: '1' },
                 { name: 'Mishary Rashid Alafasy', imageUrl: 'https://i.imgur.com/B9z84G8.jpg', id: '4' },
-                { name: 'Saad Al-Ghamdi', imageUrl: 'https://i.imgur.com/8uZv2Y6.jpg', id: '5' },
-                { name: 'Maher Al-Muaiqly', imageUrl: 'https://i.imgur.com/bIf1xZ8.jpg', id: '6' },
-                { name: 'Salah Bukhatir', imageUrl: 'https://i.imgur.com/twxxp1Y.jpg', id: '8' }
+                { name: 'Saad Al-Ghamdi', imageUrl: 'https://i.imgur.com/8uZv2Y6.jpg', id: '8' },
+                { name: 'Maher Al-Muaiqly', imageUrl: 'https://i.imgur.com/bIf1xZ8.jpg', id: '7' },
+                { name: 'Salah Bukhatir', imageUrl: 'https://i.imgur.com/twxxp1Y.jpg', id: '5' }
             ];
 
             let audioElement = null;
@@ -270,10 +270,11 @@
                 loader.style.display = 'block';
 
                 try {
-                    const response = await fetch(`https://api.alquran.cloud/v1/ayah/${surahName}/recitation/${sheikhId}`);
+                    const response = await fetch(`https://api.quran.com/api/v4/audio/${surahName}/recitations/${sheikhId}`);
                     const data = await response.json();
-                    if (data && data.data && data.data.audio) {
-                        playAudio(data.data.audio);
+                    if (data && data.result && data.result.audio_files && data.result.audio_files.length > 0) {
+                        const audioUrl = data.result.audio_files[0].url;
+                        playAudio(audioUrl);
                         audioControls.style.display = 'flex'; // Show audio controls
                     } else {
                         throw new Error('Audio URL not found');
@@ -288,10 +289,6 @@
                 } finally {
                     loader.style.display = 'none';
                 }
-            }
-
-            function scrollToTop() {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
             darkModeToggle.addEventListener('click', () => {
@@ -338,3 +335,4 @@
     </script>
 </body>
 </html>
+
