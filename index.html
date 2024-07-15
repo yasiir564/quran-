@@ -166,10 +166,10 @@
                     data.data.forEach(surah => {
                         const surahDiv = document.createElement('div');
                         surahDiv.classList.add('surah');
-                        surahDiv.innerText = ${surah.number}. ${surah.englishName};
+                        surahDiv.innerText = `${surah.number}. ${surah.englishName}`;
                         surahDiv.setAttribute('data-name', surah.englishName.toLowerCase());
                         surahDiv.addEventListener('click', () => {
-                            window.location.href = surah.html?surah=${surah.number};
+                            window.location.href = `surah.html?surah=${surah.number}`;
                         });
                         fragment.appendChild(surahDiv);
                     });
