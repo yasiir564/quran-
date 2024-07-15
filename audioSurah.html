@@ -34,46 +34,34 @@
             color: #fff;
         }
 
-        .search-container {
-            margin: 10px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .search-container input {
-            padding: 10px;
-            font-size: 1em;
-            width: 70%;
-            border: none;
-            border-radius: 5px;
-            max-width: 300px;
-        }
-
-        .search-container button {
-            padding: 10px;
-            font-size: 1em;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            margin-left: 10px;
-        }
-
-        #dark-mode-toggle {
-            margin: 10px 0;
-            cursor: pointer;
-            font-size: 1.5em;
-            color: #fff;
-        }
-
-        .reciters {
+        .audio-container {
             margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
+            text-align: center;
         }
 
-        .reciter-button {
+        .audio {
+            margin: 10px 0;
+            display: block;
+        }
+
+        .audio.loading::after {
+            content: ' Loading...';
+            font-size: 1em;
+            color: #3498db;
+            animation: blink 1s linear infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .buttons button {
             background-color: #2980b9;
             color: #fff;
             border: none;
@@ -85,24 +73,12 @@
             align-items: center;
         }
 
-        .reciter-button:hover {
+        .buttons button:hover {
             background-color: #3498db;
         }
 
-        .reciter-button i {
+        .buttons i {
             margin-right: 5px;
-        }
-
-        .audio-container {
-            margin-top: 20px;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .audio-container audio {
-            width: 100%;
-            max-width: 600px;
         }
 
         .loader {
@@ -125,16 +101,17 @@
             color: #ddd;
         }
 
-        body.dark-mode h1 {
+        body.dark-mode .audio {
+            background-color: #333;
             color: #ddd;
         }
 
-        body.dark-mode .reciter-button {
+        body.dark-mode .audio:hover {
             background-color: #444;
         }
 
-        body.dark-mode .reciter-button:hover {
-            background-color: #555;
+        body.dark-mode h1 {
+            color: #ddd;
         }
     </style>
 </head>
@@ -142,105 +119,107 @@
     <div class="container">
         <header>
             <h1>Surah Audio</h1>
-            <div class="search-container">
-                <input type="text" id="search-input" placeholder="Enter Surah Number...">
-                <button id="search-button">Search</button>
-            </div>
             <i id="dark-mode-toggle" class="fas fa-moon"></i>
+            <span class="close-button" onclick="window.location.href='index.html'">×</span>
         </header>
-        <div class="reciters" id="reciters">
-            <!-- Buttons for reciters will be dynamically added here -->
+        <div class="audio-container" id="audio-container"></div>
+        <div class="loader" id="loader"></div>
+        <div class="buttons">
+            <button id="repeat-surah"><i class="fas fa-redo"></i> Repeat Surah</button>
+            <button id="next-surah"><i class="fas fa-arrow-right"></i> Next Surah</button>
         </div>
-        <div class="audio-container" id="audio-container">
-            <audio id="surah-audio" controls></audio>
-        </div>
-        <div class="loader" id="loader" style="display: none;"></div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const reciters = [
-                { id: 'ar.alafasy', name: 'Mishary Rashid Alafasy' },
-                { id: 'ar.husary', name: 'Mahmoud Khalil Al-Husary' },
-                { id: 'ar.minshawi', name: 'Mohamed Siddiq Al-Minshawi' },
-                { id: 'ar.ajamy', name: 'Ali Jaber' }
-            ];
-
-            const recitersContainer = document.getElementById('reciters');
             const audioContainer = document.getElementById('audio-container');
-            const surahAudio = document.getElementById('surah-audio');
             const loader = document.getElementById('loader');
-            const searchInput = document.getElementById('search-input');
-            const searchButton = document.getElementById('search-button');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const repeatSurahButton = document.getElementById('repeat-surah');
+            const nextSurahButton = document.getElementById('next-surah');
 
-            let selectedSurah = null;
-            let selectedReciter = null;
+            let autoNextSurahTimeout;
 
-            reciters.forEach(reciter => {
-                const button = document.createElement('button');
-                button.className = 'reciter-button';
-                button.innerHTML = `<i class="fas fa-play"></i> ${reciter.name}`;
-                button.onclick = () => playSurah(reciter.id);
-                recitersContainer.appendChild(button);
-            });
-
-            function playSurah(reciterId) {
-                if (!selectedSurah) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'No Surah Selected',
-                        text: 'Please enter a Surah number first.',
+            function requestWakeLock() {
+                try {
+                    navigator.wakeLock.request('screen').then((wakeLockObj) => {
+                        console.log('Screen Wake Lock is active');
+                    }).catch((err) => {
+                        console.error(`${err.name}, ${err.message}`);
                     });
-                    return;
+                } catch (err) {
+                    console.error(`${err.name}, ${err.message}`);
                 }
-
-                loader.style.display = 'block';
-                audioContainer.style.display = 'none';
-                fetch(`https://api.alquran.cloud/v1/surah/${selectedSurah}/${reciterId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        loader.style.display = 'none';
-                        if (data.status === 'OK') {
-                            audioContainer.style.display = 'flex';
-                            surahAudio.src = data.data.ayahs[0].audio;
-                            surahAudio.play();
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Failed to load the audio. Please try again.',
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        loader.style.display = 'none';
-                        console.error('Error fetching audio:', error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Failed to load the audio. Please try again.',
-                        });
-                    });
             }
 
-            searchButton.addEventListener('click', () => {
-                selectedSurah = searchInput.value.trim();
-                if (!selectedSurah) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Invalid Input',
-                        text: 'Please enter a valid Surah number.',
+            function releaseWakeLock() {
+                try {
+                    navigator.wakeLock.release().then(() => {
+                        console.log('Screen Wake Lock is released');
+                    }).catch((err) => {
+                        console.error(`${err.name}, ${err.message}`);
                     });
-                    return;
+                } catch (err) {
+                    console.error(`${err.name}, ${err.message}`);
                 }
+            }
+
+            function handleVisibilityChange() {
+                if (document.visibilityState === 'visible') {
+                    requestWakeLock();
+                } else {
+                    releaseWakeLock();
+                }
+            }
+
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            requestWakeLock();
+
+            function playSurahAudio(audioUrl) {
+                const audio = new Audio(audioUrl);
+                audio.controls = true;
+                audio.autoplay = true;
+                audio.classList.add('audio');
+
+                audio.addEventListener('play', () => {
+                    scrollToTop();
+                });
+
+                audio.addEventListener('ended', () => {
+                    autoNextSurah();
+                });
+
+                audioContainer.innerHTML = ''; // Clear previous audio
+                audioContainer.appendChild(audio);
+            }
+
+            function loadSurahAudio(surahName, audioUrl) {
+                loader.style.display = 'block';
 
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Surah Selected',
-                    text: `Surah ${selectedSurah} selected. Please choose a reciter to play the audio.`,
+                    title: `Playing Surah ${surahName}`,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                    allowOutsideClick: false
                 });
-            });
+
+                playSurahAudio(audioUrl);
+
+                loader.style.display = 'none';
+                Swal.close();
+            }
+
+            function scrollToTop() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            function autoNextSurah() {
+                clearTimeout(autoNextSurahTimeout);
+                autoNextSurahTimeout = setTimeout(() => {
+                    window.location.href = 'audio.html'; // Redirect to audio selection page
+                }, 3000);
+            }
 
             darkModeToggle.addEventListener('click', () => {
                 document.body.classList.toggle('dark-mode');
@@ -252,7 +231,35 @@
                     darkModeToggle.classList.add('fa-moon');
                 }
             });
+
+            repeatSurahButton.addEventListener('click', () => {
+                clearTimeout(autoNextSurahTimeout);
+                window.location.reload(); // Reload the page to repeat the Surah
+            });
+
+            nextSurahButton.addEventListener('click', () => {
+                clearTimeout(autoNextSurahTimeout);
+                window.location.href = 'audio.html'; // Redirect to audio selection page for next Surah
+            });
+
+            // Retrieve selected Surah and audio URL from localStorage
+            const selectedSurah = localStorage.getItem('selectedSurah');
+            const selectedSurahAudio = localStorage.getItem('selectedSurahAudio');
+
+            if (selectedSurah && selectedSurahAudio) {
+                loadSurahAudio(selectedSurah, selectedSurahAudio);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Unable to fetch Surah audio. Please try again later.',
+                    onClose: () => {
+                        window.location.href = 'audio.html'; // Redirect to audio selection page on error
+                    }
+                });
+            }
         });
     </script>
 </body>
 </html>
+
