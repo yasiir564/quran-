@@ -1,1 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quran Audio - Surah</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Amiri', serif;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        nav {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin: 0 10px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 1.2em;
+            padding: 10px 20px;
+            display: block;
+        }
+
+        nav ul li a:hover {
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #fff;
+        }
+
+        .audio-controls {
+            margin-top: 20px;
+        }
+
+        .audio-controls select {
+            padding: 10px;
+            font-size: 1em;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .audio-controls button {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Read Quran</a></li>
+            <li><a href="juzz.html">Juzz</a></li>
+            <li><a href="audio.html">Quran Audio</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <header>
+            <h1>Quran Audio - Surah <span id="surah-name"></span></h1>
+        </header>
+        <div class="audio-controls">
+            <select id="sheikh-select">
+                <option value="ar.alafasy">Alafasy</option>
+                <option value="ar.ahmedajamy">Ahmed Ajmy</option>
+                <option value="ar.husary">Husary</option>
+                <option value="ar.minshawi">Minshawi</option>
+                <option value="ar.muhammadayyub">Muhammad Ayyub</option>
+                <option value="ar.saoodshuraym">Saood Shuraym</option>
+                <option value="ar.sudais">Sudais</option>
+            </select>
+            <button id="play-button">Play</button>
+        </div>
+        <audio id="audio-player" controls></audio>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const surahNumber = urlParams.get('surah');
+            const surahName = document.getElementById('surah-name');
+            const sheikhSelect = document.getElementById('sheikh-select');
+            const playButton = document.getElementById('play-button');
+            const audioPlayer = document.getElementById('audio-player');
+
+            fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`)
+                .then(response => response.json())
+                .then(data => {
+                    surahName.innerText = data.data.englishName;
+                })
+                .catch(error => console.error('Error fetching Surah data:', error));
+
+            playButton.addEventListener('click', () => {
+                const sheikh = sheikhSelect.value;
+                audioPlayer.src = `https://cdn.islamic.network/quran/audio-surah/${sheikh}/${surahNumber}.mp3`;
+                audioPlayer.play();
+            });
+        });
+    </script>
+</body>
+</html>
 
