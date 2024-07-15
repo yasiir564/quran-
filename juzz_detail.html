@@ -6,6 +6,7 @@
     <title>Juzz Detail</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         body {
             font-family: 'Amiri', serif;
@@ -22,43 +23,10 @@
             text-align: center;
         }
 
-        nav {
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-        }
-
-        nav ul li {
-            margin: 0 10px;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: #333;
-            font-size: 1.2em;
-            padding: 10px 20px;
-            display: block;
-        }
-
-        nav ul li a:hover {
-            background-color: #f0f0f0;
-            border-radius: 5px;
-        }
-
         header {
             text-align: center;
             margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            position: relative;
         }
 
         h1 {
@@ -66,65 +34,128 @@
             color: #fff;
         }
 
-        .ayah {
-            background-color: #fff;
-            padding: 15px;
-            border: 1px solid #ddd;
-            margin: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            text-align: left;
-        }
-
-        .ayah audio {
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        .ayah p {
-            margin-bottom: 10px;
-        }
-
-        .ayah .translations {
-            display: none;
-        }
-
-        .ayah:hover .translations {
-            display: block;
-        }
-
-        .translations p {
-            font-size: 0.9em;
-            color: #666;
-            margin-bottom: 5px;
-        }
-
-        .translations p.translation {
-            font-weight: bold;
-            color: #333;
-        }
-
-        .ayah .btn-container {
+        .search-container {
+            margin: 10px 0;
             display: flex;
-            justify-content: space-around;
-            margin-top: 10px;
+            align-items: center;
+            justify-content: center;
         }
 
-        .ayah .btn-container button {
-            padding: 8px 20px;
+        .search-container input {
+            padding: 10px;
+            font-size: 1em;
+            width: 70%;
+            border: none;
+            border-radius: 5px;
+            max-width: 300px;
+        }
+
+        .search-container button {
+            padding: 10px;
             font-size: 1em;
             border: none;
             cursor: pointer;
             border-radius: 5px;
-            transition: background-color 0.3s, color 0.3s;
+            margin-left: 10px;
         }
 
-        .ayah .btn-container button:hover {
-            background-color: #f0f0f0;
-        }
-
-        .ayah .btn-container button.active {
-            background-color: #2575fc;
+        #dark-mode-toggle {
+            margin: 10px 0;
+            cursor: pointer;
+            font-size: 1.5em;
             color: #fff;
+        }
+
+        #juzz-content {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow-y: auto;
+            max-height: 600px;
+        }
+
+        .close-button {
+            cursor: pointer;
+            color: #ff0000;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5em;
+        }
+
+        .ayah {
+            font-size: 1.5em;
+            line-height: 2em;
+            text-align: right;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            position: relative;
+        }
+
+        .ayah.playing {
+            background-color: #e0f7fa;
+        }
+
+        .translation {
+            font-size: 1em;
+            line-height: 1.5em;
+            text-align: left;
+            margin-bottom: 20px;
+            color: #555;
+            border-bottom: 1px dashed #ddd;
+            padding-bottom: 10px;
+        }
+
+        .audio {
+            display: block;
+            margin: 10px 0;
+        }
+
+        .audio.loading::after {
+            content: ' Loading...';
+            font-size: 1em;
+            color: #3498db;
+            animation: blink 1s linear infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .separator {
+            display: inline-block;
+            margin-left: 10px;
+            color: #2c3e50;
+            font-size: 1.2em;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .buttons button {
+            background-color: #2980b9;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 5px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .buttons button:hover {
+            background-color: #3498db;
+        }
+
+        .buttons i {
+            margin-right: 5px;
         }
 
         .loader {
@@ -152,121 +183,207 @@
             color: #ddd;
         }
 
+        body.dark-mode .ayah.playing {
+            background-color: #555;
+        }
+
+        body.dark-mode .translation {
+            color: #ccc;
+            border-color: #666;
+        }
+
+        body.dark-mode .buttons button {
+            background-color: #444;
+        }
+
+        body.dark-mode .buttons button:hover {
+            background-color: #555;
+        }
+
         body.dark-mode h1 {
             color: #ddd;
         }
 
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
+        @media (max-width: 600px) {
+            .search-container input {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .search-container button {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="index.html">Read Quran</a></li>
-            <li><a href="juzz.html">Juzz</a></li>
-        </ul>
-    </nav>
     <div class="container">
         <header>
-            <h1 id="juzz-title">Juzz Details</h1>
-            <div>
-                <button id="next-juzz">Next Juzz</button>
-                <button id="repeat-juzz">Repeat Juzz</button>
-                <button id="dark-mode-toggle">Toggle Dark Mode</button>
+            <h1>Juzz</h1>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search for an Ayah...">
+                <button id="search-button">Search</button>
             </div>
+            <i id="dark-mode-toggle" class="fas fa-moon"></i>
+            <span class="close-button" onclick="window.location.href='index.html'">×</span>
         </header>
-        <div id="ayah-list"></div>
+        <div id="juzz-content"></div>
         <div class="loader" id="loader"></div>
+        <div class="buttons">
+            <button id="repeat-juzz"><i class="fas fa-redo"></i> Repeat Juzz</button>
+            <button id="next-juzz"><i class="fas fa-arrow-right"></i> Next Juzz</button>
+        </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const ayahList = document.getElementById('ayah-list');
+            const juzzContent = document.getElementById('juzz-content');
             const loader = document.getElementById('loader');
-            const juzzTitle = document.getElementById('juzz-title');
-            const nextJuzzBtn = document.getElementById('next-juzz');
-            const repeatJuzzBtn = document.getElementById('repeat-juzz');
-            const darkModeToggle = document.getElementById('dark-mode-toggle');
-
             const urlParams = new URLSearchParams(window.location.search);
             const juzzNumber = urlParams.get('juzz');
+            const searchInput = document.getElementById('search-input');
+            const searchButton = document.getElementById('search-button');
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            let autoNextJuzzTimeout;
 
-            juzzTitle.innerText = `Juzz ${juzzNumber}`;
+            function loadJuzz(juzzNumber) {
+                juzzContent.style.display = 'none';
+                loader.style.display = 'block';
 
-            loader.style.display = 'block';
-
-            fetch(`https://api.alquran.cloud/v1/juz/${juzzNumber}/quran-uthmani`)
-                .then(response => response.json())
-                .then(data => {
-                    loader.style.display = 'none';
-                    const fragment = document.createDocumentFragment();
-                    data.data.ayahs.forEach(ayah => {
-                        const ayahDiv = document.createElement('div');
-                        ayahDiv.classList.add('ayah');
-                        ayahDiv.innerHTML = `
-                            <p>${ayah.text}</p>
-                            <audio controls autoplay>
-                                <source src="https://verses.quran.com/${ayah.number}.mp3" type="audio/mpeg">
-                                Your browser does not support the audio element.
-                            </audio>
-                            <div class="translations">
-                                <p class="translation">Translation: ${ayah.translation}</p>
-                                <p class="transliteration">Transliteration: ${ayah.transliteration}</p>
-                            </div>
-                            <div class="btn-container">
-                                <button class="play-btn">Play</button>
-                                <button class="pause-btn">Pause</button>
-                                <button class="stop-btn">Stop</button>
-                            </div>
-                        `;
-                        fragment.appendChild(ayahDiv);
-
-                        // Button functionality
-                        const audio = ayahDiv.querySelector('audio');
-                        const playBtn = ayahDiv.querySelector('.play-btn');
-                        const pauseBtn = ayahDiv.querySelector('.pause-btn');
-                        const stopBtn = ayahDiv.querySelector('.stop-btn');
-
-                        playBtn.addEventListener('click', () => {
-                            audio.play();
-                            playBtn.classList.add('active');
-                            pauseBtn.classList.remove('active');
-                        });
-
-                        pauseBtn.addEventListener('click', () => {
-                            audio.pause();
-                            playBtn.classList.remove('active');
-                            pauseBtn.classList.add('active');
-                        });
-
-                        stopBtn.addEventListener('click', () => {
-                            audio.pause();
-                            audio.currentTime = 0;
-                            playBtn.classList.remove('active');
-                            pauseBtn.classList.remove('active');
-                        });
-                    });
-                    ayahList.appendChild(fragment);
-                })
-                .catch(error => {
-                    loader.style.display = 'none';
-                    console.error('Error fetching Juzz:', error);
+                Swal.fire({
+                    title: 'Loading...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading()
+                    }
                 });
 
-            nextJuzzBtn.addEventListener('click', () => {
+                fetch(`https://api.alquran.cloud/v1/juz/${juzzNumber}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const ayahsPromises = data.data.ayahs.map(ayah => {
+                            return fetch(`https://api.alquran.cloud/v1/ayah/${ayah.number}/en.sahih`);
+                        });
+
+                        Promise.all(ayahsPromises)
+                            .then(responses => Promise.all(responses.map(response => response.json())))
+                            .then(translationData => {
+                                loader.style.display = 'none';
+                                Swal.close();
+                                juzzContent.style.display = 'block';
+
+                                juzzContent.innerHTML = `
+                                    <h2>Juzz ${juzzNumber}</h2>
+                                    ${data.data.ayahs.map((ayah, index) => `
+                                        <div class="ayah" id="ayah-${index}">
+                                            ${ayah.text}<span class="separator">۞</span>
+                                        </div>
+                                        <div class="translation" id="translation-${index}">
+                                            ${translationData[index].data.text}
+                                        </div>
+                                        <audio class="audio" id="audio-${index}" controls>
+                                            <source src="https://verses.quran.com/${ayah.number}.mp3" type="audio/mpeg">
+                                            Your browser does not support the audio element.
+                                        </audio>`).join('')}
+                                `;
+
+                                const audios = document.querySelectorAll('.audio');
+                                const ayahs = document.querySelectorAll('.ayah');
+
+                                audios.forEach((audio, index) => {
+                                    audio.addEventListener('play', () => {
+                                        ayahs.forEach(ayah => ayah.classList.remove('playing'));
+                                        document.getElementById('ayah-' + index).classList.add('playing');
+                                        scrollToAyah(index);
+                                    });
+
+                                    audio.addEventListener('waiting', () => {
+                                        audio.classList.add('loading');
+                                    });
+
+                                    audio.addEventListener('playing', () => {
+                                        audio.classList.remove('loading');
+                                    });
+
+                                    audio.addEventListener('ended', () => {
+                                        if (index < audios.length - 1) {
+                                            audios[index + 1].play();
+                                        } else {
+                                            autoNextJuzz();
+                                        }
+                                    });
+                                });
+
+                                audios[0].play();
+                            })
+                            .catch(error => {
+                                Swal.close();
+                                console.error('Error fetching translation:', error);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: 'Something went wrong!',
+                                });
+                            });
+                    })
+                    .catch(error => {
+                        Swal.close();
+                        console.error('Error fetching juzz:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        });
+                    });
+            }
+
+            function scrollToAyah(index) {
+                const ayahElement = document.getElementById(`ayah-${index}`);
+                ayahElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            function autoNextJuzz() {
+                clearTimeout(autoNextJuzzTimeout);
+                autoNextJuzzTimeout = setTimeout(() => {
+                    const nextJuzzNumber = parseInt(juzzNumber) + 1;
+                    window.location.href = `juzz_detail.html?juzz=${nextJuzzNumber}`;
+                }, 3000);
+            }
+
+            loadJuzz(juzzNumber);
+
+            document.getElementById('repeat-juzz').addEventListener('click', () => {
+                clearTimeout(autoNextJuzzTimeout);
+                loadJuzz(juzzNumber);
+            });
+
+            document.getElementById('next-juzz').addEventListener('click', () => {
+                clearTimeout(autoNextJuzzTimeout);
                 const nextJuzzNumber = parseInt(juzzNumber) + 1;
                 window.location.href = `juzz_detail.html?juzz=${nextJuzzNumber}`;
             });
 
-            repeatJuzzBtn.addEventListener('click', () => {
-                window.location.reload();
+            searchButton.addEventListener('click', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const translations = juzzContent.querySelectorAll('.translation');
+                translations.forEach(translation => {
+                    if (translation.innerText.toLowerCase().includes(searchTerm)) {
+                        translation.style.display = 'block';
+                    } else {
+                        translation.style.display = 'none';
+                    }
+                });
             });
 
             darkModeToggle.addEventListener('click', () => {
                 document.body.classList.toggle('dark-mode');
+                if (document.body.classList.contains('dark-mode')) {
+                    darkModeToggle.classList.remove('fa-moon');
+                    darkModeToggle.classList.add('fa-sun');
+                } else {
+                    darkModeToggle.classList.remove('fa-sun');
+                    darkModeToggle.classList.add('fa-moon');
+                }
             });
         });
     </script>
