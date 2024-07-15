@@ -33,14 +33,14 @@
             color: #fff;
         }
 
-        .search-container {
+        .reciter-container, .search-container {
             margin: 10px 0;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .search-container input {
+        .reciter-container select, .search-container input {
             padding: 10px;
             font-size: 1em;
             width: 70%;
@@ -219,6 +219,15 @@
     <div class="container">
         <header>
             <h1>Surah</h1>
+            <div class="reciter-container">
+                <select id="reciter-select">
+                    <option value="ar.alafasy">Mishary Rashid Alafasy</option>
+                    <option value="ar.husary">Mahmoud Khalil Al-Husary</option>
+                    <option value="ar.minshawi">Muhammad Siddiq Al-Minshawi</option>
+                    <option value="ar.ajamy">Ali Jaber</option>
+                    <option value="ar.menshawi">Abdul Basit Abdul Samad</option>
+                </select>
+            </div>
             <div class="search-container">
                 <input type="text" id="search-input" placeholder="Search for an Ayah...">
                 <button id="search-button">Search</button>
@@ -241,6 +250,7 @@
             const surahNumber = urlParams.get('surah');
             const searchInput = document.getElementById('search-input');
             const searchButton = document.getElementById('search-button');
+            const reciterSelect = document.getElementById('reciter-select');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
             let autoNextSurahTimeout;
             let wakeLock = null;
@@ -274,14 +284,14 @@
             document.addEventListener('visibilitychange', handleVisibilityChange);
             requestWakeLock();
 
-            function loadSurah(surahNumber) {
+            function loadSurah(surahNumber, reciter) {
                 surahContent.style.display = 'none';
                 loader.style.display = 'block';
 
                 Promise.all([
                     fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`),
                     fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`),
-                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`)
+                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/${reciter}`)
                 ])
                 .then(responses => Promise.all(responses.map(response => response.json())))
                 .then(([surahData, translationData, audioData]) => {
@@ -349,11 +359,15 @@
                 }, 3000);
             }
 
-            loadSurah(surahNumber);
+            loadSurah(surahNumber, reciterSelect.value);
+
+            reciterSelect.addEventListener('change', () => {
+                loadSurah(surahNumber, reciterSelect.value);
+            });
 
             document.getElementById('repeat-surah').addEventListener('click', () => {
                 clearTimeout(autoNextSurahTimeout);
-                loadSurah(surahNumber);
+                loadSurah(surahNumber, reciterSelect.value);
             });
 
             document.getElementById('next-surah').addEventListener('click', () => {
