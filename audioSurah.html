@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surah Content</title>
+    <title>Surah Audio</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
@@ -66,79 +66,14 @@
             color: #fff;
         }
 
-        #surah-content {
-            background-color: #fff;
-            padding: 20px;
-            border: 1px solid #ddd;
+        .reciters {
             margin-top: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow-y: auto;
-            max-height: 600px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
-        .close-button {
-            cursor: pointer;
-            color: #ff0000;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.5em;
-        }
-
-        .ayah {
-            font-size: 1.5em;
-            line-height: 2em;
-            text-align: right;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            position: relative;
-        }
-
-        .ayah.playing {
-            background-color: #e0f7fa;
-        }
-
-        .translation {
-            font-size: 1em;
-            line-height: 1.5em;
-            text-align: left;
-            margin-bottom: 20px;
-            color: #555;
-            border-bottom: 1px dashed #ddd;
-            padding-bottom: 10px;
-        }
-
-        .audio {
-            display: block;
-            margin: 10px 0;
-        }
-
-        .audio.loading::after {
-            content: ' Loading...';
-            font-size: 1em;
-            color: #3498db;
-            animation: blink 1s linear infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        .separator {
-            display: inline-block;
-            margin-left: 10px;
-            color: #2c3e50;
-            font-size: 1.2em;
-        }
-
-        .buttons {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .buttons button {
+        .reciter-button {
             background-color: #2980b9;
             color: #fff;
             border: none;
@@ -150,12 +85,24 @@
             align-items: center;
         }
 
-        .buttons button:hover {
+        .reciter-button:hover {
             background-color: #3498db;
         }
 
-        .buttons i {
+        .reciter-button i {
             margin-right: 5px;
+        }
+
+        .audio-container {
+            margin-top: 20px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .audio-container audio {
+            width: 100%;
+            max-width: 600px;
         }
 
         .loader {
@@ -178,218 +125,120 @@
             color: #ddd;
         }
 
-        body.dark-mode .ayah {
-            background-color: #333;
-            color: #ddd;
-        }
-
-        body.dark-mode .ayah.playing {
-            background-color: #555;
-        }
-
-        body.dark-mode .translation {
-            color: #ccc;
-            border-color: #666;
-        }
-
-        body.dark-mode .buttons button {
-            background-color: #444;
-        }
-
-        body.dark-mode .buttons button:hover {
-            background-color: #555;
-        }
-
         body.dark-mode h1 {
             color: #ddd;
         }
 
-        @media (max-width: 600px) {
-            .search-container input {
-                width: 100%;
-                margin-bottom: 10px;
-            }
+        body.dark-mode .reciter-button {
+            background-color: #444;
+        }
 
-            .search-container button {
-                width: 100%;
-            }
+        body.dark-mode .reciter-button:hover {
+            background-color: #555;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Surah</h1>
+            <h1>Surah Audio</h1>
             <div class="search-container">
-                <input type="text" id="search-input" placeholder="Search for an Ayah...">
+                <input type="text" id="search-input" placeholder="Enter Surah Number...">
                 <button id="search-button">Search</button>
             </div>
             <i id="dark-mode-toggle" class="fas fa-moon"></i>
-            <span class="close-button" onclick="window.location.href='index.html'">×</span>
         </header>
-        <div id="surah-content"></div>
-        <div class="loader" id="loader"></div>
-        <div class="buttons">
-            <button id="repeat-surah"><i class="fas fa-redo"></i> Repeat Surah</button>
-            <button id="next-surah"><i class="fas fa-arrow-right"></i> Next Surah</button>
+        <div class="reciters" id="reciters">
+            <!-- Buttons for reciters will be dynamically added here -->
         </div>
+        <div class="audio-container" id="audio-container">
+            <audio id="surah-audio" controls></audio>
+        </div>
+        <div class="loader" id="loader" style="display: none;"></div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const surahContent = document.getElementById('surah-content');
+            const reciters = [
+                { id: 'ar.alafasy', name: 'Mishary Rashid Alafasy' },
+                { id: 'ar.husary', name: 'Mahmoud Khalil Al-Husary' },
+                { id: 'ar.minshawi', name: 'Mohamed Siddiq Al-Minshawi' },
+                { id: 'ar.ajamy', name: 'Ali Jaber' }
+            ];
+
+            const recitersContainer = document.getElementById('reciters');
+            const audioContainer = document.getElementById('audio-container');
+            const surahAudio = document.getElementById('surah-audio');
             const loader = document.getElementById('loader');
-            const urlParams = new URLSearchParams(window.location.search);
-            const surahNumber = urlParams.get('surah');
             const searchInput = document.getElementById('search-input');
             const searchButton = document.getElementById('search-button');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
-            let autoNextSurahTimeout;
-            let wakeLock = null;
 
-            async function requestWakeLock() {
-                try {
-                    wakeLock = await navigator.wakeLock.request('screen');
-                    console.log('Wake lock is active');
-                } catch (err) {
-                    console.error(`${err.name}, ${err.message}`);
-                }
-            }
+            let selectedSurah = null;
+            let selectedReciter = null;
 
-            function releaseWakeLock() {
-                if (wakeLock) {
-                    wakeLock.release().then(() => {
-                        wakeLock = null;
-                        console.log('Wake lock released');
-                    });
-                }
-            }
+            reciters.forEach(reciter => {
+                const button = document.createElement('button');
+                button.className = 'reciter-button';
+                button.innerHTML = `<i class="fas fa-play"></i> ${reciter.name}`;
+                button.onclick = () => playSurah(reciter.id);
+                recitersContainer.appendChild(button);
+            });
 
-            function handleVisibilityChange() {
-                if (document.visibilityState === 'visible') {
-                    requestWakeLock();
-                } else {
-                    releaseWakeLock();
-                }
-            }
-
-            document.addEventListener('visibilitychange', handleVisibilityChange);
-            requestWakeLock();
-
-            function loadSurah(surahNumber) {
-                surahContent.style.display = 'none';
-                loader.style.display = 'block';
-
-                Swal.fire({
-                    title: 'Loading...',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading()
-                    }
-                });
-
-                Promise.all([
-                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`),
-                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`),
-                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`)
-                ])
-                .then(responses => Promise.all(responses.map(response => response.json())))
-                .then(([surahData, translationData, audioData]) => {
-                    loader.style.display = 'none';
-                    Swal.close();
-                    surahContent.style.display = 'block';
-
-                    surahContent.innerHTML = `
-                        <h2>${surahData.data.englishName} (${surahData.data.name})</h2>
-                        <p>${surahData.data.englishNameTranslation}</p>
-                        ${surahData.data.ayahs.map((ayah, index) => `
-                            <div class="ayah" id="ayah-${index}">
-                                ${ayah.text}<span class="separator">۞</span>
-                            </div>
-                            <div class="translation" id="translation-${index}">
-                                ${translationData.data.ayahs[index].text}
-                            </div>
-                            <audio class="audio" id="audio-${index}" controls>
-                                <source src="${audioData.data.ayahs[index].audio}" type="audio/mpeg">
-                                Your browser does not support the audio element.
-                            </audio>`).join('')}
-                    `;
-
-                    const audios = document.querySelectorAll('.audio');
-                    const ayahs = document.querySelectorAll('.ayah');
-
-                    audios.forEach((audio, index) => {
-                        audio.addEventListener('play', () => {
-                            ayahs.forEach(ayah => ayah.classList.remove('playing'));
-                            document.getElementById('ayah-' + index).classList.add('playing');
-                            scrollToAyah(index);
-                        });
-
-                        audio.addEventListener('waiting', () => {
-                            audio.classList.add('loading');
-                        });
-
-                        audio.addEventListener('playing', () => {
-                            audio.classList.remove('loading');
-                        });
-
-                        audio.addEventListener('ended', () => {
-                            if (index < audios.length - 1) {
-                                audios[index + 1].play();
-                            } else {
-                                autoNextSurah();
-                            }
-                        });
-                    });
-
-                    audios[0].play();
-                })
-                .catch(error => {
-                    Swal.close();
-                    console.error('Error fetching surah:', error);
+            function playSurah(reciterId) {
+                if (!selectedSurah) {
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Something went wrong!',
+                        icon: 'warning',
+                        title: 'No Surah Selected',
+                        text: 'Please enter a Surah number first.',
                     });
-                });
+                    return;
+                }
+
+                loader.style.display = 'block';
+                audioContainer.style.display = 'none';
+                fetch(`https://api.alquran.cloud/v1/surah/${selectedSurah}/${reciterId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        loader.style.display = 'none';
+                        if (data.status === 'OK') {
+                            audioContainer.style.display = 'flex';
+                            surahAudio.src = data.data.ayahs[0].audio;
+                            surahAudio.play();
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Failed to load the audio. Please try again.',
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        loader.style.display = 'none';
+                        console.error('Error fetching audio:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to load the audio. Please try again.',
+                        });
+                    });
             }
-
-            function scrollToAyah(index) {
-                const ayahElement = document.getElementById(`ayah-${index}`);
-                ayahElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-
-            function autoNextSurah() {
-                clearTimeout(autoNextSurahTimeout);
-                autoNextSurahTimeout = setTimeout(() => {
-                    const nextSurahNumber = parseInt(surahNumber) + 1;
-                    window.location.href = `surah.html?surah=${nextSurahNumber}`;
-                }, 3000);
-            }
-
-            loadSurah(surahNumber);
-
-            document.getElementById('repeat-surah').addEventListener('click', () => {
-                clearTimeout(autoNextSurahTimeout);
-                loadSurah(surahNumber);
-            });
-
-            document.getElementById('next-surah').addEventListener('click', () => {
-                clearTimeout(autoNextSurahTimeout);
-                const nextSurahNumber = parseInt(surahNumber) + 1;
-                window.location.href = `surah.html?surah=${nextSurahNumber}`;
-            });
 
             searchButton.addEventListener('click', () => {
-                const searchTerm = searchInput.value.toLowerCase();
-                const translations = surahContent.querySelectorAll('.translation');
-                translations.forEach(translation => {
-                    if (translation.innerText.toLowerCase().includes(searchTerm)) {
-                        translation.style.display = 'block';
-                    } else {
-                        translation.style.display = 'none';
-                    }
+                selectedSurah = searchInput.value.trim();
+                if (!selectedSurah) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Invalid Input',
+                        text: 'Please enter a valid Surah number.',
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Surah Selected',
+                    text: `Surah ${selectedSurah} selected. Please choose a reciter to play the audio.`,
                 });
             });
 
@@ -407,5 +256,3 @@
     </script>
 </body>
 </html>
-
-
