@@ -15,6 +15,7 @@
             color: #333;
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
         }
 
         .container {
@@ -198,35 +199,57 @@
             font-size: 1.2em;
         }
 
-        /* Mobile Dropdown Menu */
-        .mobile-menu {
+        /* Mobile Sidebar */
+        .sidebar {
             display: none;
-            flex-direction: column;
-            position: absolute;
-            top: 60px;
+            position: fixed;
+            top: 0;
             left: 0;
-            width: 100%;
+            width: 250px;
+            height: 100%;
             background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
             z-index: 1000;
+            transform: translateX(-250px);
+            transition: transform 0.3s ease;
+            padding-top: 20px;
         }
 
-        .mobile-menu.active {
-            display: flex;
+        .sidebar.active {
+            transform: translateX(0);
         }
 
-        .mobile-menu a {
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul li {
             padding: 15px;
             text-align: center;
-            text-decoration: none;
-            color: #333;
-            border-bottom: 1px solid #ddd;
         }
 
-        .mobile-menu a:hover {
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #333;
+            display: block;
+        }
+
+        .sidebar ul li a:hover {
             background-color: #f0f0f0;
         }
 
+        .sidebar .close-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        /* Hamburger Icon */
         .hamburger {
             display: none;
             font-size: 1.5em;
@@ -234,6 +257,7 @@
             position: absolute;
             top: 20px;
             left: 20px;
+            z-index: 1001; /* Ensure the hamburger icon is above other elements */
         }
 
         @media (max-width: 768px) {
@@ -241,7 +265,7 @@
                 display: block;
             }
 
-            nav ul {
+            nav {
                 display: none;
             }
         }
@@ -258,10 +282,13 @@
             <li><a href="audio.html"><i class="fas fa-headphones"></i> Quran Audio</a></li>
         </ul>
     </nav>
-    <div class="mobile-menu" id="mobile-menu">
-        <a href="index.html"><i class="fas fa-book-open"></i> Read Quran</a>
-        <a href="juzz.html"><i class="fas fa-list"></i> Juzz</a>
-        <a href="audio.html"><i class="fas fa-headphones"></i> Quran Audio</a>
+    <div class="sidebar" id="sidebar">
+        <ul>
+            <li><a href="index.html"><i class="fas fa-book-open"></i> Read Quran</a></li>
+            <li><a href="juzz.html"><i class="fas fa-list"></i> Juzz</a></li>
+            <li><a href="audio.html"><i class="fas fa-headphones"></i> Quran Audio</a></li>
+        </ul>
+        <div class="close-btn" id="close-btn"><i class="fas fa-times"></i></div>
     </div>
     <div class="container">
         <header>
@@ -284,7 +311,8 @@
             const searchButton = document.getElementById('search-button');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
             const hamburger = document.getElementById('hamburger');
-            const mobileMenu = document.getElementById('mobile-menu');
+            const sidebar = document.getElementById('sidebar');
+            const closeBtn = document.getElementById('close-btn');
 
             loader.style.display = 'block';
 
@@ -340,8 +368,13 @@
             const calendarDiv = document.getElementById('calendar');
             calendarDiv.innerHTML = `<p id="hijri-date">${hijriDate}</p><p id="hijri-date-arabic">${hijriDateArabic}</p>`;
 
+            // Sidebar functionality
             hamburger.addEventListener('click', () => {
-                mobileMenu.classList.toggle('active');
+                sidebar.classList.add('active');
+            });
+
+            closeBtn.addEventListener('click', () => {
+                sidebar.classList.remove('active');
             });
         });
     </script>
