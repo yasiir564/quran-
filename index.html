@@ -265,7 +265,7 @@
             darkModeToggle.addEventListener('click', () => {
                 document.body.classList.toggle('dark-mode');
             });
-        });
+
             const hijriDate = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
                 day: 'numeric',
                 month: 'long',
@@ -278,8 +278,8 @@
                 year: 'numeric'
             }).format(new Date());
 
-            document.getElementById('hijri-date').textContent = hijriDate;
-            document.getElementById('hijri-date-arabic').textContent = hijriDateArabic;
+            const calendarDiv = document.getElementById('calendar');
+            calendarDiv.innerHTML = `<p id="hijri-date">${hijriDate}</p><p id="hijri-date-arabic">${hijriDateArabic}</p>`;
         });
     </script>
 </body>
