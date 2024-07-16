@@ -23,6 +23,8 @@
             padding: 20px;
             text-align: center;
             position: relative;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
         }
 
         header {
@@ -33,33 +35,12 @@
 
         h1 {
             font-size: 2.5em;
-            color: #fff;
+            color: #000;
         }
 
-        .audio-visualizer-container {
-            position: relative;
-            width: 300px;
-            height: 300px;
-            margin: 0 auto 20px auto;
-        }
-
-        .audio-visualizer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .audio-visualizer img {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
+        .audio-container {
+            margin-top: 20px;
+            text-align: center;
         }
 
         .buttons {
@@ -132,6 +113,25 @@
             background-color: #e6f7ff;
         }
 
+        .audio-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .audio-controls button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #2980b9;
+        }
+
+        .audio-controls button:hover {
+            color: #3498db;
+        }
+
         body.dark-mode {
             background: linear-gradient(to right, #0f0f0f, #434343);
             color: #ddd;
@@ -189,14 +189,11 @@
             <i id="dark-mode-toggle" class="fas fa-moon"></i>
             <span class="close-button" onclick="window.location.href='index.html'">×</span>
         </header>
+        <div class="audio-container" id="audio-container"></div>
         <div class="sheikh-list" id="sheikh-list"></div>
-        <div class="audio-visualizer-container" id="audio-visualizer-container">
-            <canvas id="audio-visualizer" class="audio-visualizer"></canvas>
-            <img id="sheikh-image" src="" alt="Sheikh Image">
-        </div>
-        <div class="buttons" id="audio-controls" style="display: none;">
-            <button id="playPauseButton"><i class="fas fa-play"></i> Play/Pause</button>
-            <button id="stopButton"><i class="fas fa-stop"></i> Stop</button>
+        <div class="audio-controls" id="audio-controls" style="display: none;">
+            <button id="playPauseButton"><i class="fas fa-play"></i></button>
+            <button id="stopButton"><i class="fas fa-stop"></i></button>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -208,14 +205,7 @@
             const audioControls = document.getElementById('audio-controls');
             const sheikhList = document.getElementById('sheikh-list');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
-            const audioVisualizerContainer = document.getElementById('audio-visualizer-container');
-            const audioVisualizerCanvas = document.getElementById('audio-visualizer');
-            const sheikhImage = document.getElementById('sheikh-image');
             let audioElement;
-            let audioContext;
-            let analyzer;
-            let source;
-            let animationId;
 
             const urlParams = new URLSearchParams(window.location.search);
             const surahId = urlParams.get('surah');
@@ -230,25 +220,21 @@
                 if (audioElement) {
                     audioElement.pause();
                     audioElement.currentTime = 0;
-                    cancelAnimationFrame(animationId);
-                    clearVisualizer();
                 }
-                playPauseButton.innerHTML = '<i class="fas fa-play"></i> Play';
+                playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
             }
 
             function playAudio() {
                 if (audioElement.paused) {
                     audioElement.play();
-                    playPauseButton.innerHTML = '<i class="fas fa-pause"></i> Pause';
-                    visualizeAudio();
+                    playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
                 } else {
                     audioElement.pause();
-                    playPauseButton.innerHTML = '<i class="fas fa-play"></i> Play';
-                    cancelAnimationFrame(animationId);
+                    playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
                 }
             }
 
-            async function loadSurahAudio(surahId, sheikhId, sheikhImageUrl) {
+            async function loadSurahAudio(surahId, sheikhId) {
                 audioControls.style.display = 'none';
                 if (audioElement) {
                     audioElement.pause();
@@ -260,19 +246,17 @@
                     if (data.audio_file.audio_url) {
                         audioElement = new Audio(data.audio_file.audio_url);
                         audioElement.controls = false;
+                        audioContainer.innerHTML = '';
+                        audioContainer.appendChild(audioElement);
                         audioControls.style.display = 'flex';
-                        sheikhImage.src = sheikhImageUrl;
-
                         audioElement.addEventListener('play', () => {
-                            playPauseButton.innerHTML = '<i class="fas fa-pause"></i> Pause';
-                            visualizeAudio();
+                            playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
                         });
                         audioElement.addEventListener('pause', () => {
-                            playPauseButton.innerHTML = '<i class="fas fa-play"></i> Play';
-                            cancelAnimationFrame(animationId);
+                            playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
                         });
                         audioElement.addEventListener('ended', () => {
-                            playPauseButton.innerHTML = '<i class="fas fa-play"></i> Play';
+                            playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
                             setTimeout(playNextSurah, 3000); // 3 seconds delay before playing the next surah
                         });
                         audioElement.play();
@@ -303,7 +287,7 @@
                     sheikhItem.addEventListener('click', () => {
                         document.querySelectorAll('.sheikh-item').forEach(item => item.classList.remove('active'));
                         sheikhItem.classList.add('active');
-                        loadSurahAudio(surahId, sheikh.id, sheikh.imageUrl);
+                        loadSurahAudio(surahId, sheikh.id);
                     });
                     sheikhList.appendChild(sheikhItem);
                 });
@@ -330,44 +314,6 @@
             stopButton.addEventListener('click', stopAudio);
 
             renderSheikhs();
-
-            function visualizeAudio() {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                analyzer = audioContext.createAnalyser();
-                source = audioContext.createMediaElementSource(audioElement);
-                source.connect(analyzer);
-                analyzer.connect(audioContext.destination);
-                analyzer.fftSize = 256;
-                const bufferLength = analyzer.frequencyBinCount;
-                const dataArray = new Uint8Array(bufferLength);
-                const canvasCtx = audioVisualizerCanvas.getContext('2d');
-                const WIDTH = audioVisualizerCanvas.width;
-                const HEIGHT = audioVisualizerCanvas.height;
-
-                function draw() {
-                    animationId = requestAnimationFrame(draw);
-                    analyzer.getByteFrequencyData(dataArray);
-                    canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
-
-                    const barWidth = (WIDTH / bufferLength) * 2.5;
-                    let barHeight;
-                    let x = 0;
-
-                    for (let i = 0; i < bufferLength; i++) {
-                        barHeight = dataArray[i];
-                        canvasCtx.fillStyle = 'rgb(' + (barHeight + 100) + ',50,50)';
-                        canvasCtx.fillRect(x, HEIGHT - barHeight / 2, barWidth, barHeight / 2);
-                        x += barWidth + 1;
-                    }
-                }
-
-                draw();
-            }
-
-            function clearVisualizer() {
-                const canvasCtx = audioVisualizerCanvas.getContext('2d');
-                canvasCtx.clearRect(0, 0, audioVisualizerCanvas.width, audioVisualizerCanvas.height);
-            }
         });
     </script>
 </body>
