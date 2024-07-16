@@ -281,6 +281,37 @@
                 display: none;
             }
         }
+
+        /* Mobile Cards */
+        .mobile-cards {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .card {
+            background-color: #fff;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card i {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-cards {
+                display: flex;
+                justify-content: space-around;
+            }
+        }
     </style>
 </head>
 <body>
@@ -304,6 +335,21 @@
         </ul>
     </nav>
     <div class="container">
+        <!-- Mobile Cards -->
+        <div class="mobile-cards">
+            <a href="index.html" class="card">
+                <i class="fas fa-book-open"></i>
+                <p>Read Quran</p>
+            </a>
+            <a href="juzz.html" class="card">
+                <i class="fas fa-list"></i>
+                <p>Juzz</p>
+            </a>
+            <a href="audio.html" class="card">
+                <i class="fas fa-headphones"></i>
+                <p>Quran Audio</p>
+            </a>
+        </div>
         <header>
             <h1><span class="typing-animation">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</span></h1>
             <div id="calendar"></div>
