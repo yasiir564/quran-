@@ -62,6 +62,70 @@
             border-radius: 5px;
             transition: background-color 0.3s;
         }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quran Audio Player</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        body {
+            font-family: 'Amiri', serif;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #fff;
+        }
+
+        .audio-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .audio {
+            margin: 10px 0;
+            display: block;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .buttons button {
+            background-color: #2980b9;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 5px;
+            display: inline-flex;
+            align-items: center;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
 
         .buttons button:hover {
             background-color: #3498db;
@@ -194,8 +258,6 @@
 
             const sheikhs = [
                 { id: '1', name: 'AbdulBaset AbdulSamad', imageUrl: 'https://example.com/abdulbaset.jpg' },
-                { id: '2', name: 'AbdulBaset AbdulSamad', imageUrl: 'https://example.com/mishary.jpg' },
-                { id: '3', name: 'Abdirahman sudais ', imageUrl: 'https://example.com/saad.jpg' },
                 { id: '4', name: 'Maher Al-Muaiqly', imageUrl: 'https://example.com/maher.jpg' },
                 { id: '5', name: 'Husary', imageUrl: 'https://example.com/husary.jpg' }
             ];
