@@ -198,33 +198,41 @@
             font-size: 1.2em;
         }
 
-        /* Mobile Dropdown Menu */
-        .mobile-menu {
+        /* Overlay Menu */
+        .overlay {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
             display: none;
             flex-direction: column;
-            position: absolute;
-            top: 60px;
-            left: 0;
-            width: 100%;
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
         }
 
-        .mobile-menu.active {
-            display: flex;
-        }
-
-        .mobile-menu a {
+        .overlay a {
+            color: #fff;
             padding: 15px;
-            text-align: center;
+            font-size: 1.5em;
             text-decoration: none;
-            color: #333;
-            border-bottom: 1px solid #ddd;
+            display: block;
+            text-align: center;
         }
 
-        .mobile-menu a:hover {
-            background-color: #f0f0f0;
+        .overlay a:hover {
+            background-color: #333;
+        }
+
+        .overlay .closebtn {
+            position: absolute;
+            top: 20px;
+            right: 45px;
+            font-size: 2em;
+            cursor: pointer;
         }
 
         .hamburger {
@@ -251,6 +259,15 @@
     <div class="hamburger" id="hamburger">
         <i class="fas fa-bars"></i>
     </div>
+    <div id="myNav" class="overlay">
+        <a href="javascript:void(0)" class="closebtn" id="closebtn">&times;</a>
+        <a href="index.html"><i class="fas fa-book-open"></i> Read Quran</a>
+        <a href="juzz.html"><i class="fas fa-list"></i> Juzz</a>
+        <a href="audio.html"><i class="fas fa-headphones"></i> Quran Audio</a>
+        <a href="donate.html"><i class="fas fa-donate"></i> Donate</a>
+        <a href="share.html"><i class="fas fa-share-alt"></i> Share</a>
+        <a href="privacy.html"><i class="fas fa-user-secret"></i> Privacy Policy</a>
+    </div>
     <nav>
         <ul>
             <li><a href="index.html"><i class="fas fa-book-open"></i> Read Quran</a></li>
@@ -258,11 +275,6 @@
             <li><a href="audio.html"><i class="fas fa-headphones"></i> Quran Audio</a></li>
         </ul>
     </nav>
-    <div class="mobile-menu" id="mobile-menu">
-        <a href="index.html"><i class="fas fa-book-open"></i> Read Quran</a>
-        <a href="juzz.html"><i class="fas fa-list"></i> Juzz</a>
-        <a href="audio.html"><i class="fas fa-headphones"></i> Quran Audio</a>
-    </div>
     <div class="container">
         <header>
             <h1><span class="typing-animation">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</span></h1>
@@ -284,7 +296,8 @@
             const searchButton = document.getElementById('search-button');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
             const hamburger = document.getElementById('hamburger');
-            const mobileMenu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('myNav');
+            const closebtn = document.getElementById('closebtn');
 
             loader.style.display = 'block';
 
@@ -341,7 +354,11 @@
             calendarDiv.innerHTML = `<p id="hijri-date">${hijriDate}</p><p id="hijri-date-arabic">${hijriDateArabic}</p>`;
 
             hamburger.addEventListener('click', () => {
-                mobileMenu.classList.toggle('active');
+                overlay.style.display = 'flex';
+            });
+
+            closebtn.addEventListener('click', () => {
+                overlay.style.display = 'none';
             });
         });
     </script>
