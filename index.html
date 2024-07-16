@@ -59,13 +59,14 @@
 
         header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             position: relative;
         }
 
         h1 {
             font-size: 2.5em;
             color: #fff;
+            margin-top: 0;
         }
 
         .search-container {
@@ -154,7 +155,7 @@
             }
 
             header {
-                background: url('') no-repeat  top;
+                background: url('') no-repeat top;
                 background-size: cover;
             }
 
@@ -285,7 +286,7 @@
         /* Mobile Cards */
         .mobile-cards {
             display: none;
-            margin-top: 20px;
+            margin-top: 10px;
         }
 
         .card {
@@ -335,23 +336,22 @@
         </ul>
     </nav>
     <div class="container">
-        <!-- Mobile Cards -->
-        <div class="mobile-cards">
-            <a href="index.html" class="card">
-                <i class="fas fa-book-open"></i>
-                <p>Read Quran</p>
-            </a>
-            <a href="juzz.html" class="card">
-                <i class="fas fa-list"></i>
-                <p>Juzz</p>
-            </a>
-            <a href="audio.html" class="card">
-                <i class="fas fa-headphones"></i>
-                <p>Quran Audio</p>
-            </a>
-        </div>
         <header>
             <h1><span class="typing-animation">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</span></h1>
+            <div class="mobile-cards">
+                <a href="index.html" class="card">
+                    <i class="fas fa-book-open"></i>
+                    <p>Read Quran</p>
+                </a>
+                <a href="juzz.html" class="card">
+                    <i class="fas fa-list"></i>
+                    <p>Juzz</p>
+                </a>
+                <a href="audio.html" class="card">
+                    <i class="fas fa-headphones"></i>
+                    <p>Quran Audio</p>
+                </a>
+            </div>
             <div id="calendar"></div>
             <div class="search-container">
                 <input type="text" id="search-input" placeholder="Search for a Surah...">
@@ -438,3 +438,4 @@
     </script>
 </body>
 </html>
+
