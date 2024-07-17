@@ -11,7 +11,10 @@
     <style>
         body {
             font-family: 'Amiri', serif;
-            background: linear-gradient(to right, #6a11cb, #2575fc);
+            background-image: url('Untitled Project (27).jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             color: #333;
             margin: 0;
             padding: 0;
@@ -312,7 +315,18 @@
         @media (max-width: 768px) {
             .mobile-cards {
                 display: flex;
-                justify-content: space-around;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .card {
+                flex: 1 1 calc(50% - 20px);
+                margin: 10px;
+                text-align: center;
+            }
+
+            .card i {
+                font-size: 3em;
             }
         }
     </style>
