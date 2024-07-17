@@ -10,8 +10,7 @@
     <style>
         body {
             font-family: 'Amiri', serif;
-            background: url('photo-1587617425953-9075d28b8c46.avif') no-repeat center center fixed;
-            background-size: cover;
+            background: #fff;
             color: #333;
             margin: 0;
             padding: 0;
@@ -79,21 +78,32 @@
         }
 
         .sheikh-item {
-            background-color: transparent;
-            border: none;
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ddd;
             cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, background-color 0.3s;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
             text-align: center;
         }
 
-        .sheikh-item img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            transition: transform 0.2s;
+        .sheikh-item:hover {
+            transform: scale(1.05);
+            background-color: #f0f0f0;
         }
 
-        .sheikh-item img:hover {
-            transform: scale(1.1);
+        .sheikh-item img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        .sheikh-item.active {
+            border: 2px solid #3498db;
+            background-color: #e6f7ff;
         }
 
         .audio-controls {
@@ -101,6 +111,7 @@
             justify-content: center;
             align-items: center;
             gap: 20px;
+            margin-top: 20px;
         }
 
         .audio-controls button {
@@ -113,23 +124,6 @@
 
         .audio-controls button:hover {
             color: #3498db;
-        }
-
-        body.dark-mode {
-            background: linear-gradient(to right, #0f0f0f, #434343);
-            color: #ddd;
-        }
-
-        body.dark-mode h1 {
-            color: #ddd;
-        }
-
-        body.dark-mode button {
-            background-color: #444;
-        }
-
-        body.dark-mode button:hover {
-            background-color: #555;
         }
 
         .close-button {
@@ -149,37 +143,6 @@
             top: 10px;
             left: 10px;
         }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .overlay-content {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            position: relative;
-        }
-
-        .overlay-content h2 {
-            margin-bottom: 20px;
-        }
-
-        .overlay .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
     </style>
 </head>
 <body>
@@ -189,16 +152,18 @@
             <i id="dark-mode-toggle" class="fas fa-moon"></i>
             <span class="close-button" onclick="window.location.href='index.html'">×</span>
         </header>
+        <div class="audio-container" id="audio-container"></div>
         <div class="sheikh-list" id="sheikh-list"></div>
-    </div>
-    <div class="overlay" id="overlay" style="display: none;">
-        <div class="overlay-content">
-            <span class="close-button" onclick="closeOverlay()">×</span>
-            <div class="audio-container" id="audio-container"></div>
-            <div class="audio-controls" id="audio-controls" style="display: none;">
-                <button id="playPauseButton"><i class="fas fa-play"></i></button>
-                <button id="stopButton"><i class="fas fa-stop"></i></button>
-            </div>
+        <div class="audio-controls" id="audio-controls" style="display: none;">
+            <button id="playPauseButton"><i class="fas fa-play"></i></button>
+            <button id="stopButton"><i class="fas fa-stop"></i></button>
+            <label for="speedControl">Speed: </label>
+            <select id="speedControl">
+                <option value="0.5">0.5x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -207,10 +172,10 @@
             const audioContainer = document.getElementById('audio-container');
             const playPauseButton = document.getElementById('playPauseButton');
             const stopButton = document.getElementById('stopButton');
+            const speedControl = document.getElementById('speedControl');
             const audioControls = document.getElementById('audio-controls');
             const sheikhList = document.getElementById('sheikh-list');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
-            const overlay = document.getElementById('overlay');
             let audioElement;
 
             const urlParams = new URLSearchParams(window.location.search);
@@ -219,17 +184,20 @@
             const sheikhs = [
                 { id: '1', name: 'AbdulBaset AbdulSamad', imageUrl: 'qmkxyvfiawea1.jpg' },
                 { id: '2', name: 'Maher Al-Muaiqly', imageUrl: 'images (6).jpeg' },
-                { id: '3', name: 'ABDUR RAHMAN AS-SUDAIS', imageUrl: 'Abdul-Rahman-Al-Sudais.jpg' }
+                { id: '3', name: 'Abdur-Rahman As-Sudais', imageUrl: 'Abdul-Rahman-Al-Sudais.jpg' },
+                { id: '4', name: 'Saud Al-Shuraim', imageUrl: 'images (4).jpeg' },
+                { id: '5', name: 'Mishary Rashid Alafasy', imageUrl: 'images (5).jpeg' },
+                { id: '6', name: 'Ali Jaber', imageUrl: 'images (7).jpeg' },
+                { id: '7', name: 'Yasser Al-Dosari', imageUrl: 'images (8).jpeg' },
+                { id: '8', name: 'Salah Al-Budair', imageUrl: 'images (9).jpeg' },
+                { id: '9', name: 'Ahmad Al-Ajmi', imageUrl: 'images (10).jpeg' },
+                { id: '10', name: 'Khalil Al-Husary', imageUrl: 'images (11).jpeg' },
+                { id: '11', name: 'Muhammad Siddiq Al-Minshawi', imageUrl: 'images (12).jpeg' },
+                { id: '12', name: 'Saad Al-Ghamdi', imageUrl: 'images (13).jpeg' },
+                { id: '13', name: 'Abu Bakr Al-Shatri', imageUrl: 'images (14).jpeg' },
+                { id: '14', name: 'Hani Rifai', imageUrl: 'images (15).jpeg' },
+                { id: '15', name: 'Abdullah Basfar', imageUrl: 'images (16).jpeg' }
             ];
-
-            function closeOverlay() {
-                overlay.style.display = 'none';
-                if (audioElement) {
-                    audioElement.pause();
-                    audioElement.currentTime = 0;
-                }
-                playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
-            }
 
             function stopAudio() {
                 if (audioElement) {
