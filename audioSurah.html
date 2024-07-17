@@ -10,10 +10,14 @@
     <style>
         body {
             font-family: 'Amiri', serif;
-            background: #fff;
+            background: #f0f0f0;
             color: #333;
             margin: 0;
             padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
         .container {
@@ -22,8 +26,9 @@
             padding: 20px;
             text-align: center;
             position: relative;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         header {
@@ -242,7 +247,6 @@
                             playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
                             setTimeout(playNextSurah, 3000); // 3 seconds delay before playing the next surah
                         });
-                        overlay.style.display = 'flex';
                         audioElement.play();
                     } else {
                         Swal.fire({
@@ -295,6 +299,11 @@
 
             playPauseButton.addEventListener('click', playAudio);
             stopButton.addEventListener('click', stopAudio);
+            speedControl.addEventListener('change', () => {
+                if (audioElement) {
+                    audioElement.playbackRate = speedControl.value;
+                }
+            });
 
             renderSheikhs();
         });
