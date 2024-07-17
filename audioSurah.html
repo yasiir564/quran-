@@ -148,6 +148,47 @@
             top: 10px;
             left: 10px;
         }
+
+        .wheel-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .wheel {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            border: 10px solid #ddd;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wheel-segment {
+            width: 50%;
+            height: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: bottom left;
+            background: #3498db;
+            border: 1px solid #fff;
+        }
+
+        .spin-button {
+            margin-top: 20px;
+            background-color: #27ae60;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .spin-button:hover {
+            background-color: #2ecc71;
+        }
     </style>
 </head>
 <body>
@@ -170,6 +211,12 @@
                 <option value="2">2x</option>
             </select>
         </div>
+        <div class="wheel-container">
+            <div class="wheel" id="wheel">
+                <!-- Wheel segments will be added dynamically -->
+            </div>
+            <button class="spin-button" id="spinButton">Spin</button>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
@@ -181,6 +228,8 @@
             const audioControls = document.getElementById('audio-controls');
             const sheikhList = document.getElementById('sheikh-list');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const wheel = document.getElementById('wheel');
+            const spinButton = document.getElementById('spinButton');
             let audioElement;
 
             const urlParams = new URLSearchParams(window.location.search);
@@ -286,6 +335,40 @@
                 window.location.href = `audio.surah.html?surah=${nextSurahId}`;
             }
 
+            function renderWheel() {
+                const numSegments = sheikhs.length;
+                const segmentAngle = 360 / numSegments;
+                sheikhs.forEach((sheikh, index) => {
+                    const segment = document.createElement('div');
+                    segment.classList.add('wheel-segment');
+                    segment.style.transform = `rotate(${index * segmentAngle}deg) skewY(-${90 - segmentAngle}deg)`;
+                    segment.style.background = `hsl(${index * segmentAngle}, 70%, 50%)`;
+                    segment.dataset.sheikhId = sheikh.id;
+                    wheel.appendChild(segment);
+                });
+            }
+
+            function spinWheel() {
+                const numSegments = sheikhs.length;
+                const randomIndex = Math.floor(Math.random() * numSegments);
+                const segmentAngle = 360 / numSegments;
+                const selectedAngle = randomIndex * segmentAngle + (segmentAngle / 2);
+                const spinAngle = 3600 + selectedAngle; // Extra spins for visual effect
+
+                wheel.style.transition = 'transform 5s ease-out';
+                wheel.style.transform = `rotate(${spinAngle}deg)`;
+
+                setTimeout(() => {
+                    const selectedSheikh = sheikhs[randomIndex];
+                    loadSurahAudio(surahId, selectedSheikh.id);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Congratulations!',
+                        text: `You got ${selectedSheikh.name}!`,
+                    });
+                }, 5000); // Delay to match the spin duration
+            }
+
             darkModeToggle.addEventListener('click', () => {
                 document.body.classList.toggle('dark-mode');
                 if (document.body.classList.contains('dark-mode')) {
@@ -304,8 +387,10 @@
                     audioElement.playbackRate = speedControl.value;
                 }
             });
+            spinButton.addEventListener('click', spinWheel);
 
             renderSheikhs();
+            renderWheel();
         });
     </script>
 </body>
