@@ -285,12 +285,13 @@
 
         /* Mobile Cards */
         .mobile-cards {
-            display: none;
+            display: flex;
+            justify-content: space-around;
             margin-top: 10px;
         }
 
         .card {
-            background-color: #fff;
+            background: none;
             padding: 15px;
             margin: 10px;
             border-radius: 10px;
@@ -305,6 +306,7 @@
         .card i {
             font-size: 2em;
             margin-bottom: 10px;
+            color: #fff;
         }
 
         @media (max-width: 768px) {
@@ -316,6 +318,9 @@
     </style>
 </head>
 <body>
+    <header>
+        <h1><span class="typing-animation">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</span></h1>
+    </header>
     <div class="hamburger" id="hamburger">
         <i class="fas fa-bars"></i>
     </div>
@@ -336,29 +341,26 @@
         </ul>
     </nav>
     <div class="container">
-        <header>
-            <h1><span class="typing-animation">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</span></h1>
-            <div class="mobile-cards">
-                <a href="index.html" class="card">
-                    <i class="fas fa-book-open"></i>
-                    <p>Read Quran</p>
-                </a>
-                <a href="juzz.html" class="card">
-                    <i class="fas fa-list"></i>
-                    <p>Juzz</p>
-                </a>
-                <a href="audio.html" class="card">
-                    <i class="fas fa-headphones"></i>
-                    <p>Quran Audio</p>
-                </a>
-            </div>
-            <div id="calendar"></div>
-            <div class="search-container">
-                <input type="text" id="search-input" placeholder="Search for a Surah...">
-                <button id="search-button"><i class="fas fa-search"></i></button>
-            </div>
-            <button id="dark-mode-toggle"><i class="fas fa-adjust"></i></button>
-        </header>
+        <div class="mobile-cards">
+            <a href="index.html" class="card">
+                <i class="fas fa-book-open"></i>
+                <p>Read Quran</p>
+            </a>
+            <a href="juzz.html" class="card">
+                <i class="fas fa-list"></i>
+                <p>Juzz</p>
+            </a>
+            <a href="audio.html" class="card">
+                <i class="fas fa-headphones"></i>
+                <p>Quran Audio</p>
+            </a>
+        </div>
+        <div id="calendar"></div>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search for a Surah...">
+            <button id="search-button"><i class="fas fa-search"></i></button>
+        </div>
+        <button id="dark-mode-toggle"><i class="fas fa-adjust"></i></button>
         <div id="surah-list"></div>
         <div class="loader" id="loader"></div>
     </div>
