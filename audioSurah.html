@@ -294,25 +294,26 @@
             });
 
             function loadAudio(sheikhId) {
-                const selectedSheikh = sheikhs.find(sheikh => sheikh.id === sheikhId);
-                const surahUrl = `https://download.quranicaudio.com/quran/${selectedSheikh.id}/${surahId}.mp3`;
-                if (audioElement) {
-                    audioElement.pause();
-                    audioElement.src = surahUrl;
-                } else {
-                    audioElement = new Audio(surahUrl);
-                    audioElement.addEventListener('ended', () => {
-                        playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
-                    });
-                    audioContainer.appendChild(audioElement);
-                }
-                audioElement.playbackRate = parseFloat(speedControl.value);
-                audioElement.play();
-                playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
-                audioControls.style.display = 'flex';
-                document.querySelectorAll('.sheikh-item').forEach(item => item.classList.remove('active'));
-                document.querySelector(`.sheikh-item[data-id="${sheikhId}"]`).classList.add('active');
-            }
+    const selectedSheikh = sheikhs.find(sheikh => sheikh.id === sheikhId);
+    const surahUrl = `https://www.everyayah.com/data/${selectedSheikh.name}/${surahId}.mp3`; // Updated URL format
+    if (audioElement) {
+        audioElement.pause();
+        audioElement.src = surahUrl;
+    } else {
+        audioElement = new Audio(surahUrl);
+        audioElement.addEventListener('ended', () => {
+            playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
+        });
+        audioContainer.appendChild(audioElement);
+    }
+    audioElement.playbackRate = parseFloat(speedControl.value);
+    audioElement.play();
+    playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
+    audioControls.style.display = 'flex';
+    document.querySelectorAll('.sheikh-item').forEach(item => item.classList.remove('active'));
+    document.querySelector(`.sheikh-item[data-id="${sheikhId}"]`).classList.add('active');
+}
+
 
             playPauseButton.addEventListener('click', function () {
                 if (audioElement.paused) {
