@@ -1,4 +1,4 @@
-<DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -266,36 +266,29 @@
             const urlParams = new URLSearchParams(window.location.search);
             const surahId = urlParams.get('surah');
 
-           const sheikhs = [
+            const sheikhs = [
                 { id: '1', name: 'AbdulBaset AbdulSamad', imageUrl: 'qmkxyvfiawea1.jpg' },
                 { id: '2', name: 'Maher Al-Muaiqly', imageUrl: 'images (6).jpeg' },
-                { id: '3', name: 'Abdur-Rahman As-Sudais', imageUrl: 'Abdul-Rahman-Al-Sudais.jpg' },
-                { id: '4', name: 'Saud Al-Shuraim', imageUrl: 'transparent-saud-al-shuraim.webp' },
-                { id: '5', name: 'Mishary Rashid Alafasy', imageUrl: 'download (10).jpeg' },
-                { id: '6', name: 'Ali Jaber', imageUrl: 'ali-jaber.webp' },
-                { id: '7', name: 'Yasser Al-Dosari', imageUrl: 'download (11).jpeg' },
-                { id: '8', name: 'Salah Al-Budair', imageUrl: 'download (12).jpeg' },
-                { id: '9', name: 'Ahmad Al-Ajmi', imageUrl: 'download (13).jpeg' },
-                { id: '10', name: 'Khalil Al-Husary', imageUrl: 'download (14).jpeg' },
-                { id: '11', name: 'Muhammad Siddiq Al-Minshawi', imageUrl: 'download (15).jpeg' },
-                { id: '12', name: 'Saad Al-Ghamdi', imageUrl: 'download (16).jpeg' },
-                { id: '13', name: 'Abu Bakr Al-Shatri', imageUrl: 'download (17).jpeg' },
-                { id: '14', name: 'Hani Rifai', imageUrl: 'download (18).jpeg' },
-                { id: '15', name: 'Abdullah Basfar', imageUrl: 'download (19).jpeg' }
+                { id: '3', name: 'Abdur-Rahman as-Sudais', imageUrl: 'downloaaad (5).jpeg' },
+                { id: '4', name: 'Saud Al-Shuraim', imageUrl: 'sss.jpeg' },
+                { id: '5', name: 'Mishary Al-Afasy', imageUrl: 'afasy.jpeg' },
+                { id: '6', name: 'Saad Al-Ghamdi', imageUrl: 'download (3).jpeg' },
+                { id: '7', name: 'Yasser Al-Dosari', imageUrl: 'images (4).jpeg' },
+                { id: '8', name: 'Omar Hisham Al-Arabi', imageUrl: 'download (1).jpeg' }
             ];
 
             sheikhs.forEach(sheikh => {
                 const sheikhItem = document.createElement('div');
                 sheikhItem.className = 'sheikh-item';
                 sheikhItem.dataset.id = sheikh.id;
-                sheikhItem.innerHTML = <img src="${sheikh.imageUrl}" alt="${sheikh.name}">;
+                sheikhItem.innerHTML = `<img src="${sheikh.imageUrl}" alt="${sheikh.name}">`;
                 sheikhItem.addEventListener('click', () => loadAudio(sheikh.id));
                 sheikhList.appendChild(sheikhItem);
             });
 
             function loadAudio(sheikhId) {
                 const selectedSheikh = sheikhs.find(sheikh => sheikh.id === sheikhId);
-                const surahUrl = https://download.quranicaudio.com/quran/${selectedSheikh.id}/${surahId}.mp3;
+                const surahUrl = `https://download.quranicaudio.com/quran/${selectedSheikh.id}/${surahId}.mp3`;
                 if (audioElement) {
                     audioElement.pause();
                     audioElement.src = surahUrl;
@@ -311,7 +304,7 @@
                 playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
                 audioControls.style.display = 'flex';
                 document.querySelectorAll('.sheikh-item').forEach(item => item.classList.remove('active'));
-                document.querySelector(.sheikh-item[data-id="${sheikhId}"]).classList.add('active');
+                document.querySelector(`.sheikh-item[data-id="${sheikhId}"]`).classList.add('active');
             }
 
             playPauseButton.addEventListener('click', function () {
@@ -361,8 +354,8 @@
                 sheikhs.forEach((sheikh, index) => {
                     const segment = document.createElement('div');
                     segment.className = 'wheel-segment';
-                    segment.style.transform = rotate(${angle * index}deg) skewY(-${90 - angle}deg);
-                    segment.innerHTML = <div class="segment-content" style="transform: skewY(${90 - angle}deg) rotate(${angle / 2}deg);">${sheikh.name}</div>;
+                    segment.style.transform = `rotate(${angle * index}deg) skewY(-${90 - angle}deg)`;
+                    segment.innerHTML = `<div class="segment-content" style="transform: skewY(${90 - angle}deg) rotate(${angle / 2}deg);">${sheikh.name}</div>`;
                     wheel.appendChild(segment);
                 });
             }
@@ -374,7 +367,7 @@
                 const spins = 5; // Number of full spins before stopping
                 const finalAngle = spins * 360 + (randomIndex * segmentAngle) + segmentAngle / 2;
                 currentAngle = (currentAngle + finalAngle) % 360;
-                wheel.style.transform = rotate(${currentAngle}deg);
+                wheel.style.transform = `rotate(${currentAngle}deg)`;
                 setTimeout(() => {
                     loadAudio(sheikhs[randomIndex].id);
                     hideWheel();
@@ -399,5 +392,4 @@
     </script>
 </body>
 </html>
-
 
