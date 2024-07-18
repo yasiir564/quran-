@@ -149,61 +149,22 @@
             left: 10px;
         }
 
-        .wheel-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
+        .swal2-container .swal2-popup {
+            background-color: #fff !important;
         }
 
-        .wheel-container {
-            position: relative;
-            background: #fff;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            width: 80%;
-            max-width: 400px;
+        .swal2-container .swal2-title {
+            color: #333 !important;
         }
 
-        .close-wheel {
-            cursor: pointer;
-            color: #ff0000;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.5em;
-        }
-
-        .wheel {
-            width: 100%;
-            height: 200px;
-            margin: 20px 0;
-            border: 2px solid #ddd;
-            border-radius: 50%;
-            background: url('path_to_your_wheel_image.png') no-repeat center center;
-            background-size: cover;
-        }
-
-        .spin-button {
-            background-color: #2980b9;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1em;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-
-        .spin-button:hover {
-            background-color: #3498db;
+        .swal2-container .swal2-button {
+            background-color: #2980b9 !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 5px !important;
+            font-size: 1em !important;
+            padding: 10px 20px !important;
+            margin: 5px !important;
         }
     </style>
 </head>
@@ -229,15 +190,6 @@
         </div>
     </div>
 
-    <div class="wheel-overlay" id="wheel-overlay">
-        <div class="wheel-container">
-            <span class="close-wheel" onclick="hideWheel()">×</span>
-            <h2>Are you confused in finding a good reciter? Try your luck!</h2>
-            <div class="wheel" id="wheel"></div>
-            <button class="spin-button" id="spinButton">Spin</button>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -248,9 +200,6 @@
             const audioControls = document.getElementById('audio-controls');
             const sheikhList = document.getElementById('sheikh-list');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
-            const wheelOverlay = document.getElementById('wheel-overlay');
-            const wheel = document.getElementById('wheel');
-            const spinButton = document.getElementById('spinButton');
             let audioElement;
 
             const urlParams = new URLSearchParams(window.location.search);
@@ -263,6 +212,15 @@
                 { id: '4', name: 'Saud Al-Shuraim', imageUrl: 'transparent-saud-al-shuraim.webp' },
                 { id: '5', name: 'Mishary Rashid Alafasy', imageUrl: 'Alafasy-meshary.jpg' },
                 { id: '6', name: 'Yasser Al-Dosari', imageUrl: 'maxresdefault.jpg' },
+                { id: '7', name: 'Ali Jaber', imageUrl: 'Ali-Jaber.jpg' },
+                { id: '8', name: 'Ahmed Al-Ajmi', imageUrl: 'Ahmed-Al-Ajmi.jpg' },
+                { id: '9', name: 'Saad Al-Ghamdi', imageUrl: 'Saad-Al-Ghamdi.jpg' },
+                { id: '10', name: 'Abdullah Awad Al-Juhany', imageUrl: 'Abdullah-Awad-Al-Juhany.jpg' },
+                { id: '11', name: 'Ibrahim Al-Akhdar', imageUrl: 'Ibrahim-Al-Akhdar.jpg' },
+                { id: '12', name: 'Khalid Al-Qahtani', imageUrl: 'Khalid-Al-Qahtani.jpg' },
+                { id: '13', name: 'Fares Abbad', imageUrl: 'Fares-Abbad.jpg' },
+                { id: '14', name: 'Hani Ar-Rifai', imageUrl: 'Hani-Ar-Rifai.jpg' },
+                { id: '15', name: 'Abu Bakr Al-Shatri', imageUrl: 'Abu-Bakr-Al-Shatri.jpg' }
             ];
 
             sheikhs.forEach(sheikh => {
@@ -335,21 +293,26 @@
                 darkModeToggle.classList.toggle('fa-sun');
             });
 
-            function showWheel() {
-                wheelOverlay.style.display = 'flex';
-            }
-
-            function hideWheel() {
-                wheelOverlay.style.display = 'none';
-            }
-
-            spinButton.addEventListener('click', () => {
-                const randomSheikh = sheikhs[Math.floor(Math.random() * sheikhs.length)];
-                Swal.fire({
-                    icon: 'success',
-                    title: `Listen to ${randomSheikh.name}`
-                });
-                hideWheel();
+            Swal.fire({
+                title: 'Spin to find a good reciter',
+                text: 'Click Spin to select a random reciter or No Thanks to select manually',
+                showCancelButton: true,
+                confirmButtonText: 'Spin',
+                cancelButtonText: 'No Thanks'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const randomSheikh = sheikhs[Math.floor(Math.random() * sheikhs.length)];
+                    Swal.fire({
+                        icon: 'success',
+                        title: `Listen to ${randomSheikh.name}`
+                    }).then(() => {
+                        document.querySelectorAll('.sheikh-item').forEach(item => {
+                            if (item.querySelector('img').alt === randomSheikh.name) {
+                                item.click();
+                            }
+                        });
+                    });
+                }
             });
         });
     </script>
