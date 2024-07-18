@@ -261,124 +261,97 @@
                 { id: '2', name: 'Maher Al-Muaiqly', imageUrl: 'images (6).jpeg' },
                 { id: '3', name: 'Abdur-Rahman As-Sudais', imageUrl: 'Abdul-Rahman-Al-Sudais.jpg' },
                 { id: '4', name: 'Saud Al-Shuraim', imageUrl: 'transparent-saud-al-shuraim.webp' },
-                { id: '5', name: 'Mishary Rashid Alafasy', imageUrl: 'download (10).jpeg' },
-                { id: '6', name: 'Ali Jaber', imageUrl: 'ali-jaber.webp' },
-                { id: '7', name: 'Yasser Al-Dosari', imageUrl: 'download (11).jpeg' },
-                { id: '8', name: 'Salah Al-Budair', imageUrl: 'download (12).jpeg' },
-                { id: '9', name: 'Ahmad Al-Ajmi', imageUrl: 'download (13).jpeg' },
-                { id: '10', name: 'Khalil Al-Husary', imageUrl: 'download (14).jpeg' },
-                { id: '11', name: 'Muhammad Siddiq Al-Minshawi', imageUrl: 'download (15).jpeg' },
-                { id: '12', name: 'Saad Al-Ghamdi', imageUrl: 'download (16).jpeg' },
-                { id: '13', name: 'Abu Bakr Al-Shatri', imageUrl: 'download (17).jpeg' },
-                { id: '14', name: 'Hani Rifai', imageUrl: 'download (18).jpeg' },
-                { id: '15', name: 'Abdullah Basfar', imageUrl: 'download (19).jpeg' }
+                { id: '5', name: 'Mishary Rashid Alafasy', imageUrl: 'Alafasy-meshary.jpg' },
+                { id: '6', name: 'Yasser Al-Dosari', imageUrl: 'maxresdefault.jpg' },
             ];
 
-            function stopAudio() {
-                if (audioElement) {
-                    audioElement.pause();
-                    audioElement.currentTime = 0;
-                }
-                playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
-            }
+            sheikhs.forEach(sheikh => {
+                const sheikhItem = document.createElement('div');
+                sheikhItem.classList.add('sheikh-item');
+                sheikhItem.innerHTML = `<img src="${sheikh.imageUrl}" alt="${sheikh.name}" title="${sheikh.name}">`;
+                sheikhItem.addEventListener('click', () => {
+                    if (surahId) {
+                        if (audioElement && !audioElement.paused) {
+                            audioElement.pause();
+                            audioElement.currentTime = 0;
+                        }
 
-            function playAudio() {
-                if (audioElement.paused) {
-                    audioElement.play();
-                    playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
-                } else {
-                    audioElement.pause();
-                    playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
-                }
-            }
-
-            async function loadSurahAudio(surahId, sheikhId) {
-                audioControls.style.display = 'none';
-                if (audioElement) {
-                    audioElement.pause();
-                }
-
-                try {
-                    const response = await fetch(`https://api.quran.com/api/v4/chapter_recitations/${sheikhId}/${surahId}`);
-                    const data = await response.json();
-                    if (data.audio_file.audio_url) {
-                        audioElement = new Audio(data.audio_file.audio_url);
-                        audioElement.controls = false;
-                        audioContainer.innerHTML = '';
-                        audioContainer.appendChild(audioElement);
+                        audioElement = new Audio(`https://api.alquran.cloud/v1/ayah/${surahId}/${sheikh.id}/ar.alafasy`);
+                        audioElement.play();
                         audioControls.style.display = 'flex';
+
                         audioElement.addEventListener('play', () => {
                             playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
                         });
+
                         audioElement.addEventListener('pause', () => {
                             playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
                         });
+
                         audioElement.addEventListener('ended', () => {
                             playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
-                            setTimeout(playNextSurah, 3000); // 3 seconds delay before playing the next surah
                         });
-                        audioElement.play();
+
+                        speedControl.addEventListener('change', () => {
+                            audioElement.playbackRate = speedControl.value;
+                        });
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: `Now playing Surah ${surahId} by ${sheikh.name}`
+                        });
                     } else {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Oops...',
-                            text: 'Audio URL not found!',
+                            title: 'Surah not specified',
+                            text: 'Please specify a Surah ID in the URL, e.g., ?surah=1'
                         });
                     }
-                } catch (error) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Failed to load the audio!',
-                    });
-                }
-            }
-
-            function renderSheikhs() {
-                sheikhs.forEach(sheikh => {
-                    const sheikhItem = document.createElement('div');
-                    sheikhItem.classList.add('sheikh-item');
-                    sheikhItem.innerHTML = `
-                        <img src="${sheikh.imageUrl}" alt="${sheikh.name}">
-                    `;
-                    sheikhItem.addEventListener('click', () => {
-                        document.querySelectorAll('.sheikh-item').forEach(item => item.classList.remove('active'));
-                        sheikhItem.classList.add('active');
-                        loadSurahAudio(surahId, sheikh.id);
-                    });
-                    sheikhList.appendChild(sheikhItem);
                 });
-            }
+                sheikhList.appendChild(sheikhItem);
+            });
 
-            function playNextSurah() {
-                const currentSurahId = parseInt(surahId);
-                const nextSurahId = currentSurahId < 114 ? currentSurahId + 1 : 1;
-                window.location.href = `audio.surah.html?surah=${nextSurahId}`;
-            }
+            playPauseButton.addEventListener('click', () => {
+                if (audioElement) {
+                    if (audioElement.paused) {
+                        audioElement.play();
+                    } else {
+                        audioElement.pause();
+                    }
+                }
+            });
+
+            stopButton.addEventListener('click', () => {
+                if (audioElement) {
+                    audioElement.pause();
+                    audioElement.currentTime = 0;
+                    playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
+                }
+            });
 
             darkModeToggle.addEventListener('click', () => {
                 document.body.classList.toggle('dark-mode');
-                if (document.body.classList.contains('dark-mode')) {
-                    darkModeToggle.classList.remove('fa-moon');
-                    darkModeToggle.classList.add('fa-sun');
-                } else {
-                    darkModeToggle.classList.remove('fa-sun');
-                    darkModeToggle.classList.add('fa-moon');
-                }
+                darkModeToggle.classList.toggle('fa-moon');
+                darkModeToggle.classList.toggle('fa-sun');
             });
 
-            playPauseButton.addEventListener('click', playAudio);
-            stopButton.addEventListener('click', stopAudio);
-            speedControl.addEventListener('change', () => {
-                if (audioElement) {
-                    audioElement.playbackRate = speedControl.value;
-                }
-            });
+            function showWheel() {
+                wheelOverlay.style.display = 'flex';
+            }
 
-            renderSheikhs();
+            function hideWheel() {
+                wheelOverlay.style.display = 'none';
+            }
+
+            spinButton.addEventListener('click', () => {
+                const randomSheikh = sheikhs[Math.floor(Math.random() * sheikhs.length)];
+                Swal.fire({
+                    icon: 'success',
+                    title: `Listen to ${randomSheikh.name}`
+                });
+                hideWheel();
+            });
         });
     </script>
 </body>
 </html>
-
-
