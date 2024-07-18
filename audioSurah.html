@@ -303,7 +303,7 @@
 
                     setTimeout(() => {
                         clearInterval(intervalId);
-                        const selectedSheikh = sheikhs[currentIndex];
+                        const selectedSheikh = sheikhs[Math.floor(Math.random() * sheikhs.length)];
                         Swal.fire({
                             title: 'Selected Sheikh!',
                             text: `${selectedSheikh.name}`,
