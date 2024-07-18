@@ -229,7 +229,7 @@
                 sheikhItem.innerHTML = `<img src="${sheikh.imageUrl}" alt="${sheikh.name}" title="${sheikh.name}">`;
                 sheikhItem.addEventListener('click', () => {
                     if (surahId) {
-                        const audioUrl = `https://cdn.alquran.cloud/media/audio/ayah/ar.alafasy/${surahId}/${sheikh.id}`;
+                        const audioUrl = `https://cdn.alquran.cloud/media/audio/ayah/ar.alafasy/${surah.name}/${sheikh.id}`;
                         audioContainer.innerHTML = `<audio controls>
                             <source src="${audioUrl}" type="audio/mp3">
                             Your browser does not support the audio element.
