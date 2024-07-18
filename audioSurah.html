@@ -227,6 +227,7 @@
                 <option value="2">2x</option>
             </select>
         </div>
+        <button id="luckyButton" class="buttons"><i class="fas fa-random"></i> Try Your Luck</button>
     </div>
 
     <div class="wheel-overlay" id="wheel-overlay">
@@ -249,8 +250,8 @@
             const sheikhList = document.getElementById('sheikh-list');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
             const wheelOverlay = document.getElementById('wheel-overlay');
-            const wheel = document.getElementById('wheel');
             const spinButton = document.getElementById('spinButton');
+            const luckyButton = document.getElementById('luckyButton');
             let audioElement;
 
             const urlParams = new URLSearchParams(window.location.search);
@@ -374,8 +375,52 @@
                 }
             });
 
+            luckyButton.addEventListener('click', showWheel);
+            spinButton.addEventListener('click', spinWheel);
+
             renderSheikhs();
         });
+
+        function showWheel() {
+            const wheelOverlay = document.getElementById('wheel-overlay');
+            wheelOverlay.style.display = 'flex';
+        }
+
+        function hideWheel() {
+            const wheelOverlay = document.getElementById('wheel-overlay');
+            wheelOverlay.style.display = 'none';
+        }
+
+        function spinWheel() {
+            const sheikhs = [
+                { id: '1', name: 'AbdulBaset AbdulSamad' },
+                { id: '2', name: 'Maher Al-Muaiqly' },
+                { id: '3', name: 'Abdur-Rahman As-Sudais' },
+                { id: '4', name: 'Saud Al-Shuraim' },
+                { id: '5', name: 'Mishary Rashid Alafasy' },
+                { id: '6', name: 'Ali Jaber' },
+                { id: '7', name: 'Yasser Al-Dosari' },
+                { id: '8', name: 'Salah Al-Budair' },
+                { id: '9', name: 'Ahmad Al-Ajmi' },
+                { id: '10', name: 'Khalil Al-Husary' },
+                { id: '11', name: 'Muhammad Siddiq Al-Minshawi' },
+                { id: '12', name: 'Saad Al-Ghamdi' },
+                { id: '13', name: 'Abu Bakr Al-Shatri' },
+                { id: '14', name: 'Hani Rifai' },
+                { id: '15', name: 'Abdullah Basfar' }
+            ];
+            const randomIndex = Math.floor(Math.random() * sheikhs.length);
+            const selectedSheikh = sheikhs[randomIndex];
+
+            Swal.fire({
+                title: 'Your Random Reciter',
+                text: `You got ${selectedSheikh.name}!`,
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = `audio.surah.html?surah=1&sheikh=${selectedSheikh.id}`;
+            });
+        }
     </script>
 </body>
 </html>
