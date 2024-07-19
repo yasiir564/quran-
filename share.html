@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Share Quran Pro</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
             margin: 0;
             padding: 0;
             background: #f4f4f4;
@@ -17,6 +18,31 @@
             color: #fff;
             padding: 1rem 0;
             text-align: center;
+        }
+        nav {
+            background: #444;
+            padding: 0.5rem 0;
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        nav ul li {
+            margin: 0;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        nav ul li a:hover {
+            background: #555;
         }
         main {
             padding: 2rem;
@@ -37,6 +63,12 @@
             padding: 0.5rem 1rem;
             border-radius: 5px;
             transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .share-buttons a i {
+            font-size: 1.2rem;
         }
         .facebook { background: #3b5998; }
         .facebook:hover { background: #2d4373; }
@@ -61,14 +93,29 @@
     <header>
         <h1>Share Quran Pro</h1>
     </header>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="share.html">Share</a></li>
+        </ul>
+    </nav>
     <main>
         <h2>Spread the word about Quran Pro</h2>
         <p>Let others know about this amazing app by sharing it on your favorite social media platforms.</p>
         <div class="share-buttons">
-            <a href="https://www.facebook.com/sharer/sharer.php?u=YOUR_APP_LINK" target="_blank" class="facebook">Share on Facebook</a>
-            <a href="https://twitter.com/intent/tweet?url=YOUR_APP_LINK&text=Check%20out%20Quran%20Pro!" target="_blank" class="twitter">Share on Twitter</a>
-            <a href="https://wa.me/?text=Check%20out%20Quran%20Pro:%20YOUR_APP_LINK" target="_blank" class="whatsapp">Share on WhatsApp</a>
-            <a href="mailto:?subject=Check out Quran Pro&body=Here is the link to the app: YOUR_APP_LINK" target="_blank" class="email">Share via Email</a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u=YOUR_APP_LINK" target="_blank" class="facebook">
+                <i class="fab fa-facebook-f"></i> Facebook
+            </a>
+            <a href="https://twitter.com/intent/tweet?url=YOUR_APP_LINK&text=Check%20out%20Quran%20Pro!" target="_blank" class="twitter">
+                <i class="fab fa-twitter"></i> Twitter
+            </a>
+            <a href="https://wa.me/?text=Check%20out%20Quran%20Pro:%20YOUR_APP_LINK" target="_blank" class="whatsapp">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>
+            <a href="mailto:?subject=Check out Quran Pro&body=Here is the link to the app: YOUR_APP_LINK" target="_blank" class="email">
+                <i class="fas fa-envelope"></i> Email
+            </a>
         </div>
     </main>
     <footer>
