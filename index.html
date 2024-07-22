@@ -11,8 +11,15 @@
     <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
     <style>
 body {
-    animation: gradientAnimation 10s infinite; /* 10s is the duration, infinite means it will loop */
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: gradientAnimation 15s ease infinite; /* Smooth transition with ease function */
+    background-size: 200% 200%; /* Larger size for smoother animation */
 }
+
 
 
 .container {
@@ -176,18 +183,23 @@ h1 {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-        @keyframes gradientAnimation {
+       @keyframes gradientAnimation {
     0% {
-        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+        background-image: linear-gradient(to top left, #a8edea 0%, #fed6e3 100%);
+    }
+    25% {
+        background-image: linear-gradient(to top right, #a8edea 0%, #fed6e3 100%);
     }
     50% {
-        background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
+        background-image: linear-gradient(to bottom right, #a8edea 0%, #fed6e3 100%);
+    }
+    75% {
+        background-image: linear-gradient(to bottom left, #a8edea 0%, #fed6e3 100%);
     }
     100% {
-        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+        background-image: linear-gradient(to top left, #a8edea 0%, #fed6e3 100%);
     }
 }
-
 
 body.dark-mode {
     background: linear-gradient(to right, #0f0f0f, #434343);
