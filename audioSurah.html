@@ -257,11 +257,12 @@
                 const sheikhItem = document.createElement('div');
                 sheikhItem.className = 'sheikh-item';
                 sheikhItem.innerHTML = `<img src="${sheikh.imageUrl}" alt="${sheikh.name}">`;
-                sheikhItem.addEventListener('click', () => {
-                    document.querySelectorAll('.sheikh-item').forEach(item => item.classList.remove('active'));
-                    sheikhItem.classList.add('active');
-                    loadSurahAudio(surahId, sheikh.id);
-                });
+               sheikhItem.addEventListener('click', () => {
+    document.querySelectorAll('.sheikh-item').forEach(item => item.classList.remove('active'));
+    sheikhItem.classList.add('active');
+    window.location.href = `audiosurahrecite.html?surah=${surahId}&sheikh=${sheikh.id}`;
+});
+
                 sheikhList.appendChild(sheikhItem);
             });
 
