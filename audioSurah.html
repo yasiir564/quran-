@@ -260,8 +260,9 @@
                sheikhItem.addEventListener('click', () => {
     document.querySelectorAll('.sheikh-item').forEach(item => item.classList.remove('active'));
     sheikhItem.classList.add('active');
-    window.location.href = `audiosurahrecite.html?surah=${surahId}&sheikh=${sheikh.id}`;
+    loadSurahAudio(surahId, sheikh.id);
 });
+
 
                 sheikhList.appendChild(sheikhItem);
             });
