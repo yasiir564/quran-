@@ -324,6 +324,7 @@
             }
 
             darkModeToggle.addEventListener('click', toggleDarkMode);
+
             Swal.fire({
                 title: 'Are you confused in finding a good reciter? Try your luck!',
                 showCancelButton: true,
@@ -358,6 +359,27 @@
                     }, spinDuration);
                 }
             });
+
+            // Prevent screen from sleeping
+            if ('wakeLock' in navigator) {
+                let wakeLock = null;
+
+                const requestWakeLock = async () => {
+                    try {
+                        wakeLock = await navigator.wakeLock.request('screen');
+                    } catch (err) {
+                        console.error('Error requesting wake lock:', err);
+                    }
+                };
+
+                document.addEventListener('visibilitychange', () => {
+                    if (wakeLock !== null && document.visibilityState === 'visible') {
+                        requestWakeLock();
+                    }
+                });
+
+                requestWakeLock();
+            }
         });
     </script>
 </body>
