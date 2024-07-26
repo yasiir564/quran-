@@ -10,350 +10,303 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
     <style>
-/* General Styles */
-body {
-    animation: gradientAnimation 10s infinite;
-    font-family: 'Amiri', serif;
-}
+        /* General Styles */
+        body {
+            animation: gradientAnimation 10s infinite;
+            font-family: 'Amiri', serif;
+        }
 
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    text-align: center;
-}
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
 
-header {
-    text-align: center;
-    margin-bottom: 10px;
-    position: relative;
-}
+        header {
+            text-align: center;
+            margin-bottom: 10px;
+            position: relative;
+        }
 
-h1 {
-    font-size: 2.5em;
-    color: #fff;
-    margin-top: 0;
-}
+        h1 {
+            font-size: 2.5em;
+            color: #fff;
+            margin-top: 0;
+        }
 
-.search-container {
-    margin: 10px 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
+        .search-container {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
 
-.search-container input {
-    padding: 10px;
-    font-size: 1em;
-    width: 70%;
-    border: 2px solid #ddd;
-    border-radius: 25px;
-    outline: none;
-    padding-left: 20px;
-    transition: all 0.3s;
-}
+        .search-container input {
+            padding: 10px;
+            font-size: 1em;
+            width: 70%;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            padding-left: 20px;
+            transition: all 0.3s;
+        }
 
-.search-container input:focus {
-    border-color: #2575fc;
-}
+        .search-container input:focus {
+            border-color: #2575fc;
+        }
 
-.search-container button {
-    padding: 10px;
-    font-size: 1em;
-    border: none;
-    cursor: pointer;
-    border-radius: 50%;
-    background-color: #2575fc;
-    color: #fff;
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        .search-container button {
+            padding: 10px;
+            font-size: 1em;
+            border: none;
+            cursor: pointer;
+            border-radius: 50%;
+            background-color: #2575fc;
+            color: #fff;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-#dark-mode-toggle {
-    margin: 10px 0;
-    cursor: pointer;
-    color: #fff;
-    font-size: 1.5em;
-    background: none;
-    border: none;
-}
+        #dark-mode-toggle {
+            margin: 10px 0;
+            cursor: pointer;
+            color: #fff;
+            font-size: 1.5em;
+            background: none;
+            border: none;
+        }
 
-#surah-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-}
+        #surah-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
 
-.surah {
-    background-color: #2575fc;
-    padding: 15px;
-    border: 1px solid #ddd;
-    cursor: pointer;
-    flex: 1 1 calc(25% - 20px);
-    box-sizing: border-box;
-    text-align: center;
-    margin: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, background-color 0.3s;
-}
+        .surah {
+            background-color: #2575fc;
+            padding: 15px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            flex: 1 1 calc(25% - 20px);
+            box-sizing: border-box;
+            text-align: center;
+            margin: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, background-color 0.3s;
+        }
 
-.surah:hover {
-    transform: scale(1.05);
-    background-color: #f0f0f0;
-}
+        .surah:hover {
+            transform: scale(1.05);
+            background-color: #f0f0f0;
+        }
 
-@media (max-width: 768px) {
-    .surah {
-        flex: 1 1 calc(50% - 20px);
-    }
-}
+        @media (max-width: 768px) {
+            .surah {
+                flex: 1 1 calc(50% - 20px);
+            }
+        }
 
-@media (max-width: 480px) {
-    .surah {
-        flex: 1 1 100%;
-    }
+        @media (max-width: 480px) {
+            .surah {
+                flex: 1 1 100%;
+            }
 
-    header {
-        background: url('') no-repeat top;
-        background-size: cover;
-    }
+            header {
+                background: url('') no-repeat top;
+                background-size: cover;
+            }
 
-    header h1 {
-        margin-top: 150px;
-    }
-}
+            header h1 {
+                margin-top: 150px;
+            }
+        }
 
-.loader {
-    border: 16px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 16px solid #3498db;
-    width: 120px;
-    height: 120px;
-    animation: spin 2s linear infinite;
-    margin: 50px auto;
-}
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            margin: 50px auto;
+        }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-@keyframes gradientAnimation {
-    0% {
-        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-    }
-    50% {
-        background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
-    }
-    100% {
-        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-    }
-}
+        @keyframes gradientAnimation {
+            0% {
+                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+            }
+            50% {
+                background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
+            }
+            100% {
+                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+            }
+        }
 
-body.dark-mode {
-    background: linear-gradient(to right, #0f0f0f, #434343);
-    color: #ddd;
-}
+        body.dark-mode {
+            background: linear-gradient(to right, #0f0f0f, #434343);
+            color: #ddd;
+        }
 
-body.dark-mode .surah {
-    background-color: #333;
-    color: #ddd;
-}
+        body.dark-mode .surah {
+            background-color: #333;
+            color: #ddd;
+        }
 
-body.dark-mode .surah:hover {
-    background-color: #444;
-}
+        body.dark-mode .surah:hover {
+            background-color: #444;
+        }
 
-body.dark-mode h1 {
-    color: #ddd;
-}
+        body.dark-mode h1 {
+            color: #ddd;
+        }
 
-.typing-animation {
-    display: inline-block;
-    overflow: hidden;
-    white-space: nowrap;
-    border-right: 3px solid;
-    animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
-}
+        .typing-animation {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid;
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
 
-@keyframes typing {
-    from { width: 0 }
-    to { width: 100% }
-}
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
 
-@keyframes blink-caret {
-    from, to { border-color: transparent }
-    50% { border-color: black; }
-}
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: black; }
+        }
 
-#calendar {
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 20px;
-    border-radius: 10px;
-    color: #333;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 20px 0;
-    font-size: 1.2em;
-    position: relative;
-    overflow: hidden;
-}
+        #calendar {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            font-size: 1.2em;
+            position: relative;
+            overflow: hidden;
+        }
 
-#calendar:before, #calendar:after {
-    content: '';
-    position: absolute;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, #ffafbd, #ffc3a0, #ffafbd, #ffc3a0);
-    top: -50%;
-    left: -50%;
-    animation: rotateBg 10s linear infinite;
-    z-index: 0;
-}
+        #calendar:before, #calendar:after {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, #ffafbd, #ffc3a0, #ffafbd, #ffc3a0);
+            top: -50%;
+            left: -50%;
+            animation: rotateBg 10s linear infinite;
+            z-index: 0;
+        }
 
-@keyframes rotateBg {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+        @keyframes rotateBg {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-#calendar p {
-    position: relative;
-    z-index: 1;
-    margin: 0;
-}
+        #calendar p {
+            position: relative;
+            z-index: 1;
+            margin: 0;
+        }
 
-/* Sidebar Menu */
-.sidebar {
-    height: 100%;
-    width: 250px;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: -250px;
-    background: linear-gradient(to top, #a8edea, #fed6e3);
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-}
+        .text-links {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
 
-.sidebar a {
-    padding: 10px 15px;
-    text-decoration: none;
-    font-size: 18px;
-    color: #111;
-    display: block;
-    transition: 0.3s;
-}
+        .text-links a {
+            font-size: 1.2em;
+            color: #2575fc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
 
-.sidebar a:hover {
-    color: #fff;
-    background-color: #2575fc;
-}
+        .text-links a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
 
-.sidebar .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-}
+        /* Sidebar Menu */
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: -250px;
+            background: linear-gradient(to top, #a8edea, #fed6e3);
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
 
-#main {
-    transition: margin-left .5s;
-    padding: 16px;
-}
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #111;
+            display: block;
+            transition: 0.3s;
+        }
 
-@media screen and (max-height: 450px) {
-    .sidebar {padding-top: 15px;}
-    .sidebar a {font-size: 18px;}
-}
+        .sidebar a:hover {
+            color: #fff;
+            background-color: #2575fc;
+        }
 
-.openbtn {
-    font-size: 20px;
-    cursor: pointer;
-    background-color: #2575fc;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-}
+        .sidebar .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
 
-.openbtn:hover {
-    background-color: #444;
-}
+        #main {
+            transition: margin-left .5s;
+            padding: 16px;
+        }
 
-/* Navigation */
-nav ul {
-    display: none;
-}
+        @media screen and (max-height: 450px) {
+            .sidebar {padding-top: 15px;}
+            .sidebar a {font-size: 18px;}
+        }
 
-/* Mobile Cards */
-.mobile-cards {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 10px;
-}
+        .openbtn {
+            font-size: 20px;
+            cursor: pointer;
+            background-color: #2575fc;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+        }
 
-.card {
-    background: none;
-    padding: 15px;
-    margin: 10px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s;
-}
-
-.card:hover {
-    transform: scale(1.05);
-}
-
-.card lord-icon {
-    font-size: 2em;
-    margin-bottom: 10px;
-    color: #fff;
-}
-
-@media (max-width: 768px) {
-    .mobile-cards {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-    .card {
-        flex: 1 1 calc(50% - 20px);
-        margin:        margin: 10px;
-        text-align: center;
-    }
-
-    .card lord-icon {
-        font-size: 3em;
-    }
-}
-
-.text-links {
-    margin-top: 20px;
-    text-align: center;
-}
-
-.text-links a {
-    display: block;
-    font-size: 1.2em;
-    color: #2575fc;
-    text-decoration: none;
-    margin: 10px 0;
-}
-
-.text-links a:hover {
-    text-decoration: underline;
-}
+        .openbtn:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -371,23 +324,14 @@ nav ul {
 
     <div id="main">
         <button class="openbtn" onclick="openNav()">&#9776; Quran Pro</button>
-        
+
         <div class="container">
-            <div class="mobile-cards">
-                <a href="index.html" class="card">
-                    <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#121331,secondary:#08a88a" style="width:50px;height:50px"></lord-icon>
-                    <p>Read Quran</p>
-                </a>
-                <a href="juzz.html" class="card">
-                    <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#121331,secondary:#08a88a" style="width:50px;height:50px"></lord-icon>
-                    <p>Juzz</p>
-                </a>
-                <a href="audio.html" class="card">
-                    <lord-icon src="https://cdn.lordicon.com/rhvddzym.json" trigger="hover" colors="primary:#121331,secondary:#08a88a" style="width:50px;height:50px"></lord-icon>
-                    <p>Quran Audio</p>
-                </a>
-            </div>
             <div id="calendar"></div>
+            <div class="text-links">
+                <a href="surah-yaseen.html">Surah Yaseen</a>
+                <a href="ayat-al-kursi.html">Ayat Al-Kursi</a>
+                <a href="surah-al-kahf.html">Surah Al-Kahf</a>
+            </div>
             <div class="search-container">
                 <input type="text" id="search-input" placeholder="Search for a Surah...">
                 <button id="search-button"><i class="fas fa-search"></i></button>
@@ -395,12 +339,6 @@ nav ul {
             <button id="dark-mode-toggle"><i class="fas fa-adjust"></i></button>
             <div id="surah-list"></div>
             <div class="loader" id="loader"></div>
-            
-            <div class="text-links">
-                <a href="surah-yaseen.html">Surah Yaseen</a>
-                <a href="ayat-al-kursi.html">Ayat Al-Kursi</a>
-                <a href="surah-al-kahf.html">Surah Al-Kahf</a>
-            </div>
         </div>
     </div>
 
@@ -424,7 +362,6 @@ nav ul {
             Swal.fire('Search feature is under development!');
         });
 
-        // Function to display loader while loading content
         function showLoader() {
             document.getElementById('loader').style.display = 'block';
         }
@@ -433,16 +370,13 @@ nav ul {
             document.getElementById('loader').style.display = 'none';
         }
 
-        // Simulate loading content with a delay
         function loadContent() {
             showLoader();
             setTimeout(() => {
                 hideLoader();
-                // Your content loading logic here
             }, 2000);
         }
 
-        // Call loadContent on page load
         window.onload = loadContent;
 
         if ('serviceWorker' in navigator) {
@@ -503,9 +437,6 @@ nav ul {
             const searchInput = document.getElementById('search-input');
             const searchButton = document.getElementById('search-button');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
-            const hamburger = document.getElementById('hamburger');
-            const overlay = document.getElementById('myNav');
-            const closebtn = document.getElementById('closebtn');
 
             searchButton.addEventListener('click', () => {
                 const searchTerm = searchInput.value.toLowerCase();
@@ -537,17 +468,7 @@ nav ul {
 
             const calendarDiv = document.getElementById('calendar');
             calendarDiv.innerHTML = `<p id="hijri-date">${hijriDate}</p><p id="hijri-date-arabic">${hijriDateArabic}</p>`;
-
-            hamburger.addEventListener('click', () => {
-                overlay.style.display = 'flex';
-            });
-
-            closebtn.addEventListener('click', () => {
-                overlay.style.display = 'none';
-            });
         });
     </script>
 </body>
 </html>
-
-            
