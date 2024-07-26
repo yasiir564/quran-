@@ -16,6 +16,7 @@ body {
     font-family: 'Amiri', serif;
     margin: 0;
     padding: 0;
+    position: relative;
 }
 
 .container {
@@ -31,20 +32,14 @@ header {
     padding: 10px;
 }
 
-h1 {
-    font-size: 2.5em;
-    color: #fff;
-    margin-top: 0;
-}
-
 /* Ensure header-icons are positioned correctly */
 .header-icons {
-    position: absolute;
-    right: 20px;
+    position: fixed; /* Fixed position to keep icons at the top right */
     top: 10px;
+    right: 20px;
     display: flex;
     gap: 15px;
-    z-index: 2; /* Ensure it appears above other elements */
+    z-index: 1000; /* High z-index to ensure it's on top */
 }
 
 .header-icons a {
@@ -57,6 +52,7 @@ h1 {
     color: #fff;
 }
 
+/* Search Container */
 .search-container {
     margin: 10px 0;
     display: flex;
@@ -97,6 +93,7 @@ h1 {
     justify-content: center;
 }
 
+/* Dark Mode */
 #dark-mode-toggle {
     margin: 10px 0;
     cursor: pointer;
@@ -318,7 +315,7 @@ body.dark-mode h1 {
     position: fixed;
     top: 10px;
     left: 10px;
-    z-index: 2;
+    z-index: 1000; /* High z-index to ensure it's on top */
 }
 
 .openbtn:hover {
@@ -350,7 +347,7 @@ nav ul {
     transform: scale(1.05);
 }
 
-.card lord-icon {
+.card .lord-icon {
     font-size: 2em;
     margin-bottom: 10px;
     color: #fff;
@@ -369,7 +366,7 @@ nav ul {
         text-align: center;
     }
 
-    .card lord-icon {
+    .card .lord-icon {
         font-size: 3em;
     }
 }
