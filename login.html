@@ -4,18 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Form</title>
-    <script src="https://cdn.clerk.dev/clerk.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
 </head>
 <body>
     <div id="clerk-login"></div>
     <script>
+        // Initialize Clerk with your frontend API
         Clerk.load({
             frontendApi: 'sk_test_rJQGwjTJ0UubRHpRnQoeBmAVwz7b9lOcf6GMRhT1W9'
-        });
-
-        Clerk.onReady(() => {
+        }).then(() => {
+            // When Clerk is ready, mount the sign-in form
             Clerk.mountSignIn(document.getElementById('clerk-login'));
+        }).catch(err => {
+            console.error("Clerk failed to load:", err);
         });
     </script>
 </body>
 </html>
+
