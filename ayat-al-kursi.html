@@ -284,50 +284,30 @@
                     }
                 });
 
-                fetch('https://api.alquran.cloud/v1/ayah/255') // Ayat Al-Kursi is Ayah 255 of Surah Al-Baqarah
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Network response was not ok: ${response.statusText}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    loader.style.display = 'none';
-                    Swal.close();
-                    ayatContent.style.display = 'block';
+                // Hardcoded data for Ayat Al-Kursi
+                const ayatText = "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۗ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۗ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِندَهُ إِلَّا بِإِذْنِهِ ۗ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۗ وَلَا يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۗ وِسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۗ وَلَا يَؤُودُهُ حِفْظُهُمَا ۗ وَهُوَ الْعَلِيُّ الْعَظِيمُ";
+                const translationText = "Allah! There is no deity except Him, the Ever-Living, the Sustainer of existence. Neither drowsiness overtakes Him nor sleep. To Him belongs whatever is in the heavens and whatever is on the earth. Who is it that can intercede with Him except by His permission? He knows what is before them and what will be after them, and they encompass not a thing of His knowledge except for what He wills. His Kursi extends over the heavens and the earth, and their preservation tires Him not. And He is the Most High, the Most Great.";
 
-                    ayatContent.innerHTML = `
-                        <h2>Ayat Al-Kursi</h2>
-                        <div class="ayah">
-                            ${data.data.text}
-                        </div>
-                        <div class="translation">
-                            ${data.data.translation}
-                        </div>
-                        <audio class="audio" id="audio" controls>
-                            <source src="${data.data.audio}" type="audio/mpeg">
-                            Your browser does not support the audio element.
-                        </audio>
-                    `;
+                ayatContent.innerHTML = `
+                    <div class="ayah">${ayatText}</div>
+                    <div class="translation">${translationText}</div>
+                    <audio class="audio" controls>
+                        <source src="path_to_ayat_alkursi_audio.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                `;
 
-                    const audio = document.querySelector('.audio');
+                loader.style.display = 'none';
+                ayatContent.style.display = 'block';
 
-                    audio.addEventListener('play', () => {
-                        document.querySelector('.ayah').classList.add('playing');
-                    });
+                const audio = document.querySelector('.audio');
 
-                    audio.addEventListener('ended', () => {
-                        document.querySelector('.ayah').classList.remove('playing');
-                    });
-                })
-                .catch(error => {
-                    Swal.close();
-                    console.error('Error fetching Ayat:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: `Error fetching Ayat: ${error.message}`,
-                    });
+                audio.addEventListener('play', () => {
+                    document.querySelector('.ayah').classList.add('playing');
+                });
+
+                audio.addEventListener('ended', () => {
+                    document.querySelector('.ayah').classList.remove('playing');
                 });
             }
 
