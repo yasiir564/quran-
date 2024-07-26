@@ -14,12 +14,6 @@
 body {
     animation: gradientAnimation 10s infinite;
     font-family: 'Amiri', serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
 }
 
 .container {
@@ -41,7 +35,6 @@ h1 {
     margin-top: 0;
 }
 
-/* Search Styles */
 .search-container {
     margin: 10px 0;
     display: flex;
@@ -91,7 +84,6 @@ h1 {
     border: none;
 }
 
-/* Surah List Styles */
 #surah-list {
     display: flex;
     flex-wrap: wrap;
@@ -138,7 +130,6 @@ h1 {
     }
 }
 
-/* Loader Styles */
 .loader {
     border: 16px solid #f3f3f3;
     border-radius: 50%;
@@ -154,7 +145,6 @@ h1 {
     100% { transform: rotate(360deg); }
 }
 
-/* Gradient Animation */
 @keyframes gradientAnimation {
     0% {
         background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
@@ -167,7 +157,6 @@ h1 {
     }
 }
 
-/* Dark Mode Styles */
 body.dark-mode {
     background: linear-gradient(to right, #0f0f0f, #434343);
     color: #ddd;
@@ -186,7 +175,6 @@ body.dark-mode h1 {
     color: #ddd;
 }
 
-/* Typing Animation */
 .typing-animation {
     display: inline-block;
     overflow: hidden;
@@ -205,7 +193,6 @@ body.dark-mode h1 {
     50% { border-color: black; }
 }
 
-/* Calendar Styles */
 #calendar {
     background-color: rgba(255, 255, 255, 0.8);
     padding: 20px;
@@ -285,8 +272,8 @@ body.dark-mode h1 {
 }
 
 @media screen and (max-height: 450px) {
-    .sidebar { padding-top: 15px; }
-    .sidebar a { font-size: 18px; }
+    .sidebar {padding-top: 15px;}
+    .sidebar a {font-size: 18px;}
 }
 
 .openbtn {
@@ -351,32 +338,6 @@ nav ul {
     }
 }
 
-/* Responsive Icon Links */
-.icon-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.icon-link {
-    display: flex;
-    align-items: center;
-    margin: 10px;
-    text-decoration: none;
-    color: #08a88a;
-    font-size: 1.2em;
-    transition: color 0.3s ease;
-}
-
-.icon-link:hover {
-    color: #005f5f;
-}
-
-.icon {
-    width: 50px;
-    height: 50px;
-    margin-right: 10px;
-}
 
     </style>
 </head>
