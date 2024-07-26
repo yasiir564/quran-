@@ -372,6 +372,71 @@ nav ul {
 .text-links a:hover {
     text-decoration: underline;
 }
+        /* Footer Styles */
+        footer {
+            background-color: #2575fc;
+            color: #fff;
+            padding: 20px 0;
+        }
+
+        footer .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        footer h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        footer p, footer ul {
+            margin: 0;
+            padding: 0;
+        }
+
+        footer ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        footer ul li {
+            margin-bottom: 10px;
+        }
+
+        footer ul li a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        footer ul li a:hover {
+            color: #f0f0f0;
+            text-decoration: underline;
+        }
+
+        footer .donate-btn {
+            display: inline-block;
+            background-color: #ff5722;
+            color: #fff;
+            padding: 15px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        footer .donate-btn:hover {
+            background-color: #e64a19;
+        }
+
+        footer .text-center {
+            text-align: center;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -419,6 +484,50 @@ nav ul {
             <div class="loader" id="loader"></div>
         </div>
     </div>
+        <footer>
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+                <!-- About Us Section -->
+                <div style="flex: 1; min-width: 200px; margin: 10px;">
+                    <h3>About Us</h3>
+                    <p>
+                        At Quran Reader, we are dedicated to providing a user-friendly platform for reading and listening to the Holy Quran. Our mission is to make the Quran accessible to everyone, anywhere, at any time. We offer a range of features including surah navigation, audio recitations, and more. Our team is committed to continuous improvement and user satisfaction. Thank you for being a part of our journey.
+                    </p>
+                </div>
+
+                <!-- Useful Links Section -->
+                <div style="flex: 1; min-width: 200px; margin: 10px;">
+                    <h3>Useful Links</h3>
+                    <ul style="list-style-type: none; padding: 0;">
+                        <li><a href="index.html">Read Quran</a></li>
+                        <li><a href="juzz.html">Juzz</a></li>
+                        <li><a href="audio.html">Listen to Quran</a></li>
+                        <li><a href="surah-yaseen.html">Surah Yaseen</a></li>
+                        <li><a href="ayat-al-kursi.html">Ayat Al-Kursi</a></li>
+                        <li><a href="surah-al-kahf.html">Surah Al-Kahf</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                    </ul>
+                </div>
+
+                <!-- Privacy Policy & Terms Section -->
+                <div style="flex: 1; min-width: 200px; margin: 10px;">
+                    <h3>Legal</h3>
+                    <ul style="list-style-type: none; padding: 0;">
+                        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="terms-conditions.html">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+
+                <!-- Donate Button Section -->
+                <div style="flex: 1; min-width: 200px; margin: 10px; text-align: center;">
+                    <h3>Support Us</h3>
+                    <p>Your support helps us to keep providing and improving our services. Consider making a donation to help us grow.</p>
+                    <a href="donate.html" class="donate-btn">Donate</a>
+                </div>
+            </div>
+            <p class="text-center">&copy; 2024 Quran Reader. All rights reserved.</p>
+        </div>
+    </footer>
 
     <script src="https://unpkg.com/idb@6.1.0/build/iife/index-min.js"></script>
     <script>
