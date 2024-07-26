@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-       body {
+        body {
             margin: 0;
             height: 100vh;
             background: #abbaab;  /* fallback for old browsers */
@@ -20,6 +20,7 @@
             margin: 0 auto;
             padding: 20px;
             text-align: center;
+            position: relative;
         }
 
         nav {
@@ -56,6 +57,7 @@
         header {
             text-align: center;
             margin-bottom: 20px;
+            position: relative;
         }
 
         h1 {
@@ -129,12 +131,12 @@
             color: #ddd;
         }
 
-        body.dark-mode .juzz {
+        body.dark-mode .surah {
             background-color: #333;
             color: #ddd;
         }
 
-        body.dark-mode .juzz:hover {
+        body.dark-mode .surah:hover {
             background-color: #444;
         }
 
@@ -186,7 +188,15 @@
                 })
                 .catch(error => {
                     loader.style.display = 'none';
-                    darkModeToggle.addEventListener('click', () => {
+                    console.error('Error fetching Surahs:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Unable to fetch Surah list. Please try again later.',
+                    });
+                });
+
+            darkModeToggle.addEventListener('click', () => {
                 document.body.classList.toggle('dark-mode');
                 if (document.body.classList.contains('dark-mode')) {
                     darkModeToggle.classList.remove('fa-moon');
@@ -195,15 +205,10 @@
                     darkModeToggle.classList.remove('fa-sun');
                     darkModeToggle.classList.add('fa-moon');
                 }
-                    console.error('Error fetching Surahs:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Unable to fetch Surah list. Please try again later.',
-                    });
-                });
+            });
         });
     </script>
 </body>
 </html>
+
 
