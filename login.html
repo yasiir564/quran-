@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <script src="https://cdn.clerk.dev/clerk.js"></script>
+</head>
+<body>
+    <div id="clerk-login"></div>
+    <script>
+        Clerk.load({
+            frontendApi: 'sk_test_rJQGwjTJ0UubRHpRnQoeBmAVwz7b9lOcf6GMRhT1W9'
+        });
+
+        Clerk.onReady(() => {
+            Clerk.mountSignIn(document.getElementById('clerk-login'));
+        });
+    </script>
+</body>
+</html>
