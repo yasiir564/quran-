@@ -437,10 +437,32 @@ nav ul {
             text-align: center;
             margin-top: 20px;
         }
+        .header-icons {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    display: flex;
+    gap: 15px;
+}
+
+.header-icons a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.header-icons a:hover {
+    color: #dcdcdc;
+}
+
     </style>
 </head>
 <body>
     </header>
+    <div class="header-icons">
+        <a href="login.html" title="Login"><lord-icon src="https://cdn.lordicon.com/ovwbrvva.json" trigger="hover" colors="primary:#ffffff" style="width:30px;height:30px"></lord-icon></a>
+        <a href="translate.html" title="Page Translation"><lord-icon src="https://cdn.lordicon.com/tyjbylon.json" trigger="hover" colors="primary:#ffffff" style="width:30px;height:30px"></lord-icon></a>
+        <a href="settings.html" title="Settings"><lord-icon src="https://cdn.lordicon.com/xhfytdzv.json" trigger="hover" colors="primary:#ffffff" style="width:30px;height:30px"></lord-icon></a>
+    </div>
 
     <div id="mySidebar" class="sidebar">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
