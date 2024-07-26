@@ -9,16 +9,35 @@
 <body>
     <div id="clerk-login"></div>
     <script>
-        // Initialize Clerk with your frontend API
-        Clerk.load({
-            frontendApi: 'sk_test_rJQGwjTJ0UubRHpRnQoeBmAVwz7b9lOcf6GMRhT1W9'
-        }).then(() => {
-            // When Clerk is ready, mount the sign-in form
-            Clerk.mountSignIn(document.getElementById('clerk-login'));
-        }).catch(err => {
-            console.error("Clerk failed to load:", err);
-        });
+        (function() {
+            // Replace 'your-frontend-api-key' with your actual Clerk frontend API key
+            const frontendApi = 'pk_test_aW5mb3JtZWQtbW9sZS00OC5jbGVyay5hY2NvdW50cy5kZXYk';
+            
+            window.Clerk = window.Clerk || {};
+            window.Clerk.load = () => {
+                // Load Clerk with the frontend API key
+                return new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = `https://cdn.clerk.dev/clerk.js`;
+                    script.async = true;
+                    script.onload = () => {
+                        Clerk = window.Clerk;
+                        Clerk.frontendApi = frontendApi;
+                        Clerk.mountSignIn(document.getElementById('clerk-login'));
+                        resolve();
+                    };
+                    script.onerror = (err) => {
+                        console.error("Failed to load Clerk:", err);
+                        reject(err);
+                    };
+                    document.head.appendChild(script);
+                });
+            };
+
+            Clerk.load();
+        })();
     </script>
 </body>
 </html>
+
 
