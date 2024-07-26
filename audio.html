@@ -115,22 +115,38 @@
             100% { transform: rotate(360deg); }
         }
 
+        .close-button {
+            cursor: pointer;
+            color: #ff0000;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5em;
+        }
+
         body.dark-mode {
             background: linear-gradient(to right, #0f0f0f, #434343);
             color: #ddd;
         }
 
-        body.dark-mode .surah {
+        body.dark-mode .juzz {
             background-color: #333;
             color: #ddd;
         }
 
-        body.dark-mode .surah:hover {
+        body.dark-mode .juzz:hover {
             background-color: #444;
         }
 
         body.dark-mode h1 {
             color: #ddd;
+        }
+
+        .dark-mode-toggle {
+            margin: 10px 0;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #fff;
         }
     </style>
 </head>
@@ -138,6 +154,8 @@
     <div class="container">
         <header>
             <h1>Quran Audio</h1>
+            <i id="dark-mode-toggle" class="fas fa-moon dark-mode-toggle"></i>
+            <span class="close-button" onclick="window.location.href='index.html'">×</span>
         </header>
         <div id="surah-list"></div>
         <div class="loader" id="loader"></div>
@@ -146,6 +164,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const surahList = document.getElementById('surah-list');
             const loader = document.getElementById('loader');
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
 
             loader.style.display = 'block';
 
@@ -167,6 +186,15 @@
                 })
                 .catch(error => {
                     loader.style.display = 'none';
+                    darkModeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                if (document.body.classList.contains('dark-mode')) {
+                    darkModeToggle.classList.remove('fa-moon');
+                    darkModeToggle.classList.add('fa-sun');
+                } else {
+                    darkModeToggle.classList.remove('fa-sun');
+                    darkModeToggle.classList.add('fa-moon');
+                }
                     console.error('Error fetching Surahs:', error);
                     Swal.fire({
                         icon: 'error',
