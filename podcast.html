@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Islamic Scholars Podcast</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        header {
+            background-color: #004080;
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+        }
+        .scholar-card {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .scholar-card img {
+            border-radius: 50%;
+            margin-right: 20px;
+            width: 80px;
+            height: 80px;
+        }
+        .scholar-info {
+            flex: 1;
+        }
+        .scholar-info h2 {
+            margin: 0 0 10px;
+            color: #004080;
+        }
+        .scholar-info p {
+            margin: 0 0 10px;
+        }
+        .scholar-info button {
+            background-color: #004080;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .scholar-info button:hover {
+            background-color: #003366;
+        }
+        footer {
+            background-color: #004080;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Islamic Scholars Podcast</h1>
+        <p>Listen to the wisdom of popular Islamic scholars</p>
+    </header>
+    <div class="container" id="podcast-container">
+        <!-- Podcast entries will be dynamically added here -->
+    </div>
+    <footer>
+        <p>&copy; 2024 Islamic Scholars Podcast. All Rights Reserved.</p>
+    </footer>
+    <script>
+        async function fetchPodcasts() {
+            const rssUrl = 'https://feeds.feedburner.com/islampodcasts';
+            const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`);
+            const data = await response.json();
+
+            const podcastContainer = document.getElementById('podcast-container');
+
+            data.items.forEach(item => {
+                const scholarCard = document.createElement('div');
+                scholarCard.className = 'scholar-card';
+
+                const scholarImage = document.createElement('img');
+                scholarImage.src = 'https://via.placeholder.com/80';
+                scholarImage.alt = 'Scholar Image';
+
+                const scholarInfo = document.createElement('div');
+                scholarInfo.className = 'scholar-info';
+
+                const scholarName = document.createElement('h2');
+                scholarName.textContent = item.title;
+
+                const scholarDescription = document.createElement('p');
+                scholarDescription.textContent = item.description;
+
+                const playButton = document.createElement('button');
+                playButton.textContent = 'Play Podcast';
+                playButton.onclick = () => playPodcast(item.enclosure.link);
+
+                scholarInfo.appendChild(scholarName);
+                scholarInfo.appendChild(scholarDescription);
+                scholarInfo.appendChild(playButton);
+
+                scholarCard.appendChild(scholarImage);
+                scholarCard.appendChild(scholarInfo);
+
+                podcastContainer.appendChild(scholarCard);
+            });
+        }
+
+        function playPodcast(podcastUrl) {
+            const audio = new Audio(podcastUrl);
+            audio.play();
+        }
+
+        window.onload = fetchPodcasts;
+    </script>
+</body>
+</html>
