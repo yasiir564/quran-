@@ -290,9 +290,9 @@
                 });
 
                 Promise.all([
-                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`),
-                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`),
-                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`)
+                    fetch(`https://api.alquran.cloud/v1/surah/36`),
+                    fetch(`https://api.alquran.cloud/v1/surah/36/en.sahih`),
+                    fetch(`https://api.alquran.cloud/v1/surah/36/ar.alafasy`)
                 ])
                 .then(responses => Promise.all(responses.map(response => response.json())))
                 .then(([surahData, translationData, audioData]) => {
