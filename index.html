@@ -307,6 +307,71 @@
         .openbtn:hover {
             background-color: #0056b3;
         }
+        /* Navigation */
+nav ul {
+    display: none;
+}
+
+    /* Mobile Cards */
+.mobile-cards {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+
+.card {
+    background: none;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card lord-icon {
+    font-size: 2em;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .mobile-cards {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+.card {
+        flex: 1 1 calc(50% - 20px);
+        margin: 10px;
+        text-align: center;
+    }
+
+    .card lord-icon {
+        font-size: 3em;
+    }
+}
+
+.text-links {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.text-links a {
+    display: block;
+    font-size: 1.2em;
+    color: #2575fc;
+    text-decoration: none;
+    margin: 10px 0;
+}
+
+.text-links a:hover {
+    text-decoration: underline;
+}
     </style>
 </head>
 <body>
@@ -324,6 +389,21 @@
 
     <div id="main">
         <button class="openbtn" onclick="openNav()">&#9776; Quran Pro</button>
+         <div class="container">
+            <div class="mobile-cards">
+                <a href="index.html" class="card">
+                    <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#121331,secondary:#08a88a" style="width:50px;height:50px"></lord-icon>
+                    <p>Read Quran</p>
+                </a>
+                <a href="juzz.html" class="card">
+                    <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#121331,secondary:#08a88a" style="width:50px;height:50px"></lord-icon>
+                    <p>Juzz</p>
+                </a>
+                <a href="audio.html" class="card">
+                    <lord-icon src="https://cdn.lordicon.com/rhvddzym.json" trigger="hover" colors="primary:#121331,secondary:#08a88a" style="width:50px;height:50px"></lord-icon>
+                    <p>Quran Audio</p>
+                </a>
+            </div>
 
         <div class="container">
             <div id="calendar"></div>
