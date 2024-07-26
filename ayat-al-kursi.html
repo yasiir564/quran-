@@ -109,23 +109,6 @@
             padding-bottom: 10px;
         }
 
-        .audio {
-            display: block;
-            margin: 10px 0;
-        }
-
-        .audio.loading::after {
-            content: ' Loading...';
-            font-size: 1em;
-            color: #3498db;
-            animation: blink 1s linear infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
         .separator {
             display: inline-block;
             margin-left: 10px;
@@ -291,23 +274,15 @@
                 ayatContent.innerHTML = `
                     <div class="ayah">${ayatText}</div>
                     <div class="translation">${translationText}</div>
-                    <audio class="audio" controls>
-                        <source src="path_to_ayat_alkursi_audio.mp3" type="audio/mpeg">
-                        Your browser does not support the audio element.
-                    </audio>
                 `;
 
                 loader.style.display = 'none';
                 ayatContent.style.display = 'block';
 
-                const audio = document.querySelector('.audio');
+                const ayah = document.querySelector('.ayah');
 
-                audio.addEventListener('play', () => {
-                    document.querySelector('.ayah').classList.add('playing');
-                });
-
-                audio.addEventListener('ended', () => {
-                    document.querySelector('.ayah').classList.remove('playing');
+                ayah.addEventListener('click', () => {
+                    ayah.classList.toggle('playing');
                 });
             }
 
