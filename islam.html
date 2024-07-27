@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Islamic Calendar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f3f3;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+            margin-top: 20px;
+        }
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .day, .event, .goal {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .day:hover, .event:hover, .goal:hover {
+            background-color: #f9f9f9;
+        }
+        .event {
+            background-color: #f1f1f1;
+        }
+        .goal {
+            background-color: #e1f5e1;
+        }
+        .important-date {
+            background-color: #ffeb3b;
+        }
+        .header {
+            grid-column: span 7;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .goal-setting {
+            margin-top: 20px;
+        }
+        .goal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .goal-form input, .goal-form button {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .goal-form button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+        .goals-list {
+            list-style: none;
+            padding: 0;
+        }
+        .goals-list li {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Islamic Calendar</h1>
+        <div class="calendar" id="calendar">
+            <!-- Calendar will be generated here -->
+        </div>
+
+        <div class="goal-setting">
+            <h2>Set Your Goals</h2>
+            <form class="goal-form" id="goalForm">
+                <input type="text" id="goalInput" placeholder="Enter your goal" required>
+                <button type="submit">Add Goal</button>
+            </form>
+            <ul class="goals-list" id="goalsList">
+                <!-- Goals will be appended here -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const months = [
+            "Muharram", "Safar", "Rabi' al-Awwal", "Rabi' al-Thani", "Jumada al-Awwal", 
+            "Jumada al-Thani", "Rajab", "Sha'ban", "Ramadan", "Shawwal", "Dhu al-Qi'dah", "Dhu al-Hijjah"
+        ];
+
+        const importantDates = {
+            "Muharram": { 1: "Islamic New Year", 10: "Day of Ashura" },
+            "Safar": { 27: "Isra and Mi'raj" },
+            "Rabi' al-Awwal": { 12: "Mawlid al-Nabi" },
+            "Rajab": { 27: "Lailat al-Miraj" },
+            "Sha'ban": { 15: "Lailat al-Bara'ah" },
+            "Ramadan": { 1: "Start of Ramadan", 27: "Lailat al-Qadr" },
+            "Shawwal": { 1: "Eid al-Fitr" },
+            "Dhu al-Hijjah": { 8: "Day of Tarwiyah", 9: "Day of Arafat", 10: "Eid al-Adha" }
+        };
+
+        const daysInMonth = 30; // Simplified for demonstration
+
+        function generateCalendar(month) {
+            const calendar = document.getElementById('calendar');
+            calendar.innerHTML = `<div class="header">${month}</div>`;
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'day';
+                if (importantDates[month] && importantDates[month][day]) {
+                    dayElement.classList.add('important-date');
+                    dayElement.innerHTML = `${day}<br>${importantDates[month][day]}`;
+                } else {
+                    dayElement.textContent = day;
+                }
+                calendar.appendChild(dayElement);
+            }
+        }
+
+        document.getElementById('goalForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const goalInput = document.getElementById('goalInput');
+            const goal = goalInput.value.trim();
+            if (goal) {
+                const goalsList = document.getElementById('goalsList');
+                const li = document.createElement('li');
+                li.textContent = goal;
+                goalsList.appendChild(li);
+                goalInput.value = '';
+            }
+        });
+
+        // Generate calendar for Muharram as an example
+        generateCalendar("Muharram");
+    </script>
+</body>
+</html>
