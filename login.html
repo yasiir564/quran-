@@ -1,25 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Form</title>
-    <script
-      async
-      crossorigin="anonymous"
-      data-clerk-publishable-key="pk_test_aW5mb3JtZWQtbW9sZS00OC5jbGVyay5hY2NvdW50cy5kZXYk"
-      src="https://informed-mole-48.clerk.accounts.dev/npm/@clerk/clerk-js@4/dist/clerk.browser.js"
-      type="text/javascript">
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Form</title>
 </head>
 <body>
-    <div id="clerk-login"></div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            Clerk.onReady(() => {
-                Clerk.mountSignIn(document.getElementById('clerk-login'));
-            });
-        });
-    </script>
+  <div id="clerk-login"></div>
+
+  <script
+    async
+    crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_aW5mb3JtZWQtbW9sZS00OC5jbGVyay5hY2NvdW50cy5kZXYk"
+    src="https://informed-mole-48.clerk.accounts.dev/npm/@clerk/clerk-js@4/dist/clerk.browser.js"
+    type="text/javascript">
+  </script>
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Initialize Clerk
+      await Clerk.load({ publishableKey: 'pk_test_aW5mb3JtZWQtbW9sZS00OC5jbGVyay5hY2NvdW50cy5kZXYk' });
+
+      // Mount the Clerk login component
+      Clerk.mountLogin('#clerk-login', {
+        afterSignInUrl: '/dashboard',
+        afterSignUpUrl: '/welcome'
+      });
+    });
+  </script>
 </body>
 </html>
