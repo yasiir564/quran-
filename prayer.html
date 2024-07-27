@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prayer Times</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+        
+        body {
+            font-family: 'Lobster', cursive;
+            background: linear-gradient(
+                rgba(0, 0, 0, 0.5), 
+                rgba(0, 0, 0, 0.5)
+            ), url('mosque-background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .prayer-time {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            margin: 10px 0;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .prayer-time span:first-child {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .prayer-time span:last-child {
+            color: #007BFF;
+        }
+
+        #location {
+            margin-bottom: 20px;
+            font-style: italic;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Prayer Times</h1>
+        <div id="location"></div>
+        <div id="prayer-times">
+            <div class="prayer-time">
+                <span>Fajr:</span> <span id="fajr"></span>
+            </div>
+            <div class="prayer-time">
+                <span>Dhuhr:</span> <span id="dhuhr"></span>
+            </div>
+            <div class="prayer-time">
+                <span>Asr:</span> <span id="asr"></span>
+            </div>
+            <div class="prayer-time">
+                <span>Maghrib:</span> <span id="maghrib"></span>
+            </div>
+            <div class="prayer-time">
+                <span>Isha:</span> <span id="isha"></span>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get user's location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+
+            function showPosition(position) {
+                let lat = position.coords.latitude;
+                let lon = position.coords.longitude;
+
+                // Fetch prayer times
+                fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=2`)
+                    .then(response => response.json())
+                    .then(data => {
+                        let timings = data.data.timings;
+                        document.getElementById("fajr").textContent = timings.Fajr;
+                        document.getElementById("dhuhr").textContent = timings.Dhuhr;
+                        document.getElementById("asr").textContent = timings.Asr;
+                        document.getElementById("maghrib").textContent = timings.Maghrib;
+                        document.getElementById("isha").textContent = timings.Isha;
+
+                        let location = data.data.meta.timezone;
+                        document.getElementById("location").textContent = `Location: ${location}`;
+                    })
+                    .catch(error => console.error("Error fetching prayer times:", error));
+            }
+
+            function showError(error) {
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        alert("User denied the request for Geolocation.");
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        alert("Location information is unavailable.");
+                        break;
+                    case error.TIMEOUT:
+                        alert("The request to get user location timed out.");
+                        break;
+                    case error.UNKNOWN_ERROR:
+                        alert("An unknown error occurred.");
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
