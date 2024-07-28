@@ -610,132 +610,165 @@ footer .text-center {
     </footer>
 
     <script src="https://unpkg.com/idb@6.1.0/build/iife/index-min.js"></script>
-    <script>
-        function openNav() {
-            document.getElementById("mySidebar").style.left = "0";
-            document.getElementById("main").style.marginLeft = "250px";
+  <script>
+    function openNav() {
+        document.getElementById("mySidebar").style.left = "0";
+        document.getElementById("main").style.marginLeft = "250px";
+    }
+
+    function closeNav() {
+        document.getElementById("mySidebar").style.left = "-250px";
+        document.getElementById("main").style.marginLeft = "0";
+    }
+
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+    }
+
+    document.querySelector('.search-container button').addEventListener('click', function() {
+        Swal.fire('Search feature is under development!');
+    });
+
+    function showLoader() {
+        document.getElementById('loader').style.display = 'block';
+    }
+
+    function hideLoader() {
+        document.getElementById('loader').style.display = 'none';
+    }
+
+    function loadContent() {
+        showLoader();
+        setTimeout(() => {
+            hideLoader();
+        }, 2000);
+    }
+
+    window.onload = function() {
+        openNav();
+        loadContent();
+    };
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(function(registration) {
+                console.log('Service Worker registered with scope:', registration.scope);
+            }).catch(function(error) {
+                console.log('Service Worker registration failed:', error);
+            });
+    }
+
+    async function getSurahData() {
+        const db = await idb.openDB('quran-reader-db', 1, {
+            upgrade(db) {
+                db.createObjectStore('surahs', { keyPath: 'number' });
+            }
+        });
+
+        const surahs = await db.getAll('surahs');
+        if (surahs.length) {
+            return surahs;
+        } else {
+            const response = await fetch('https://api.alquran.cloud/v1/surah');
+            const data = await response.json();
+            const tx = db.transaction('surahs', 'readwrite');
+            for (const surah of data.data) {
+                tx.store.put(surah);
+            }
+            await tx.done;
+            return data.data;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', async function () {
+        const surahList = document.getElementById('surah-list');
+        const loader = document.getElementById('loader');
+        loader.style.display = 'block';
+
+        try {
+            const surahs = await getSurahData();
+            loader.style.display = 'none';
+            const fragment = document.createDocumentFragment();
+            surahs.forEach(surah => {
+                const surahDiv = document.createElement('div');
+                surahDiv.classList.add('surah');
+                surahDiv.innerText = surah.englishName;
+                surahDiv.addEventListener('click', () => {
+                    window.location.href = `surah.html?surah=${surah.number}`;
+                });
+                fragment.appendChild(surahDiv);
+            });
+            surahList.appendChild(fragment);
+        } catch (error) {
+            loader.style.display = 'none';
+            console.error('Error fetching Surahs:', error);
         }
 
-        function closeNav() {
-            document.getElementById("mySidebar").style.left = "-250px";
-            document.getElementById("main").style.marginLeft = "0";
-        }
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
 
-        function toggleDarkMode() {
+        searchButton.addEventListener('click', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const surahElements = surahList.querySelectorAll('.surah');
+            surahElements.forEach(surah => {
+                if (surah.innerText.toLowerCase().includes(searchTerm)) {
+                    surah.style.display = 'block';
+                } else {
+                    surah.style.display = 'none';
+                }
+            });
+        });
+
+        darkModeToggle.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
-        }
-
-        document.querySelector('.search-container button').addEventListener('click', function() {
-            Swal.fire('Search feature is under development!');
         });
 
-        function showLoader() {
-            document.getElementById('loader').style.display = 'block';
+        const hijriDate = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        }).format(new Date());
+
+        const hijriDateArabic = new Intl.DateTimeFormat('ar-TN-u-ca-islamic', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        }).format(new Date());
+
+        const calendarDiv = document.getElementById('calendar');
+        calendarDiv.innerHTML = `<p id="hijri-date">${hijriDate}</p><p id="hijri-date-arabic">${hijriDateArabic}</p>`;
+    });
+
+    // Hide header on scroll down, show on scroll up or stop
+    let lastScrollTop = 0;
+    const header = document.querySelector('header');
+    let scrollTimeout;
+
+    window.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+
+        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+        if (currentScrollTop > lastScrollTop) {
+            // Scroll down
+            header.classList.remove('header-visible');
+            header.classList.add('header-hidden');
+        } else {
+            // Scroll up
+            header.classList.remove('header-hidden');
+            header.classList.add('header-visible');
         }
 
-        function hideLoader() {
-            document.getElementById('loader').style.display = 'none';
-        }
+        lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop; // For mobile or negative scrolling
 
-        function loadContent() {
-            showLoader();
-            setTimeout(() => {
-                hideLoader();
-            }, 2000);
-        }
+        // Show header after user stops scrolling
+        scrollTimeout = setTimeout(() => {
+            header.classList.remove('header-hidden');
+            header.classList.add('header-visible');
+        }, 200);
+    });
+</script>
 
-        window.onload = loadContent;
-
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js')
-                .then(function(registration) {
-                    console.log('Service Worker registered with scope:', registration.scope);
-                }).catch(function(error) {
-                    console.log('Service Worker registration failed:', error);
-                });
-        }
-
-        async function getSurahData() {
-            const db = await idb.openDB('quran-reader-db', 1, {
-                upgrade(db) {
-                    db.createObjectStore('surahs', { keyPath: 'number' });
-                }
-            });
-
-            const surahs = await db.getAll('surahs');
-            if (surahs.length) {
-                return surahs;
-            } else {
-                const response = await fetch('https://api.alquran.cloud/v1/surah');
-                const data = await response.json();
-                const tx = db.transaction('surahs', 'readwrite');
-                for (const surah of data.data) {
-                    tx.store.put(surah);
-                }
-                await tx.done;
-                return data.data;
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', async function () {
-            const surahList = document.getElementById('surah-list');
-            const loader = document.getElementById('loader');
-            loader.style.display = 'block';
-
-            try {
-                const surahs = await getSurahData();
-                loader.style.display = 'none';
-                const fragment = document.createDocumentFragment();
-                surahs.forEach(surah => {
-                    const surahDiv = document.createElement('div');
-                    surahDiv.classList.add('surah');
-                    surahDiv.innerText = surah.englishName;
-                    surahDiv.addEventListener('click', () => {
-                        window.location.href = surah.html?surah=${surah.number};
-                    });
-                    fragment.appendChild(surahDiv);
-                });
-                surahList.appendChild(fragment);
-            } catch (error) {
-                loader.style.display = 'none';
-                console.error('Error fetching Surahs:', error);
-            }
-
-            const searchInput = document.getElementById('search-input');
-            const searchButton = document.getElementById('search-button');
-            const darkModeToggle = document.getElementById('dark-mode-toggle');
-
-            searchButton.addEventListener('click', () => {
-                const searchTerm = searchInput.value.toLowerCase();
-                const surahElements = surahList.querySelectorAll('.surah');
-                surahElements.forEach(surah => {
-                    if (surah.innerText.toLowerCase().includes(searchTerm)) {
-                        surah.style.display = 'block';
-                    } else {
-                        surah.style.display = 'none';
-                    }
-                });
-            });
-
-            darkModeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('dark-mode');
-            });
-
-            const hijriDate = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            }).format(new Date());
-
-            const hijriDateArabic = new Intl.DateTimeFormat('ar-TN-u-ca-islamic', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            }).format(new Date());
-
-            const calendarDiv = document.getElementById('calendar');
-            calendarDiv.innerHTML = <p id="hijri-date">${hijriDate}</p><p id="hijri-date-arabic">${hijriDateArabic}</p>;
-        });
-    </script>
 </body>
 </html>
