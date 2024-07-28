@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasbih Pro</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .top-menu {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .top-menu button {
+            background: none;
+            border: none;
+            font-size: 2em;
+            cursor: pointer;
+            color: #000;
+        }
+        .tasbih-counter {
+            width: 80%;
+            max-width: 300px;
+            height: 220px;
+            background-color: #fff;
+            border: 2px solid #000;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .screen {
+            width: 100px;
+            height: 40px;
+            background-color: #000;
+            color: #fff;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .button {
+            width: 50px;
+            height: 50px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 5px 0;
+        }
+        .reset-button {
+            background-color: red;
+            width: 40px;
+            height: 40px;
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+        .count-button {
+            width: 60px;
+            height: 60px;
+            font-size: 1.2em;
+        }
+        .button:active {
+            background-color: #444;
+        }
+        .label {
+            font-size: 0.8em;
+            position: absolute;
+            top: 10px;
+        }
+        .label-left {
+            left: 10px;
+        }
+        .label-right {
+            right: 10px;
+        }
+        .bottom-buttons {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        .bottom-buttons button {
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 1em;
+            margin: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-menu">
+        <button id="rateApp">⭐</button>
+        <button id="muteApp">🔇</button>
+        <button id="changeBgColor">🎨</button>
+        <button id="changeBtnColor">🔄</button>
+    </div>
+    <div class="tasbih-counter">
+        <div class="label label-left">SXH5136</div>
+        <div class="screen" id="countDisplay">0000</div>
+        <div class="buttons">
+            <button class="button count-button" id="countButton"></button>
+            <button class="button reset-button" id="resetButton"></button>
+        </div>
+        <div class="label label-right">LED</div>
+    </div>
+    <div class="bottom-buttons">
+        <button id="saveTasbih">Save</button>
+        <button id="viewSavedTasbih">Saved Tasbih</button>
+    </div>
+
+    <audio id="clickSound" src="http://hayatinitiative.org/wp-content/uploads/2024/07/mixkit-arcade-game-jump-coin-216.wav"></audio>
+
+    <script>
+        let count = 0;
+        let isMuted = false;
+        const countDisplay = document.getElementById('countDisplay');
+        const countButton = document.getElementById('countButton');
+        const resetButton = document.getElementById('resetButton');
+        const clickSound = document.getElementById('clickSound');
+        const rateAppButton = document.getElementById('rateApp');
+        const muteAppButton = document.getElementById('muteApp');
+        const changeBgColorButton = document.getElementById('changeBgColor');
+        const changeBtnColorButton = document.getElementById('changeBtnColor');
+        const saveTasbihButton = document.getElementById('saveTasbih');
+        const viewSavedTasbihButton = document.getElementById('viewSavedTasbih');
+
+        const colors = ['#f0f0f0', '#ffcccc', '#ccffcc', '#ccccff'];
+        const buttonColors = ['#000', '#007BFF', '#28A745', '#DC3545'];
+
+        countButton.addEventListener('click', () => {
+            count++;
+            countDisplay.textContent = count.toString().padStart(4, '0');
+            if (!isMuted) {
+                clickSound.play();
+            }
+        });
+
+        resetButton.addEventListener('click', () => {
+            if (confirm('Are you sure you want to reset the count?')) {
+                count = 0;
+                countDisplay.textContent = count.toString().padStart(4, '0');
+            }
+        });
+
+        muteAppButton.addEventListener('click', () => {
+            isMuted = !isMuted;
+            muteAppButton.textContent = isMuted ? '🔊' : '🔇';
+        });
+
+        changeBgColorButton.addEventListener('click', () => {
+            document.body.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        });
+
+        changeBtnColorButton.addEventListener('click', () => {
+            const newColor = buttonColors[Math.floor(Math.random() * buttonColors.length)];
+            countButton.style.backgroundColor = newColor;
+            resetButton.style.backgroundColor = newColor;
+        });
+
+        rateAppButton.addEventListener('click', () => {
+            alert('Thank you for rating our app!');
+        });
+
+        saveTasbihButton.addEventListener('click', () => {
+            const savedCounts = JSON.parse(localStorage.getItem('savedTasbihCounts')) || [];
+            savedCounts.push(count);
+            localStorage.setItem('savedTasbihCounts', JSON.stringify(savedCounts));
+            alert('Tasbih count saved!');
+        });
+
+        viewSavedTasbihButton.addEventListener('click', () => {
+            const savedCounts = JSON.parse(localStorage.getItem('savedTasbihCounts')) || [];
+            alert('Saved Tasbih Counts: ' + savedCounts.join(', '));
+        });
+    </script>
+</body>
+</html>
