@@ -8,175 +8,46 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
-        body {
-            margin: 0;
-            height: 100vh;
-            background: #abbaab;
-            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
-            background: linear-gradient(to right, #ffffff, #abbaab);
-            font-family: 'Amiri', serif;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            text-align: center;
-        }
-
-        nav {
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-        }
-
-        nav ul li {
-            margin: 0 10px;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: #333;
-            font-size: 1.2em;
-            padding: 10px 20px;
-            display: block;
-        }
-
-        nav ul li a:hover {
-            background-color: #f0f0f0;
-            border-radius: 5px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        h1 {
-            font-size: 2.5em;
-            color: #fff;
-        }
-
-        .calendar {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
-            margin: 20px 0;
-        }
-
-        .day, .event, .goal {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: center;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s, background-color 0.3s;
-        }
-
-        .day:hover, .event:hover, .goal:hover {
-            transform: scale(1.05);
-            background-color: #f0f0f0;
-        }
-
-        .event {
-            background-color: #f1f1f1;
-        }
-
-        .goal {
-            background-color: #e1f5e1;
-        }
-
-        .important-date {
-            background-color: #ffeb3b;
-        }
-
-        .header {
-            grid-column: span 7;
-            background-color: #4CAF50;
-            color: white;
-            text-align: center;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        .goal-setting {
-            margin-top: 20px;
-        }
-
-        .goal-form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin: 20px 0;
-        }
-
-        .goal-form input, .goal-form button {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .goal-form button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-        }
-
-        .goals-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .goals-list li {
-            background-color: white;
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 5px;
-        }
-
-        .close-button {
-            cursor: pointer;
-            color: #ff0000;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.5em;
-        }
-
-        body.dark-mode {
-            background: linear-gradient(to right, #0f0f0f, #434343);
-            color: #ddd;
-        }
-
-        body.dark-mode .day, body.dark-mode .event, body.dark-mode .goal {
-            background-color: #333;
-            color: #ddd;
-        }
-
-        body.dark-mode .day:hover, body.dark-mode .event:hover, body.dark-mode .goal:hover {
-            background-color: #444;
-        }
-
-        body.dark-mode h1 {
-            color: #ddd;
-        }
-
-        .dark-mode-toggle {
+        /* Existing styles... */
+        
+        .calendar-controls {
             margin: 10px 0;
+        }
+
+        .calendar-controls select, .calendar-controls button {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        .goal-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .goal-item button {
+            background: transparent;
+            border: none;
+            color: red;
+            font-size: 1em;
             cursor: pointer;
-            font-size: 1.5em;
-            color: #fff;
+        }
+
+        .goal-item button:hover {
+            color: darkred;
+        }
+
+        .goal-item input[type="text"] {
+            border: none;
+            background: transparent;
+            width: 100%;
+        }
+
+        .goal-item input[type="text"].completed {
+            text-decoration: line-through;
+            color: gray;
         }
     </style>
 </head>
@@ -187,6 +58,13 @@
             <i id="dark-mode-toggle" class="fas fa-moon dark-mode-toggle"></i>
             <span class="close-button" onclick="window.location.href='index.html'">×</span>
         </header>
+
+        <div class="calendar-controls">
+            <button id="prevMonth">Previous</button>
+            <button id="nextMonth">Next</button>
+            <select id="monthSelect"></select>
+        </div>
+
         <div class="calendar" id="calendar">
             <!-- Calendar will be generated here -->
         </div>
@@ -220,11 +98,13 @@
             "Dhu al-Hijjah": { 8: "Day of Tarwiyah", 9: "Day of Arafat", 10: "Eid al-Adha" }
         };
 
-        const daysInMonth = 30; // Simplified for demonstration
-
+        let currentMonthIndex = 0;
+        
         function generateCalendar(month) {
             const calendar = document.getElementById('calendar');
             calendar.innerHTML = `<div class="header">${month}</div>`;
+            const daysInMonth = 30; // Simplified for demonstration
+
             for (let day = 1; day <= daysInMonth; day++) {
                 const dayElement = document.createElement('div');
                 dayElement.className = 'day';
@@ -238,6 +118,18 @@
             }
         }
 
+        function updateMonthSelect() {
+            const monthSelect = document.getElementById('monthSelect');
+            monthSelect.innerHTML = months.map((month, index) => 
+                `<option value="${index}" ${index === currentMonthIndex ? 'selected' : ''}>${month}</option>`
+            ).join('');
+        }
+
+        function loadCalendar() {
+            generateCalendar(months[currentMonthIndex]);
+            updateMonthSelect();
+        }
+
         document.getElementById('goalForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const goalInput = document.getElementById('goalInput');
@@ -245,26 +137,56 @@
             if (goal) {
                 const goalsList = document.getElementById('goalsList');
                 const li = document.createElement('li');
-                li.textContent = goal;
+                li.className = 'goal-item';
+                li.innerHTML = `
+                    <input type="text" value="${goal}" readonly>
+                    <button onclick="removeGoal(this)">✖</button>
+                `;
                 goalsList.appendChild(li);
                 goalInput.value = '';
             }
         });
 
-        const darkModeToggle = document.getElementById('dark-mode-toggle');
-        darkModeToggle.addEventListener('click', () => {
+        function removeGoal(button) {
+            button.parentElement.remove();
+        }
+
+        document.getElementById('dark-mode-toggle').addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
-            if (document.body.classList.contains('dark-mode')) {
-                darkModeToggle.classList.remove('fa-moon');
-                darkModeToggle.classList.add('fa-sun');
-            } else {
-                darkModeToggle.classList.remove('fa-sun');
-                darkModeToggle.classList.add('fa-moon');
+            const darkModeEnabled = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', darkModeEnabled);
+            document.getElementById('dark-mode-toggle').classList.toggle('fa-moon', !darkModeEnabled);
+            document.getElementById('dark-mode-toggle').classList.toggle('fa-sun', darkModeEnabled);
+        });
+
+        document.getElementById('prevMonth').addEventListener('click', () => {
+            if (currentMonthIndex > 0) {
+                currentMonthIndex--;
+                loadCalendar();
             }
         });
 
-        // Generate calendar for Muharram as an example
-        generateCalendar("Muharram");
+        document.getElementById('nextMonth').addEventListener('click', () => {
+            if (currentMonthIndex < months.length - 1) {
+                currentMonthIndex++;
+                loadCalendar();
+            }
+        });
+
+        document.getElementById('monthSelect').addEventListener('change', (e) => {
+            currentMonthIndex = parseInt(e.target.value);
+            loadCalendar();
+        });
+
+        // Load dark mode preference from localStorage
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('dark-mode-toggle').classList.remove('fa-moon');
+            document.getElementById('dark-mode-toggle').classList.add('fa-sun');
+        }
+
+        // Initial calendar load
+        loadCalendar();
     </script>
 </body>
 </html>
