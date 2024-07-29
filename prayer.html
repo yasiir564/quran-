@@ -9,19 +9,60 @@
         @import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
         @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
         @import url('https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css');
-        
+
         body {
-            font-family: 'Lobster', cursive;
-            background: linear-gradient(
-                rgba(0, 0, 0, 0.5), 
-                rgba(0, 0, 0, 0.5)
-            ), url('mosque-background.jpg') no-repeat center center fixed;
-            background-size: cover;
+            font-family: 'Amiri', serif;
+            background: #abbaab;
+            background: linear-gradient(to right, #ffffff, #abbaab);
+            margin: 0;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            transition: background 0.3s;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
             margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            margin: 0 10px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 1.2em;
+            padding: 10px 20px;
+            display: block;
+        }
+
+        nav ul li a:hover {
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+
+        .dark-mode-toggle {
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #333;
         }
 
         .container {
@@ -31,6 +72,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             text-align: center;
             max-width: 400px;
+            position: relative;
         }
 
         h1 {
@@ -62,139 +104,6 @@
             color: #777;
         }
 
-        /* Additional CSS from Islamic Calendar page */
-        body {
-            margin: 0;
-            height: 100vh;
-            background: #abbaab;
-            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
-            background: linear-gradient(to right, #ffffff, #abbaab);
-            font-family: 'Amiri', serif;
-        }
-
-        nav {
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-        }
-
-        nav ul li {
-            margin: 0 10px;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: #333;
-            font-size: 1.2em;
-            padding: 10px 20px;
-            display: block;
-        }
-
-        nav ul li a:hover {
-            background-color: #f0f0f0;
-            border-radius: 5px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .calendar {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
-            margin: 20px 0;
-        }
-
-        .day, .event, .goal {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: center;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s, background-color 0.3s;
-        }
-
-        .day:hover, .event:hover, .goal:hover {
-            transform: scale(1.05);
-            background-color: #f0f0f0;
-        }
-
-        .event {
-            background-color: #f1f1f1;
-        }
-
-        .goal {
-            background-color: #e1f5e1;
-        }
-
-        .important-date {
-            background-color: #ffeb3b;
-            font-weight: bold;
-        }
-
-        .header {
-            grid-column: span 7;
-            background-color: #4CAF50;
-            color: white;
-            text-align: center;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        .goal-setting {
-            margin-top: 20px;
-        }
-
-        .goal-form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin: 20px 0;
-        }
-
-        .goal-form input, .goal-form button {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .goal-form button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .goal-form button:hover {
-            background-color: #45a049;
-        }
-
-        .goals-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .goals-list li {
-            background-color: white;
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 5px;
-        }
-
         .close-button {
             cursor: pointer;
             color: #ff0000;
@@ -209,47 +118,54 @@
             color: #ddd;
         }
 
-        body.dark-mode .day, body.dark-mode .event, body.dark-mode .goal {
+        body.dark-mode nav {
             background-color: #333;
+        }
+
+        body.dark-mode nav ul li a {
             color: #ddd;
         }
 
-        body.dark-mode .day:hover, body.dark-mode .event:hover, body.dark-mode .goal:hover {
+        body.dark-mode nav ul li a:hover {
             background-color: #444;
         }
 
-        body.dark-mode h1 {
+        body.dark-mode .container {
+            background: rgba(50, 50, 50, 0.8);
             color: #ddd;
         }
 
-        .dark-mode-toggle {
-            margin: 10px 0;
-            cursor: pointer;
-            font-size: 1.5em;
-            color: #fff;
+        body.dark-mode .prayer-time {
+            border-bottom: 1px solid #555;
         }
 
-        #calendar-controls {
-            margin-bottom: 20px;
+        body.dark-mode .prayer-time span:first-child {
+            color: #ccc;
         }
 
-        #calendar-controls button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s;
+        body.dark-mode .prayer-time span:last-child {
+            color: #4a90e2;
         }
 
-        #calendar-controls button:hover {
-            background-color: #45a049;
+        body.dark-mode #location {
+            color: #aaa;
         }
     </style>
 </head>
 <body>
+    <nav>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Islamic Calendar</a></li>
+            <li><a href="#">Prayer Times</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+        <div class="dark-mode-toggle">
+            <i class="fas fa-moon"></i>
+        </div>
+    </nav>
     <div class="container">
+        <div class="close-button">&times;</div>
         <h1>Prayer Times</h1>
         <div id="location"></div>
         <div id="prayer-times">
@@ -316,6 +232,23 @@
                         break;
                 }
             }
+
+            // Dark mode toggle
+            const darkModeToggle = document.querySelector('.dark-mode-toggle');
+            darkModeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                if (document.body.classList.contains('dark-mode')) {
+                    darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                } else {
+                    darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                }
+            });
+
+            // Close button functionality
+            const closeButton = document.querySelector('.close-button');
+            closeButton.addEventListener('click', () => {
+                document.querySelector('.container').style.display = 'none';
+            });
         });
     </script>
 </body>
