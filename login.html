@@ -6,6 +6,8 @@
     <title>Animated Login Form</title>
     <link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a81368914c.js"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com">
     <style>
         * {
             padding: 0;
@@ -191,6 +193,10 @@
             background-position: right;
         }
 
+        .g-signin2 {
+            margin-top: 1rem;
+        }
+
         @media screen and (max-width: 1050px) {
             .container {
                 grid-gap: 5rem;
@@ -232,14 +238,14 @@
     </style>
 </head>
 <body>
-    <img class="wave" src="wave.png">
+    <img class="wave" src="img/wave.png">
     <div class="container">
         <div class="img">
-            <img src="bg.svg">
+            <img src="img/bg.svg">
         </div>
         <div class="login-content">
-            <form action="index.html">
-                <img src="avatar.svg">
+            <form id="login-form" action="login.php" method="post">
+                <img src="img/avatar.svg">
                 <h2 class="title">Welcome</h2>
                 <div class="input-div one">
                     <div class="i">
@@ -247,7 +253,7 @@
                     </div>
                     <div class="div">
                         <h5>Username</h5>
-                        <input type="text" class="input">
+                        <input type="text" name="username" class="input" required>
                     </div>
                 </div>
                 <div class="input-div pass">
@@ -256,11 +262,12 @@
                     </div>
                     <div class="div">
                         <h5>Password</h5>
-                        <input type="password" class="input">
+                        <input type="password" name="password" class="input" required>
                     </div>
                 </div>
                 <a href="#">Forgot Password?</a>
                 <input type="submit" class="btn" value="Login">
+                <div class="g-signin2" data-onsuccess="onSignIn"></div>
             </form>
         </div>
     </div>
@@ -283,7 +290,24 @@
             input.addEventListener("focus", addcl);
             input.addEventListener("blur", remcl);
         });
+
+        function onSignIn(googleUser) {
+            var profile = googleUser.getBasicProfile();
+            console.log('ID: ' + profile.getId());
+            console.log('Name: ' + profile.getName());
+            console.log('Image URL: ' + profile.getImageUrl());
+            console.log('Email: ' + profile.getEmail());
+
+            var id_token = googleUser.getAuthResponse().id_token;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'login.php');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                console.log('Signed in as: ' + xhr.responseText);
+                // Handle the response here
+            };
+            xhr.send('idtoken=' + id_token);
+        }
     </script>
 </body>
 </html>
-
