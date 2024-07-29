@@ -626,30 +626,31 @@ footer .text-center {
     function toggleDarkMode() {
         document.body.classList.toggle('dark-mode');
     }
-      function performSearch() {
-    const query = document.querySelector('#search-input').value.toLowerCase();
-    const surahElements = document.querySelectorAll('.surah');
-    
-    surahElements.forEach(surahElement => {
-        const surahName = surahElement.innerText.toLowerCase();
-        if (surahName.includes(query)) {
-            surahElement.style.display = 'block';
-        } else {
-            surahElement.style.display = 'none';
+
+    function performSearch() {
+        const query = document.querySelector('#search-input').value.toLowerCase();
+        const surahElements = document.querySelectorAll('.surah');
+        
+        surahElements.forEach(surahElement => {
+            const surahName = surahElement.innerText.toLowerCase();
+            if (surahName.includes(query)) {
+                surahElement.style.display = 'block';
+            } else {
+                surahElement.style.display = 'none';
+            }
+        });
+    }
+
+    document.querySelector('.search-container button').addEventListener('click', function() {
+        performSearch();
+    });
+
+    document.querySelector('#search-input').addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            performSearch();
         }
     });
-}
 
-
-document.querySelector('.search-container button').addEventListener('click', function() {
-    performSearch();
-});
-
-document.querySelector('#search-input').addEventListener('keypress', function(event) {
-    if (event.key === 'Enter') {
-        performSearch();
-    }
-});
     function showLoader() {
         document.getElementById('loader').style.display = 'block';
     }
@@ -666,7 +667,6 @@ document.querySelector('#search-input').addEventListener('keypress', function(ev
     }
 
     window.onload = function() {
-        
         loadContent();
     };
 
@@ -715,7 +715,7 @@ document.querySelector('#search-input').addEventListener('keypress', function(ev
                 surahDiv.classList.add('surah');
                 surahDiv.innerText = surah.englishName;
                 surahDiv.addEventListener('click', () => {
-                    window.location.href = surah.html?surah=${surah.number};
+                    window.location.href = `surah.html?surah=${surah.number}`;
                 });
                 fragment.appendChild(surahDiv);
             });
@@ -758,7 +758,7 @@ document.querySelector('#search-input').addEventListener('keypress', function(ev
         }).format(new Date());
 
         const calendarDiv = document.getElementById('calendar');
-        calendarDiv.innerHTML = <p id="hijri-date">${hijriDate}</p><p id="hijri-date-arabic">${hijriDateArabic}</p>;
+        calendarDiv.innerHTML = `<p id="hijri-date">${hijriDate}</p><p id="hijri-date-arabic">${hijriDateArabic}</p>`;
     });
 
     // Hide header on scroll down, show on scroll up or stop
