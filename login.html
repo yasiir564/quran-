@@ -39,6 +39,7 @@
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required><br>
         <button type="submit">Login</button>
+        <button type="button" onclick="window.location.href='register.html'">Register</button>
     </form>
     <br>
     <div class="g-signin2" data-onsuccess="onSignIn"></div>
@@ -65,7 +66,7 @@
 
             if (user) {
                 alert('Login successful');
-                // Redirect or perform other actions
+                window.location.href = 'index.html'; // Redirect to main page
             } else {
                 alert('Invalid username or password');
             }
@@ -79,8 +80,9 @@
             console.log('Email: ' + profile.getEmail());
 
             alert('Google Sign-In successful');
-            // Redirect or perform other actions
+            window.location.href = 'main.html'; // Redirect to main page
         }
     </script>
 </body>
 </html>
+
