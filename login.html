@@ -16,15 +16,16 @@
             height: 100vh;
             margin: 0;
         }
-        form {
-            max-width: 300px;
+        .container {
+            width: 100%;
+            max-width: 400px;
             padding: 2em;
             background: #fff;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
         }
         h2 {
-            text-align: center;
             color: #333;
         }
         label {
@@ -61,28 +62,38 @@
         }
         button[type="button"] {
             background-color: #888;
+            margin-bottom: 1em;
         }
         button[type="button"]:hover {
             background-color: #666;
         }
+        .toggle-password {
+            float: right;
+            margin-right: 1em;
+            cursor: pointer;
+            color: #666;
+        }
         .g-signin2 {
-            margin-top: 1em;
             display: block;
             margin: auto;
         }
     </style>
 </head>
 <body>
-    <h2>Login</h2>
-    <form id="login-form">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br>
-        <button type="submit">Login</button>
-        <button type="button" onclick="window.location.href='register.html'">Register</button>
-    </form>
-    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <div class="container">
+        <h2>Login</h2>
+        <form id="login-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <span class="toggle-password" onclick="togglePassword()">Show</span>
+            <button type="submit">Login</button>
+            <button type="button" onclick="window.location.href='register.html'">Register</button>
+            <p>or sign in with Google</p>
+            <div class="g-signin2" data-onsuccess="onSignIn"></div>
+        </form>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
@@ -101,23 +112,32 @@
             const password = document.getElementById('password').value;
 
             const storedUsers = JSON.parse(localStorage.getItem('users'));
-            const user = storedUsers.find(user => user.username === username && user.password === password);
+            const user = storedUsers.find(user => user.username === username);
 
             if (user) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Login successful!',
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    localStorage.setItem('loggedInUser', JSON.stringify(user));
-                    window.location.href = 'index.html';
-                });
+                if (user.password === password) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Login successful!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        localStorage.setItem('loggedInUser', JSON.stringify(user));
+                        window.location.href = 'index.html';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Invalid password!',
+                        confirmButtonColor: '#4e74e6'
+                    });
+                }
             } else {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'Invalid username or password!',
+                    text: 'Username not found!',
                     confirmButtonColor: '#4e74e6'
                 });
             }
@@ -141,6 +161,14 @@
                 window.location.href = 'index.html';
             });
         }
+
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const passwordType = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', passwordType);
+            document.querySelector('.toggle-password').textContent = passwordType === 'password' ? 'Show' : 'Hide';
+        }
     </script>
 </body>
 </html>
+
