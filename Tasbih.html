@@ -24,26 +24,24 @@
             position: relative;
         }
 
-        .top-menu {
+        .close-button,
+        .dark-mode-toggle {
+            cursor: pointer;
+            font-size: 2em;
+            color: #fff;
             position: absolute;
             top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
             z-index: 1000;
-            display: flex;
-            justify-content: space-between;
-            width: 100px;
         }
 
-        .top-menu .close-button,
-        .top-menu .dark-mode-toggle {
-            cursor: pointer;
-            font-size: 1.5em;
-            color: #fff;
-        }
-
-        .top-menu .close-button {
+        .close-button {
+            right: 50px;
             color: #ff0000;
+        }
+
+        .dark-mode-toggle {
+            right: 10px;
+            color: #fff;
         }
 
         .tasbih-counter {
@@ -182,10 +180,8 @@
     </style>
 </head>
 <body>
-    <div class="top-menu">
-        <span class="close-button" onclick="window.location.href='index.html'">×</span>
-        <i id="dark-mode-toggle" class="fas fa-moon"></i>
-    </div>
+    <span class="close-button" onclick="window.location.href='index.html'">×</span>
+    <i id="dark-mode-toggle" class="fas fa-moon dark-mode-toggle"></i>
 
     <div class="tasbih-counter">
         <div class="label label-left">Quran pro</div>
@@ -217,8 +213,6 @@
 
             let count = 0;
             let isMuted = false;
-            const colors = ['#f0f0f0', '#ffcccc', '#ccffcc', '#ccccff'];
-            const buttonColors = ['#000', '#007BFF', '#28A745', '#DC3545'];
 
             countButton.addEventListener('click', () => {
                 count++;
