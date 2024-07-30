@@ -9,30 +9,71 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
         form {
             max-width: 300px;
-            margin: auto;
-            padding: 1em;
-            border: 1px solid #ccc;
-            border-radius: 1em;
+            padding: 2em;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
         }
         label {
-            margin-top: 1em;
             display: block;
+            margin-bottom: 0.5em;
+            color: #666;
         }
-        button {
-            margin-top: 1em;
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 0.8em;
+            margin-bottom: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        button[type="submit"],
+        button[type="button"] {
+            width: 100%;
+            padding: 1em;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button[type="submit"] {
+            background: linear-gradient(to right, #4e74e6, #72b2f5);
+            margin-bottom: 0.5em;
+        }
+        button[type="submit"]:hover {
+            background: linear-gradient(to right, #3a5ab3, #5a98e0);
+        }
+        button[type="button"] {
+            background-color: #888;
+        }
+        button[type="button"]:hover {
+            background-color: #666;
         }
         .g-signin2 {
+            margin-top: 1em;
             display: block;
             margin: auto;
-            margin-top: 1em;
         }
     </style>
 </head>
 <body>
-    <h2 style="text-align:center;">Login</h2>
+    <h2>Login</h2>
     <form id="login-form">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required><br>
@@ -41,17 +82,15 @@
         <button type="submit">Login</button>
         <button type="button" onclick="window.location.href='register.html'">Register</button>
     </form>
-    <br>
     <div class="g-signin2" data-onsuccess="onSignIn"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Dummy user data for demonstration, stored in local storage
         const users = [
             { username: 'user1', password: 'pass1' },
             { username: 'user2', password: 'pass2' }
         ];
 
-        // Store dummy users in local storage if not already stored
         if (!localStorage.getItem('users')) {
             localStorage.setItem('users', JSON.stringify(users));
         }
@@ -65,11 +104,22 @@
             const user = storedUsers.find(user => user.username === username && user.password === password);
 
             if (user) {
-                alert('Login successful');
-                localStorage.setItem('loggedInUser', JSON.stringify(user));
-                window.location.href = 'index.html'; // Redirect to main page
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Login successful!',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    localStorage.setItem('loggedInUser', JSON.stringify(user));
+                    window.location.href = 'index.html';
+                });
             } else {
-                alert('Invalid username or password');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Invalid username or password!',
+                    confirmButtonColor: '#4e74e6'
+                });
             }
         });
 
@@ -81,9 +131,15 @@
                 imageUrl: profile.getImageUrl()
             };
 
-            alert('Google Sign-In successful');
-            localStorage.setItem('loggedInUser', JSON.stringify(user));
-            window.location.href = 'index.html'; // Redirect to main page
+            Swal.fire({
+                icon: 'success',
+                title: 'Google Sign-In successful!',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                localStorage.setItem('loggedInUser', JSON.stringify(user));
+                window.location.href = 'index.html';
+            });
         }
     </script>
 </body>
