@@ -470,15 +470,11 @@ footer .text-center {
 </head>
 <body>
     <header>
-         <div class="header-icons">
-            <a href="profile.html" id="profileIcon" style="display: none;">
-                <img id="profileImage" src="" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%;">
-            </a>
-            <a href="login.html" id="loginIcon">
-                <lord-icon src="https://cdn.lordicon.com//login.json" trigger="hover" colors="primary:#121331,secondary:#08a88a" style="width:40px;height:40px"></lord-icon>
-            </a>
-        </div>
-        <a href="#" id="logout" style="display: none;">Logout</a>
+<div class="profile">
+        <h2>Welcome, <span id="username"></span>!</h2>
+        <img id="profile-pic" src="" alt="Profile Picture" style="display:none; border-radius:50%; width:100px; height:100px;">
+        <p id="email"></p>
+    </div>
       <div class="header-icons">
     <!-- Login Icon -->
     <a href="login.html" title="Login">
@@ -622,28 +618,23 @@ footer .text-center {
 
     <script src="https://unpkg.com/idb@6.1.0/build/iife/index-min.js"></script>
   <script>
-       document.addEventListener('DOMContentLoaded', () => {
-            const username = localStorage.getItem('username');
-            const profileImage = localStorage.getItem('profileImage');
-            
-            if (username) {
-                document.getElementById('profileIcon').style.display = 'block';
-                document.getElementById('loginIcon').style.display = 'none';
-                document.getElementById('profileImage').src = profileImage;
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = JSON.parse(localStorage.getItem('loggedInUser'));
+
+            if (user) {
+                document.getElementById('username').textContent = user.username;
+                document.getElementById('email').textContent = user.email || '';
+
+                if (user.imageUrl) {
+                    const profilePic = document.getElementById('profile-pic');
+                    profilePic.src = user.imageUrl;
+                    profilePic.style.display = 'block';
+                }
             } else {
-                document.getElementById('profileIcon').style.display = 'none';
-                document.getElementById('loginIcon').style.display = 'block';
+                alert('No user is logged in');
+                window.location.href = 'login.html'; // Redirect to login page if no user is logged in
             }
         });
-      document.getElementById('logout').addEventListener('click', () => {
-        localStorage.removeItem('username');
-        localStorage.removeItem('profileImage');
-        window.location.href = 'login.html';
-    });
-
-    if (localStorage.getItem('username')) {
-        document.getElementById('logout').style.display = 'block';
-    }
     function openNav() {
         document.getElementById("mySidebar").style.left = "0";
         document.getElementById("main").style.marginLeft = "250px";
