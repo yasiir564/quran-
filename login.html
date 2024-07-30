@@ -66,7 +66,8 @@
 
             if (user) {
                 alert('Login successful');
-                window.location.href = 'index.html'; // Redirect to main page
+                localStorage.setItem('loggedInUser', JSON.stringify(user));
+                window.location.href = 'main.html'; // Redirect to main page
             } else {
                 alert('Invalid username or password');
             }
@@ -74,15 +75,16 @@
 
         function onSignIn(googleUser) {
             const profile = googleUser.getBasicProfile();
-            console.log('ID: ' + profile.getId());
-            console.log('Name: ' + profile.getName());
-            console.log('Image URL: ' + profile.getImageUrl());
-            console.log('Email: ' + profile.getEmail());
+            const user = {
+                username: profile.getName(),
+                email: profile.getEmail(),
+                imageUrl: profile.getImageUrl()
+            };
 
             alert('Google Sign-In successful');
-            window.location.href = 'main.html'; // Redirect to main page
+            localStorage.setItem('loggedInUser', JSON.stringify(user));
+            window.location.href = 'index.html'; // Redirect to main page
         }
     </script>
 </body>
 </html>
-
