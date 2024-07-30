@@ -7,33 +7,69 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-        form {
-            max-width: 300px;
-            margin: auto;
-            padding: 1em;
-            border: 1px solid #ccc;
-            border-radius: 1em;
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 2em;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h2 {
+            color: #333;
         }
         label {
-            margin-top: 1em;
             display: block;
+            margin-bottom: 0.5em;
+            color: #666;
         }
-        button {
-            margin-top: 1em;
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 0.8em;
+            margin-bottom: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        button[type="submit"] {
+            width: 100%;
+            padding: 1em;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            background: linear-gradient(to right, #4e74e6, #72b2f5);
+            margin-bottom: 0.5em;
+        }
+        button[type="submit"]:hover {
+            background: linear-gradient(to right, #3a5ab3, #5a98e0);
         }
     </style>
 </head>
 <body>
-    <h2 style="text-align:center;">Register</h2>
-    <form id="register-form">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br>
-        <button type="submit">Register</button>
-    </form>
+    <div class="container">
+        <h2>Register</h2>
+        <form id="register-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Register</button>
+        </form>
+    </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.getElementById('register-form').addEventListener('submit', function(event) {
             event.preventDefault();
@@ -44,14 +80,26 @@
             const userExists = storedUsers.find(user => user.username === username);
 
             if (userExists) {
-                alert('Username already taken');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Username already taken!',
+                    confirmButtonColor: '#4e74e6'
+                });
             } else {
                 storedUsers.push({ username, password });
                 localStorage.setItem('users', JSON.stringify(storedUsers));
-                alert('Registration successful');
-                window.location.href = 'login.html'; // Redirect to login page
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Registration successful!',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.href = 'login.html'; // Redirect to login page
+                });
             }
         });
     </script>
 </body>
 </html>
+
