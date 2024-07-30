@@ -622,6 +622,11 @@ footer .text-center {
     document.addEventListener('DOMContentLoaded', async function() {
         const user = JSON.parse(localStorage.getItem('loggedInUser'));
 
+        function resetPage() {
+            document.getElementById("mySidebar").style.left = "-250px";
+            document.getElementById("main").style.marginLeft = "0";
+        }
+
         if (user) {
             document.getElementById('username').textContent = user.username;
             document.getElementById('email').textContent = user.email || '';
@@ -631,6 +636,8 @@ footer .text-center {
                 profilePic.src = user.imageUrl;
                 profilePic.style.display = 'block';
             }
+
+            resetPage();
         }
 
         function openNav() {
@@ -669,6 +676,10 @@ footer .text-center {
             if (event.key === 'Enter') {
                 performSearch();
             }
+        });
+
+        document.querySelector('.openbtn').addEventListener('click', function() {
+            openNav();
         });
 
         function showLoader() {
@@ -809,8 +820,5 @@ footer .text-center {
         });
     });
 </script>
-
-
-
 </body>
 </html>
