@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-color:#000;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -25,6 +25,7 @@
         }
         h2 {
             color: #333;
+            margin-bottom: 1em;
         }
         label {
             display: block;
@@ -32,6 +33,7 @@
             color: #666;
         }
         input[type="text"],
+        input[type="email"],
         input[type="password"] {
             width: 100%;
             padding: 0.8em;
@@ -63,6 +65,8 @@
         <form id="register-form">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
             <button type="submit">Register</button>
@@ -74,20 +78,21 @@
         document.getElementById('register-form').addEventListener('submit', function(event) {
             event.preventDefault();
             const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
             let storedUsers = JSON.parse(localStorage.getItem('users'));
-            const userExists = storedUsers.find(user => user.username === username);
+            const userExists = storedUsers.find(user => user.username === username || user.email === email);
 
             if (userExists) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'Username already taken!',
+                    text: 'Username or email already taken!',
                     confirmButtonColor: '#4e74e6'
                 });
             } else {
-                storedUsers.push({ username, password });
+                storedUsers.push({ username, email, password });
                 localStorage.setItem('users', JSON.stringify(storedUsers));
                 Swal.fire({
                     icon: 'success',
@@ -102,4 +107,5 @@
     </script>
 </body>
 </html>
+
 
