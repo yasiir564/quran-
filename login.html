@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <meta name="google-signin-client_id"692064901690-k1988525o60rf8s1bop506ea8tll3s7t.apps.googleusercontent.com">
+    <meta name="google-signin-client_id" content="692064901690-k1988525o60rf8s1bop506ea8tll3s7t.apps.googleusercontent.com">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #000;
+            background-color: #f0f0f0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -70,9 +70,31 @@
         button[type="button"]:hover {
             background-color: #666;
         }
+        .toggle-password {
+            float: right;
+            margin-right: 1em;
+            cursor: pointer;
+            color: #666;
+        }
         .g-signin2 {
-            display: block;
-            margin: 1em auto;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 1em 0;
+        }
+        .google-button {
+            width: 100%;
+            padding: 1em;
+            border: none;
+            border-radius: 5px;
+            background: #db4437;
+            color: #fff;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .google-button:hover {
+            background: #c33b2f;
         }
     </style>
 </head>
@@ -90,7 +112,7 @@
             <button type="submit">Login</button>
             <button type="button" onclick="window.location.href='register.html'">Register</button>
             <p>or sign in with Google</p>
-            <div class="g-signin2" data-onsuccess="onSignIn"></div>
+            <div class="g-signin2 google-button" data-onsuccess="onSignIn"></div>
         </form>
     </div>
 
