@@ -6,6 +6,7 @@
     <title>Login</title>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <meta name="google-signin-client_id" content="692064901690-k1988525o60rf8s1bop506ea8tll3s7t.apps.googleusercontent.com">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -27,6 +28,7 @@
         }
         h2 {
             color: #333;
+            margin-bottom: 1em;
         }
         label {
             display: block;
@@ -34,6 +36,7 @@
             color: #666;
         }
         input[type="text"],
+        input[type="email"],
         input[type="password"] {
             width: 100%;
             padding: 0.8em;
@@ -67,12 +70,6 @@
         button[type="button"]:hover {
             background-color: #666;
         }
-        .toggle-password {
-            float: right;
-            margin-right: 1em;
-            cursor: pointer;
-            color: #666;
-        }
         .g-signin2 {
             display: block;
             margin: auto;
@@ -85,6 +82,8 @@
         <form id="login-form">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
             <span class="toggle-password" onclick="togglePassword()">Show</span>
@@ -98,8 +97,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         const users = [
-            { username: 'user1', password: 'pass1' },
-            { username: 'user2', password: 'pass2' }
+            { username: 'user1', email: 'user1@example.com', password: 'pass1' },
+            { username: 'user2', email: 'user2@example.com', password: 'pass2' }
         ];
 
         if (!localStorage.getItem('users')) {
@@ -109,10 +108,11 @@
         document.getElementById('login-form').addEventListener('submit', function(event) {
             event.preventDefault();
             const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
             const storedUsers = JSON.parse(localStorage.getItem('users'));
-            const user = storedUsers.find(user => user.username === username);
+            const user = storedUsers.find(user => user.username === username && user.email === email);
 
             if (user) {
                 if (user.password === password) {
@@ -123,7 +123,7 @@
                         timer: 1500
                     }).then(() => {
                         localStorage.setItem('loggedInUser', JSON.stringify(user));
-                        window.location.href = 'index.html';
+                        window.location.href = 'profile.html';
                     });
                 } else {
                     Swal.fire({
@@ -137,7 +137,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'Username not found!',
+                    text: 'Username or email not found!',
                     confirmButtonColor: '#4e74e6'
                 });
             }
@@ -148,7 +148,7 @@
             const user = {
                 username: profile.getName(),
                 email: profile.getEmail(),
-                imageUrl: profile.getImageUrl()
+                profilePic: profile.getImageUrl()
             };
 
             Swal.fire({
@@ -158,7 +158,7 @@
                 timer: 1500
             }).then(() => {
                 localStorage.setItem('loggedInUser', JSON.stringify(user));
-                window.location.href = 'index.html';
+                window.location.href = 'profile.html';
             });
         }
 
@@ -171,3 +171,4 @@
     </script>
 </body>
 </html>
+
