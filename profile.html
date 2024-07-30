@@ -7,34 +7,60 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
     <style>
-        /* Existing CSS styles */
+        /* Updated CSS styles */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #000;
+            color: #fff;
             margin: 0;
             padding: 0;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 400px;
             margin: 50px auto;
             padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #1a1a1a;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
         }
 
         h2 {
             text-align: center;
             margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .profile-pic-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
         }
 
         .profile-pic {
-            display: block;
-            margin: 0 auto;
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
-            width: 150px;
-            height: 150px;
             object-fit: cover;
+            display: block;
+        }
+
+        .upload-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
         }
 
         .form-group {
@@ -44,23 +70,15 @@
         .form-group label {
             display: block;
             margin-bottom: 5px;
+            color: #fff;
         }
 
         .form-group input {
             width: 100%;
             padding: 10px;
             box-sizing: border-box;
-        }
-
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-            height: 100px;
-        }
-
-        .form-group button {
-            display: none; /* Hide the Update Profile button */
+            border: none;
+            border-radius: 5px;
         }
 
         .logout-button {
@@ -73,17 +91,26 @@
             cursor: pointer;
             text-align: center;
             margin-top: 20px;
+            border-radius: 5px;
         }
 
         .logout-button:hover {
             background-color: #c9302c;
+        }
+
+        input[type="file"] {
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>User Profile</h2>
-        <img id="profile-pic" class="profile-pic" src="" alt="Profile Picture">
+        <div class="profile-pic-container">
+            <img id="profile-pic" class="profile-pic" src="" alt="Profile Picture">
+            <label for="profile-pic-input" class="upload-btn">+</label>
+            <input type="file" id="profile-pic-input" accept="image/*">
+        </div>
         <form id="profile-form">
             <div class="form-group">
                 <label for="username">Username</label>
@@ -92,10 +119,6 @@
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="profile-pic-url">Profile Picture URL</label>
-                <input type="url" id="profile-pic-url" name="profile-pic-url">
             </div>
         </form>
         <button class="logout-button" id="logout-button">Log Out</button>
@@ -111,7 +134,8 @@
                 document.getElementById('email').value = user.email || '';
                 if (user.profilePic) {
                     document.getElementById('profile-pic').src = user.profilePic;
-                    document.getElementById('profile-pic').style.display = 'block';
+                } else {
+                    document.getElementById('profile-pic').src = 'default-avatar.png'; // Provide a default avatar image
                 }
             } else {
                 Swal.fire({
@@ -139,6 +163,27 @@
                         window.location.href = 'login.html';
                     }
                 });
+            });
+
+            document.getElementById('profile-pic-input').addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const updatedUser = {
+                            ...user,
+                            profilePic: e.target.result
+                        };
+                        localStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
+                        document.getElementById('profile-pic').src = e.target.result;
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Profile picture updated successfully',
+                            confirmButtonText: 'OK'
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
             });
         });
     </script>
