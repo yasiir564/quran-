@@ -472,7 +472,15 @@ footer .text-center {
     <header>
      <div class="header-icons">
     <!-- Login Icon -->
-    <a href="login.html" title="Login" id="login-icon" style="display: none;">
+    <a href="login.html" title="Login">
+        <lord-icon
+            src="https://cdn.lordicon.com/bhfjfgqz.json"
+            trigger="hover"
+            colors="primary:#0057b7"
+            style="width:50px;height:50px;">
+        </lord-icon>
+    </a>
+    <a href="profile.html" title="user profile">
         <lord-icon
             src="https://cdn.lordicon.com/bhfjfgqz.json"
             trigger="hover"
@@ -481,16 +489,6 @@ footer .text-center {
         </lord-icon>
     </a>
     
-    <!-- Profile Icon -->
-    <a href="profile.html" title="User Profile" id="profile-icon" style="display: none;">
-        <lord-icon
-            src="https://cdn.lordicon.com/bhfjfgqz.json"
-            trigger="hover"
-            colors="primary:#0057b7"
-            style="width:50px;height:50px;">
-        </lord-icon>
-    </a>
-
     <!-- Page Translation Icon -->
     <a href="prayer.html" title="Page Prayer Times">
         <lord-icon
@@ -619,21 +617,22 @@ footer .text-center {
         </div>
     </footer>
 
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="https://unpkg.com/idb@6.1.0/build/iife/index-min.js"></script>
 <script>
-   document.addEventListener('DOMContentLoaded', function() {
-    const user = JSON.parse(localStorage.getItem('loggedInUser'));
+    document.addEventListener('DOMContentLoaded', async function() {
+        const user = JSON.parse(localStorage.getItem('loggedInUser'));
 
-    if (user) {
-        document.getElementById('username').textContent = user.username;
-        document.getElementById('email').textContent = user.email || '';
+        if (user) {
+            document.getElementById('username').textContent = user.username;
+            document.getElementById('email').textContent = user.email || '';
 
-        if (user.imageUrl) {
-            const profilePic = document.getElementById('profile-pic');
-            profilePic.src = user.imageUrl;
-            profilePic.style.display = 'block';
+            if (user.imageUrl) {
+                const profilePic = document.getElementById('profile-pic');
+                profilePic.src = user.imageUrl;
+                profilePic.style.display = 'block';
+            }
         }
-    }
+
         function openNav() {
             document.getElementById("mySidebar").style.left = "0";
             document.getElementById("main").style.marginLeft = "250px";
