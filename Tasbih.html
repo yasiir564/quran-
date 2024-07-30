@@ -28,17 +28,24 @@
             justify-content: space-between;
             width: 100%;
             padding: 10px;
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: transparent;
+            box-shadow: none;
+            z-index: 1000;
         }
 
-        .top-menu button {
-            background: none;
-            border: none;
-            font-size: 2em;
+        .top-menu .close-button {
             cursor: pointer;
-            color: #000;
+            color: #ff0000;
+            font-size: 1.5em;
+        }
+
+        .top-menu .dark-mode-toggle {
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #fff;
         }
 
         .tasbih-counter {
@@ -55,6 +62,7 @@
             justify-content: center;
             position: relative;
             padding: 10px;
+            margin-top: 60px; /* Adjust margin to avoid overlap with fixed menu */
             margin-bottom: 20px;
         }
 
@@ -85,7 +93,6 @@
             color: #fff;
             border: none;
             border-radius: 50%;
-            font-size: 1em;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -97,14 +104,12 @@
             background-color: red;
             width: 40px;
             height: 40px;
-            font-size: 0.8em;
             margin-top: 5px;
         }
 
         .count-button {
             width: 60px;
             height: 60px;
-            font-size: 1.2em;
         }
 
         .button:active {
@@ -142,13 +147,8 @@
             cursor: pointer;
         }
 
-        .close-button {
-            cursor: pointer;
-            color: #ff0000;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.5em;
+        .bottom-buttons button:hover {
+            background-color: #444;
         }
 
         body.dark-mode {
@@ -182,12 +182,6 @@
         body.dark-mode .bottom-buttons button:hover {
             background-color: #555;
         }
-
-        .dark-mode-toggle {
-            cursor: pointer;
-            font-size: 1.5em;
-            color: #fff;
-        }
     </style>
 </head>
 <body>
@@ -200,8 +194,8 @@
         <div class="label label-left">Quran pro</div>
         <div class="screen" id="countDisplay">0000</div>
         <div class="buttons">
-            <button class="button count-button" id="countButton">+</button>
-            <button class="button reset-button" id="resetButton">R</button>
+            <button class="button count-button" id="countButton"></button>
+            <button class="button reset-button" id="resetButton"></button>
         </div>
         <div class="label label-right">LED</div>
     </div>
