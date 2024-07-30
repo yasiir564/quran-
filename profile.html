@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
     <style>
+        /* Existing CSS styles */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -58,17 +60,23 @@
         }
 
         .form-group button {
+            display: none; /* Hide the Update Profile button */
+        }
+
+        .logout-button {
             display: block;
             width: 100%;
             padding: 10px;
-            background-color: #0057b7;
+            background-color: #d9534f;
             color: #fff;
             border: none;
             cursor: pointer;
+            text-align: center;
+            margin-top: 20px;
         }
 
-        .form-group button:hover {
-            background-color: #0041a1;
+        .logout-button:hover {
+            background-color: #c9302c;
         }
     </style>
 </head>
@@ -79,7 +87,7 @@
         <form id="profile-form">
             <div class="form-group">
                 <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
+                <input type="text" id="username" name="username" readonly required>
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
@@ -89,12 +97,11 @@
                 <label for="profile-pic-url">Profile Picture URL</label>
                 <input type="url" id="profile-pic-url" name="profile-pic-url">
             </div>
-            <div class="form-group">
-                <button type="submit">Update Profile</button>
-            </div>
         </form>
+        <button class="logout-button" id="logout-button">Log Out</button>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const user = JSON.parse(localStorage.getItem('loggedInUser'));
@@ -107,22 +114,31 @@
                     document.getElementById('profile-pic').style.display = 'block';
                 }
             } else {
-                alert('No user is logged in');
-                window.location.href = 'login.html';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'No user is logged in',
+                    text: 'Please log in first.',
+                    confirmButtonText: 'OK',
+                    allowOutsideClick: false,
+                    willClose: () => {
+                        window.location.href = 'login.html';
+                    }
+                });
             }
 
-            document.getElementById('profile-form').addEventListener('submit', function(event) {
-                event.preventDefault();
-
-                const updatedUser = {
-                    username: document.getElementById('username').value,
-                    email: document.getElementById('email').value,
-                    profilePic: document.getElementById('profile-pic-url').value
-                };
-
-                localStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
-                alert('Profile updated successfully');
-                window.location.reload();
+            document.getElementById('logout-button').addEventListener('click', function() {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Are you sure you want to log out?',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, log out',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        localStorage.removeItem('loggedInUser');
+                        window.location.href = 'login.html';
+                    }
+                });
             });
         });
     </script>
