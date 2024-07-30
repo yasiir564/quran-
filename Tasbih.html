@@ -21,32 +21,29 @@
             font-family: 'Amiri', serif;
             color: #333;
             transition: background 0.3s, color 0.3s;
+            position: relative;
         }
 
         .top-menu {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
             display: flex;
             justify-content: space-between;
-            width: 100%;
-            padding: 10px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background-color: transparent;
-            box-shadow: none;
-            z-index: 1000;
-            margin: 10px; /* Adjust margin to bring it closer */
+            width: 100px;
         }
 
-        .top-menu .close-button {
-            cursor: pointer;
-            color: #ff0000;
-            font-size: 1.5em;
-        }
-
+        .top-menu .close-button,
         .top-menu .dark-mode-toggle {
             cursor: pointer;
             font-size: 1.5em;
             color: #fff;
+        }
+
+        .top-menu .close-button {
+            color: #ff0000;
         }
 
         .tasbih-counter {
@@ -63,8 +60,7 @@
             justify-content: center;
             position: relative;
             padding: 10px;
-            margin-top: 60px; /* Adjust margin to avoid overlap with fixed menu */
-            margin-bottom: 20px;
+            margin-top: 60px; /* Space to avoid overlap */
         }
 
         .screen {
@@ -188,7 +184,7 @@
 <body>
     <div class="top-menu">
         <span class="close-button" onclick="window.location.href='index.html'">×</span>
-        <i id="dark-mode-toggle" class="fas fa-moon dark-mode-toggle"></i>
+        <i id="dark-mode-toggle" class="fas fa-moon"></i>
     </div>
 
     <div class="tasbih-counter">
@@ -285,4 +281,3 @@
     </script>
 </body>
 </html>
-
