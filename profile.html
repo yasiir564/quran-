@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-pic {
+            display: block;
+            margin: 0 auto;
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            height: 100px;
+        }
+
+        .form-group button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #0057b7;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .form-group button:hover {
+            background-color: #0041a1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>User Profile</h2>
+        <img id="profile-pic" class="profile-pic" src="" alt="Profile Picture">
+        <form id="profile-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="profile-pic-url">Profile Picture URL</label>
+                <input type="url" id="profile-pic-url" name="profile-pic-url">
+            </div>
+            <div class="form-group">
+                <button type="submit">Update Profile</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = JSON.parse(localStorage.getItem('loggedInUser'));
+
+            if (user) {
+                document.getElementById('username').value = user.username;
+                document.getElementById('email').value = user.email || '';
+                if (user.profilePic) {
+                    document.getElementById('profile-pic').src = user.profilePic;
+                    document.getElementById('profile-pic').style.display = 'block';
+                }
+            } else {
+                alert('No user is logged in');
+                window.location.href = 'login.html';
+            }
+
+            document.getElementById('profile-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const updatedUser = {
+                    username: document.getElementById('username').value,
+                    email: document.getElementById('email').value,
+                    profilePic: document.getElementById('profile-pic-url').value
+                };
+
+                localStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
+                alert('Profile updated successfully');
+                window.location.reload();
+            });
+        });
+    </script>
+</body>
+</html>
