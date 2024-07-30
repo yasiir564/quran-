@@ -734,7 +734,7 @@ footer .text-center {
                 surahDiv.classList.add('surah');
                 surahDiv.innerText = surah.englishName;
                 surahDiv.addEventListener('click', () => {
-                    window.location.href = surah.html?surah=${surah.number};
+                    window.location.href = `surah.html?surah=${surah.number}`;
                 });
                 fragment.appendChild(surahDiv);
             });
@@ -777,7 +777,7 @@ footer .text-center {
         }).format(new Date());
 
         const calendarDiv = document.getElementById('calendar');
-        calendarDiv.innerHTML = <p id="hijri-date">${hijriDate}</p><p id="hijri-date-arabic">${hijriDateArabic}</p>;
+        calendarDiv.innerHTML = `<p id="hijri-date">${hijriDate}</p><p id="hijri-date-arabic">${hijriDateArabic}</p>`;
 
         // Hide header on scroll down, show on scroll up or stop
         let lastScrollTop = 0;
