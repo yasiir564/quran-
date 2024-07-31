@@ -269,6 +269,7 @@
             passwordField.setAttribute('type', passwordType);
             document.querySelector('.toggle-password').textContent = passwordType === 'password' ? '👁️' : '🙈';
         }
+        document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
 
         function onSignIn(googleUser) {
             const profile = googleUser.getBasicProfile();
