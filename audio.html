@@ -212,13 +212,26 @@
                         buttonsDiv.classList.add('surah-buttons');
                         buttonsDiv.innerHTML = `
                             <i class="fas fa-bookmark" title="Bookmark" onclick="bookmarkSurah(${surah.id})"></i>
-                            <i class="fas fa-share-alt" title="Share"></i>
+                            <i class="fas fa-share-alt" title="Share" onclick="shareSurah()"></i>
                             <i class="fas fa-plus-circle" title="Add to Playlist" onclick="addToPlaylist(${surah.id})"></i>
                         `;
                         surahDiv.appendChild(buttonsDiv);
 
                         surahDiv.addEventListener('click', () => {
-                            window.location.href = `audioSurah.html?surah=${surah.id}`;
+                            if (isUserLoggedIn()) {
+                                window.location.href = `audioSurah.html?surah=${surah.id}`;
+                            } else {
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Not Logged In',
+                                    text: 'You need to be logged in to access this page.',
+                                    confirmButtonText: 'Log In',
+                                    allowOutsideClick: false,
+                                    preConfirm: () => {
+                                        window.location.href = 'login.html';
+                                    }
+                                });
+                            }
                         });
                         fragment.appendChild(surahDiv);
                     });
@@ -327,9 +340,25 @@
                 });
             }
         }
+
+        function shareSurah() {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'URL Copied',
+                    text: 'The URL has been copied to your clipboard.',
+                });
+            }).catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Copy Failed',
+                    text: 'Failed to copy the URL. Please try again.',
+                });
+            });
+        }
     </script>
 </body>
 </html>
-
 
 
