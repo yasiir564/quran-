@@ -109,12 +109,53 @@
             color: #aaa;
         }
 
-        select {
+        .country-search {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .country-search input {
             padding: 10px;
-            margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
-            width: 100%;
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+
+        .country-search button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+
+        .country-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .country-list-item {
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .country-list-item img {
+            width: 30px;
+            height: 20px;
+            margin-right: 10px;
+        }
+
+        .country-list-item:hover {
+            background-color: #f0f0f0;
         }
 
         @media (max-width: 600px) {
@@ -138,9 +179,11 @@
         <div class="clock" id="clock"></div>
         <h1>Prayer Times</h1>
         <div id="location"></div>
-        <select id="country-select">
-            <!-- Options will be populated dynamically -->
-        </select>
+        <div class="country-search">
+            <input type="text" id="country-search-input" placeholder="Search for a country...">
+            <button id="search-button">Search</button>
+        </div>
+        <div id="country-list" class="country-list"></div>
         <div id="prayer-times">
             <div class="prayer-time">
                 <span>Fajr:</span> <span id="fajr"></span>
@@ -159,6 +202,7 @@
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             // Clock functionality
@@ -177,7 +221,7 @@
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(showPosition, showError);
             } else {
-                alert("Geolocation is not supported by this browser.");
+                Swal.fire("Error", "Geolocation is not supported by this browser.", "error");
             }
 
             function showPosition(position) {
@@ -189,16 +233,16 @@
             function showError(error) {
                 switch (error.code) {
                     case error.PERMISSION_DENIED:
-                        alert("User denied the request for Geolocation.");
+                        Swal.fire("Error", "User denied the request for Geolocation.", "error");
                         break;
                     case error.POSITION_UNAVAILABLE:
-                        alert("Location information is unavailable.");
+                        Swal.fire("Error", "Location information is unavailable.", "error");
                         break;
                     case error.TIMEOUT:
-                        alert("The request to get user location timed out.");
+                        Swal.fire("Error", "The request to get user location timed out.", "error");
                         break;
                     case error.UNKNOWN_ERROR:
-                        alert("An unknown error occurred.");
+                        Swal.fire("Error", "An unknown error occurred.", "error");
                         break;
                 }
             }
@@ -223,23 +267,45 @@
                         document.getElementById("location").textContent = `Location: ${location}`;
                         displayNextPrayer(timings);
                     })
-                    .catch(error => console.error("Error fetching prayer times:", error));
+                    .catch(error => Swal.fire("Error", "Error fetching prayer times.", "error"));
             }
 
             // Display next prayer time
             function displayNextPrayer(timings) {
                 const now = new Date();
                 const prayerTimes = {
-                    Fajr: new Date(`${now.toDateString()} ${timings.Fajr}`),
-                    Dhuhr: new Date(`${now.toDateString()} ${timings.Dhuhr}`),
-                    Asr: new Date(`${now.toDateString()} ${timings.Asr}`),
-                    Maghrib: new Date(`${now.toDateString()} ${timings.Maghrib}`),
-                    Isha: new Date(`${now.toDateString()} ${timings.Isha}`)
-                };
-                const upcomingPrayers = Object.keys(prayerTimes).filter(prayer => prayerTimes[prayer] > now);
-                const nextPrayer = upcomingPrayers.length > 0 ? upcomingPrayers[0] : 'Fajr';
-                const nextPrayerTime = prayerTimes[nextPrayer];
-                document.getElementById('location').insertAdjacentHTML('afterend', `<div id="next-prayer">Next Prayer: ${nextPrayer} at ${nextPrayerTime.toLocaleTimeString()}</div>`);
+                    Fajr: new Date(`${now.toDate
+const prayerTimes = {
+                        Fajr: new Date(`${now.toDateString()} ${timings.Fajr}`),
+                        Dhuhr: new Date(`${now.toDateString()} ${timings.Dhuhr}`),
+                        Asr: new Date(`${now.toDateString()} ${timings.Asr}`),
+                        Maghrib: new Date(`${now.toDateString()} ${timings.Maghrib}`),
+                        Isha: new Date(`${now.toDateString()} ${timings.Isha}`)
+                    };
+
+                    let nextPrayer = null;
+                    let nextPrayerTime = null;
+
+                    for (const [prayer, time] of Object.entries(prayerTimes)) {
+                        if (now < time) {
+                            nextPrayer = prayer;
+                            nextPrayerTime = time;
+                            break;
+                        }
+                    }
+
+                    if (!nextPrayer) {
+                        nextPrayer = 'Fajr';
+                        nextPrayerTime = new Date(`${now.toDateString()} ${timings.Fajr}`);
+                        nextPrayerTime.setDate(nextPrayerTime.getDate() + 1); // Next day's Fajr
+                    }
+
+                    Swal.fire({
+                        title: 'Next Prayer',
+                        text: `${nextPrayer} at ${nextPrayerTime.toLocaleTimeString()}`,
+                        icon: 'info'
+                    });
+                }
             }
 
             // Dark mode toggle
@@ -260,27 +326,50 @@
             });
 
             // Populate country select
-            const countrySelect = document.getElementById('country-select');
+            const countrySearchInput = document.getElementById('country-search-input');
+            const countryList = document.getElementById('country-list');
+            let countries = [];
+
             fetch('https://restcountries.com/v3.1/all')
                 .then(response => response.json())
-                .then(countries => {
-                    countries.sort((a, b) => a.name.common.localeCompare(b.name.common));
-                    countries.forEach(country => {
-                        const option = document.createElement('option');
-                        option.value = JSON.stringify({name: country.name.common, city: country.capital ? country.capital[0] : ''});
-                        option.textContent = country.name.common;
-                        countrySelect.appendChild(option);
-                    });
+                .then(data => {
+                    countries = data;
+                    displayCountryList(countries);
                 })
-                .catch(error => console.error('Error fetching countries:', error));
+                .catch(error => Swal.fire("Error", "Error fetching countries.", "error"));
 
-            // Handle country select change
-            countrySelect.addEventListener('change', () => {
-                const selectedCountry = JSON.parse(countrySelect.value);
-                fetchPrayerTimes(null, null, selectedCountry);
+            function displayCountryList(countries) {
+                countryList.innerHTML = '';
+                countries.forEach(country => {
+                    const countryItem = document.createElement('div');
+                    countryItem.className = 'country-list-item';
+                    countryItem.dataset.country = JSON.stringify({ name: country.name.common, city: country.capital ? country.capital[0] : '' });
+                    countryItem.innerHTML = `
+                        <img src="${country.flags.svg}" alt="${country.name.common} flag">
+                        <span>${country.name.common}</span>
+                    `;
+                    countryItem.addEventListener('click', () => {
+                        const selectedCountry = JSON.parse(countryItem.dataset.country);
+                        fetchPrayerTimes(null, null, selectedCountry);
+                    });
+                    countryList.appendChild(countryItem);
+                });
+            }
+
+            countrySearchInput.addEventListener('input', () => {
+                const searchTerm = countrySearchInput.value.toLowerCase();
+                const filteredCountries = countries.filter(country => country.name.common.toLowerCase().includes(searchTerm));
+                displayCountryList(filteredCountries);
+            });
+
+            // Handle search button click
+            const searchButton = document.getElementById('search-button');
+            searchButton.addEventListener('click', () => {
+                const searchTerm = countrySearchInput.value.toLowerCase();
+                const filteredCountries = countries.filter(country => country.name.common.toLowerCase().includes(searchTerm));
+                displayCountryList(filteredCountries);
             });
         });
     </script>
 </body>
-</html>
 
