@@ -15,6 +15,8 @@
             background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
             background: linear-gradient(to right, #ffffff, #abbaab);
             font-family: 'Amiri', serif;
+            overflow-y: scroll;
+            scroll-behavior: smooth;
         }
         .container {
             max-width: 800px;
@@ -38,29 +40,6 @@
             margin-top: 20px;
             text-align: center;
         }
-        .buttons {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .buttons button {
-            background-color: #2980b9;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1em;
-            cursor: pointer;
-            margin: 5px;
-            display: inline-flex;
-            align-items: center;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        .buttons button:hover {
-            background-color: #3498db;
-        }
-        .buttons i {
-            margin-right: 5px;
-        }
         .sheikh-list {
             display: flex;
             flex-wrap: wrap;
@@ -75,55 +54,26 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s, background-color 0.3s;
             border-radius: 50%;
-            width: 80px;
-            height: 80px;
+            width: 120px;
+            height: 120px;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         .sheikh-item:hover {
-            transform: scale(1.05);
+            transform: scale(1.1);
             background-color: #f0f0f0;
         }
         .sheikh-item img {
-            width: 100%;
-            height: 100%;
+            width: 80%;
+            height: 80%;
             border-radius: 50%;
         }
         .sheikh-item.active {
             border: 2px solid #3498db;
             background-color: #e6f7ff;
-        }
-        .audio-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .audio-controls button {
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 1.5em;
-            color: #2980b9;
-        }
-        .audio-controls button:hover {
-            color: #3498db;
-        }
-        .close-button {
-            cursor: pointer;
-            color: #ff0000;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.5em;
-        }
-        #dark-mode-toggle {
-            cursor: pointer;
-            font-size: 1.5em;
-            color: #fff;
-            position: absolute;
-            top: 10px;
-            left: 10px;
         }
         .audio-overlay {
             position: fixed;
@@ -170,13 +120,45 @@
             padding: 5px;
             margin: 10px;
         }
+        .audio-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .audio-controls button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #2980b9;
+        }
+        .audio-controls button:hover {
+            color: #3498db;
+        }
+        .close-button {
+            cursor: pointer;
+            color: #ff0000;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5em;
+        }
+        #dark-mode-toggle {
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #fff;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
         @media (max-width: 600px) {
             .audio-player {
                 width: 100%;
                 padding: 10px;
             }
         }
-        /* Dark mode styles */
         body.dark-mode {
             background: linear-gradient(to right, #0f0f0f, #434343);
             color: #ddd;
@@ -192,15 +174,6 @@
         }
         body.dark-mode .sheikh-item:hover {
             background-color: #555;
-        }
-        body.dark-mode .buttons button {
-            background-color: #555;
-        }
-        body.dark-mode .buttons button:hover {
-            background-color: #666;
-        }
-        body.dark-mode .audio-player {
-            background: rgba(0, 0, 0, 0.8);
         }
     </style>
 </head>
@@ -230,6 +203,7 @@
                     <option value="2">2x</option>
                 </select>
             </div>
+            <div id="surah-list"></div>
             <button class="close-button" onclick="toggleOverlay()"><i class="fas fa-times"></i></button>
         </div>
     </div>
@@ -245,10 +219,8 @@
             const sheikhList = document.getElementById('sheikh-list');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
             const reciterImage = document.getElementById('reciter-image');
+            const surahList = document.getElementById('surah-list');
             let currentAudio;
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const surahId = urlParams.get('surah');
 
             const sheikhs = [
                 { id: '1', name: 'AbdulBaset AbdulSamad', imageUrl: 'qmkxyvfiawea1.jpg' },
@@ -259,159 +231,157 @@
                 { id: '6', name: 'Ali Jaber', imageUrl: 'ali-jaber.webp' },
                 { id: '7', name: 'Yasser Al-Dosari', imageUrl: 'download (11).jpeg' },
                 { id: '8', name: 'Salah Al-Budair', imageUrl: 'download (12).jpeg' },
-                { id: '9', name: 'Ahmad Al-Ajmi', imageUrl: 'download (13).jpeg' },
-                { id: '10', name: 'Khalil Al-Husary', imageUrl: 'download (14).jpeg' },
-                { id: '11', name: 'Muhammad Siddiq Al-Minshawi', imageUrl: 'download (15).jpeg' },
-                { id: '12', name: 'Saad Al-Ghamdi', imageUrl: 'download (16).jpeg' },
-                { id: '13', name: 'Abu Bakr Al-Shatri', imageUrl: 'download (17).jpeg' },
-                { id: '14', name: 'Hani Rifai', imageUrl: 'download (18).jpeg' },
-                { id: '15', name: 'Abdullah Basfar', imageUrl: 'download (19).jpeg' }
+                { id: '9', name: 'Ahmed Al-Ajmi', imageUrl: 'download (13).jpeg' },
+                { id: '10', name: 'Saad Al-Ghamdi', imageUrl: 'download (14).jpeg' },
+                { id: '11', name: 'Yasser Al-Dosari', imageUrl: 'download (15).jpeg' },
+                { id: '12', name: 'Idris Abkar', imageUrl: 'download (16).jpeg' }
             ];
 
-            function stopAudio() {
-                if (currentAudio) {
-                    currentAudio.pause();
-                    currentAudio.currentTime = 0;
-                }
-                playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
-            }
+            const surahs = [
+                { number: 1, name: "Al-Fatihah" },
+                { number: 2, name: "Al-Baqarah" },
+                { number: 3, name: "Aal-E-Imran" },
+                { number: 4, name: "An-Nisa" },
+                { number: 5, name: "Al-Maidah" },
+                { number: 6, name: "Al-An'am" },
+                { number: 7, name: "Al-A'raf" },
+                { number: 8, name: "Al-Anfal" },
+                { number: 9, name: "At-Tawbah" },
+                { number: 10, name: "Yunus" },
+                { number: 11, name: "Hud" },
+                { number: 12, name: "Yusuf" },
+                { number: 13, name: "Ar-Ra'd" },
+                { number: 14, name: "Ibrahim" },
+                { number: 15, name: "Al-Hijr" },
+                { number: 16, name: "An-Nahl" },
+                { number: 17, name: "Al-Isra" },
+                { number: 18, name: "Al-Kahf" },
+                { number: 19, name: "Maryam" },
+                { number: 20, name: "Taha" },
+                { number: 21, name: "Al-Anbiya" },
+                { number: 22, name: "Al-Hajj" },
+                { number: 23, name: "Al-Mu'minun" },
+                { number: 24, name: "An-Nur" },
+                { number: 25, name: "Al-Furqan" },
+                { number: 26, name: "Ash-Shu'ara" },
+                { number: 27, name: "An-Naml" },
+                { number: 28, name: "Al-Qasas" },
+                { number: 29, name: "Al-Ankabut" },
+                { number: 30, name: "Ar-Rum" },
+                { number: 31, name: "Luqman" },
+                { number: 32, name: "As-Sajda" },
+                { number: 33, name: "Al-Ahzab" },
+                { number: 34, name: "Saba" },
+                { number: 35, name: "Fatir" },
+                { number: 36, name: "Yaseen" },
+                { number: 37, name: "As-Saffat" },
+                { number: 38, name: "Sad" },
+                { number: 39, name: "Az-Zumar" },
+                { number: 40, name: "Ghafir" },
+                { number: 41, name: "Fussilat" },
+                { number: 42, name: "Ash-Shura" },
+                { number: 43, name: "Az-Zukhruf" },
+                { number: 44, name: "Ad-Dukhan" },
+                { number: 45, name: "Al-Jathiya" },
+                { number: 46, name: "Al-Ahqaf" },
+                { number: 47, name: "Muhammad" },
+                { number: 48, name: "Al-Fath" },
+                { number: 49, name: "Al-Hujurat" },
+                { number: 50, name: "Qaf" },
+                { number: 51, name: "Adh-Dhariyat" },
+                { number: 52, name: "At-Tur" },
+                { number: 53, name: "An-Najm" },
+                { number: 54, name: "Al-Qamar" },
+                { number: 55, name: "Ar-Rahman" },
+                { number: 56, name: "Al-Waqia" },
+                { number: 57, name: "Al-Hadid" },
+                { number: 58, name: "Al-Mujadila" },
+                { number: 59, name: "Al-Hashr" },
+                { number: 60, name: "Al-Mumtahina" },
+                { number: 61, name: "As-Saff" },
+                { number: 62, name: "Al-Jumua" },
+                { number: 63, name: "Al-Munafiqun" },
+                { number: 64, name: "At-Taghabun" },
+                { number: 65, name: "At-Talaq" },
+                { number: 66, name: "At-Tahrim" },
+                { number: 67, name: "Al-Mulk" },
+                { number: 68, name: "Al-Qalam" },
+                { number: 69, name: "Al-Haaqqa" },
+                { number: 70, name: "Al-Maarij" },
+                { number: 71, name: "Nuh" },
+                { number: 72, name: "Al-Jinn" },
+                { number: 73, name: "Al-Muzzammil" },
+                { number: 74, name: "Al-Muddathir" },
+                { number: 75, name: "Al-Qiyama" },
+                { number: 76, name: "Al-Insan" },
+                { number: 77, name: "Al-Mursalat" },
+                { number: 78, name: "An-Naba" },
+                { number: 79, name: "An-Nazi'at" },
+                { number: 80, name: "Abasa" },
+                { number: 81, name: "At-Takwir" },
+                { number: 82, name: "Al-Infitar" },
+                { number: 83, name: "Al-Mutaffifin" },
+                { number: 84, name: "Al-Inshiqaq" },
+                { number: 85, name: "Al-Buruj" },
+                { number: 86, name: "At-Tariq" },
+                { number: 87, name: "Al-Ala" },
+                { number: 88, name: "Al-Ghashiya" },
+                { number: 89, name: "Al-Fajr" },
+                { number: 90, name: "Al-Balad" },
+                { number: 91, name: "Ash-Shams" },
+                { number: 92, name: "Al-Lail" },
+                { number: 93, name: "Ad-Duha" },
+                { number: 94, name: "Ash-Sharh" },
+                { number: 95, name: "At-Tin" },
+                { number: 96, name: "Al-Alaq" },
+                { number: 97, name: "Al-Qadr" },
+                { number: 98, name: "Al-Bayyina" },
+                { number: 99, name: "Az-Zalzala" },
+                { number: 100, name: "Al-Adiyat" },
+                { number: 101, name: "Al-Qaria" },
+                { number: 102, name: "At-Takathur" },
+                { number: 103, name: "Al-Asr" },
+                { number: 104, name: "Al-Humaza" },
+                { number: 105, name: "Al-Fil" },
+                { number: 106, name: "Quraish" },
+                { number: 107, name: "Al-Ma'un" },
+                { number: 108, name: "Al-Kawthar" },
+                { number: 109, name: "Al-Kafiroon" },
+                { number: 110, name: "An-Nasr" },
+                { number: 111, name: "Al-Masad" },
+                { number: 112, name: "Al-Ikhlas" },
+                { number: 113, name: "Al-Falaq" },
+                { number: 114, name: "An-Nas" }
+            ];
 
-            function playAudio() {
-                if (currentAudio.paused) {
-                    currentAudio.play();
-                    playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
-                } else {
-                    currentAudio.pause();
-                    playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
-                }
-            }
-
-            function toggleOverlay() {
-                audioOverlay.classList.toggle('active');
-                if (!audioOverlay.classList.contains('active') && currentAudio) {
-                    currentAudio.pause();
-                }
-            }
-
-            async function loadSurahAudio(surahId, sheikh) {
-                if (currentAudio) {
-                    currentAudio.pause();
-                }
-
-                try {
-                    const response = await fetch(`https://api.quran.com/api/v4/chapter_recitations/${sheikh.id}/${surahId}`);
-                    const data = await response.json();
-                    const audioUrl = data.audio_file.audio_url;
-
-                    currentAudio = new Audio(audioUrl);
-                    currentAudio.addEventListener('ended', () => {
-                        playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
-                    });
-
-                    currentAudio.addEventListener('canplaythrough', () => {
-                        currentAudio.play();
-                        playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
-                    });
-
-                    audioElement.src = audioUrl;
-                    reciterImage.src = sheikh.imageUrl;
-                    toggleOverlay();
-                } catch (error) {
-                    console.error('Error loading audio:', error);
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Failed to load audio. Please try again later.',
-                        icon: 'error',
-                        confirmButtonText: 'Okay'
-                    });
-                }
-            }
-
-            playPauseButton.addEventListener('click', playAudio);
-            stopButton.addEventListener('click', stopAudio);
-            speedControl.addEventListener('change', (event) => {
-                if (currentAudio) {
-                    currentAudio.playbackRate = parseFloat(event.target.value);
-                }
-            });
-
-            sheikhs.forEach((sheikh) => {
+            sheikhs.forEach(sheikh => {
                 const sheikhItem = document.createElement('div');
-                sheikhItem.className = 'sheikh-item';
-                sheikhItem.innerHTML = `<img src="${sheikh.imageUrl}" alt="${sheikh.name}">`;
-                sheikhItem.addEventListener('click', () => {
-                    document.querySelectorAll('.sheikh-item').forEach(item => item.classList.remove('active'));
-                    sheikhItem.classList.add('active');
-                    loadSurahAudio(surahId, sheikh);
-                });
-
+                sheikhItem.classList.add('sheikh-item');
+                sheikhItem.innerHTML = `<img src="${sheikh.imageUrl}" alt="${sheikh.name}"><span>${sheikh.name}</span>`;
+                sheikhItem.onclick = () => {
+                    showSurahList(sheikh);
+                };
                 sheikhList.appendChild(sheikhItem);
             });
 
-            function toggleDarkMode() {
-                document.body.classList.toggle('dark-mode');
-                darkModeToggle.classList.toggle('fa-sun');
-                darkModeToggle.classList.toggle('fa-moon');
-            }
-
-            darkModeToggle.addEventListener('click', toggleDarkMode);
-
-            Swal.fire({
-                title: 'Are you confused in finding a good reciter? Try your luck!',
-                showCancelButton: true,
-                confirmButtonText: 'Spin!',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    let currentIndex = 0;
-                    const spinDuration = 3000; // Spin for 3 seconds
-
-                    const intervalId = setInterval(() => {
-                        const sheikh = sheikhs[currentIndex];
-                        Swal.update({
-                            title: 'Spinning...',
-                            html: `Selected Sheikh: ${sheikh.name}`,
-                            showConfirmButton: false
-                        });
-
-                        currentIndex = (currentIndex + 1) % sheikhs.length;
-                    }, 100);
-
-                    setTimeout(() => {
-                        clearInterval(intervalId);
-                        const selectedSheikh = sheikhs[Math.floor(Math.random() * sheikhs.length)];
-                        Swal.fire({
-                            title: 'Selected Sheikh!',
-                            text: `${selectedSheikh.name}`,
-                            icon: 'success'
-                        }).then(() => {
-                            loadSurahAudio(surahId, selectedSheikh);
-                        });
-                    }, spinDuration);
-                }
-            });
-
-            // Prevent screen from sleeping
-            if ('wakeLock' in navigator) {
-                let wakeLock = null;
-
-                const requestWakeLock = async () => {
-                    try {
-                        wakeLock = await navigator.wakeLock.request('screen');
-                    } catch (err) {
-                        console.error('Error requesting wake lock:', err);
-                    }
-                };
-
-                document.addEventListener('visibilitychange', () => {
-                    if (wakeLock !== null && document.visibilityState === 'visible') {
-                        requestWakeLock();
-                    }
+            function showSurahList(sheikh) {
+                surahList.innerHTML = '';
+                surahs.forEach(surah => {
+                    const surahItem = document.createElement('div');
+                    surahItem.classList.add('surah-item');
+                    surahItem.innerHTML = `<span>${surah.name}</span>`;
+                    surahItem.onclick = () => {
+                        playAudio(sheikh, surah);
+                    };
+                    surahList.appendChild(surahItem);
                 });
-
-                requestWakeLock();
             }
-        });
-    </script>
-</body>
+
+            function playAudio(sheikh, surah) {
+                const audioUrl = `https://example.com/audio/${sheikh.id}/${surah.number}.mp3`;
+                audioPlayer.src = audioUrl;
+                audioPlayer.play();
+            }
+        </script>
+    </body>
 </html>
