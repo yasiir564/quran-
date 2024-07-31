@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quran Pro Login Form</title>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com">
+    <meta name="google-signin-client_id" content="692064901690-k1988525o60rf8s1bop506ea8tll3s7t.apps.googleusercontent.com ">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet">
     <style>
@@ -15,7 +15,7 @@
             background: #abbaab;
             background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
             background: linear-gradient(to right, #ffffff, #abbaab);
-            font-family: 'Amiri', serif;
+            font-family: 'Roboto', sans-serif;
         }
 
         .login-page {
@@ -49,7 +49,7 @@
         }
 
         .form button {
-            font-family: 'Titillium Web', sans-serif;
+            font-family: 'Roboto', sans-serif;
             font-size: 14px;
             font-weight: bold;
             letter-spacing: .1em;
@@ -61,10 +61,8 @@
             margin: 0 0 8px;
             padding: 15px;
             color: #fff;
-            -webkit-transition: all 0.3 ease;
-            transition: all 0.3 ease;
+            transition: all 0.3s ease;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
         .form button:hover,
@@ -85,7 +83,6 @@
             font-size: 11px;
             text-align: center;
             font-weight: bold;
-            font-style: normal;
         }
 
         .form .message a {
@@ -265,7 +262,8 @@
             const login = document.getElementById('login').value;
             const password = document.getElementById('password').value;
 
-            const storedUsers = JSON.parse(localStorage.getItem('users'));
+            // Check if users are stored in local storage
+            const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
             const user = storedUsers.find(user => 
                 (user.username === login || user.email === login) && user.password === password
             );
@@ -320,3 +318,4 @@
     </script>
 </body>
 </html>
+ 
