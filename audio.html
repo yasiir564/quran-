@@ -185,6 +185,7 @@
         <div id="surah-list"></div>
         <div class="loader" id="loader"></div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const surahList = document.getElementById('surah-list');
@@ -210,9 +211,9 @@
                         const buttonsDiv = document.createElement('div');
                         buttonsDiv.classList.add('surah-buttons');
                         buttonsDiv.innerHTML = `
-                            <i class="fas fa-bookmark" title="Bookmark"></i>
+                            <i class="fas fa-bookmark" title="Bookmark" onclick="bookmarkSurah(${surah.id})"></i>
                             <i class="fas fa-share-alt" title="Share"></i>
-                            <i class="fas fa-plus-circle" title="Add to Playlist"></i>
+                            <i class="fas fa-plus-circle" title="Add to Playlist" onclick="addToPlaylist(${surah.id})"></i>
                         `;
                         surahDiv.appendChild(buttonsDiv);
 
@@ -244,9 +245,88 @@
                 }
             });
         });
+
+        function ajaxPost(url, data) {
+            return fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams(data)
+            }).then(response => response.json());
+        }
+
+        function isUserLoggedIn() {
+            return ajaxPost('backend.php', { action: 'is_logged_in' });
+        }
+
+        function bookmarkSurah(surahId) {
+            isUserLoggedIn().then(result => {
+                if (!result.loggedIn) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Not Logged In',
+                        text: 'You need to be logged in to bookmark Surahs.',
+                        confirmButtonText: 'Log In',
+                        allowOutsideClick: false,
+                        preConfirm: () => {
+                            window.location.href = 'login.html';
+                        }
+                    });
+                    return;
+                }
+
+                ajaxPost('backend.php', { action: 'bookmark', surah_id: surahId }).then(response => {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Bookmarked',
+                            text: 'Surah has been bookmarked successfully.',
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.error || 'An error occurred.',
+                        });
+                    }
+                });
+            });
+        }
+
+        function addToPlaylist(surahId) {
+            isUserLoggedIn().then(result => {
+                if (!result.loggedIn) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Not Logged In',
+                        text: 'You need to be logged in to add Surahs to your playlist.',
+                        confirmButtonText: 'Log In',
+                        allowOutsideClick: false,
+                        preConfirm: () => {
+                            window.location.href = 'login.html';
+                        }
+                    });
+                    return;
+                }
+
+                ajaxPost('backend.php', { action: 'add_to_playlist', surah_id: surahId }).then(response => {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Added to Playlist',
+                            text: 'Surah has been added to your playlist successfully.',
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.error || 'An error occurred.',
+                        });
+                    }
+                });
+            });
+        }
     </script>
 </body>
 </html>
-
 
 
