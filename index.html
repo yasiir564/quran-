@@ -616,6 +616,53 @@ footer .text-center {
         document.getElementById("main").style.marginLeft = "0";
     }
 
+    function initializePage() {
+        // Calendar Initialization
+        const hijriDate = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        }).format(new Date());
+
+        const hijriDateArabic = new Intl.DateTimeFormat('ar-TN-u-ca-islamic', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        }).format(new Date());
+
+        const calendarDiv = document.getElementById('calendar');
+        calendarDiv.innerHTML = `<p id="hijri-date">${hijriDate}</p><p id="hijri-date-arabic">${hijriDateArabic}</p>`;
+
+        // Surah List Initialization
+        loadSurahs();
+    }
+
+    async function loadSurahs() {
+        const surahList = document.getElementById('surah-list');
+        const loader = document.getElementById('loader');
+        loader.style.display = 'block';
+
+        try {
+            const surahs = await getSurahData();
+            loader.style.display = 'none';
+            const fragment = document.createDocumentFragment();
+            surahs.forEach(surah => {
+                const surahDiv = document.createElement('div');
+                surahDiv.classList.add('surah');
+                surahDiv.innerText = surah.englishName;
+                surahDiv.addEventListener('click', () => {
+                    window.location.href = `surah.html?surah=${surah.number}`;
+                });
+                fragment.appendChild(surahDiv);
+            });
+            surahList.innerHTML = ''; // Clear existing content
+            surahList.appendChild(fragment);
+        } catch (error) {
+            loader.style.display = 'none';
+            console.error('Error fetching Surahs:', error);
+        }
+    }
+
     if (user) {
         document.getElementById('username').textContent = user.username;
         document.getElementById('email').textContent = user.email || '';
@@ -725,36 +772,13 @@ footer .text-center {
         }
     }
 
-    const surahList = document.getElementById('surah-list');
-    const loader = document.getElementById('loader');
-    loader.style.display = 'block';
-
-    try {
-        const surahs = await getSurahData();
-        loader.style.display = 'none';
-        const fragment = document.createDocumentFragment();
-        surahs.forEach(surah => {
-            const surahDiv = document.createElement('div');
-            surahDiv.classList.add('surah');
-            surahDiv.innerText = surah.englishName;
-            surahDiv.addEventListener('click', () => {
-                window.location.href = `surah.html?surah=${surah.number}`;
-            });
-            fragment.appendChild(surahDiv);
-        });
-        surahList.appendChild(fragment);
-    } catch (error) {
-        loader.style.display = 'none';
-        console.error('Error fetching Surahs:', error);
-    }
-
     const searchInput = document.getElementById('search-input');
     const searchButton = document.getElementById('search-button');
     const darkModeToggle = document.getElementById('dark-mode-toggle');
 
     searchButton.addEventListener('click', () => {
         const searchTerm = searchInput.value.toLowerCase();
-        const surahElements = surahList.querySelectorAll('.surah');
+        const surahElements = document.querySelectorAll('.surah');
         surahElements.forEach(surah => {
             if (surah.innerText.toLowerCase().includes(searchTerm)) {
                 surah.style.display = 'block';
@@ -767,21 +791,6 @@ footer .text-center {
     darkModeToggle.addEventListener('click', () => {
         document.body.classList.toggle('dark-mode');
     });
-
-    const hijriDate = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    }).format(new Date());
-
-    const hijriDateArabic = new Intl.DateTimeFormat('ar-TN-u-ca-islamic', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    }).format(new Date());
-
-    const calendarDiv = document.getElementById('calendar');
-    calendarDiv.innerHTML = `<p id="hijri-date">${hijriDate}</p><p id="hijri-date-arabic">${hijriDateArabic}</p>`;
 
     // Hide header on scroll down, show on scroll up or stop
     let lastScrollTop = 0;
@@ -833,6 +842,9 @@ footer .text-center {
     document.getElementById('login-button').addEventListener('click', function() {
         loginUser();
     });
+
+    // Ensure the page is fully initialized after checking user login state
+    initializePage();
 });
 </script>
 </body>
