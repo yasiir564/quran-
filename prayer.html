@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -274,102 +274,75 @@
             function displayNextPrayer(timings) {
                 const now = new Date();
                 const prayerTimes = {
-                    Fajr: new Date(`${now.toDate
-const prayerTimes = {
-                        Fajr: new Date(`${now.toDateString()} ${timings.Fajr}`),
-                        Dhuhr: new Date(`${now.toDateString()} ${timings.Dhuhr}`),
-                        Asr: new Date(`${now.toDateString()} ${timings.Asr}`),
-                        Maghrib: new Date(`${now.toDateString()} ${timings.Maghrib}`),
-                        Isha: new Date(`${now.toDateString()} ${timings.Isha}`)
-                    };
-
-                    let nextPrayer = null;
-                    let nextPrayerTime = null;
-
-                    for (const [prayer, time] of Object.entries(prayerTimes)) {
-                        if (now < time) {
-                            nextPrayer = prayer;
-                            nextPrayerTime = time;
-                            break;
-                        }
+                    Fajr: new Date(`${now.toDateString()} ${timings.Fajr}`),
+                    Dhuhr: new Date(`${now.toDateString()} ${timings.Dhuhr}`),
+                    Asr: new Date(`${now.toDateString()} ${timings.Asr}`),
+                    Maghrib: new Date(`${now.toDateString()} ${timings.Maghrib}`),
+                    Isha: new Date(`${now.toDateString()} ${timings.Isha}`)
+                };
+                let nextPrayer = null;
+                for (let [prayer, time] of Object.entries(prayerTimes)) {
+                    if (now < time) {
+                        nextPrayer = prayer;
+                        break;
                     }
+                }
+                if (!nextPrayer) {
+                    nextPrayer = "Fajr";
+                }
+                document.querySelector('.prayer-time span').textContent = `${nextPrayer}:`;
+            }
 
-                    if (!nextPrayer) {
-                        nextPrayer = 'Fajr';
-                        nextPrayerTime = new Date(`${now.toDateString()} ${timings.Fajr}`);
-                        nextPrayerTime.setDate(nextPrayerTime.getDate() + 1); // Next day's Fajr
-                    }
+            // Country search functionality
+            document.getElementById("search-button").addEventListener("click", function() {
+                let searchInput = document.getElementById("country-search-input").value.trim();
+                if (searchInput) {
+                    searchCountry(searchInput);
+                } else {
+                    Swal.fire("Error", "Please enter a country name.", "error");
+                }
+            });
 
-                    Swal.fire({
-                        title: 'Next Prayer',
-                        text: `${nextPrayer} at ${nextPrayerTime.toLocaleTimeString()}`,
-                        icon: 'info'
+            function searchCountry(query) {
+                const countries = [
+                    // Add country list here
+                    { name: "Kenya", city: "Nairobi", flag: "https://restcountries.com/v3.1/all" },
+                    // Add more countries as needed
+                ];
+
+                let filteredCountries = countries.filter(country => country.name.toLowerCase().includes(query.toLowerCase()));
+                displayCountryList(filteredCountries);
+            }
+
+            function displayCountryList(countries) {
+                const countryList = document.getElementById("country-list");
+                countryList.innerHTML = "";
+
+                if (countries.length > 0) {
+                    countries.forEach(country => {
+                        const listItem = document.createElement("div");
+                        listItem.classList.add("country-list-item");
+                        listItem.innerHTML = `<img src="${country.flag}" alt="${country.name} flag"><span>${country.name}</span>`;
+                        listItem.addEventListener("click", () => fetchPrayerTimes(null, null, country));
+                        countryList.appendChild(listItem);
                     });
+                } else {
+                    countryList.innerHTML = "<div>No countries found.</div>";
                 }
             }
 
-            // Dark mode toggle
-            const darkModeToggle = document.querySelector('.dark-mode-toggle');
-            darkModeToggle.addEventListener('click', () => {
+            // Dark mode toggle functionality
+            document.querySelector('.dark-mode-toggle').addEventListener('click', () => {
                 document.body.classList.toggle('dark-mode');
-                if (document.body.classList.contains('dark-mode')) {
-                    darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-                } else {
-                    darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-                }
+                document.querySelector('.dark-mode-toggle i').classList.toggle('fa-sun');
+                document.querySelector('.dark-mode-toggle i').classList.toggle('fa-moon');
             });
 
             // Close button functionality
-            const closeButton = document.querySelector('.close-button');
-            closeButton.addEventListener('click', () => {
-                window.location.href = 'index.html';
-            });
-
-            // Populate country select
-            const countrySearchInput = document.getElementById('country-search-input');
-            const countryList = document.getElementById('country-list');
-            let countries = [];
-
-            fetch('https://restcountries.com/v3.1/all')
-                .then(response => response.json())
-                .then(data => {
-                    countries = data;
-                    displayCountryList(countries);
-                })
-                .catch(error => Swal.fire("Error", "Error fetching countries.", "error"));
-
-            function displayCountryList(countries) {
-                countryList.innerHTML = '';
-                countries.forEach(country => {
-                    const countryItem = document.createElement('div');
-                    countryItem.className = 'country-list-item';
-                    countryItem.dataset.country = JSON.stringify({ name: country.name.common, city: country.capital ? country.capital[0] : '' });
-                    countryItem.innerHTML = `
-                        <img src="${country.flags.svg}" alt="${country.name.common} flag">
-                        <span>${country.name.common}</span>
-                    `;
-                    countryItem.addEventListener('click', () => {
-                        const selectedCountry = JSON.parse(countryItem.dataset.country);
-                        fetchPrayerTimes(null, null, selectedCountry);
-                    });
-                    countryList.appendChild(countryItem);
-                });
-            }
-
-            countrySearchInput.addEventListener('input', () => {
-                const searchTerm = countrySearchInput.value.toLowerCase();
-                const filteredCountries = countries.filter(country => country.name.common.toLowerCase().includes(searchTerm));
-                displayCountryList(filteredCountries);
-            });
-
-            // Handle search button click
-            const searchButton = document.getElementById('search-button');
-            searchButton.addEventListener('click', () => {
-                const searchTerm = countrySearchInput.value.toLowerCase();
-                const filteredCountries = countries.filter(country => country.name.common.toLowerCase().includes(searchTerm));
-                displayCountryList(filteredCountries);
+            document.querySelector('.close-button').addEventListener('click', () => {
+                window.close();
             });
         });
     </script>
 </body>
-
+</html>
