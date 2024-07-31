@@ -608,16 +608,14 @@ footer .text-center {
 
     <script src="https://unpkg.com/idb@6.1.0/build/iife/index-min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', async function() {
-    const user = JSON.parse(localStorage.getItem('loggedInUser'));
-
+   document.addEventListener('DOMContentLoaded', async function() {
     function resetPage() {
         document.getElementById("mySidebar").style.left = "-250px";
         document.getElementById("main").style.marginLeft = "0";
     }
 
-    function initializePage() {
-        // Calendar Initialization
+    async function initializePage() {
+        // Initialize Calendar
         const hijriDate = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
             day: 'numeric',
             month: 'long',
@@ -631,123 +629,48 @@ footer .text-center {
         }).format(new Date());
 
         const calendarDiv = document.getElementById('calendar');
-        calendarDiv.innerHTML = `<p id="hijri-date">${hijriDate}</p><p id="hijri-date-arabic">${hijriDateArabic}</p>`;
+        if (calendarDiv) {
+            calendarDiv.innerHTML = `<p id="hijri-date">${hijriDate}</p><p id="hijri-date-arabic">${hijriDateArabic}</p>`;
+        }
 
-        // Surah List Initialization
-        loadSurahs();
+        // Load Surahs
+        await loadSurahs();
+
+        // Initialize other components if necessary
     }
 
     async function loadSurahs() {
         const surahList = document.getElementById('surah-list');
         const loader = document.getElementById('loader');
-        loader.style.display = 'block';
+        if (loader) {
+            loader.style.display = 'block';
+        }
 
         try {
             const surahs = await getSurahData();
-            loader.style.display = 'none';
-            const fragment = document.createDocumentFragment();
-            surahs.forEach(surah => {
-                const surahDiv = document.createElement('div');
-                surahDiv.classList.add('surah');
-                surahDiv.innerText = surah.englishName;
-                surahDiv.addEventListener('click', () => {
-                    window.location.href = `surah.html?surah=${surah.number}`;
+            if (loader) {
+                loader.style.display = 'none';
+            }
+            if (surahList) {
+                surahList.innerHTML = ''; // Clear existing content
+                const fragment = document.createDocumentFragment();
+                surahs.forEach(surah => {
+                    const surahDiv = document.createElement('div');
+                    surahDiv.classList.add('surah');
+                    surahDiv.innerText = surah.englishName;
+                    surahDiv.addEventListener('click', () => {
+                        window.location.href = `surah.html?surah=${surah.number}`;
+                    });
+                    fragment.appendChild(surahDiv);
                 });
-                fragment.appendChild(surahDiv);
-            });
-            surahList.innerHTML = ''; // Clear existing content
-            surahList.appendChild(fragment);
+                surahList.appendChild(fragment);
+            }
         } catch (error) {
-            loader.style.display = 'none';
+            if (loader) {
+                loader.style.display = 'none';
+            }
             console.error('Error fetching Surahs:', error);
         }
-    }
-
-    if (user) {
-        document.getElementById('username').textContent = user.username;
-        document.getElementById('email').textContent = user.email || '';
-
-        if (user.imageUrl) {
-            const profilePic = document.getElementById('profile-pic');
-            profilePic.src = user.imageUrl;
-            profilePic.style.display = 'block';
-        }
-
-        resetPage();
-    }
-
-    function openNav() {
-        document.getElementById("mySidebar").style.left = "0";
-        document.getElementById("main").style.marginLeft = "250px";
-    }
-
-    function closeNav() {
-        document.getElementById("mySidebar").style.left = "-250px";
-        document.getElementById("main").style.marginLeft = "0";
-    }
-
-    function toggleDarkMode() {
-        document.body.classList.toggle('dark-mode');
-    }
-
-    function performSearch() {
-        const query = document.querySelector('#search-input').value.toLowerCase();
-        const surahElements = document.querySelectorAll('.surah');
-
-        surahElements.forEach(surahElement => {
-            const surahName = surahElement.innerText.toLowerCase();
-            if (surahName.includes(query)) {
-                surahElement.style.display = 'block';
-            } else {
-                surahElement.style.display = 'none';
-            }
-        });
-    }
-
-    document.querySelector('.search-container button').addEventListener('click', function() {
-        performSearch();
-    });
-
-    document.querySelector('#search-input').addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-            performSearch();
-        }
-    });
-
-    document.querySelector('.openbtn').addEventListener('click', function() {
-        openNav();
-    });
-
-    document.getElementById('closeSidebarBtn').addEventListener('click', function() {
-        closeNav();
-    });
-
-    function showLoader() {
-        document.getElementById('loader').style.display = 'block';
-    }
-
-    function hideLoader() {
-        document.getElementById('loader').style.display = 'none';
-    }
-
-    function loadContent() {
-        showLoader();
-        setTimeout(() => {
-            hideLoader();
-        }, 2000);
-    }
-
-    window.onload = function() {
-        loadContent();
-    };
-
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/service-worker.js')
-            .then(function(registration) {
-                console.log('Service Worker registered with scope:', registration.scope);
-            }).catch(function(error) {
-                console.log('Service Worker registration failed:', error);
-            });
     }
 
     async function getSurahData() {
@@ -772,57 +695,89 @@ footer .text-center {
         }
     }
 
-    const searchInput = document.getElementById('search-input');
-    const searchButton = document.getElementById('search-button');
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    function setEventListeners() {
+        document.querySelector('.search-container button').addEventListener('click', function() {
+            performSearch();
+        });
 
-    searchButton.addEventListener('click', () => {
-        const searchTerm = searchInput.value.toLowerCase();
-        const surahElements = document.querySelectorAll('.surah');
-        surahElements.forEach(surah => {
-            if (surah.innerText.toLowerCase().includes(searchTerm)) {
-                surah.style.display = 'block';
-            } else {
-                surah.style.display = 'none';
+        document.querySelector('#search-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                performSearch();
             }
         });
-    });
 
-    darkModeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-    });
+        document.querySelector('.openbtn').addEventListener('click', function() {
+            openNav();
+        });
+
+        document.getElementById('closeSidebarBtn').addEventListener('click', function() {
+            closeNav();
+        });
+
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        if (darkModeToggle) {
+            darkModeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+            });
+        }
+    }
+
+    function openNav() {
+        document.getElementById("mySidebar").style.left = "0";
+        document.getElementById("main").style.marginLeft = "250px";
+    }
+
+    function closeNav() {
+        document.getElementById("mySidebar").style.left = "-250px";
+        document.getElementById("main").style.marginLeft = "0";
+    }
+
+    function performSearch() {
+        const query = document.querySelector('#search-input').value.toLowerCase();
+        const surahElements = document.querySelectorAll('.surah');
+
+        surahElements.forEach(surahElement => {
+            const surahName = surahElement.innerText.toLowerCase();
+            if (surahName.includes(query)) {
+                surahElement.style.display = 'block';
+            } else {
+                surahElement.style.display = 'none';
+            }
+        });
+    }
 
     // Hide header on scroll down, show on scroll up or stop
-    let lastScrollTop = 0;
-    const header = document.querySelector('header');
-    let scrollTimeout;
+    function handleScroll() {
+        let lastScrollTop = 0;
+        const header = document.querySelector('header');
+        let scrollTimeout;
 
-    window.addEventListener('scroll', () => {
-        clearTimeout(scrollTimeout);
+        window.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
 
-        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-        if (currentScrollTop > lastScrollTop) {
-            // Scroll down
-            header.classList.remove('header-visible');
-            header.classList.add('header-hidden');
-        } else {
-            // Scroll up
-            header.classList.remove('header-hidden');
-            header.classList.add('header-visible');
-        }
+            if (currentScrollTop > lastScrollTop) {
+                // Scroll down
+                header.classList.remove('header-visible');
+                header.classList.add('header-hidden');
+            } else {
+                // Scroll up
+                header.classList.remove('header-hidden');
+                header.classList.add('header-visible');
+            }
 
-        lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop; // For mobile or negative scrolling
+            lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop; // For mobile or negative scrolling
 
-        // Show header after user stops scrolling
-        scrollTimeout = setTimeout(() => {
-            header.classList.remove('header-hidden');
-            header.classList.add('header-visible');
-        }, 200);
-    });
+            // Show header after user stops scrolling
+            scrollTimeout = setTimeout(() => {
+                header.classList.remove('header-hidden');
+                header.classList.add('header-visible');
+            }, 200);
+        });
+    }
 
-    // *** Add these to handle login state and reload page ***
-    
+    // Login handling logic
     function loginUser() {
         // Example login logic (replace with actual validation logic)
         const username = document.getElementById('username-input').value;
@@ -830,7 +785,7 @@ footer .text-center {
 
         if (username === 'admin' && password === 'password123') {
             // Set a flag indicating the user is logged in
-            localStorage.setItem('loggedInUser', JSON.stringify({username: username, email: 'admin@example.com'}));
+            localStorage.setItem('loggedInUser', JSON.stringify({ username: username, email: 'admin@example.com' }));
             
             // Reload the page after login
             location.reload();
@@ -843,8 +798,34 @@ footer .text-center {
         loginUser();
     });
 
-    // Ensure the page is fully initialized after checking user login state
+    const user = JSON.parse(localStorage.getItem('loggedInUser'));
+    if (user) {
+        document.getElementById('username').textContent = user.username;
+        document.getElementById('email').textContent = user.email || '';
+
+        if (user.imageUrl) {
+            const profilePic = document.getElementById('profile-pic');
+            profilePic.src = user.imageUrl;
+            profilePic.style.display = 'block';
+        }
+
+        resetPage();
+    }
+
+    // Initialize the page and set up event listeners
     initializePage();
+    setEventListeners();
+    handleScroll();
+
+    // Service Worker registration
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(function(registration) {
+                console.log('Service Worker registered with scope:', registration.scope);
+            }).catch(function(error) {
+                console.log('Service Worker registration failed:', error);
+            });
+    }
 });
 </script>
 </body>
