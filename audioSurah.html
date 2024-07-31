@@ -285,6 +285,19 @@ body.dark-mode .audio-player {
             currentAudio.currentTime = Math.max(currentAudio.currentTime - 10, 0);
         }
     }
+        function showAudioOverlay(sheikh) {
+        if (currentAudio) {
+            currentAudio.pause();
+        }
+        audioElement.src = `path/to/audio/${surahId}/${sheikh.id}.mp3`;
+        reciterImage.src = sheikh.imageUrl;
+        audioOverlay.classList.add('active');
+        currentAudio = audioElement;
+        currentAudio.play();
+        playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
+        document.getElementById('current-surah').innerText = `Currently playing: Surah ${surahId}`;
+    }
+
 
     function toggleOverlay() {
         audioOverlay.classList.toggle('active');
@@ -347,15 +360,17 @@ body.dark-mode .audio-player {
         }
     });
 
-    sheikhs.forEach((sheikh) => {
+       sheikhs.forEach(sheikh => {
         const sheikhItem = document.createElement('div');
-        sheikhItem.className = 'sheikh-item';
-        sheikhItem.innerHTML = `<img src="${sheikh.imageUrl}" alt="${sheikh.name}">`;
-        sheikhItem.addEventListener('click', () => {
-            document.querySelectorAll('.sheikh-item').forEach(item => item.classList.remove('active'));
-            sheikhItem.classList.add('active');
-            loadSurahAudio(surahId, sheikh);
-        });
+        sheikhItem.classList.add('sheikh-item');
+        sheikhItem.innerHTML = `
+            <img src="${sheikh.imageUrl}" alt="${sheikh.name}">
+            <div class="sheikh-name"><span>${sheikh.name}</span><span>${sheikh.nameAr}</span></div>
+        `;
+        sheikhItem.addEventListener('click', () => showAudioOverlay(sheikh));
+        sheikhList.appendChild(sheikhItem);
+    });
+
 
         sheikhList.appendChild(sheikhItem);
     });
