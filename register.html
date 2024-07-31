@@ -4,73 +4,154 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color:#000;
+            background-image: url('https://ordinaryfaith.net/wp-content/uploads/2016/03/Gray-plain-website-background.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+            font-family: 'Roboto', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
+        }
+        .register-page {
+            width: 90%;
+            max-width: 360px;
+            padding: 8% 0 0;
+            margin: auto;
+        }
+        .form {
+            position: relative;
+            z-index: 1;
+            background: #48c9b0;
+            max-width: 360px;
+            margin: 0 auto 100px;
+            padding: 45px;
+            text-align: center;
+            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+        }
+        .form input {
+            font-family: FontAwesome, 'Roboto', sans-serif;
+            outline: 0;
+            background: #f2f2f2;
+            width: calc(100% - 40px);
+            border: 0;
+            margin: 0 0 15px;
+            padding: 15px;
+            box-sizing: border-box;
+            font-size: 14px;
+            border-radius: 10px;
+        }
+        .form button {
+            font-family: 'Titillium Web', sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: .1em;
+            outline: 0;
+            background: #17a589;
+            width: 100%;
+            border: 0;
+            border-radius: 30px;
+            margin: 0 0 8px;
+            padding: 15px;
+            color: #fff;
+            -webkit-transition: all 0.3 ease;
+            transition: all 0.3 ease;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .form button:hover,
+        .form button:focus {
+            background: #148f77;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            transform: translateY(-4px);
+        }
+        .form button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2.5px 5px rgba(0, 0, 0, 0.2);
+        }
+        .form .message {
+            margin: 6px 0;
+            color: #808080;
+            font-size: 11px;
+            text-align: center;
+            font-weight: bold;
+            font-style: normal;
+        }
+        .form .message a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .form .terms {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            color: #808080;
+        }
+        .form .terms input {
+            margin-right: 10px;
+        }
+        .form .register-form {
+            display: none;
         }
         .container {
-            width: 100%;
-            max-width: 400px;
-            padding: 2em;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        .container:before,
+        .container:after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+        .container .info {
+            margin: 50px auto;
             text-align: center;
         }
-        h2 {
-            color: #333;
-            margin-bottom: 1em;
+        .container .info h1 {
+            margin: 0 0 15px;
+            padding: 0;
+            font-size: 36px;
+            font-weight: 300;
+            color: #1a1a1a;
         }
-        label {
-            display: block;
-            margin-bottom: 0.5em;
-            color: #666;
+        .container .info span {
+            color: #4d4d4d;
+            font-size: 12px;
         }
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 0.8em;
-            margin-bottom: 1em;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1em;
+        .container .info span a {
+            color: #000;
+            text-decoration: none;
         }
-        button[type="submit"] {
-            width: 100%;
-            padding: 1em;
-            border: none;
-            border-radius: 5px;
-            color: #fff;
-            font-size: 1em;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            background: linear-gradient(to right, #4e74e6, #72b2f5);
-            margin-bottom: 0.5em;
-        }
-        button[type="submit"]:hover {
-            background: linear-gradient(to right, #3a5ab3, #5a98e0);
+        .container .info span .fa {
+            color: #ef3b3a;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Register</h2>
-        <form id="register-form">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-            <button type="submit">Register</button>
-        </form>
+    <div class="register-page">
+        <div class="form">
+            <h2>Register</h2>
+            <form id="register-form">
+                <input type="text" id="username" name="username" placeholder="Username" required>
+                <input type="email" id="email" name="email" placeholder="Email" required>
+                <input type="password" id="password" name="password" placeholder="Password" required>
+                <div class="terms">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">I accept the <a href="#">terms and conditions</a></label>
+                </div>
+                <button type="submit">Register</button>
+            </form>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -81,7 +162,7 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            let storedUsers = JSON.parse(localStorage.getItem('users'));
+            let storedUsers = JSON.parse(localStorage.getItem('users')) || [];
             const userExists = storedUsers.find(user => user.username === username || user.email === email);
 
             if (userExists) {
@@ -89,7 +170,7 @@
                     icon: 'error',
                     title: 'Oops...',
                     text: 'Username or email already taken!',
-                    confirmButtonColor: '#4e74e6'
+                    confirmButtonColor: '#17a589'
                 });
             } else {
                 storedUsers.push({ username, email, password });
@@ -107,5 +188,6 @@
     </script>
 </body>
 </html>
+
 
 
