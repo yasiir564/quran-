@@ -382,12 +382,36 @@
 
                 bookmarkButton.addEventListener('click', () => {
                     const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
-                    bookmarkedList.innerHTML = bookmarks.length ? bookmarks.map(id => `<li>Surah ${id}</li>`).join('') : '<li>No bookmarks found</li>';
+                    if (bookmarks.length === 0) {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'No Bookmarks',
+                            text: 'You have no bookmarks. Please add bookmarks to view them.',
+                            confirmButtonText: 'Add Bookmarks',
+                            preConfirm: () => {
+                                window.location.href = 'audio.html';  // Change this URL to where users can add bookmarks
+                            }
+                        });
+                    } else {
+                        bookmarkedList.innerHTML = bookmarks.length ? bookmarks.map(id => `<li>Surah ${id}</li>`).join('') : '<li>No bookmarks found</li>';
+                    }
                 });
 
                 playlistButton.addEventListener('click', () => {
                     const playlist = JSON.parse(localStorage.getItem('playlist')) || [];
-                    playlistList.innerHTML = playlist.length ? playlist.map(id => `<li>Surah ${id}</li>`).join('') : '<li>No items in playlist</li>';
+                    if (playlist.length === 0) {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'No Playlist',
+                            text: 'Your playlist is empty. Please add items to your playlist.',
+                            confirmButtonText: 'Create Playlist',
+                            preConfirm: () => {
+                                window.location.href = 'audio.html';  // Change this URL to where users can create a playlist
+                            }
+                        });
+                    } else {
+                        playlistList.innerHTML = playlist.length ? playlist.map(id => `<li>Surah ${id}</li>`).join('') : '<li>No items in playlist</li>';
+                    }
                 });
             }
         }
