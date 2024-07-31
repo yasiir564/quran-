@@ -15,24 +15,23 @@
             background: #abbaab;
             background: linear-gradient(to right, #ffffff, #abbaab);
             margin: 0;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             transition: background 0.3s;
         }
 
-        .clock-container {
+        .container {
             background: rgba(255, 255, 255, 0.8);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             text-align: center;
+            width: 90%;
             max-width: 400px;
             position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
 
         .clock {
@@ -89,7 +88,7 @@
             color: #ddd;
         }
 
-        body.dark-mode .clock-container {
+        body.dark-mode .container {
             background: rgba(50, 50, 50, 0.8);
             color: #ddd;
         }
@@ -109,10 +108,29 @@
         body.dark-mode #location {
             color: #aaa;
         }
+
+        select {
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        @media (max-width: 600px) {
+            .clock {
+                font-size: 2.5em;
+            }
+
+            .container {
+                width: 100%;
+                padding: 15px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="clock-container">
+    <div class="container">
         <div class="close-button">&times;</div>
         <div class="dark-mode-toggle">
             <i class="fas fa-moon"></i>
@@ -120,6 +138,9 @@
         <div class="clock" id="clock"></div>
         <h1>Prayer Times</h1>
         <div id="location"></div>
+        <select id="country-select">
+            <!-- Options will be populated dynamically -->
+        </select>
         <div id="prayer-times">
             <div class="prayer-time">
                 <span>Fajr:</span> <span id="fajr"></span>
@@ -162,22 +183,7 @@
             function showPosition(position) {
                 let lat = position.coords.latitude;
                 let lon = position.coords.longitude;
-
-                // Fetch prayer times
-                fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=2`)
-                    .then(response => response.json())
-                    .then(data => {
-                        let timings = data.data.timings;
-                        document.getElementById("fajr").textContent = timings.Fajr;
-                        document.getElementById("dhuhr").textContent = timings.Dhuhr;
-                        document.getElementById("asr").textContent = timings.Asr;
-                        document.getElementById("maghrib").textContent = timings.Maghrib;
-                        document.getElementById("isha").textContent = timings.Isha;
-
-                        let location = data.data.meta.timezone;
-                        document.getElementById("location").textContent = `Location: ${location}`;
-                    })
-                    .catch(error => console.error("Error fetching prayer times:", error));
+                fetchPrayerTimes(lat, lon);
             }
 
             function showError(error) {
@@ -197,6 +203,45 @@
                 }
             }
 
+            // Fetch prayer times
+            function fetchPrayerTimes(lat, lon, country = null) {
+                let url = `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=2`;
+                if (country) {
+                    url = `https://api.aladhan.com/v1/timingsByCity?city=${country.city}&country=${country.name}&method=2`;
+                }
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        let timings = data.data.timings;
+                        document.getElementById("fajr").textContent = timings.Fajr;
+                        document.getElementById("dhuhr").textContent = timings.Dhuhr;
+                        document.getElementById("asr").textContent = timings.Asr;
+                        document.getElementById("maghrib").textContent = timings.Maghrib;
+                        document.getElementById("isha").textContent = timings.Isha;
+
+                        let location = data.data.meta.timezone;
+                        document.getElementById("location").textContent = `Location: ${location}`;
+                        displayNextPrayer(timings);
+                    })
+                    .catch(error => console.error("Error fetching prayer times:", error));
+            }
+
+            // Display next prayer time
+            function displayNextPrayer(timings) {
+                const now = new Date();
+                const prayerTimes = {
+                    Fajr: new Date(`${now.toDateString()} ${timings.Fajr}`),
+                    Dhuhr: new Date(`${now.toDateString()} ${timings.Dhuhr}`),
+                    Asr: new Date(`${now.toDateString()} ${timings.Asr}`),
+                    Maghrib: new Date(`${now.toDateString()} ${timings.Maghrib}`),
+                    Isha: new Date(`${now.toDateString()} ${timings.Isha}`)
+                };
+                const upcomingPrayers = Object.keys(prayerTimes).filter(prayer => prayerTimes[prayer] > now);
+                const nextPrayer = upcomingPrayers.length > 0 ? upcomingPrayers[0] : 'Fajr';
+                const nextPrayerTime = prayerTimes[nextPrayer];
+                document.getElementById('location').insertAdjacentHTML('afterend', `<div id="next-prayer">Next Prayer: ${nextPrayer} at ${nextPrayerTime.toLocaleTimeString()}</div>`);
+            }
+
             // Dark mode toggle
             const darkModeToggle = document.querySelector('.dark-mode-toggle');
             darkModeToggle.addEventListener('click', () => {
@@ -212,6 +257,27 @@
             const closeButton = document.querySelector('.close-button');
             closeButton.addEventListener('click', () => {
                 window.location.href = 'index.html';
+            });
+
+            // Populate country select
+            const countrySelect = document.getElementById('country-select');
+            fetch('https://restcountries.com/v3.1/all')
+                .then(response => response.json())
+                .then(countries => {
+                    countries.sort((a, b) => a.name.common.localeCompare(b.name.common));
+                    countries.forEach(country => {
+                        const option = document.createElement('option');
+                        option.value = JSON.stringify({name: country.name.common, city: country.capital ? country.capital[0] : ''});
+                        option.textContent = country.name.common;
+                        countrySelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching countries:', error));
+
+            // Handle country select change
+            countrySelect.addEventListener('change', () => {
+                const selectedCountry = JSON.parse(countrySelect.value);
+                fetchPrayerTimes(null, null, selectedCountry);
             });
         });
     </script>
