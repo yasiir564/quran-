@@ -10,9 +10,10 @@
         body {
             margin: 0;
             height: 100vh;
-            background: #abbaab;  /* fallback for old browsers */
-            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);  /* Chrome 10-25, Safari 5.1-6 */
-            background: linear-gradient(to right, #ffffff, #abbaab); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            background: #abbaab;
+            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
+            background: linear-gradient(to right, #ffffff, #abbaab);
+            font-family: 'Amiri', serif;
         }
 
         .container {
@@ -112,9 +113,115 @@
             color: #fff;
             font-size: 50px;
         }
+
+        /* Sidebar Menu */
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: -250px;
+            background: linear-gradient(to top, #a8edea, #fed6e3);
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #111;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            color: #fff;
+            background-color: #2575fc;
+        }
+
+        .sidebar .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
+
+        #main {
+            transition: margin-left .5s;
+            padding: 16px;
+        }
+
+        .openbtn {
+            font-size: 20px;
+            cursor: pointer;
+            background-color: #2575fc;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+        }
+
+        .openbtn:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
+    <header>
+        <div class="header-icons">
+            <!-- Login Icon -->
+            <a href="login.html" title="Login">
+                <lord-icon
+                    src="https://cdn.lordicon.com/bhfjfgqz.json"
+                    trigger="hover"
+                    colors="primary:#0057b7"
+                    style="width:50px;height:50px;">
+                </lord-icon>
+            </a>
+            <a href="profile.html" title="user profile">
+                <lord-icon
+                    src="https://cdn.lordicon.com/oezixobx.json"
+                    trigger="hover"
+                    colors="primary:#0057b7"
+                    style="width:50px;height:50px;">
+                </lord-icon>
+            </a>
+        </div>
+
+        <div id="mySidebar" class="sidebar">
+            <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
+            <a href="index.html">
+                <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
+            </a>
+            <a href="juzz.html">
+                <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Juzz
+            </a>
+            <a href="audio.html">
+                <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Listen to Quran
+            </a>
+            <a href="donate.html">
+                <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Donate
+            </a>
+            <a href="islam.html">
+                <lord-icon src="https://cdn.lordicon.com/bhfjfgqz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Hijri
+            </a>
+            <a href="prayer.html">
+                <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Prayer
+            </a>
+        </div>
+
+        <div id="main">
+            <button class="openbtn" onclick="openNav()">&#9776; Quran Pro</button>
+        </div>
+    </header>
+
     <div class="container">
         <h2>User Profile</h2>
         <div class="profile-pic-container">
@@ -137,6 +244,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        function openNav() {
+            document.getElementById("mySidebar").style.left = "0";
+        }
+
+        function closeNav() {
+            document.getElementById("mySidebar").style.left = "-250px";
+        }
+
+        document.getElementById('closeSidebarBtn').addEventListener('click', closeNav);
+
         document.addEventListener('DOMContentLoaded', function() {
             const user = JSON.parse(localStorage.getItem('loggedInUser'));
 
@@ -144,56 +261,35 @@
                 document.getElementById('username').value = user.username;
                 document.getElementById('email').value = user.email || '';
                 if (user.profilePic) {
-                    document.getElementById('profile-pic').innerHTML = '';
-                    document.getElementById('profile-pic').style.backgroundImage = `url(${user.profilePic})`;
+                    const profilePicElem = document.getElementById('profile-pic');
+                    profilePicElem.innerHTML = '';
+                    profilePicElem.style.backgroundImage = `url('${user.profilePic}')`;
+                    profilePicElem.style.backgroundSize = 'cover';
                 } else {
-                    document.getElementById('profile-pic').innerText = user.username.charAt(0).toUpperCase();
+                    const profilePicElem = document.getElementById('profile-pic');
+                    const initials = user.username.charAt(0).toUpperCase();
+                    profilePicElem.textContent = initials;
                 }
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'No user is logged in',
-                    text: 'Please log in first.',
-                    confirmButtonText: 'OK',
-                    allowOutsideClick: false,
-                    willClose: () => {
-                        window.location.href = 'login.html';
-                    }
-                });
             }
 
             document.getElementById('logout-button').addEventListener('click', function() {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Are you sure you want to log out?',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, log out',
-                    cancelButtonText: 'Cancel'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        localStorage.removeItem('loggedInUser');
-                        window.location.href = 'login.html';
-                    }
-                });
+                localStorage.removeItem('loggedInUser');
+                window.location.href = 'login.html';
             });
 
-            document.getElementById('profile-pic-input').addEventListener('change', function(event) {
+            const profilePicInput = document.getElementById('profile-pic-input');
+            profilePicInput.addEventListener('change', function(event) {
                 const file = event.target.files[0];
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        const updatedUser = {
-                            ...user,
-                            profilePic: e.target.result
-                        };
+                        const profilePicElem = document.getElementById('profile-pic');
+                        profilePicElem.innerHTML = '';
+                        profilePicElem.style.backgroundImage = `url('${e.target.result}')`;
+                        profilePicElem.style.backgroundSize = 'cover';
+
+                        const updatedUser = { ...user, profilePic: e.target.result };
                         localStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
-                        document.getElementById('profile-pic').innerHTML = '';
-                        document.getElementById('profile-pic').style.backgroundImage = `url(${e.target.result})`;
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Profile picture updated successfully',
-                            confirmButtonText: 'OK'
-                        });
                     };
                     reader.readAsDataURL(file);
                 }
@@ -202,4 +298,5 @@
     </script>
 </body>
 </html>
+
 
