@@ -83,6 +83,7 @@
             margin: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s, background-color 0.3s;
+            position: relative;
         }
 
         .surah:hover {
@@ -150,6 +151,28 @@
             font-size: 1.5em;
             color: #fff;
         }
+
+        .surah-info {
+            font-family: 'Amiri', serif;
+            font-size: 1.2em;
+        }
+
+        .surah-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .surah-buttons i {
+            cursor: pointer;
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .surah-buttons i:hover {
+            color: #007bff;
+        }
     </style>
 </head>
 <body>
@@ -178,7 +201,21 @@
                     data.chapters.forEach(surah => {
                         const surahDiv = document.createElement('div');
                         surahDiv.classList.add('surah');
-                        surahDiv.innerText = surah.name_simple;
+
+                        const surahInfo = document.createElement('div');
+                        surahInfo.classList.add('surah-info');
+                        surahInfo.innerHTML = `<strong>${surah.name_simple}</strong> <br> ${surah.name_arabic} <br> <span>${surah.id}</span>`;
+                        surahDiv.appendChild(surahInfo);
+
+                        const buttonsDiv = document.createElement('div');
+                        buttonsDiv.classList.add('surah-buttons');
+                        buttonsDiv.innerHTML = `
+                            <i class="fas fa-bookmark" title="Bookmark"></i>
+                            <i class="fas fa-share-alt" title="Share"></i>
+                            <i class="fas fa-plus-circle" title="Add to Playlist"></i>
+                        `;
+                        surahDiv.appendChild(buttonsDiv);
+
                         surahDiv.addEventListener('click', () => {
                             window.location.href = `audioSurah.html?surah=${surah.id}`;
                         });
@@ -210,5 +247,6 @@
     </script>
 </body>
 </html>
+
 
 
