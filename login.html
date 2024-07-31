@@ -16,9 +16,11 @@
             font-family: 'Roboto', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            margin: 0;
         }
         .login-page {
-            width: 360px;
+            width: 90%;
+            max-width: 360px;
             padding: 8% 0 0;
             margin: auto;
         }
@@ -36,7 +38,7 @@
             font-family: FontAwesome, 'Roboto', sans-serif;
             outline: 0;
             background: #f2f2f2;
-            width: 100%;
+            width: calc(100% - 40px);
             border: 0;
             margin: 0 0 15px;
             padding: 15px;
@@ -122,6 +124,20 @@
         .container .info span .fa {
             color: #ef3b3a;
         }
+        .password-container {
+            position: relative;
+        }
+        .password-container input {
+            width: calc(100% - 40px);
+            padding-right: 40px;
+        }
+        .password-container .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -131,7 +147,10 @@
             <form id="login-form">
                 <input type="text" id="username" name="username" placeholder="Username" required>
                 <input type="email" id="email" name="email" placeholder="Email" required>
-                <input type="password" id="password" name="password" placeholder="Password" required>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" placeholder="Password" required>
+                    <span class="toggle-password" onclick="togglePassword()">&#128065;</span>
+                </div>
                 <button type="submit">Login</button>
                 <button type="button" onclick="window.location.href='register.html'">Register</button>
                 <p class="message">or sign in with Google</p>
@@ -207,8 +226,13 @@
                 window.location.href = 'profile.html';
             });
         }
+
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const passwordType = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', passwordType);
+            document.querySelector('.toggle-password').textContent = passwordType === 'password' ? '👁' : '🙈';
+        }
     </script>
 </body>
 </html>
-
-
