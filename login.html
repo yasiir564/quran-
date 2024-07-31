@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quran Pro Login Form</title>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <meta name="google-signin-client_id" content="692064901690-k1988525o60rf8s1bop506ea8tll3s7t.apps.googleusercontent.com">
+    <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet">
     <style>
@@ -61,8 +61,10 @@
             margin: 0 0 8px;
             padding: 15px;
             color: #fff;
-            transition: all 0.2s;
+            -webkit-transition: all 0.3 ease;
+            transition: all 0.3 ease;
             cursor: pointer;
+            transition: all 0.2s;
         }
 
         .form button:hover,
@@ -83,6 +85,7 @@
             font-size: 11px;
             text-align: center;
             font-weight: bold;
+            font-style: normal;
         }
 
         .form .message a {
@@ -107,95 +110,9 @@
             transform: translateY(-50%);
             cursor: pointer;
         }
-
-        /* Sidebar Menu */
-        .sidebar {
-            height: 100%;
-            width: 250px;
-            position: fixed;
-            z-index: 1;
-            top: 0;
-            left: -250px;
-            background: linear-gradient(to top, #a8edea, #fed6e3);
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-        }
-
-        .sidebar a {
-            padding: 10px 15px;
-            text-decoration: none;
-            font-size: 18px;
-            color: #111;
-            display: block;
-            transition: 0.3s;
-        }
-
-        .sidebar a:hover {
-            color: #fff;
-            background-color: #2575fc;
-        }
-
-        .sidebar .closebtn {
-            position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-        }
-
-        #main {
-            transition: margin-left .5s;
-            padding: 16px;
-        }
-
-        .openbtn {
-            font-size: 20px;
-            cursor: pointer;
-            background-color: #2575fc;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            z-index: 1000;
-        }
-
-        .openbtn:hover {
-            background-color: #0056b3;
-        }
     </style>
 </head>
 <body>
-    <header>
-        <div id="main">
-            <button class="openbtn" onclick="openNav()">&#9776; Quran Pro</button>
-        </div>
-    </header>
-
-    <div id="mySidebar" class="sidebar">
-        <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
-        <a href="index.html">
-            <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
-        </a>
-        <a href="juzz.html">
-            <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Juzz
-        </a>
-        <a href="audio.html">
-            <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Listen to Quran
-        </a>
-        <a href="donate.html">
-            <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Donate
-        </a>
-        <a href="islam.html">
-            <lord-icon src="https://cdn.lordicon.com/bhfjfgqz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Hijri
-        </a>
-        <a href="prayer.html">
-            <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Prayer
-        </a>
-    </div>
-
     <div class="login-page">
         <div class="form">
             <h2>Login to Your Account</h2>
@@ -212,69 +129,73 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function openNav() {
-            document.getElementById("mySidebar").style.left = "0";
+        // Dummy users data for demonstration purposes
+        const users = [
+            { username: 'user1', email: 'user1@example.com', password: 'pass1' },
+            { username: 'user2', email: 'user2@example.com', password: 'pass2' }
+        ];
+
+        // Storing dummy users data in localStorage (for the sake of example)
+        if (!localStorage.getItem('users')) {
+            localStorage.setItem('users', JSON.stringify(users));
         }
 
-        function closeNav() {
-            document.getElementById("mySidebar").style.left = "-250px";
-        }
+       document.getElementById('login-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const login = document.getElementById('login').value;
+    const password = document.getElementById('password').value;
 
-        document.getElementById('login-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const login = document.getElementById('login').value;
-            const password = document.getElementById('password').value;
+    const storedUsers = JSON.parse(localStorage.getItem('users'));
+    const user = storedUsers.find(user => 
+        (user.username === login || user.email === login) && user.password === password
+    );
 
-            const storedUsers = JSON.parse(localStorage.getItem('users'));
-            const user = storedUsers.find(user => 
-                (user.username === login || user.email === login) && user.password === password
-            );
-
-            if (user) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Login successful!',
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    localStorage.setItem('loggedInUser', JSON.stringify(user));
-                    window.location.href = 'profile.html'; // Redirect to profile.html
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Invalid username, email, or password!',
-                    confirmButtonColor: '#17a589'
-                });
-            }
+    if (user) {
+        Swal.fire({
+            icon: 'success',
+            title: 'Login successful!',
+            showConfirmButton: false,
+            timer: 1500
+        }).then(() => {
+            localStorage.setItem('loggedInUser', JSON.stringify(user));
+            window.location.href = 'profile.html'; // Redirect to profile.html
         });
-
+    } else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Invalid username, email, or password!',
+            confirmButtonColor: '#17a589'
+        });
+    }
+});
         function togglePassword() {
-            var passwordField = document.getElementById("password");
-            var passwordToggle = document.querySelector(".toggle-password");
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                passwordToggle.textContent = "🙈";
-            } else {
-                passwordField.type = "password";
-                passwordToggle.textContent = "👁️";
-            }
+            const passwordField = document.getElementById('password');
+            const passwordType = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', passwordType);
+            document.querySelector('.toggle-password').textContent = passwordType === 'password' ? '👁️' : '🙈';
         }
-
-        document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
 
         function onSignIn(googleUser) {
-            var profile = googleUser.getBasicProfile();
-            console.log('ID: ' + profile.getId());
-            console.log('Name: ' + profile.getName());
-            console.log('Image URL: ' + profile.getImageUrl());
-            console.log('Email: ' + profile.getEmail());
+            const profile = googleUser.getBasicProfile();
+            const user = {
+                username: profile.getName(),
+                email: profile.getEmail(),
+                profilePic: profile.getImageUrl()
+            };
 
-            // Redirect or handle sign-in on the server
+            Swal.fire({
+                icon: 'success',
+                title: 'Google Sign-In successful!',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                localStorage.setItem('loggedInUser', JSON.stringify(user));
+                window.location.href = 'profile.html';
+            });
         }
     </script>
 </body>
 </html>
-
