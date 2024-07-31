@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet">
     <style>
-      body {
+        body {
             margin: 0;
             height: 100vh;
             background: #abbaab;
@@ -17,12 +17,14 @@
             background: linear-gradient(to right, #ffffff, #abbaab);
             font-family: 'Amiri', serif;
         }
+
         .login-page {
             width: 90%;
             max-width: 360px;
             padding: 8% 0 0;
             margin: auto;
         }
+
         .form {
             position: relative;
             z-index: 1;
@@ -33,6 +35,7 @@
             text-align: center;
             box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
         }
+
         .form input {
             font-family: FontAwesome, 'Roboto', sans-serif;
             outline: 0;
@@ -45,6 +48,7 @@
             font-size: 14px;
             border-radius: 10px;
         }
+
         .form button {
             font-family: 'Titillium Web', sans-serif;
             font-size: 14px;
@@ -63,16 +67,19 @@
             cursor: pointer;
             transition: all 0.2s;
         }
+
         .form button:hover,
         .form button:focus {
             background: #148f77;
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
             transform: translateY(-4px);
         }
+
         .form button:active {
             transform: translateY(2px);
             box-shadow: 0 2.5px 5px rgba(0, 0, 0, 0.2);
         }
+
         .form .message {
             margin: 6px 0;
             color: #808080;
@@ -81,30 +88,36 @@
             font-weight: bold;
             font-style: normal;
         }
+
         .form .message a {
             color: #fff;
             text-decoration: none;
             font-size: 13px;
         }
+
         .form .register-form {
             display: none;
         }
+
         .container {
             position: relative;
             z-index: 1;
             max-width: 300px;
             margin: 0 auto;
         }
+
         .container:before,
         .container:after {
             content: "";
             display: block;
             clear: both;
         }
+
         .container .info {
             margin: 50px auto;
             text-align: center;
         }
+
         .container .info h1 {
             margin: 0 0 15px;
             padding: 0;
@@ -112,24 +125,30 @@
             font-weight: 300;
             color: #1a1a1a;
         }
+
         .container .info span {
             color: #4d4d4d;
             font-size: 12px;
         }
+
         .container .info span a {
             color: #000;
             text-decoration: none;
         }
+
         .container .info span .fa {
             color: #ef3b3a;
         }
+
         .password-container {
             position: relative;
         }
+
         .password-container input {
             width: calc(100% - 40px);
             padding-right: 40px;
         }
+
         .password-container .toggle-password {
             position: absolute;
             top: 50%;
@@ -137,101 +156,134 @@
             transform: translateY(-50%);
             cursor: pointer;
         }
+
+        /* Sidebar Menu */
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: -250px;
+            background: linear-gradient(to top, #a8edea, #fed6e3);
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #111;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            color: #fff;
+            background-color: #2575fc;
+        }
+
+        .sidebar .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
+
+        #main {
+            transition: margin-left .5s;
+            padding: 16px;
+        }
+
+        .openbtn {
+            font-size: 20px;
+            cursor: pointer;
+            background-color: #2575fc;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+        }
+
+        .openbtn:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
+    <header>
+        <div id="main">
+            <button class="openbtn" onclick="openNav()">&#9776; Quran Pro</button>
+        </div>
+    </header>
+
+    <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
+        <a href="index.html">
+            <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
+        </a>
+        <a href="juzz.html">
+            <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Juzz
+        </a>
+        <a href="audio.html">
+            <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Listen to Quran
+        </a>
+        <a href="donate.html">
+            <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Donate
+        </a>
+        <a href="islam.html">
+            <lord-icon src="https://cdn.lordicon.com/bhfjfgqz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Hijri
+        </a>
+        <a href="prayer.html">
+            <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Prayer
+        </a>
+    </div>
+
     <div class="login-page">
         <div class="form">
-            <h2>Login</h2>
-            <form id="login-form">
-                <input type="text" id="username" name="username" placeholder="Username" required>
-                <input type="email" id="email" name="email" placeholder="Email" required>
+            <h2>Login to Your Account</h2>
+            <form action="login.php" method="post">
+                <input type="text" name="username" placeholder="&#xf007;  username" required>
                 <div class="password-container">
-                    <input type="password" id="password" name="password" placeholder="Password" required>
-                    <span class="toggle-password" onclick="togglePassword()">&#128065;</span>
+                    <input type="password" id="password" name="password" placeholder="&#xf084; password" required>
+                    <span class="toggle-password" onclick="togglePassword()">👁️</span>
                 </div>
-                <button type="submit">Login</button>
-                <button type="button" onclick="window.location.href='register.html'">Register</button>
-                <p class="message">or sign in with Google</p>
-                <div class="g-signin2 google-button" data-onsuccess="onSignIn"></div>
+                <button type="submit">login</button>
+                <p class="message">Not registered? <a href="register.html">Create an account</a></p>
             </form>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        const users = [
-            { username: 'user1', email: 'user1@example.com', password: 'pass1' },
-            { username: 'user2', email: 'user2@example.com', password: 'pass2' }
-        ];
-
-        if (!localStorage.getItem('users')) {
-            localStorage.setItem('users', JSON.stringify(users));
+        function openNav() {
+            document.getElementById("mySidebar").style.left = "0";
         }
 
-        document.getElementById('login-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const username = document.getElementById('username').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            const storedUsers = JSON.parse(localStorage.getItem('users'));
-            const user = storedUsers.find(user => user.username === username && user.email === email);
-
-            if (user) {
-                if (user.password === password) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Login successful!',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        localStorage.setItem('loggedInUser', JSON.stringify(user));
-                        window.location.href = 'profile.html';
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Invalid password!',
-                        confirmButtonColor: '#17a589'
-                    });
-                }
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Username or email not found!',
-                    confirmButtonColor: '#17a589'
-                });
-            }
-        });
-
-        function onSignIn(googleUser) {
-            const profile = googleUser.getBasicProfile();
-            const user = {
-                username: profile.getName(),
-                email: profile.getEmail(),
-                profilePic: profile.getImageUrl()
-            };
-
-            Swal.fire({
-                icon: 'success',
-                title: 'Google Sign-In successful!',
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                localStorage.setItem('loggedInUser', JSON.stringify(user));
-                window.location.href = 'profile.html';
-            });
+        function closeNav() {
+            document.getElementById("mySidebar").style.left = "-250px";
         }
 
+        // Toggle the password visibility
         function togglePassword() {
-            const passwordField = document.getElementById('password');
-            const passwordType = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordField.setAttribute('type', passwordType);
-            document.querySelector('.toggle-password').textContent = passwordType === 'password' ? '👁' : '🙈';
+            var passwordField = document.getElementById("password");
+            var passwordToggle = document.querySelector(".toggle-password");
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                passwordToggle.textContent = "🙈";
+            } else {
+                passwordField.type = "password";
+                passwordToggle.textContent = "👁️";
+            }
         }
+
+        // Add event listener to close button
+        document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
     </script>
 </body>
 </html>
