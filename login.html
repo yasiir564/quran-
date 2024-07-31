@@ -121,7 +121,7 @@
             left: -250px;
             background: linear-gradient(to top, #a8edea, #fed6e3);
             overflow-x: hidden;
-            transition: 0.5s;
+            transition: left 0.5s ease;
             padding-top: 60px;
         }
 
@@ -254,17 +254,6 @@
 
         function closeNav() {
             document.getElementById("mySidebar").classList.remove('open');
-        }
-
-        // Dummy users data for demonstration purposes
-        const users = [
-            { username: 'user1', email: 'user1@example.com', password: 'pass1' },
-            { username: 'user2', email: 'user2@example.com', password: 'pass2' }
-        ];
-
-        // Storing dummy users data in localStorage (for the sake of example)
-        if (!localStorage.getItem('users')) {
-            localStorage.setItem('users', JSON.stringify(users));
         }
 
         document.getElementById('login-form').addEventListener('submit', function(event) {
