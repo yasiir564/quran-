@@ -15,7 +15,7 @@
             background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
             background: linear-gradient(to right, #ffffff, #abbaab);
             font-family: 'Amiri', serif;
-            overflow-x: hidden;
+            overflow: hidden; /* Prevent scrolling */
         }
         .container {
             max-width: 800px;
@@ -39,29 +39,6 @@
             margin-top: 20px;
             text-align: center;
         }
-        .buttons {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .buttons button {
-            background-color: #2980b9;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1em;
-            cursor: pointer;
-            margin: 5px;
-            display: inline-flex;
-            align-items: center;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        .buttons button:hover {
-            background-color: #3498db;
-        }
-        .buttons i {
-            margin-right: 5px;
-        }
         .sheikh-list {
             display: flex;
             flex-wrap: wrap;
@@ -71,7 +48,6 @@
         }
         .sheikh-item {
             padding: 10px;
-            border: 1px solid #ddd;
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s, background-color 0.3s;
@@ -79,15 +55,13 @@
             width: 120px;
             height: 120px;
             text-align: center;
-        }
-        .sheikh-item:hover {
-            transform: scale(1.05);
-            background-color: #f0f0f0;
+            overflow: hidden;
         }
         .sheikh-item img {
             width: 100%;
             height: 100%;
             border-radius: 50%;
+            object-fit: cover;
         }
         .sheikh-item.active {
             border: 2px solid #3498db;
@@ -97,41 +71,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
+            gap: 20px;
             margin-top: 20px;
         }
         .audio-controls button {
-            background: none;
+            background-color: transparent;
             border: none;
-            font-size: 1.5em;
-            margin: 0 5px;
             cursor: pointer;
+            font-size: 1.5em;
             color: #2980b9;
         }
         .audio-controls button:hover {
             color: #3498db;
-        }
-        .audio-controls .rewind,
-        .audio-controls .forward {
-            font-size: 1.2em;
-        }
-        .audio-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to right, #ffffff, #abbaab);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(8px);
-            z-index: 1000;
-            transition: opacity 0.3s ease;
-        }
-        .audio-overlay.active {
-            display: flex;
-            opacity: 1;
         }
         .audio-player {
             position: relative;
@@ -142,12 +93,11 @@
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             text-align: center;
-            overflow: hidden;
-            transition: transform 0.3s ease;
+            margin: 20px auto;
         }
         .audio-player img {
-            width: 120px;
-            height: 120px;
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
             margin-bottom: 20px;
         }
@@ -165,35 +115,28 @@
             padding: 5px;
             margin: 10px;
         }
-        .audio-overlay .filter-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 1em;
-            cursor: pointer;
-            transition: background 0.3s ease;
+        .audio-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
-        .audio-overlay .filter-btn:hover {
-            background: #2980b9;
+        .audio-overlay.active {
+            display: flex;
         }
-        .about-section {
-            margin-top: 20px;
-            font-size: 1em;
-            color: #333;
+        .blurred {
+            filter: blur(4px);
         }
         @media (max-width: 600px) {
             .audio-player {
                 width: 100%;
                 padding: 10px;
-            }
-            .sheikh-item {
-                width: 100px;
-                height: 100px;
             }
         }
         /* Dark mode styles */
@@ -213,12 +156,6 @@
         body.dark-mode .sheikh-item:hover {
             background-color: #555;
         }
-        body.dark-mode .buttons button {
-            background-color: #555;
-        }
-        body.dark-mode .buttons button:hover {
-            background-color: #666;
-        }
         body.dark-mode .audio-player {
             background: rgba(0, 0, 0, 0.8);
         }
@@ -231,19 +168,17 @@
             <i id="dark-mode-toggle" class="fas fa-moon"></i>
             <span class="close-button" onclick="window.location.href='index.html'">×</span>
         </header>
+        <div id="reciter-selector" class="sheikh-list"></div>
         <div class="audio-container" id="audio-container"></div>
-        <div class="sheikh-list" id="sheikh-list"></div>
     </div>
 
     <div class="audio-overlay" id="audio-overlay">
         <div class="audio-player" id="audio-player">
-            <button class="filter-btn" onclick="filterSurahs()">Filter Surahs</button>
             <img id="reciter-image" src="" alt="Reciter">
             <audio id="audio-element" controls></audio>
             <div class="audio-controls">
-                <button class="rewind" onclick="rewindAudio()"><i class="fas fa-backward"></i></button>
                 <button id="playPauseButton"><i class="fas fa-play"></i></button>
-                <button class="forward" onclick="forwardAudio()"><i class="fas fa-forward"></i></button>
+                <button id="stopButton"><i class="fas fa-stop"></i></button>
                 <label for="speedControl">Speed: </label>
                 <select id="speedControl">
                     <option value="0.5">0.5x</option>
@@ -252,44 +187,42 @@
                     <option value="2">2x</option>
                 </select>
             </div>
-            <div class="about-section" id="about-section">
-                <p id="about-text">About: Reciter information will be displayed here.</p>
-            </div>
-            <button class="close-button" onclick="toggleOverlay()">×</button>
+            <button class="close-button" onclick="toggleOverlay()"><i class="fas fa-times"></i></button>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function () {
             const audioOverlay = document.getElementById('audio-overlay');
             const audioElement = document.getElementById('audio-element');
-            const reciterImage = document.getElementById('reciter-image');
-            const aboutSection = document.getElementById('about-section');
-            const aboutText = document.getElementById('about-text');
             const playPauseButton = document.getElementById('playPauseButton');
+            const stopButton = document.getElementById('stopButton');
             const speedControl = document.getElementById('speedControl');
-            const sheikhList = document.getElementById('sheikh-list');
+            const sheikhList = document.getElementById('reciter-selector');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
-            let currentAudio = null;
-            let currentSurahId = 1;
+            const reciterImage = document.getElementById('reciter-image');
+            let currentAudio;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const surahId = urlParams.get('surah');
 
             const sheikhs = [
-                { id: '1', name: 'Abdul Rahman Al-Sudais', imageUrl: 'download (1).jpeg' },
-                { id: '2', name: 'Abdul Basit', imageUrl: 'download (2).jpeg' },
-                { id: '3', name: 'Ali Jaber', imageUrl: 'download (3).jpeg' },
-                { id: '4', name: 'Maher Al-Muaiqly', imageUrl: 'download (4).jpeg' },
-                { id: '5', name: 'Nasser Al-Qatami', imageUrl: 'download (5).jpeg' },
-                { id: '6', name: 'Yasser Al-Dosari', imageUrl: 'download (6).jpeg' },
-                { id: '7', name: 'Saad Al-Ghamdi', imageUrl: 'download (7).jpeg' },
-                { id: '8', name: 'Salah Bukhatir', imageUrl: 'download (8).jpeg' },
-                { id: '9', name: 'Fares Abbad', imageUrl: 'download (9).jpeg' },
-                { id: '10', name: 'Juhany', imageUrl: 'download (10).jpeg' },
-                { id: '11', name: 'Muhammad Siddiq Al-Minshawi', imageUrl: 'download (11).jpeg' },
-                { id: '12', name: 'Saad Al-Ghamdi', imageUrl: 'download (12).jpeg' },
-                { id: '13', name: 'Abu Bakr Al-Shatri', imageUrl: 'download (13).jpeg' },
-                { id: '14', name: 'Hani Rifai', imageUrl: 'download (14).jpeg' },
-                { id: '15', name: 'Abdullah Basfar', imageUrl: 'download (15).jpeg' }
+                { id: '1', name: 'AbdulBaset AbdulSamad', imageUrl: 'qmkxyvfiawea1.jpg' },
+                { id: '2', name: 'Maher Al-Muaiqly', imageUrl: 'images (6).jpeg' },
+                { id: '3', name: 'Abdur-Rahman As-Sudais', imageUrl: 'Abdul-Rahman-Al-Sudais.jpg' },
+                { id: '4', name: 'Saud Al-Shuraim', imageUrl: 'transparent-saud-al-shuraim.webp' },
+                { id: '5', name: 'Mishary Rashid Alafasy', imageUrl: 'download (10).jpeg' },
+                { id: '6', name: 'Ali Jaber', imageUrl: 'ali-jaber.webp' },
+                { id: '7', name: 'Yasser Al-Dosari', imageUrl: 'download (11).jpeg' },
+                { id: '8', name: 'Salah Al-Budair', imageUrl: 'download (12).jpeg' },
+                { id: '9', name: 'Ahmad Al-Ajmi', imageUrl: 'download (13).jpeg' },
+                { id: '10', name: 'Khalil Al-Husary', imageUrl: 'download (14).jpeg' },
+                { id: '11', name: 'Muhammad Siddiq Al-Minshawi', imageUrl: 'download (15).jpeg' },
+                { id: '12', name: 'Saad Al-Ghamdi', imageUrl: 'download (16).jpeg' },
+                { id: '13', name: 'Abu Bakr Al-Shatri', imageUrl: 'download (17).jpeg' },
+                { id: '14', name: 'Hani Rifai', imageUrl: 'download (18).jpeg' },
+                { id: '15', name: 'Abdullah Basfar', imageUrl: 'download (19).jpeg' }
             ];
 
             function stopAudio() {
@@ -310,28 +243,11 @@
                 }
             }
 
-            function rewindAudio() {
-                if (currentAudio) {
-                    currentAudio.currentTime -= 10;
-                }
-            }
-
-            function forwardAudio() {
-                if (currentAudio) {
-                    currentAudio.currentTime += 10;
-                }
-            }
-
             function toggleOverlay() {
                 audioOverlay.classList.toggle('active');
                 if (!audioOverlay.classList.contains('active') && currentAudio) {
                     currentAudio.pause();
                 }
-                document.body.classList.toggle('blurred');
-            }
-
-            function filterSurahs() {
-                // Implement filtering logic here
             }
 
             async function loadSurahAudio(surahId, sheikh) {
@@ -356,7 +272,6 @@
 
                     audioElement.src = audioUrl;
                     reciterImage.src = sheikh.imageUrl;
-                    aboutText.textContent = `Reciter: ${sheikh.name}`;
                     toggleOverlay();
                 } catch (error) {
                     console.error('Error loading audio:', error);
@@ -384,7 +299,7 @@
                 sheikhItem.addEventListener('click', () => {
                     document.querySelectorAll('.sheikh-item').forEach(item => item.classList.remove('active'));
                     sheikhItem.classList.add('active');
-                    loadSurahAudio(currentSurahId, sheikh);
+                    loadSurahAudio(surahId, sheikh);
                 });
 
                 sheikhList.appendChild(sheikhItem);
@@ -404,14 +319,7 @@
                     title: 'Are you confused in finding a good reciter? Try your luck!',
                     showCancelButton: true,
                     confirmButtonText: 'Spin!',
-                    cancelButtonText: 'Cancel',
-                    backdrop: 'rgba(0, 0, 0, 0.4)',
-                    didOpen: () => {
-                        Swal.showLoading();
-                    },
-                    willClose: () => {
-                        Swal.stopLoading();
-                    }
+                    cancelButtonText: 'Cancel'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         let currentIndex = 0;
@@ -422,14 +330,7 @@
                             Swal.update({
                                 title: 'Spinning...',
                                 html: `Selected Sheikh: ${sheikh.name}`,
-                                showConfirmButton: false,
-                                backdrop: 'rgba(0, 0, 0, 0.4)',
-                                didOpen: () => {
-                                    Swal.showLoading();
-                                },
-                                willClose: () => {
-                                    Swal.stopLoading();
-                                }
+                                showConfirmButton: false
                             });
 
                             currentIndex = (currentIndex + 1) % sheikhs.length;
@@ -441,16 +342,9 @@
                             Swal.fire({
                                 title: 'Selected Sheikh!',
                                 text: selectedSheikh.name,
-                                icon: 'success',
-                                backdrop: 'rgba(0, 0, 0, 0.4)',
-                                didOpen: () => {
-                                    Swal.showLoading();
-                                },
-                                willClose: () => {
-                                    Swal.stopLoading();
-                                }
+                                icon: 'success'
                             }).then(() => {
-                                loadSurahAudio(currentSurahId, selectedSheikh);
+                                loadSurahAudio(surahId, selectedSheikh);
                             });
                         }, spinDuration);
                     }
@@ -481,6 +375,7 @@
     </script>
 </body>
 </html>
+
 
 
 
