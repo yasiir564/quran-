@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color:#000;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right, #4e74e6, #72b2f5);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -23,7 +23,7 @@
             padding: 2em;
             background: #fff;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
         h2 {
@@ -44,6 +44,7 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 1em;
+            box-sizing: border-box;
         }
         button[type="submit"],
         button[type="button"] {
@@ -72,6 +73,7 @@
         }
         .toggle-password {
             float: right;
+            margin-top: -2.5em;
             margin-right: 1em;
             cursor: pointer;
             color: #666;
@@ -109,7 +111,6 @@
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
             <span class="toggle-password" onclick="togglePassword()">Show</span>
-            <div class="g-recaptcha" data-sitekey="6LcV8BsqAAAAAC2PRrzOwCXKsjvVd4uqiQXqhKjt"></div>
             <button type="submit">Login</button>
             <button type="button" onclick="window.location.href='register.html'">Register</button>
             <p>or sign in with Google</p>
@@ -118,7 +119,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script>
         const users = [
             { username: 'user1', email: 'user1@example.com', password: 'pass1' },
