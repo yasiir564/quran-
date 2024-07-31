@@ -246,87 +246,90 @@
             });
         });
 
-        function ajaxPost(url, data) {
-            return fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams(data)
-            }).then(response => response.json());
+        function isUserLoggedIn() {
+            return localStorage.getItem('loggedIn') === 'true';
         }
 
-        function isUserLoggedIn() {
-            return ajaxPost('backend.php', { action: 'is_logged_in' });
+        function loginUser() {
+            // Simulate a login process
+            localStorage.setItem('loggedIn', 'true');
+        }
+
+        function logoutUser() {
+            // Simulate a logout process
+            localStorage.removeItem('loggedIn');
+            localStorage.removeItem('bookmarks');
+            localStorage.removeItem('playlist');
         }
 
         function bookmarkSurah(surahId) {
-            isUserLoggedIn().then(result => {
-                if (!result.loggedIn) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Not Logged In',
-                        text: 'You need to be logged in to bookmark Surahs.',
-                        confirmButtonText: 'Log In',
-                        allowOutsideClick: false,
-                        preConfirm: () => {
-                            window.location.href = 'login.html';
-                        }
-                    });
-                    return;
-                }
-
-                ajaxPost('backend.php', { action: 'bookmark', surah_id: surahId }).then(response => {
-                    if (response.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Bookmarked',
-                            text: 'Surah has been bookmarked successfully.',
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: response.error || 'An error occurred.',
-                        });
+            if (!isUserLoggedIn()) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Not Logged In',
+                    text: 'You need to be logged in to bookmark Surahs.',
+                    confirmButtonText: 'Log In',
+                    allowOutsideClick: false,
+                    preConfirm: () => {
+                        window.location.href = 'login.html';
                     }
                 });
-            });
+                return;
+            }
+
+            let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+            if (!bookmarks.includes(surahId)) {
+                bookmarks.push(surahId);
+                localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Bookmarked',
+                    text: 'Surah has been bookmarked successfully.',
+                });
+            } else {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Already Bookmarked',
+                    text: 'This Surah is already in your bookmarks.',
+                });
+            }
         }
 
         function addToPlaylist(surahId) {
-            isUserLoggedIn().then(result => {
-                if (!result.loggedIn) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Not Logged In',
-                        text: 'You need to be logged in to add Surahs to your playlist.',
-                        confirmButtonText: 'Log In',
-                        allowOutsideClick: false,
-                        preConfirm: () => {
-                            window.location.href = 'login.html';
-                        }
-                    });
-                    return;
-                }
-
-                ajaxPost('backend.php', { action: 'add_to_playlist', surah_id: surahId }).then(response => {
-                    if (response.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Added to Playlist',
-                            text: 'Surah has been added to your playlist successfully.',
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: response.error || 'An error occurred.',
-                        });
+            if (!isUserLoggedIn()) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Not Logged In',
+                    text: 'You need to be logged in to add Surahs to your playlist.',
+                    confirmButtonText: 'Log In',
+                    allowOutsideClick: false,
+                    preConfirm: () => {
+                        window.location.href = 'login.html';
                     }
                 });
-            });
+                return;
+            }
+
+            let playlist = JSON.parse(localStorage.getItem('playlist')) || [];
+            if (!playlist.includes(surahId)) {
+                playlist.push(surahId);
+                localStorage.setItem('playlist', JSON.stringify(playlist));
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Added to Playlist',
+                    text: 'Surah has been added to your playlist successfully.',
+                });
+            } else {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Already in Playlist',
+                    text: 'This Surah is already in your playlist.',
+                });
+            }
         }
     </script>
 </body>
 </html>
+
 
 
