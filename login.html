@@ -3,193 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <meta name="google-signin-client_id" content="692064901690-k1988525o60rf8s1bop506ea8tll3s7t.apps.googleusercontent.com">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color:#000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
+            height: 100vh;
+            background: #abbaab;
+            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
+            background: linear-gradient(to right, #ffffff, #abbaab);
+            font-family: 'Amiri', serif;
         }
         .container {
-            width: 100%;
             max-width: 400px;
-            padding: 2em;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin: 0 auto;
+            padding: 20px;
             text-align: center;
         }
-        h2 {
-            color: #333;
-            margin-bottom: 1em;
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
         }
-        label {
-            display: block;
-            margin-bottom: 0.5em;
-            color: #666;
+        h1 {
+            font-size: 2.5em;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
         }
         input[type="text"],
-        input[type="email"],
         input[type="password"] {
-            width: 100%;
-            padding: 0.8em;
-            margin-bottom: 1em;
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin: 5px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
-            font-size: 1em;
         }
-        button[type="submit"],
-        button[type="button"] {
-            width: 100%;
-            padding: 1em;
+        button {
+            padding: 10px 20px;
             border: none;
             border-radius: 5px;
-            color: #fff;
+            cursor: pointer;
             font-size: 1em;
+        }
+        .google-btn {
+            background-color: #4285F4;
+            color: white;
+        }
+        .close-button {
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            color: #ff0000;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5em;
         }
-        button[type="submit"] {
-            background: linear-gradient(to right, #4e74e6, #72b2f5);
-            margin-bottom: 0.5em;
-        }
-        button[type="submit"]:hover {
-            background: linear-gradient(to right, #3a5ab3, #5a98e0);
-        }
-        button[type="button"] {
-            background-color: #888;
-            margin-bottom: 1em;
-        }
-        button[type="button"]:hover {
-            background-color: #666;
-        }
-        .toggle-password {
-            float: right;
-            margin-right: 1em;
+        .dark-mode-toggle {
             cursor: pointer;
-            color: #666;
-        }
-        .g-signin2 {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin: 1em 0;
-        }
-        .google-button {
-            width: 100%;
-            padding: 1em;
-            border: none;
-            border-radius: 5px;
-            background: #db4437;
+            font-size: 1.5em;
             color: #fff;
-            font-size: 1em;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
+            position: absolute;
+            top: 10px;
+            left: 10px;
         }
-        .google-button:hover {
-            background: #c33b2f;
+        body.dark-mode {
+            background: linear-gradient(to right, #0f0f0f, #434343);
+            color: #ddd;
+        }
+        body.dark-mode h1 {
+            color: #ddd;
+        }
+        body.dark-mode input[type="text"],
+        body.dark-mode input[type="password"] {
+            background-color: #333;
+            color: #ddd;
+            border: 1px solid #555;
+        }
+        body.dark-mode button {
+            background-color: #444;
+            color: #ddd;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Login</h2>
-        <form id="login-form">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-            <span class="toggle-password" onclick="togglePassword()">Show</span>
-            <button type="submit">Login</button>
-            <button type="button" onclick="window.location.href='register.html'">Register</button>
-            <p>or sign in with Google</p>
-            <div class="g-signin2 google-button" data-onsuccess="onSignIn"></div>
-        </form>
+        <header>
+            <h1>Login</h1>
+            <i id="dark-mode-toggle" class="fas fa-moon dark-mode-toggle"></i>
+            <span class="close-button" onclick="window.location.href='index.html'">×</span>
+        </header>
+        <div class="form-group">
+            <input type="text" id="username" placeholder="Username">
+        </div>
+        <div class="form-group">
+            <input type="password" id="password" placeholder="Password">
+            <i class="fas fa-eye toggle-password" onclick="togglePassword()"></i>
+        </div>
+        <button onclick="login()">Login</button>
+        <button class="google-btn" id="google-signin-btn">Sign in with Google</button>
+        <div id="password-strength" class="password-strength"></div>
+        <div id="reCaptcha"></div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script>
-        const users = [
-            { username: 'user1', email: 'user1@example.com', password: 'pass1' },
-            { username: 'user2', email: 'user2@example.com', password: 'pass2' }
-        ];
-
-        if (!localStorage.getItem('users')) {
-            localStorage.setItem('users', JSON.stringify(users));
-        }
-
-        document.getElementById('login-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const username = document.getElementById('username').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            const storedUsers = JSON.parse(localStorage.getItem('users'));
-            const user = storedUsers.find(user => user.username === username && user.email === email);
-
-            if (user) {
-                if (user.password === password) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Login successful!',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        localStorage.setItem('loggedInUser', JSON.stringify(user));
-                        window.location.href = 'profile.html';
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Invalid password!',
-                        confirmButtonColor: '#4e74e6'
-                    });
-                }
+        // Dark Mode Toggle
+        document.getElementById('dark-mode-toggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.getElementById('dark-mode-toggle');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
             } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Username or email not found!',
-                    confirmButtonColor: '#4e74e6'
-                });
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
             }
         });
 
-        function onSignIn(googleUser) {
-            const profile = googleUser.getBasicProfile();
-            const user = {
-                username: profile.getName(),
-                email: profile.getEmail(),
-                profilePic: profile.getImageUrl()
-            };
-
-            Swal.fire({
-                icon: 'success',
-                title: 'Google Sign-In successful!',
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                localStorage.setItem('loggedInUser', JSON.stringify(user));
-                window.location.href = 'profile.html';
-            });
-        }
-
+        // Password Toggle
         function togglePassword() {
             const passwordField = document.getElementById('password');
             const passwordType = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordField.setAttribute('type', passwordType);
-            document.querySelector('.toggle-password').textContent = passwordType === 'password' ? 'Show' : 'Hide';
+            document.querySelector('.toggle-password').classList.toggle('fa-eye-slash');
+        }
+
+        // Google Sign-In
+        function onSignIn(googleUser) {
+            const profile = googleUser.getBasicProfile();
+            const idToken = googleUser.getAuthResponse().id_token;
+
+            // Send ID token to backend for verification and user profile update
+            fetch('/google-signin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ token: idToken })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = 'profile.html';
+                } else {
+                    Swal.fire('Error', 'Google Sign-In failed.', 'error');
+                }
+            })
+            .catch(error => {
+                Swal.fire('Error', 'An error occurred.', 'error');
+                console.error('Error:', error);
+            });
+        }
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Add your login logic here
+            Swal.fire('Login', 'Login functionality is not implemented.', 'info');
+        }
+
+        // Initialize Google Sign-In
+        gapi.load('auth2', function() {
+            gapi.auth2.init({
+                client_id: 'YOUR_GOOGLE_CLIENT_ID',
+            }).then(() => {
+                const googleSignInButton = document.getElementById('google-signin-btn');
+                gapi.auth2.getAuthInstance().attachClickHandler(googleSignInButton, {},
+                    onSignIn,
+                    (error) => {
+                        console.error('Error:', error);
+                        Swal.fire('Error', 'Google Sign-In failed.', 'error');
+                    }
+                );
+            });
+        });
+
+        // reCAPTCHA
+        function onloadCallback() {
+            grecaptcha.render('reCaptcha', {
+                'sitekey': 'your-site-key'
+            });
         }
     </script>
+    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
 </body>
 </html>
