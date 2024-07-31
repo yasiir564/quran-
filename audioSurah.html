@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-   <style>
+    <style>
         body {
             margin: 0;
             height: 100vh;
@@ -17,18 +17,9 @@
             font-family: 'Amiri', serif;
             overflow: hidden; /* Prevent scrolling */
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
         header {
             text-align: center;
-            margin-bottom: 20px;
+            margin: 20px 0;
             position: relative;
         }
         h1 {
@@ -121,7 +112,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.5);
             display: none;
             justify-content: center;
             align-items: center;
@@ -130,8 +122,15 @@
         .audio-overlay.active {
             display: flex;
         }
-        .blurred {
-            filter: blur(4px);
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
         }
         @media (max-width: 600px) {
             .audio-player {
@@ -144,10 +143,7 @@
             background: linear-gradient(to right, #0f0f0f, #434343);
             color: #ddd;
         }
-        body.dark-mode .container {
-            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
-        }
-        body.dark-mode h1 {
+        body.dark-mode header h1 {
             color: #fff;
         }
         body.dark-mode .sheikh-item {
@@ -162,21 +158,19 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Quran Audio Player</h1>
-            <i id="dark-mode-toggle" class="fas fa-moon"></i>
-            <span class="close-button" onclick="window.location.href='index.html'">×</span>
-        </header>
-        <div id="reciter-selector" class="sheikh-list"></div>
-        <div class="audio-container" id="audio-container"></div>
-    </div>
+    <header>
+        <h1>Quran Audio Player</h1>
+        <i id="dark-mode-toggle" class="fas fa-moon"></i>
+    </header>
+    <div id="reciter-selector" class="sheikh-list"></div>
+    <div class="audio-container" id="audio-container"></div>
 
     <div class="audio-overlay" id="audio-overlay">
         <div class="audio-player" id="audio-player">
             <img id="reciter-image" src="" alt="Reciter">
             <audio id="audio-element" controls></audio>
             <div class="audio-controls">
+                <button id="rewindButton"><i class="fas fa-backward"></i></button>
                 <button id="playPauseButton"><i class="fas fa-play"></i></button>
                 <button id="stopButton"><i class="fas fa-stop"></i></button>
                 <label for="speedControl">Speed: </label>
@@ -198,14 +192,13 @@
             const audioElement = document.getElementById('audio-element');
             const playPauseButton = document.getElementById('playPauseButton');
             const stopButton = document.getElementById('stopButton');
+            const rewindButton = document.getElementById('rewindButton');
             const speedControl = document.getElementById('speedControl');
             const sheikhList = document.getElementById('reciter-selector');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
             const reciterImage = document.getElementById('reciter-image');
             let currentAudio;
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const surahId = urlParams.get('surah');
+            let currentSurahId;
 
             const sheikhs = [
                 { id: '1', name: 'AbdulBaset AbdulSamad', imageUrl: 'qmkxyvfiawea1.jpg' },
@@ -243,6 +236,12 @@
                 }
             }
 
+            function rewindAudio() {
+                if (currentAudio) {
+                    currentAudio.currentTime = Math.max(currentAudio.currentTime - 10, 0);
+                }
+            }
+
             function toggleOverlay() {
                 audioOverlay.classList.toggle('active');
                 if (!audioOverlay.classList.contains('active') && currentAudio) {
@@ -261,8 +260,19 @@
                     const audioUrl = data.audio_file.audio_url;
 
                     currentAudio = new Audio(audioUrl);
-                    currentAudio.addEventListener('ended', () => {
-                        playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
+                    currentAudio.addEventListener('ended', async () => {
+                        const nextSurahId = parseInt(surahId) + 1; // Move to next Surah
+                        if (nextSurahId <= 114) { // Check if the Surah number is valid
+                            await loadSurahAudio(nextSurahId.toString(), sheikh);
+                        } else {
+                            stopAudio();
+                            Swal.fire({
+                                title: 'End of Quran',
+                                text: 'You have reached the end of the Quran.',
+                                icon: 'info',
+                                confirmButtonText: 'Okay'
+                            });
+                        }
                     });
 
                     currentAudio.addEventListener('canplaythrough', () => {
@@ -286,6 +296,7 @@
 
             playPauseButton.addEventListener('click', playAudio);
             stopButton.addEventListener('click', stopAudio);
+            rewindButton.addEventListener('click', rewindAudio);
             speedControl.addEventListener('change', (event) => {
                 if (currentAudio) {
                     currentAudio.playbackRate = parseFloat(event.target.value);
@@ -299,7 +310,8 @@
                 sheikhItem.addEventListener('click', () => {
                     document.querySelectorAll('.sheikh-item').forEach(item => item.classList.remove('active'));
                     sheikhItem.classList.add('active');
-                    loadSurahAudio(surahId, sheikh);
+                    currentSurahId = new URLSearchParams(window.location.search).get('surah');
+                    loadSurahAudio(currentSurahId, sheikh);
                 });
 
                 sheikhList.appendChild(sheikhItem);
@@ -313,42 +325,45 @@
 
             darkModeToggle.addEventListener('click', toggleDarkMode);
 
-            // Show SweetAlert with a delay of 5 seconds
+            // Show SweetAlert with a delay of 5 seconds if no reciter has been chosen
             setTimeout(() => {
-                Swal.fire({
-                    title: 'Are you confused in finding a good reciter? Try your luck!',
-                    showCancelButton: true,
-                    confirmButtonText: 'Spin!',
-                    cancelButtonText: 'Cancel'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        let currentIndex = 0;
-                        const spinDuration = 3000; // Spin for 3 seconds
+                if (!document.querySelector('.sheikh-item.active')) {
+                    Swal.fire({
+                        title: 'Are you confused in finding a good reciter? Try your luck!',
+                        showCancelButton: true,
+                        confirmButtonText: 'Spin!',
+                        cancelButtonText: 'Cancel'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            let currentIndex = 0;
+                            const spinDuration = 3000; // Spin for 3 seconds
 
-                        const intervalId = setInterval(() => {
-                            const sheikh = sheikhs[currentIndex];
-                            Swal.update({
-                                title: 'Spinning...',
-                                html: `Selected Sheikh: ${sheikh.name}`,
-                                showConfirmButton: false
-                            });
+                            const intervalId = setInterval(() => {
+                                const sheikh = sheikhs[currentIndex];
+                                Swal.update({
+                                    title: 'Spinning...',
+                                    html: `Selected Sheikh: ${sheikh.name}`,
+                                    showConfirmButton: false
+                                });
 
-                            currentIndex = (currentIndex + 1) % sheikhs.length;
-                        }, 100);
+                                currentIndex = (currentIndex + 1) % sheikhs.length;
+                            }, 100);
 
-                        setTimeout(() => {
-                            clearInterval(intervalId);
-                            const selectedSheikh = sheikhs[Math.floor(Math.random() * sheikhs.length)];
-                            Swal.fire({
-                                title: 'Selected Sheikh!',
-                                text: selectedSheikh.name,
-                                icon: 'success'
-                            }).then(() => {
-                                loadSurahAudio(surahId, selectedSheikh);
-                            });
-                        }, spinDuration);
-                    }
-                });
+                            setTimeout(() => {
+                                clearInterval(intervalId);
+                                const selectedSheikh = sheikhs[Math.floor(Math.random() * sheikhs.length)];
+                                Swal.fire({
+                                    title: 'Selected Sheikh!',
+                                    text: selectedSheikh.name,
+                                    icon: 'success'
+                                }).then(() => {
+                                    currentSurahId = new URLSearchParams(window.location.search).get('surah');
+                                    loadSurahAudio(currentSurahId, selectedSheikh);
+                                });
+                            }, spinDuration);
+                        }
+                    });
+                }
             }, 5000);
 
             // Prevent screen from sleeping
@@ -375,7 +390,6 @@
     </script>
 </body>
 </html>
-
 
 
 
