@@ -171,6 +171,33 @@
         .openbtn:hover {
             background-color: #0056b3;
         }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .actions i {
+            font-size: 24px;
+            cursor: pointer;
+            color: #fff;
+        }
+
+        .actions i.disabled {
+            color: #aaa;
+            cursor: not-allowed;
+        }
+
+        .actions i:hover:not(.disabled) {
+            color: #007bff;
+        }
+
+        .bookmarked-items, .playlist-items {
+            margin-top: 20px;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -239,10 +266,23 @@
                 <input type="email" id="email" name="email" required>
             </div>
         </form>
+        <div class="actions">
+            <i id="bookmark-button" class="fa fa-bookmark" title="Bookmarks"></i>
+            <i id="playlist-button" class="fa fa-list" title="Playlist"></i>
+        </div>
+        <div class="bookmarked-items">
+            <h3>Bookmarked Surahs:</h3>
+            <ul id="bookmarked-list"></ul>
+        </div>
+        <div class="playlist-items">
+            <h3>Playlist:</h3>
+            <ul id="playlist-list"></ul>
+        </div>
         <button class="logout-button" id="logout-button">Log Out</button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
     <script>
         function openNav() {
             document.getElementById("mySidebar").style.left = "0";
@@ -254,9 +294,12 @@
 
         document.getElementById('closeSidebarBtn').addEventListener('click', closeNav);
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const user = JSON.parse(localStorage.getItem('loggedInUser'));
+        function isUserLoggedIn() {
+            return localStorage.getItem('loggedIn') === 'true';
+        }
 
+        function updateProfile() {
+            const user = JSON.parse(localStorage.getItem('loggedInUser'));
             if (user) {
                 document.getElementById('username').value = user.username;
                 document.getElementById('email').value = user.email || '';
@@ -271,9 +314,67 @@
                     profilePicElem.textContent = initials;
                 }
             }
+        }
+
+        function displayBookmarksAndPlaylist() {
+            if (!isUserLoggedIn()) {
+                document.getElementById('bookmark-button').classList.add('disabled');
+                document.getElementById('playlist-button').classList.add('disabled');
+                document.getElementById('bookmark-button').addEventListener('click', () => {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Not Logged In',
+                        text: 'You need to be logged in to view bookmarks.',
+                        confirmButtonText: 'Log In',
+                        showCancelButton: true,
+                        cancelButtonText: 'Cancel',
+                        allowOutsideClick: false,
+                        preConfirm: () => {
+                            window.location.href = 'login.html';
+                        }
+                    });
+                });
+                document.getElementById('playlist-button').addEventListener('click', () => {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Not Logged In',
+                        text: 'You need to be logged in to view the playlist.',
+                        confirmButtonText: 'Log In',
+                        showCancelButton: true,
+                        cancelButtonText: 'Cancel',
+                        allowOutsideClick: false,
+                        preConfirm: () => {
+                            window.location.href = 'login.html';
+                        }
+                    });
+                });
+            } else {
+                document.getElementById('bookmark-button').classList.remove('disabled');
+                document.getElementById('playlist-button').classList.remove('disabled');
+
+                document.getElementById('bookmark-button').addEventListener('click', () => {
+                    const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+                    const bookmarkedList = document.getElementById('bookmarked-list');
+                    bookmarkedList.innerHTML = bookmarks.map(id => `<li>Surah ${id}</li>`).join('');
+                });
+
+                document.getElementById('playlist-button').addEventListener('click', () => {
+                    const playlist = JSON.parse(localStorage.getItem('playlist')) || [];
+                    const playlistList = document.getElementById('playlist-list');
+                    playlistList.innerHTML = playlist.map(id => `<li>Surah ${id}</li>`).join('');
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProfile();
+            displayBookmarksAndPlaylist();
 
             document.getElementById('logout-button').addEventListener('click', function() {
                 localStorage.removeItem('loggedInUser');
+                localStorage.removeItem('loggedIn');
+                localStorage.removeItem('bookmarks');
+                localStorage.removeItem('playlist');
                 window.location.href = 'login.html';
             });
 
@@ -288,8 +389,9 @@
                         profilePicElem.style.backgroundImage = `url('${e.target.result}')`;
                         profilePicElem.style.backgroundSize = 'cover';
 
-                        const updatedUser = { ...user, profilePic: e.target.result };
-                        localStorage.setItem('loggedInUser', JSON.stringify(updatedUser));
+                        const user = JSON.parse(localStorage.getItem('loggedInUser')) || {};
+                        user.profilePic = e.target.result;
+                        localStorage.setItem('loggedInUser', JSON.stringify(user));
                     };
                     reader.readAsDataURL(file);
                 }
@@ -298,5 +400,3 @@
     </script>
 </body>
 </html>
-
-
