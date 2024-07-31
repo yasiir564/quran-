@@ -282,58 +282,40 @@
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" readonly required>
             </div>
+            <button type="button" id="logout-button" class="logout-button">Log Out</button>
         </form>
         <div class="actions">
-            <i id="bookmark-button" class="fa fa-bookmark" title="Bookmarks"></i>
-            <i id="playlist-button" class="fa fa-list" title="Playlist"></i>
+            <i id="bookmark-button" class="fas fa-bookmark" title="Bookmarks"></i>
+            <i id="playlist-button" class="fas fa-list" title="Playlist"></i>
         </div>
         <div class="list-container">
-            <div class="bookmarked-items">
-                <h3>Bookmarked Surahs:</h3>
-                <ul id="bookmarked-list"></ul>
-            </div>
-            <div class="playlist-items">
-                <h3>Playlist:</h3>
-                <ul id="playlist-list"></ul>
-            </div>
+            <h3>Bookmarks</h3>
+            <ul id="bookmarked-list"></ul>
+            <h3>Playlist</h3>
+            <ul id="playlist-list"></ul>
         </div>
-        <button class="logout-button" id="logout-button">Log Out</button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
     <script>
-        function openNav() {
-            document.getElementById("mySidebar").style.left = "0";
-        }
-
-        function closeNav() {
-            document.getElementById("mySidebar").style.left = "-250px";
-        }
-
-        document.getElementById('closeSidebarBtn').addEventListener('click', closeNav);
-
         function isUserLoggedIn() {
             return localStorage.getItem('loggedIn') === 'true';
         }
 
         function updateProfile() {
-            const user = JSON.parse(localStorage.getItem('loggedInUser'));
-            if (user) {
-                document.getElementById('username').value = user.username;
-                document.getElementById('email').value = user.email || '';
-                if (user.profilePic) {
-                    const profilePicElem = document.getElementById('profile-pic');
-                    profilePicElem.innerHTML = '';
-                    profilePicElem.style.backgroundImage = `url('${user.profilePic}')`;
-                    profilePicElem.style.backgroundSize = 'cover';
-                } else {
-                    const profilePicElem = document.getElementById('profile-pic');
-                    const initials = user.username.charAt(0).toUpperCase();
-                    profilePicElem.textContent = initials;
-                }
+            const user = JSON.parse(localStorage.getItem('loggedInUser')) || {};
+            document.getElementById('username').value = user.username || 'Guest';
+            document.getElementById('email').value = user.email || '';
+            const profilePicElem = document.getElementById('profile-pic');
+            if (user.profilePic) {
+                profilePicElem.style.backgroundImage = `url('${user.profilePic}')`;
+                profilePicElem.style.backgroundSize = 'cover';
+                profilePicElem.innerHTML = '';
+            } else {
+                profilePicElem.innerHTML = user.username ? user.username.charAt(0).toUpperCase() : 'A';
+                profilePicElem.style.backgroundImage = '';
             }
         }
 
@@ -430,6 +412,20 @@
 
             const profilePicInput = document.getElementById('profile-pic-input');
             profilePicInput.addEventListener('change', function(event) {
+                if (!isUserLoggedIn()) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Not Logged In',
+                        text: 'You need to be logged in to set a profile picture.',
+                        confirmButtonText: 'Log In',
+                        preConfirm: () => {
+                            window.location.href = 'login.html';
+                        }
+                    });
+                    profilePicInput.value = ''; // Clear the input field
+                    return;
+                }
+
                 const file = event.target.files[0];
                 if (file) {
                     const reader = new FileReader();
@@ -447,6 +443,17 @@
                 }
             });
         });
+
+        function openNav() {
+            document.getElementById("mySidebar").style.left = "0";
+            document.getElementById("main").style.marginLeft = "250px";
+        }
+
+        document.getElementById("closeSidebarBtn").addEventListener('click', function() {
+            document.getElementById("mySidebar").style.left = "-250px";
+            document.getElementById("main").style.marginLeft= "0";
+        });
     </script>
 </body>
 </html>
+
