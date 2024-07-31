@@ -246,17 +246,17 @@
 
     <div class="login-page">
         <div class="form">
-            <h2>Login to Your Account</h2>
-            <form action="login.php" method="post">
-                <input type="text" name="username" placeholder="Username or Email" required>
+            <h2>Login</h2>
+            <form id="login-form">
+                <input type="text" id="username" name="username" placeholder="Username or Email" required>
                 <div class="password-container">
                     <input type="password" id="password" name="password" placeholder="Password" required>
-                    <span class="toggle-password" onclick="togglePassword()">👁️</span>
+                    <span class="toggle-password" onclick="togglePassword()">&#128065;</span>
                 </div>
                 <button type="submit">Login</button>
-                <p class="message">Not registered? <a href="register.html">Create an account</a></p>
             </form>
             <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
+            <p class="message">Not registered? <a href="register.html">Create an account</a></p>
         </div>
     </div>
 
@@ -269,7 +269,6 @@
             document.getElementById("mySidebar").style.left = "-250px";
         }
 
-        // Toggle the password visibility
         function togglePassword() {
             var passwordField = document.getElementById("password");
             var passwordToggle = document.querySelector(".toggle-password");
@@ -282,10 +281,8 @@
             }
         }
 
-        // Add event listener to close button
         document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
 
-        // Google Sign-In callback
         function onSignIn(googleUser) {
             var profile = googleUser.getBasicProfile();
             console.log('ID: ' + profile.getId());
@@ -293,7 +290,7 @@
             console.log('Image URL: ' + profile.getImageUrl());
             console.log('Email: ' + profile.getEmail());
 
-            // Redirect or handle sign-in on the server
+            // Handle sign-in on the server
         }
     </script>
 </body>
