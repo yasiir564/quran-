@@ -110,12 +110,13 @@
             transform: translateY(-50%);
             cursor: pointer;
         }
-         /* Sidebar Menu */
+
+        /* Sidebar Menu */
         .sidebar {
             height: 100%;
             width: 250px;
             position: fixed;
-            z-index: 1;
+            z-index: 1001; /* Ensure sidebar is on top */
             top: 0;
             left: -250px;
             background: linear-gradient(to top, #a8edea, #fed6e3);
@@ -146,11 +147,6 @@
             margin-left: 50px;
         }
 
-        #main {
-            transition: margin-left .5s;
-            padding: 16px;
-        }
-
         .openbtn {
             font-size: 20px;
             cursor: pointer;
@@ -166,6 +162,42 @@
 
         .openbtn:hover {
             background-color: #0056b3;
+        }
+
+        /* Mobile view adjustments */
+        @media screen and (max-width: 768px) {
+            .login-page {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+                margin: 0;
+            }
+
+            .form {
+                width: 90%;
+                max-width: none;
+                margin: 0;
+                padding: 20px;
+                box-shadow: none;
+            }
+
+            .sidebar {
+                width: 100%;
+                left: -100%;
+                top: 0;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .openbtn {
+                font-size: 18px;
+                padding: 8px 12px;
+            }
         }
     </style>
 </head>
@@ -197,6 +229,7 @@
             <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Prayer
         </a>
     </div>
+
     <div class="login-page">
         <div class="form">
             <h2>Login to Your Account</h2>
@@ -216,11 +249,11 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function openNav() {
-            document.getElementById("mySidebar").style.left = "0";
+            document.getElementById("mySidebar").classList.add('open');
         }
 
         function closeNav() {
-            document.getElementById("mySidebar").style.left = "-250px";
+            document.getElementById("mySidebar").classList.remove('open');
         }
 
         // Dummy users data for demonstration purposes
@@ -234,41 +267,43 @@
             localStorage.setItem('users', JSON.stringify(users));
         }
 
-       document.getElementById('login-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const login = document.getElementById('login').value;
-    const password = document.getElementById('password').value;
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const login = document.getElementById('login').value;
+            const password = document.getElementById('password').value;
 
-    const storedUsers = JSON.parse(localStorage.getItem('users'));
-    const user = storedUsers.find(user => 
-        (user.username === login || user.email === login) && user.password === password
-    );
+            const storedUsers = JSON.parse(localStorage.getItem('users'));
+            const user = storedUsers.find(user => 
+                (user.username === login || user.email === login) && user.password === password
+            );
 
-    if (user) {
-        Swal.fire({
-            icon: 'success',
-            title: 'Login successful!',
-            showConfirmButton: false,
-            timer: 1500
-        }).then(() => {
-            localStorage.setItem('loggedInUser', JSON.stringify(user));
-            window.location.href = 'profile.html'; // Redirect to profile.html
+            if (user) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Login successful!',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    localStorage.setItem('loggedInUser', JSON.stringify(user));
+                    window.location.href = 'profile.html'; // Redirect to profile.html
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Invalid username, email, or password!',
+                    confirmButtonColor: '#17a589'
+                });
+            }
         });
-    } else {
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Invalid username, email, or password!',
-            confirmButtonColor: '#17a589'
-        });
-    }
-});
+
         function togglePassword() {
             const passwordField = document.getElementById('password');
             const passwordType = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordField.setAttribute('type', passwordType);
             document.querySelector('.toggle-password').textContent = passwordType === 'password' ? '👁️' : '🙈';
         }
+
         document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
 
         function onSignIn(googleUser) {
