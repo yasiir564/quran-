@@ -218,20 +218,22 @@
                         surahDiv.appendChild(buttonsDiv);
 
                         surahDiv.addEventListener('click', () => {
-                            Swal.fire({
-                                title: 'Continue without logging in?',
-                                text: 'You can continue to the next page or log in to bookmark and add to playlist.',
-                                icon: 'info',
-                                showCancelButton: true,
-                                confirmButtonText: 'Continue',
-                                cancelButtonText: 'Log In',
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.href = `audioSurah.html?surah=${surah.id}`;
-                                } else if (result.isDenied) {
-                                    window.location.href = 'login.html';
-                                }
-                            });
+                            if (isUserLoggedIn()) {
+                                window.location.href = `audioSurah.html?surah=${surah.id}`;
+                            } else {
+                                Swal.fire({
+                                    title: 'Log In Required',
+                                    text: 'You need to log in to access this Surah.',
+                                    icon: 'info',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Log In',
+                                    cancelButtonText: 'Cancel',
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = 'login.html';
+                                    }
+                                });
+                            }
                         });
                         fragment.appendChild(surahDiv);
                     });
@@ -249,13 +251,8 @@
 
             darkModeToggle.addEventListener('click', () => {
                 document.body.classList.toggle('dark-mode');
-                if (document.body.classList.contains('dark-mode')) {
-                    darkModeToggle.classList.remove('fa-moon');
-                    darkModeToggle.classList.add('fa-sun');
-                } else {
-                    darkModeToggle.classList.remove('fa-sun');
-                    darkModeToggle.classList.add('fa-moon');
-                }
+                darkModeToggle.classList.toggle('fa-moon');
+                darkModeToggle.classList.toggle('fa-sun');
             });
         });
 
@@ -266,6 +263,7 @@
         function loginUser() {
             // Simulate a login process
             localStorage.setItem('loggedIn', 'true');
+            window.location.href = 'profile.html'; // Redirect to profile page after login
         }
 
         function logoutUser() {
