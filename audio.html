@@ -228,12 +228,12 @@
                                     icon: 'info',
                                     showCancelButton: true,
                                     confirmButtonText: 'Log In',
-                                    cancelButtonText: 'Continue',
+                                    cancelButtonText: 'Continue To reciters',
                                 }).then((result) => {
                                     if (result.isConfirmed) {
                                         window.location.href = 'login.html';
                                     } else if (result.dismiss === Swal.DismissReason.cancel) {
-                                        window.location.href = 'audiosurah.html';
+                                        window.location.href = 'audioSurah.html';
                                     }
                                 });
                             }
