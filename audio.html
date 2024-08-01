@@ -205,20 +205,33 @@
 
                         const surahInfo = document.createElement('div');
                         surahInfo.classList.add('surah-info');
-                        surahInfo.innerHTML = `<strong>${surah.name_simple}</strong> <br> ${surah.name_arabic} <br> <span>${surah.id}</span>`;
+                        surahInfo.innerHTML = <strong>${surah.name_simple}</strong> <br> ${surah.name_arabic} <br> <span>${surah.id}</span>;
                         surahDiv.appendChild(surahInfo);
 
                         const buttonsDiv = document.createElement('div');
                         buttonsDiv.classList.add('surah-buttons');
-                        buttonsDiv.innerHTML = `
-                            <i class="fas fa-bookmark" title="Bookmark" onclick="handleBookmark(${surah.id})"></i>
+                        buttonsDiv.innerHTML = 
+                            <i class="fas fa-bookmark" title="Bookmark" onclick="bookmarkSurah(${surah.id})"></i>
                             <i class="fas fa-share-alt" title="Share" onclick="shareSurah()"></i>
-                            <i class="fas fa-plus-circle" title="Add to Playlist" onclick="handleAddToPlaylist(${surah.id})"></i>
-                        `;
+                            <i class="fas fa-plus-circle" title="Add to Playlist" onclick="addToPlaylist(${surah.id})"></i>
+                        ;
                         surahDiv.appendChild(buttonsDiv);
 
                         surahDiv.addEventListener('click', () => {
-                            handleSurahClick(surah.id);
+                            Swal.fire({
+                                title: 'Continue without logging in?',
+                                text: 'You can continue to the next page or log in to bookmark and add to playlist.',
+                                icon: 'info',
+                                showCancelButton: true,
+                                confirmButtonText: 'Continue',
+                                cancelButtonText: 'Log In',
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = audioSurah.html?surah=${surah.id};
+                                } else if (result.isDenied) {
+                                    window.location.href = 'login.html';
+                                }
+                            });
                         });
                         fragment.appendChild(surahDiv);
                     });
@@ -236,86 +249,68 @@
 
             darkModeToggle.addEventListener('click', () => {
                 document.body.classList.toggle('dark-mode');
-                darkModeToggle.classList.toggle('fa-moon');
-                darkModeToggle.classList.toggle('fa-sun');
+                if (document.body.classList.contains('dark-mode')) {
+                    darkModeToggle.classList.remove('fa-moon');
+                    darkModeToggle.classList.add('fa-sun');
+                } else {
+                    darkModeToggle.classList.remove('fa-sun');
+                    darkModeToggle.classList.add('fa-moon');
+                }
             });
         });
 
         function isUserLoggedIn() {
-            return localStorage.getItem('loggedInUser') !== null;
+            return localStorage.getItem('loggedIn') === 'true';
         }
 
-        function handleSurahClick(surahId) {
-            if (isUserLoggedIn()) {
-                window.location.href = `audioSurah.html?surah=${surahId}`;
-            } else {
-                Swal.fire({
-                    title: 'Access Required',
-                    text: 'You need to log in to bookmark or create a playlist. Do you want to log in or continue without logging in?',
-                    icon: 'info',
-                    showCancelButton: true,
-                    confirmButtonText: 'Log In',
-                    cancelButtonText: 'Continue',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        localStorage.setItem('redirectAfterLogin', `audioSurah.html?surah=${surahId}`);
-                        window.location.href = 'login.html';
-                    } else if (result.isDismissed) {
-                        window.location.href = `audioSurah.html?surah=${surahId}`;
-                    }
-                });
-            }
+        function loginUser() {
+            // Simulate a login process
+            localStorage.setItem('loggedIn', 'true');
         }
 
-        function handleBookmark(surahId) {
-            if (isUserLoggedIn()) {
-                bookmarkSurah(surahId);
-                window.location.href = `audioSurah.html?surah=${surahId}`;
-            } else {
-                Swal.fire({
-                    title: 'Access Required',
-                    text: 'You need to log in to bookmark Surahs. Do you want to log in or continue without logging in?',
-                    icon: 'info',
-                    showCancelButton: true,
-                    confirmButtonText: 'Log In',
-                    cancelButtonText: 'Continue',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        localStorage.setItem('redirectAfterLogin', `audioSurah.html?surah=${surahId}`);
-                        window.location.href = 'login.html';
-                    } else if (result.isDismissed) {
-                        bookmarkSurah(surahId);
-                        window.location.href = `audioSurah.html?surah=${surahId}`;
-                    }
-                });
-            }
-        }
-
-        function handleAddToPlaylist(surahId) {
-            if (isUserLoggedIn()) {
-                addToPlaylist(surahId);
-                window.location.href = `audioSurah.html?surah=${surahId}`;
-            } else {
-                Swal.fire({
-                    title: 'Access Required',
-                    text: 'You need to log in to create a playlist. Do you want to log in or continue without logging in?',
-                    icon: 'info',
-                    showCancelButton: true,
-                    confirmButtonText: 'Log In',
-                    cancelButtonText: 'Continue',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        localStorage.setItem('redirectAfterLogin', `audioSurah.html?surah=${surahId}`);
-                        window.location.href = 'login.html';
-                    } else if (result.isDismissed) {
-                        addToPlaylist(surahId);
-                        window.location.href = `audioSurah.html?surah=${surahId}`;
-                    }
-                });
-            }
+        function logoutUser() {
+            // Simulate a logout process
+            localStorage.removeItem('loggedIn');
+            localStorage.removeItem('bookmarks');
+            localStorage.removeItem('playlist');
         }
 
         function bookmarkSurah(surahId) {
+            if (!isUserLoggedIn()) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Not Logged In',
+                    text: 'You need to be logged in to bookmark Surahs.',
+                    confirmButtonText: 'Log In',
+                    showCancelButton: true,
+                    cancelButtonText: 'Continue',
+                    allowOutsideClick: false,
+                    preConfirm: () => {
+                        window.location.href = 'login.html';
+                    }
+                }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.cancel) {
+                        let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+                        if (!bookmarks.includes(surahId)) {
+                            bookmarks.push(surahId);
+                            localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Bookmarked',
+                                text: 'Surah has been bookmarked successfully.',
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Already Bookmarked',
+                                text: 'This Surah is already in your bookmarks.',
+                            });
+                        }
+                    }
+                });
+                return;
+            }
+
             let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
             if (!bookmarks.includes(surahId)) {
                 bookmarks.push(surahId);
@@ -335,6 +330,41 @@
         }
 
         function addToPlaylist(surahId) {
+            if (!isUserLoggedIn()) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Not Logged In',
+                    text: 'You need to be logged in to add Surahs to your playlist.',
+                    confirmButtonText: 'Log In',
+                    showCancelButton: true,
+                    cancelButtonText: 'Continue',
+                    allowOutsideClick: false,
+                    preConfirm: () => {
+                        window.location.href = 'login.html';
+                    }
+                }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.cancel) {
+                        let playlist = JSON.parse(localStorage.getItem('playlist')) || [];
+                        if (!playlist.includes(surahId)) {
+                            playlist.push(surahId);
+                            localStorage.setItem('playlist', JSON.stringify(playlist));
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Added to Playlist',
+                                text: 'Surah has been added to your playlist successfully.',
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Already in Playlist',
+                                text: 'This Surah is already in your playlist.',
+                            });
+                        }
+                    }
+                });
+                return;
+            }
+
             let playlist = JSON.parse(localStorage.getItem('playlist')) || [];
             if (!playlist.includes(surahId)) {
                 playlist.push(surahId);
