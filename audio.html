@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,19 +14,23 @@
             background: linear-gradient(to right, #ffffff, #abbaab);
             color: #333;
         }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
+
         header {
             text-align: center;
         }
+
         .search-container {
             margin: 20px 0;
             position: relative;
             text-align: center;
         }
+
         .search-container input {
             padding: 10px;
             width: 70%;
@@ -34,9 +39,11 @@
             outline: none;
             transition: border-color 0.3s;
         }
+
         .search-container input:focus {
             border-color: #2575fc;
         }
+
         .search-container button {
             position: absolute;
             right: 15%;
@@ -49,6 +56,45 @@
             border-radius: 50%;
             cursor: pointer;
         }
+
+        .surah-list {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            padding: 20px 0;
+        }
+
+        .surah {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 5px;
+            transition: transform 0.3s, background-color 0.3s, border-color 0.3s;
+            color: #2575fc;
+            font-size: 1.2em;
+            position: relative;
+        }
+
+        .surah:hover {
+            transform: scale(1.05);
+            background-color: #2575fc;
+            color: #fff;
+        }
+
+        .surah span {
+            font-size: 0.8em;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #fff;
+            border-radius: 50%;
+            padding: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
         .show-more-btn {
             display: block;
             width: 200px;
@@ -62,52 +108,22 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
+
         .show-more-btn:hover {
             background-color: #0056b3;
         }
+
         .featured-reciters {
             display: flex;
             overflow-x: auto;
             gap: 10px;
             padding: 20px 0;
             position: relative;
-            text-align: center;
         }
-        .featured-reciters::before,
-        .featured-reciters::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 50%;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 2em;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-        .featured-reciters::before {
-            content: '\f053'; /* Font Awesome chevron-left */
-            left: 10px;
-            transform: translateY(-50%);
-        }
-        .featured-reciters::after {
-            content: '\f054'; /* Font Awesome chevron-right */
-            right: 10px;
-            transform: translateY(-50%);
-        }
-        .featured-reciters:hover::before,
-        .featured-reciters:hover::after {
-            background-color: #2575fc;
-            color: #fff;
-            transform: scale(1.1);
-        }
+
         .reciter-card {
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
             border: 1px solid #ddd;
             padding: 15px;
             border-radius: 5px;
@@ -115,77 +131,105 @@
             text-align: center;
             transition: transform 0.3s, box-shadow 0.3s;
         }
+
         .reciter-card img {
             border-radius: 50%;
             width: 100px;
             height: 100px;
         }
+
         .reciter-card:hover {
             transform: scale(1.05);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
-        .surah-list {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+
+        .arrow {
+            font-size: 2em;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, background-color 0.3s;
         }
-        .surah {
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid #ddd;
-            padding: 15px;
-            text-align: center;
-            border-radius: 5px;
-            transition: transform 0.3s, background-color 0.3s, border-color 0.3s;
-            color: #007bff;
+
+        .arrow:hover {
+            transform: scale(1.1);
+            background-color: #2575fc;
+            color: #fff;
         }
-        .surah:hover {
-            transform: scale(1.05);
-            background-color: #f0f0f0;
-            border-color: #007bff;
-        }
-        .surah-info {
-            font-size: 1.2em;
-            font-weight: bold;
-        }
+
         .dark-mode {
             background: linear-gradient(to right, #2c3e50, #4ca1af);
             color: #fff;
         }
+
         .dark-mode .surah {
             background-color: #444;
             border: 1px solid #555;
-            color: #fff;
         }
+
         .dark-mode .search-container input {
             border: 2px solid #444;
         }
+
         .dark-mode .search-container button {
             background-color: #4ca1af;
         }
+
         .dark-mode .show-more-btn {
             background-color: #4ca1af;
         }
+
         .dark-mode .show-more-btn:hover {
             background-color: #3b9d9d;
         }
-        .featured-reciters h2 {
-            font-size: 1.5em;
+
+        .featured-title {
             text-align: center;
+            font-size: 2em;
             margin: 20px 0;
+            color: #2575fc;
             position: relative;
         }
-        .featured-reciters h2::after {
+
+        .featured-title:before,
+        .featured-title:after {
             content: '';
             position: absolute;
-            left: 50%;
-            bottom: -10px;
-            width: 80px;
-            height: 4px;
-            background: #2575fc;
-            transform: translateX(-50%);
+            top: 50%;
+            width: 50px;
+            height: 3px;
+            background-color: #2575fc;
+        }
+
+        .featured-title:before {
+            left: -60px;
+        }
+
+        .featured-title:after {
+            right: -60px;
+        }
+
+        @media (max-width: 768px) {
+            .surah-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .surah-list {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
@@ -198,8 +242,9 @@
         </header>
 
         <!-- Featured Reciters -->
-        <h2>Featured Reciters</h2>
+        <h2 class="featured-title">Featured Reciters</h2>
         <div class="featured-reciters">
+            <div class="arrow" id="prev-arrow"><i class="fas fa-chevron-left"></i></div>
             <div class="reciter-card" onclick="showReciterAlert()">
                 <img src="download (11).jpeg" alt="Yasser Al-Dosari">
                 <h3>Yasser Al-Dosari</h3>
@@ -228,41 +273,136 @@
                 <img src="download (17).jpeg" alt="Abu Bakr Al-Shatri">
                 <h3>Abu Bakr Al-Shatri</h3>
             </div>
+            <div class="arrow" id="next-arrow"><i class="fas fa-chevron-right"></i></div>
         </div>
 
         <!-- Surah List -->
-        <div id="surah-list" class="surah-list">
-            <!-- Example Surah Cards -->
-            <div class="surah">
-                <div class="surah-info">1</div>
-                <div class="surah-name">Al-Fatiha</div>
-            </div>
-            <div class="surah">
-                <div class="surah-info">2</div>
-                <div class="surah-name">Al-Baqarah</div>
-            </div>
-            <div class="surah">
-                <div class="surah-info">3</div>
-                <div class="surah-name">Aali Imran</div>
-            </div>
-            <div class="surah">
-                <div class="surah-info">4</div>
-                <div class="surah-name">An-Nisa</div>
-            </div>
-            <!-- More Surah cards can be added here -->
-        </div>
+        <div id="surah-list" class="surah-list"></div>
+        <button id="show-more-btn" class="show-more-btn">Show More</button>
     </div>
 
     <script>
-        function showReciterAlert() {
-            Swal.fire({
-                title: 'Reciter Information',
-                text: 'More details about the reciter.',
-                icon: 'info',
-                confirmButtonText: 'OK'
+        document.addEventListener('DOMContentLoaded', function () {
+            const surahList = document.getElementById('surah-list');
+            const showMoreBtn = document.getElementById('show-more-btn');
+            const searchBar = document.getElementById('search-bar');
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const featuredReciters = document.querySelector('.featured-reciters');
+            const prevArrow = document.getElementById('prev-arrow');
+            const nextArrow = document.getElementById('next-arrow');
+            let surahs = [];
+            let surahDisplayCount = 30;
+
+            fetch('https://api.quran.com/api/v4/chapters')
+                .then(response => response.json())
+                .then(data => {
+                    surahs = data.chapters;
+                    displaySurahs(surahs.slice(0, surahDisplayCount));
+                })
+                .catch(error => {
+                    console.error('Error fetching Surahs:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Unable to fetch Surah list. Please try again later.',
+                    });
+                });
+
+            function displaySurahs(surahsToDisplay) {
+                surahList.innerHTML = '';
+                const fragment = document.createDocumentFragment();
+                surahsToDisplay.forEach(surah => {
+                    const surahDiv = document.createElement('div');
+                    surahDiv.classList.add('surah');
+
+                    const surahInfo = document.createElement('div');
+                    surahInfo.classList.add('surah-info');
+                    surahInfo.innerHTML = `<strong>${surah.name_simple}</strong> <br> ${surah.name_arabic} <br> <span>${surah.id}</span>`;
+                    surahDiv.appendChild(surahInfo);
+
+                    surahDiv.addEventListener('click', () => {
+                        window.location.href = `audioSurah.html?surah=${surah.id}`;
+                    });
+
+                    fragment.appendChild(surahDiv);
+                });
+                surahList.appendChild(fragment);
+
+                // Update Show More button text
+                if (surahDisplayCount >= 114) {
+                    showMoreBtn.textContent = 'Show Less';
+                } else {
+                    showMoreBtn.textContent = 'Show More';
+                }
+            }
+
+            showMoreBtn.addEventListener('click', () => {
+                if (surahDisplayCount >= 114) {
+                    surahDisplayCount = 30;
+                    displaySurahs(surahs.slice(0, surahDisplayCount));
+                } else {
+                    surahDisplayCount += 30;
+                    displaySurahs(surahs.slice(0, surahDisplayCount));
+                }
             });
-        }
+
+            searchBar.addEventListener('input', (event) => {
+                const query = event.target.value.toLowerCase();
+                const filteredSurahs = surahs.filter(surah =>
+                    surah.name_simple.toLowerCase().includes(query) ||
+                    surah.name_arabic.toLowerCase().includes(query)
+                );
+                displaySurahs(filteredSurahs.slice(0, surahDisplayCount));
+            });
+
+            darkModeToggle.addEventListener('click', () => {
+                const darkModeEnabled = document.body.classList.toggle('dark-mode');
+                darkModeToggle.classList.toggle('fa-moon', !darkModeEnabled);
+                darkModeToggle.classList.toggle('fa-sun', darkModeEnabled);
+                localStorage.setItem('darkMode', darkModeEnabled ? 'enabled' : 'disabled');
+            });
+
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+                darkModeToggle.classList.remove('fa-moon');
+                darkModeToggle.classList.add('fa-sun');
+            }
+
+            // Featured Reciters Scrolling
+            let scrollAmount = 0;
+            const scrollAmountIncrement = 200;
+
+            nextArrow.addEventListener('click', () => {
+                if (scrollAmount < featuredReciters.scrollWidth - featuredReciters.clientWidth) {
+                    scrollAmount += scrollAmountIncrement;
+                    featuredReciters.scrollTo({
+                        left: scrollAmount,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+
+            prevArrow.addEventListener('click', () => {
+                if (scrollAmount > 0) {
+                    scrollAmount -= scrollAmountIncrement;
+                    featuredReciters.scrollTo({
+                        left: scrollAmount,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+
+            // SweetAlert for Reciter Card Click
+            window.showReciterAlert = function () {
+                Swal.fire({
+                    title: 'Choose a Surah',
+                    text: 'Please select a Surah to continue to reciters.',
+                    icon: 'info',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
     </script>
 </body>
-</html>
 
+</html>
