@@ -270,11 +270,11 @@
                 }
             } else {
                 Swal.fire({
-                    icon: 'warning',
                     title: 'Not Logged In',
-                    text: `You need to be logged in to ${action === 'bookmark' ? 'bookmark Surahs' : 'add Surahs to your playlist'}.`,
-                    confirmButtonText: 'Log In',
+                    text: `You need to log in to ${action === 'bookmark' ? 'bookmark this Surah' : 'add this Surah to your playlist'}.`,
+                    icon: 'warning',
                     showCancelButton: true,
+                    confirmButtonText: 'Log In',
                     cancelButtonText: 'Continue',
                 }).then((result) => {
                     if (result.isConfirmed) {
