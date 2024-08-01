@@ -8,16 +8,15 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
     <style>
-         body {
+        body {
             margin: 0;
             height: 100vh;
-            background: #abbaab;  /* fallback for old browsers */
-            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);  /* Chrome 10-25, Safari 5.1-6 */
-            background: linear-gradient(to right, #ffffff, #abbaab); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            background: linear-gradient(to right, #ffffff, #abbaab); /* Gradient background */
+            color: #333;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
             text-align: center;
@@ -54,10 +53,7 @@
             background-color: #f0f0f0;
             border-radius: 5px;
         }
-        /* Existing styles... */
-        /* Add your existing CSS here */
 
-        /* New styles */
         header {
             display: flex;
             flex-direction: column;
@@ -65,46 +61,47 @@
             gap: 10px;
         }
 
-      .search-container {
-    margin: 10px 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
+        .search-container {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
 
-.search-container input {
-    padding: 10px;
-    font-size: 1em;
-    width: 70%;
-    border: 2px solid #ddd;
-    border-radius: 25px;
-    outline: none;
-    padding-left: 20px;
-    transition: all 0.3s;
-}
+        .search-container input {
+            padding: 10px;
+            font-size: 1em;
+            width: 70%;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            padding-left: 20px;
+            transition: all 0.3s;
+        }
 
-.search-container input:focus {
-    border-color: #2575fc;
-}
+        .search-container input:focus {
+            border-color: #2575fc;
+        }
 
-.search-container button {
-    padding: 10px;
-    font-size: 1em;
-    border: none;
-    cursor: pointer;
-    border-radius: 50%;
-    background-color: #2575fc;
-    color: #fff;
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-         .surah {
+        .search-container button {
+            padding: 10px;
+            font-size: 1em;
+            border: none;
+            cursor: pointer;
+            border-radius: 50%;
+            background-color: #2575fc;
+            color: #fff;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .surah {
             background-color: #fff;
             padding: 15px;
             border: 1px solid #ddd;
@@ -149,7 +146,7 @@
         }
 
         .reciter-card {
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.7);
             padding: 15px;
             border: 1px solid #ddd;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -183,13 +180,42 @@
             border-radius: 50%;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+
+        .dark-mode {
+            background: linear-gradient(to right, #2c3e50, #4ca1af);
+            color: #fff;
+        }
+
+        .dark-mode .surah {
+            background-color: #444;
+            border: 1px solid #555;
+        }
+
+        .dark-mode .search-container input {
+            border: 2px solid #444;
+        }
+
+        .dark-mode .search-container button {
+            background-color: #4ca1af;
+        }
+
+        .dark-mode .show-more-btn {
+            background-color: #4ca1af;
+        }
+
+        .dark-mode .show-more-btn:hover {
+            background-color: #3b9d9d;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Tracks</h1>
-            <input type="text" class="search-bar" id="search-bar" placeholder="Search Surahs...">
+            <div class="search-container">
+                <input type="text" id="search-bar" placeholder="Search Surahs...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
             <i id="dark-mode-toggle" class="fas fa-moon dark-mode-toggle"></i>
             <span class="close-button" onclick="window.location.href='index.html'">×</span>
         </header>
@@ -198,33 +224,37 @@
         <div class="featured-reciters">
             <div class="arrow" id="prev-arrow"><i class="fas fa-chevron-left"></i></div>
             <div class="reciter-card">
-                <img src="reciter1.jpg" alt="Reciter 1">
-                <h3>Reciter 1</h3>
+                <img src="download (11).jpeg" alt="Yasser Al-Dosari">
+                <h3>Yasser Al-Dosari</h3>
             </div>
             <div class="reciter-card">
-                <img src="reciter2.jpg" alt="Reciter 2">
-                <h3>Reciter 2</h3>
+                <img src="download (12).jpeg" alt="Salah Al-Budair">
+                <h3>Salah Al-Budair</h3>
             </div>
             <div class="reciter-card">
-                <img src="reciter3.jpg" alt="Reciter 3">
-                <h3>Reciter 3</h3>
+                <img src="download (13).jpeg" alt="Ahmad Al-Ajmi">
+                <h3>Ahmad Al-Ajmi</h3>
             </div>
             <div class="reciter-card">
-                <img src="reciter4.jpg" alt="Reciter 4">
-                <h3>Reciter 4</h3>
+                <img src="download (14).jpeg" alt="Khalil Al-Husary">
+                <h3>Khalil Al-Husary</h3>
             </div>
             <div class="reciter-card">
-                <img src="reciter5.jpg" alt="Reciter 5">
-                <h3>Reciter 5</h3>
+                <img src="download (15).jpeg" alt="Muhammad Siddiq Al-Minshawi">
+                <h3>Muhammad Siddiq Al-Minshawi</h3>
             </div>
             <div class="reciter-card">
-                <img src="reciter6.jpg" alt="Reciter 6">
-                <h3>Reciter 6</h3>
+                <img src="download (16).jpeg" alt="Saad Al-Ghamdi">
+                <h3>Saad Al-Ghamdi</h3>
+            </div>
+            <div class="reciter-card">
+                <img src="download (17).jpeg" alt="Abu Bakr Al-Shatri">
+                <h3>Abu Bakr Al-Shatri</h3>
             </div>
             <div class="arrow" id="next-arrow"><i class="fas fa-chevron-right"></i></div>
         </div>
 
-        <div id="surah-list"></div>
+        <div id="surah-list" style="display: flex; flex-wrap: wrap; justify-content: space-between;"></div>
         <button class="show-more-btn" id="show-more-btn">Show More</button>
         <div class="loader" id="loader"></div>
     </div>
