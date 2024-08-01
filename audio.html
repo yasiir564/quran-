@@ -181,6 +181,13 @@
             <h1>Tracks</h1>
             <i id="dark-mode-toggle" class="fas fa-moon dark-mode-toggle"></i>
             <span class="close-button" onclick="window.location.href='index.html'">×</span>
+       </head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Tracks</h1>
+            <i id="dark-mode-toggle" class="fas fa-moon dark-mode-toggle"></i>
+            <span class="close-button" onclick="window.location.href='index.html'">×</span>
         </header>
         <div id="surah-list"></div>
         <div class="loader" id="loader"></div>
@@ -211,9 +218,9 @@
                         const buttonsDiv = document.createElement('div');
                         buttonsDiv.classList.add('surah-buttons');
                         buttonsDiv.innerHTML = `
-                            <i class="fas fa-bookmark" title="Bookmark" onclick="bookmarkSurah(${surah.id})"></i>
+                            <i class="fas fa-bookmark" title="Bookmark" onclick="handleBookmark(${surah.id})"></i>
                             <i class="fas fa-share-alt" title="Share" onclick="shareSurah()"></i>
-                            <i class="fas fa-plus-circle" title="Add to Playlist" onclick="addToPlaylist(${surah.id})"></i>
+                            <i class="fas fa-plus-circle" title="Add to Playlist" onclick="handleAddToPlaylist(${surah.id})"></i>
                         `;
                         surahDiv.appendChild(buttonsDiv);
 
@@ -226,10 +233,12 @@
                                     text: 'You need to log in to access this Surah.',
                                     icon: 'info',
                                     showCancelButton: true,
-                                    confirmButtonText: 'Log In',
-                                    cancelButtonText: 'Cancel',
+                                    confirmButtonText: 'Continue',
+                                    cancelButtonText: 'Log In',
                                 }).then((result) => {
                                     if (result.isConfirmed) {
+                                        window.location.href = `audioSurah.html?surah=${surah.id}`;
+                                    } else if (result.isDismissed) {
                                         window.location.href = 'login.html';
                                     }
                                 });
@@ -257,58 +266,52 @@
         });
 
         function isUserLoggedIn() {
-            return localStorage.getItem('loggedIn') === 'true';
+            return localStorage.getItem('loggedInUser') !== null;
         }
 
-        function loginUser() {
-            // Simulate a login process
-            localStorage.setItem('loggedIn', 'true');
-            window.location.href = 'profile.html'; // Redirect to profile page after login
+        function handleBookmark(surahId) {
+            if (isUserLoggedIn()) {
+                bookmarkSurah(surahId);
+            } else {
+                Swal.fire({
+                    title: 'Log In Required',
+                    text: 'You need to log in to bookmark Surahs.',
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: 'Log In',
+                    cancelButtonText: 'Continue',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'login.html';
+                    } else if (result.isDismissed) {
+                        bookmarkSurah(surahId);
+                    }
+                });
+            }
         }
 
-        function logoutUser() {
-            // Simulate a logout process
-            localStorage.removeItem('loggedIn');
-            localStorage.removeItem('bookmarks');
-            localStorage.removeItem('playlist');
+        function handleAddToPlaylist(surahId) {
+            if (isUserLoggedIn()) {
+                addToPlaylist(surahId);
+            } else {
+                Swal.fire({
+                    title: 'Log In Required',
+                    text: 'You need to log in to add Surahs to your playlist.',
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: 'Log In',
+                    cancelButtonText: 'Continue',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'login.html';
+                    } else if (result.isDismissed) {
+                        addToPlaylist(surahId);
+                    }
+                });
+            }
         }
 
         function bookmarkSurah(surahId) {
-            if (!isUserLoggedIn()) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Not Logged In',
-                    text: 'You need to be logged in to bookmark Surahs.',
-                    confirmButtonText: 'Log In',
-                    showCancelButton: true,
-                    cancelButtonText: 'Continue',
-                    allowOutsideClick: false,
-                    preConfirm: () => {
-                        window.location.href = 'login.html';
-                    }
-                }).then((result) => {
-                    if (result.dismiss === Swal.DismissReason.cancel) {
-                        let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
-                        if (!bookmarks.includes(surahId)) {
-                            bookmarks.push(surahId);
-                            localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Bookmarked',
-                                text: 'Surah has been bookmarked successfully.',
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'Already Bookmarked',
-                                text: 'This Surah is already in your bookmarks.',
-                            });
-                        }
-                    }
-                });
-                return;
-            }
-
             let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
             if (!bookmarks.includes(surahId)) {
                 bookmarks.push(surahId);
@@ -328,41 +331,6 @@
         }
 
         function addToPlaylist(surahId) {
-            if (!isUserLoggedIn()) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Not Logged In',
-                    text: 'You need to be logged in to add Surahs to your playlist.',
-                    confirmButtonText: 'Log In',
-                    showCancelButton: true,
-                    cancelButtonText: 'Continue',
-                    allowOutsideClick: false,
-                    preConfirm: () => {
-                        window.location.href = 'login.html';
-                    }
-                }).then((result) => {
-                    if (result.dismiss === Swal.DismissReason.cancel) {
-                        let playlist = JSON.parse(localStorage.getItem('playlist')) || [];
-                        if (!playlist.includes(surahId)) {
-                            playlist.push(surahId);
-                            localStorage.setItem('playlist', JSON.stringify(playlist));
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Added to Playlist',
-                                text: 'Surah has been added to your playlist successfully.',
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'Already in Playlist',
-                                text: 'This Surah is already in your playlist.',
-                            });
-                        }
-                    }
-                });
-                return;
-            }
-
             let playlist = JSON.parse(localStorage.getItem('playlist')) || [];
             if (!playlist.includes(surahId)) {
                 playlist.push(surahId);
