@@ -8,154 +8,87 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
     <style>
-        body {
-            margin: 0;
-            height: 100vh;
-            background: #abbaab;  /* fallback for old browsers */
-            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);  /* Chrome 10-25, Safari 5.1-6 */
-            background: linear-gradient(to right, #ffffff, #abbaab); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-        }
+        /* Existing styles... */
+        /* Add your existing CSS here */
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-        }
-
-        nav {
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-        }
-
-        nav ul li {
-            margin: 0 10px;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: #333;
-            font-size: 1.2em;
-            padding: 10px 20px;
-            display: block;
-        }
-
-        nav ul li a:hover {
-            background-color: #f0f0f0;
-            border-radius: 5px;
-        }
-
+        /* New styles */
         header {
-            text-align: center;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        h1 {
-            font-size: 2.5em;
-            color: #fff;
-        }
-
-        #surah-list {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: center;
             gap: 10px;
-            justify-content: center;
         }
 
-        .surah {
+        .search-bar {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .show-more-btn {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .show-more-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .featured-reciters {
+            display: flex;
+            overflow-x: auto;
+            padding: 10px 0;
+            gap: 10px;
+        }
+
+        .reciter-card {
             background-color: #fff;
             padding: 15px;
             border: 1px solid #ddd;
-            cursor: pointer;
-            flex: 1 1 calc(25% - 20px);
-            box-sizing: border-box;
-            text-align: center;
-            margin: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s, background-color 0.3s;
-            position: relative;
+            border-radius: 5px;
+            min-width: 200px;
+            text-align: center;
+            transition: transform 0.2s;
         }
 
-        .surah:hover {
-            transform: scale(1.05);
-            background-color: #f0f0f0;
-        }
-
-        @media (max-width: 768px) {
-            .surah {
-                flex: 1 1 calc(50% - 20px);
-            }
-        }
-
-        @media (max-width: 480px) {
-            .surah {
-                flex: 1 1 100%;
-            }
-        }
-
-        .loader {
-            border: 16px solid #f3f3f3;
+        .reciter-card img {
             border-radius: 50%;
-            border-top: 16px solid #3498db;
-            width: 120px;
-            height: 120px;
-            animation: spin 2s linear infinite;
-            margin: 50px auto;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .reciter-card:hover {
+            transform: scale(1.05);
         }
 
-        .close-button {
+        .arrow {
+            font-size: 2em;
             cursor: pointer;
-            color: #ff0000;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.5em;
-        }
-
-        body.dark-mode {
-            background: linear-gradient(to right, #0f0f0f, #434343);
-            color: #ddd;
-        }
-
-        body.dark-mode .surah {
-            background-color: #333;
-            color: #ddd;
-        }
-
-        body.dark-mode .surah:hover {
-            background-color: #444;
-        }
-
-        body.dark-mode h1 {
-            color: #ddd;
-        }
-
-        .dark-mode-toggle {
-            margin: 10px 0;
-            cursor: pointer;
-            font-size: 1.5em;
-            color: #fff;
-        }
-
-        .surah-info {
-            font-family: 'Amiri', serif;
-            font-size: 1.2em;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
@@ -163,17 +96,58 @@
     <div class="container">
         <header>
             <h1>Tracks</h1>
+            <input type="text" class="search-bar" id="search-bar" placeholder="Search Surahs...">
             <i id="dark-mode-toggle" class="fas fa-moon dark-mode-toggle"></i>
             <span class="close-button" onclick="window.location.href='index.html'">×</span>
         </header>
+
+        <!-- Featured Reciters -->
+        <div class="featured-reciters">
+            <div class="arrow" id="prev-arrow"><i class="fas fa-chevron-left"></i></div>
+            <div class="reciter-card">
+                <img src="reciter1.jpg" alt="Reciter 1">
+                <h3>Reciter 1</h3>
+            </div>
+            <div class="reciter-card">
+                <img src="reciter2.jpg" alt="Reciter 2">
+                <h3>Reciter 2</h3>
+            </div>
+            <div class="reciter-card">
+                <img src="reciter3.jpg" alt="Reciter 3">
+                <h3>Reciter 3</h3>
+            </div>
+            <div class="reciter-card">
+                <img src="reciter4.jpg" alt="Reciter 4">
+                <h3>Reciter 4</h3>
+            </div>
+            <div class="reciter-card">
+                <img src="reciter5.jpg" alt="Reciter 5">
+                <h3>Reciter 5</h3>
+            </div>
+            <div class="reciter-card">
+                <img src="reciter6.jpg" alt="Reciter 6">
+                <h3>Reciter 6</h3>
+            </div>
+            <div class="arrow" id="next-arrow"><i class="fas fa-chevron-right"></i></div>
+        </div>
+
         <div id="surah-list"></div>
+        <button class="show-more-btn" id="show-more-btn">Show More</button>
         <div class="loader" id="loader"></div>
     </div>
+
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         const surahList = document.getElementById('surah-list');
         const loader = document.getElementById('loader');
         const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const searchBar = document.getElementById('search-bar');
+        const showMoreBtn = document.getElementById('show-more-btn');
+        const featuredReciters = document.querySelector('.featured-reciters');
+        const prevArrow = document.getElementById('prev-arrow');
+        const nextArrow = document.getElementById('next-arrow');
+        let surahs = [];
+        let surahDisplayCount = 30;
 
         loader.style.display = 'block';
 
@@ -181,23 +155,8 @@
             .then(response => response.json())
             .then(data => {
                 loader.style.display = 'none';
-                const fragment = document.createDocumentFragment();
-                data.chapters.forEach(surah => {
-                    const surahDiv = document.createElement('div');
-                    surahDiv.classList.add('surah');
-
-                    const surahInfo = document.createElement('div');
-                    surahInfo.classList.add('surah-info');
-                    surahInfo.innerHTML = `<strong>${surah.name_simple}</strong> <br> ${surah.name_arabic} <br> <span>${surah.id}</span>`;
-                    surahDiv.appendChild(surahInfo);
-
-                    surahDiv.addEventListener('click', () => {
-                        window.location.href = `audioSurah.html?surah=${surah.id}`;
-                    });
-
-                    fragment.appendChild(surahDiv);
-                });
-                surahList.appendChild(fragment);
+                surahs = data.chapters;
+                displaySurahs(surahs.slice(0, surahDisplayCount));
             })
             .catch(error => {
                 loader.style.display = 'none';
@@ -209,10 +168,46 @@
                 });
             });
 
+        function displaySurahs(surahsToDisplay) {
+            surahList.innerHTML = '';
+            const fragment = document.createDocumentFragment();
+            surahsToDisplay.forEach(surah => {
+                const surahDiv = document.createElement('div');
+                surahDiv.classList.add('surah');
+
+                const surahInfo = document.createElement('div');
+                surahInfo.classList.add('surah-info');
+                surahInfo.innerHTML = `<strong>${surah.name_simple}</strong> <br> ${surah.name_arabic} <br> <span>${surah.id}</span>`;
+                surahDiv.appendChild(surahInfo);
+
+                surahDiv.addEventListener('click', () => {
+                    window.location.href = `audioSurah.html?surah=${surah.id}`;
+                });
+
+                fragment.appendChild(surahDiv);
+            });
+            surahList.appendChild(fragment);
+        }
+
+        showMoreBtn.addEventListener('click', () => {
+            surahDisplayCount += 30;
+            displaySurahs(surahs.slice(0, surahDisplayCount));
+        });
+
+        searchBar.addEventListener('input', (event) => {
+            const query = event.target.value.toLowerCase();
+            const filteredSurahs = surahs.filter(surah =>
+                surah.name_simple.toLowerCase().includes(query) ||
+                surah.name_arabic.toLowerCase().includes(query)
+            );
+            displaySurahs(filteredSurahs.slice(0, surahDisplayCount));
+        });
+
         darkModeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-            darkModeToggle.classList.toggle('fa-moon');
-            darkModeToggle.classList.toggle('fa-sun');
+            const darkModeEnabled = document.body.classList.toggle('dark-mode');
+            darkModeToggle.classList.toggle('fa-moon', !darkModeEnabled);
+            darkModeToggle.classList.toggle('fa-sun', darkModeEnabled);
+            localStorage.setItem('darkMode', darkModeEnabled ? 'enabled' : 'disabled');
         });
 
         if (localStorage.getItem('darkMode') === 'enabled') {
@@ -220,13 +215,30 @@
             darkModeToggle.classList.remove('fa-moon');
             darkModeToggle.classList.add('fa-sun');
         }
-    });
 
-    darkModeToggle.addEventListener('click', () => {
-        const darkModeEnabled = document.body.classList.toggle('dark-mode');
-        darkModeToggle.classList.toggle('fa-moon', !darkModeEnabled);
-        darkModeToggle.classList.toggle('fa-sun', darkModeEnabled);
-        localStorage.setItem('darkMode', darkModeEnabled ? 'enabled' : 'disabled');
+        // Featured Reciters Scrolling
+        let scrollAmount = 0;
+        const scrollAmountIncrement = 200;
+
+        nextArrow.addEventListener('click', () => {
+            if (scrollAmount < featuredReciters.scrollWidth - featuredReciters.clientWidth) {
+                scrollAmount += scrollAmountIncrement;
+                featuredReciters.scrollTo({
+                    left: scrollAmount,
+                    behavior: 'smooth'
+                });
+            }
+        });
+
+        prevArrow.addEventListener('click', () => {
+            if (scrollAmount > 0) {
+                scrollAmount -= scrollAmountIncrement;
+                featuredReciters.scrollTo({
+                    left: scrollAmount,
+                    behavior: 'smooth'
+                });
+            }
+        });
     });
     </script>
 </body>
