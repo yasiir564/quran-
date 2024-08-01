@@ -224,14 +224,15 @@
                                 } else {
                                     Swal.fire({
                                         title: 'Log In Required',
-                                        text: 'You need to log in to access this Surah.',
+                                        text: 'You need to log in to Bookmark and create a playlist.',
                                         icon: 'info',
                                         showCancelButton: true,
                                         confirmButtonText: 'Log In',
-                                        cancelButtonText: 'Continue',
+                                        confirmButtonText: 'Continue',
                                     }).then((result) => {
                                         if (result.isConfirmed) {
                                             window.location.href = 'login.html';
+                                             window.location.href = 'audiosurah.html';
                                         }
                                     });
                                 }
