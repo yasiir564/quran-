@@ -218,24 +218,7 @@
                         surahDiv.appendChild(buttonsDiv);
 
                         surahDiv.addEventListener('click', () => {
-                            if (isUserLoggedIn()) {
-                                window.location.href = `audioSurah.html?surah=${surah.id}`;
-                            } else {
-                                Swal.fire({
-                                    title: 'Log In Required',
-                                    text: 'You need to log in to access this Surah.',
-                                    icon: 'info',
-                                    showCancelButton: true,
-                                    confirmButtonText: 'Continue',
-                                    cancelButtonText: 'Log In',
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        window.location.href = `audioSurah.html?surah=${surah.id}`;
-                                    } else if (result.isDismissed) {
-                                        window.location.href = 'login.html';
-                                    }
-                                });
-                            }
+                            handleSurahClick(surah.id);
                         });
                         fragment.appendChild(surahDiv);
                     });
@@ -262,20 +245,43 @@
             return localStorage.getItem('loggedInUser') !== null;
         }
 
-        function handleBookmark(surahId) {
+        function handleSurahClick(surahId) {
             if (isUserLoggedIn()) {
-                bookmarkSurah(surahId);
                 window.location.href = `audioSurah.html?surah=${surahId}`;
             } else {
                 Swal.fire({
-                    title: 'Log In Required',
-                    text: 'You need to log in to bookmark Surahs and add to your playlist.',
+                    title: 'Access Required',
+                    text: 'You need to log in to bookmark or create a playlist. Do you want to log in or continue without logging in?',
                     icon: 'info',
                     showCancelButton: true,
                     confirmButtonText: 'Log In',
                     cancelButtonText: 'Continue',
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        localStorage.setItem('redirectAfterLogin', `audioSurah.html?surah=${surahId}`);
+                        window.location.href = 'login.html';
+                    } else if (result.isDismissed) {
+                        window.location.href = `audioSurah.html?surah=${surahId}`;
+                    }
+                });
+            }
+        }
+
+        function handleBookmark(surahId) {
+            if (isUserLoggedIn()) {
+                bookmarkSurah(surahId);
+                window.location.href = `audioSurah.html?surah=${surahId}`;
+            } else {
+                Swal.fire({
+                    title: 'Access Required',
+                    text: 'You need to log in to bookmark Surahs. Do you want to log in or continue without logging in?',
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: 'Log In',
+                    cancelButtonText: 'Continue',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        localStorage.setItem('redirectAfterLogin', `audioSurah.html?surah=${surahId}`);
                         window.location.href = 'login.html';
                     } else if (result.isDismissed) {
                         bookmarkSurah(surahId);
@@ -291,14 +297,15 @@
                 window.location.href = `audioSurah.html?surah=${surahId}`;
             } else {
                 Swal.fire({
-                    title: 'Log In Required',
-                    text: 'You need to log in to bookmark Surahs and add to your playlist.',
+                    title: 'Access Required',
+                    text: 'You need to log in to create a playlist. Do you want to log in or continue without logging in?',
                     icon: 'info',
                     showCancelButton: true,
                     confirmButtonText: 'Log In',
                     cancelButtonText: 'Continue',
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        localStorage.setItem('redirectAfterLogin', `audioSurah.html?surah=${surahId}`);
                         window.location.href = 'login.html';
                     } else if (result.isDismissed) {
                         addToPlaylist(surahId);
