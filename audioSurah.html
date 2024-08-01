@@ -3,222 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quran Pro Audio Player</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <title>Quran Audio Player</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Include your stylesheet -->
     <style>
-       body {
+        /* Basic resets and styles */
+        body {
+            font-family: Arial, sans-serif;
             margin: 0;
-            height: 100vh;
-            background: linear-gradient(to right, #ffffff, #abbaab);
-            font-family: 'Amiri', serif;
-            overflow: auto;
-        }
-        header {
-            text-align: center;
-            margin: 20px 0;
-            position: relative;
-        }
-        h1 {
-            font-size: 2.5em;
-            color: #000;
-        }
-        .audio-container {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .sheikh-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-            padding: 0 20px;
-            box-sizing: border-box;
-        }
-        .sheikh-item {
-            padding: 10px;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s, background-color 0.3s;
-            border-radius: 15px;
-            text-align: center;
-            overflow: hidden;
+            padding: 0;
             background-color: #fff;
-            border: 1px solid #e0e0e0;
-        }
-        .sheikh-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 12px 40px rgba(0, 0, 0, 0.2);
-        }
-        .sheikh-item img {
-            width: 100%;
-            height: 150px;
-            border-radius: 15px;
-            object-fit: cover;
-        }
-        .sheikh-item.active {
-            border: 2px solid #3498db;
-            background-color: #e6f7ff;
-        }
-        .sheikh-name {
-            font-size: 1em;
             color: #000;
-            margin-top: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            transition: background-color 0.3s, color 0.3s;
         }
-        .audio-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            margin-top: 20px;
+        body.dark-mode {
+            background-color: #333;
+            color: #f9f9f9;
         }
-        .audio-controls button {
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 1.5em;
-            color: #2980b9;
+        .dark-mode .sheikh-item {
+            background-color: #444;
         }
-        .audio-controls button:hover {
-            color: #3498db;
-        }
-        .audio-player {
-            position: relative;
-            width: 90%;
-            max-width: 600px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            margin: 20px auto;
-        }
-        .audio-player img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            margin-bottom: 20px;
-        }
-        .audio-player button {
-            background: none;
-            border: none;
-            font-size: 1.5em;
-            margin: 10px;
-            cursor: pointer;
-        }
-        .audio-player button:hover {
-            color: #2980b9;
-        }
-        .audio-player select {
-            padding: 5px;
-            margin: 10px;
-        }
+        /* Overlay Styles */
         .audio-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            backdrop-filter: blur(5px);
-            background: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.7);
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            overflow: hidden;
+            color: #fff;
+            transition: opacity 0.5s;
+            flex-direction: column;
+            text-align: center;
         }
         .audio-overlay.active {
             display: flex;
         }
-        .audio-overlay .overlay-content {
-            background: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            position: relative;
-            text-align: center;
-            width: 80%;
-            max-width: 600px;
+        .audio-overlay .now-playing {
+            font-size: 1.5rem;
+            font-weight: bold;
+            animation: flowingText 5s linear infinite;
+            background: linear-gradient(90deg, #ff6f61, #dce35b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
         }
-        .audio-overlay .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: none;
-            font-size: 1.5em;
-            cursor: pointer;
+        @keyframes flowingText {
+            0% { background-position: 0%; }
+            100% { background-position: 100%; }
+        }
+        .audio-overlay img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
         }
         .audio-overlay .surah-title {
-            font-size: 1.2em;
-            margin-bottom: 20px;
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            color: #dce35b;
         }
-        @media (max-width: 600px) {
-            .audio-player {
-                width: 100%;
-                padding: 10px;
-            }
+        /* Sheikh List Styles */
+        #reciter-selector {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
         }
-        /* Dark mode styles */
-        body.dark-mode {
-            background: linear-gradient(to right, #0f0f0f, #434343);
-            color: #ddd;
+        .sheikh-item {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            background-color: #f9f9f9;
+            color: #333;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
-        body.dark-mode header h1 {
+        .sheikh-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .sheikh-item.active {
+            background-color: #ddd;
+        }
+        /* Playback Controls Styles */
+        .playback-controls {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0 10px;
+        }
+        .playback-controls button {
+            background-color: #007bff;
             color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
         }
-        body.dark-mode .sheikh-item {
-            background-color: #333;
+        .playback-controls button:hover {
+            background-color: #0056b3;
         }
-        body.dark-mode .sheikh-item.active {
-            border: 2px solid #ddd;
-            background-color: #444;
+        .playback-controls select {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            margin: 0 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
         }
-        body.dark-mode .audio-player {
-            background: rgba(0, 0, 0, 0.8);
+        /* Dark Mode Toggle Styles */
+        #dark-mode-toggle {
+            cursor: pointer;
+            font-size: 1.5rem;
+            margin: 10px;
+            position: fixed;
+            top: 10px;
+            right: 10px;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Quran Pro Audio Reciters</h1>
-        <i id="dark-mode-toggle" class="fas fa-moon"></i>
-    </header>
-    <div id="reciter-selector" class="sheikh-list"></div>
-    <div class="audio-container" id="audio-container"></div>
-
-    <div class="audio-overlay" id="audio-overlay">
-        <div class="overlay-content">
-            <div class="surah-title" id="surah-title">Surah: None</div>
-            <div class="audio-player" id="audio-player">
-                <img id="reciter-image" src="" alt="Reciter">
-                <audio id="audio-element" controls></audio>
-                <div class="audio-controls">
-                    <button id="rewindButton"><i class="fas fa-backward"></i></button>
-                    <button id="playPauseButton"><i class="fas fa-play"></i></button>
-                    <button id="stopButton"><i class="fas fa-stop"></i></button>
-                    <label for="speedControl">Speed: </label>
-                    <select id="speedControl">
-                        <option value="0.5">0.5x</option>
-                        <option value="1" selected>1x</option>
-                        <option value="1.5">1.5x</option>
-                        <option value="2">2x</option>
-                    </select>
-                </div>
-                <button class="close-button" onclick="toggleOverlay()"><i class="fas fa-times"></i></button>
-            </div>
-        </div>
+    <div id="audio-overlay" class="audio-overlay">
+        <div class="now-playing">Now Playing</div>
+        <img id="reciter-image" src="" alt="Reciter Image">
+        <div id="surah-title" class="surah-title"></div>
     </div>
 
+    <div class="playback-controls">
+        <button id="playPauseButton"><i class="fas fa-play"></i></button>
+        <button id="stopButton"><i class="fas fa-stop"></i></button>
+        <button id="rewindButton"><i class="fas fa-backward"></i></button>
+        <select id="speedControl">
+            <option value="0.5">0.5x</option>
+            <option value="1" selected>1x</option>
+            <option value="1.5">1.5x</option>
+            <option value="2">2x</option>
+        </select>
+    </div>
+
+    <div id="reciter-selector"></div>
+    <div id="dark-mode-toggle" class="fas fa-moon"></div>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', () => {
             const audioOverlay = document.getElementById('audio-overlay');
-            const audioElement = document.getElementById('audio-element');
             const playPauseButton = document.getElementById('playPauseButton');
             const stopButton = document.getElementById('stopButton');
             const rewindButton = document.getElementById('rewindButton');
@@ -250,187 +192,91 @@
                 { id: '15', name: 'Abdullah Basfar', imageUrl: 'download (19).jpeg' },
                 { id: '17', name: 'Mohammad Al-Tablawi', imageUrl: 'mohamed-tablawi.jpg' },
                 { id: '18', name: 'Khalid Al-Jaleel', imageUrl: 'download (20).jpeg' },
-                { id: '19', name: 'Yasser Al-Mazroyee', imageUrl: 'download (21).jpeg' },
-                { id: '20', name: 'Fares Abbad', imageUrl: 'download (22).jpeg' },
-                { id: '22', name: 'Abdul-Rahman Al-Ossi', imageUrl: 'download (23).jpeg' },
-                { id: '23', name: 'Ahmad Al-Huthaify', imageUrl: 'download (24).jpeg' },
-                { id: '24', name: 'Muhammad Ayyub', imageUrl: 'download (25).jpeg' },
-                { id: '25', name: 'Muhammad Jibreel', imageUrl: 'download (26).jpeg' },
-                { id: '26', name: 'AbdulRashid Sufi', imageUrl: 'download (27).jpeg' },
-                { id: '27', name: 'Ibrahim Al-Akhdar', imageUrl: 'download (28).jpeg' },
-                { id: '28', name: 'Muhammad Al-Luhaidan', imageUrl: 'download (29).jpeg' },
-                { id: '29', name: 'Yahya Hawwa', imageUrl: 'download (30).jpeg' },
-                { id: '30', name: 'Abdul Wadood Haneef', imageUrl: 'download (31).jpeg' }
+                { id: '19', name: 'Yusuf Al-Qaradawi', imageUrl: 'download (31).jpeg' }
             ];
 
-            function stopAudio() {
+            const fetchSurahDetails = async (surahId) => {
+                try {
+                    const response = await fetch(`https://api.alquran.cloud/v1/surah/${surahId}`);
+                    const data = await response.json();
+                    return data.data;
+                } catch (error) {
+                    console.error('Error fetching Surah details:', error);
+                }
+            };
+
+            const loadSurah = async (surahId) => {
+                const surahDetails = await fetchSurahDetails(surahId);
+                if (surahDetails) {
+                    surahTitle.innerText = `Now Playing Surah ${surahDetails.englishName}`;
+                }
+            };
+
+            const updateOverlay = async (sheikh) => {
+                reciterImage.src = sheikh.imageUrl;
+                audioOverlay.classList.add('active');
+                if (currentAudio) {
+                    currentAudio.pause();
+                }
+                currentAudio = new Audio(`https://path-to-your-audio-files/${sheikh.id}.mp3`);
+                currentAudio.play();
+                await loadSurah(surahId);
+            };
+
+            const setupSheikhList = () => {
+                sheikhs.forEach(sheikh => {
+                    const item = document.createElement('div');
+                    item.classList.add('sheikh-item');
+                    item.innerHTML = `
+                        <img src="${sheikh.imageUrl}" alt="${sheikh.name}">
+                        <span>${sheikh.name}</span>
+                    `;
+                    item.addEventListener('click', () => {
+                        document.querySelectorAll('.sheikh-item').forEach(i => i.classList.remove('active'));
+                        item.classList.add('active');
+                        updateOverlay(sheikh);
+                    });
+                    sheikhList.appendChild(item);
+                });
+            };
+
+            const toggleDarkMode = () => {
+                document.body.classList.toggle('dark-mode');
+                const isDarkMode = document.body.classList.contains('dark-mode');
+                darkModeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            };
+
+            const handleSpeedChange = () => {
+                if (currentAudio) {
+                    currentAudio.playbackRate = parseFloat(speedControl.value);
+                }
+            };
+
+            darkModeToggle.addEventListener('click', toggleDarkMode);
+            speedControl.addEventListener('change', handleSpeedChange);
+
+            playPauseButton.addEventListener('click', () => {
+                if (currentAudio.paused) {
+                    currentAudio.play();
+                } else {
+                    currentAudio.pause();
+                }
+            });
+
+            stopButton.addEventListener('click', () => {
                 if (currentAudio) {
                     currentAudio.pause();
                     currentAudio.currentTime = 0;
                 }
-                playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
-            }
+            });
 
-            function playAudio() {
-                if (currentAudio.paused) {
-                    currentAudio.play();
-                    playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
-                } else {
-                    currentAudio.pause();
-                    playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
-                }
-            }
-
-            function rewindAudio() {
+            rewindButton.addEventListener('click', () => {
                 if (currentAudio) {
-                    currentAudio.currentTime = Math.max(currentAudio.currentTime - 10, 0);
-                }
-            }
-
-            function toggleOverlay() {
-                audioOverlay.classList.toggle('active');
-                if (!audioOverlay.classList.contains('active') && currentAudio) {
-                    currentAudio.pause();
-                }
-            }
-
-            async function loadSurahAudio(surahId, sheikh) {
-                if (currentAudio) {
-                    currentAudio.pause();
-                }
-
-                try {
-                    const response = await fetch(`https://api.quran.com/api/v4/chapter_recitations/${sheikh.id}/${surahId}`);
-                    const data = await response.json();
-                    const audioUrl = data.audio_file.audio_url;
-
-                    currentAudio = new Audio(audioUrl);
-                    currentAudio.addEventListener('ended', async () => {
-                        const nextSurahId = parseInt(surahId) + 1;
-                        if (nextSurahId <= 114) {
-                            loadSurahAudio(nextSurahId.toString(), sheikh);
-                        } else {
-                            stopAudio();
-                            Swal.fire({
-                                title: 'End of Quran',
-                                text: 'You have reached the end of the Quran.',
-                                icon: 'info',
-                                confirmButtonText: 'Okay'
-                            });
-                        }
-                    });
-
-                    currentAudio.addEventListener('canplaythrough', () => {
-                        currentAudio.play();
-                        playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
-                    });
-
-                    audioElement.src = audioUrl;
-                    reciterImage.src = sheikh.imageUrl;
-                    surahTitle.textContent = `Surah: ${surahId}`; // Update Surah title
-                    audioOverlay.classList.add('active');
-                } catch (error) {
-                    console.error('Error loading audio:', error);
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Failed to load audio. Please try again later.',
-                        icon: 'error',
-                        confirmButtonText: 'Okay'
-                    });
-                }
-            }
-
-            playPauseButton.addEventListener('click', playAudio);
-            stopButton.addEventListener('click', stopAudio);
-            rewindButton.addEventListener('click', rewindAudio);
-            speedControl.addEventListener('change', (event) => {
-                if (currentAudio) {
-                    currentAudio.playbackRate = parseFloat(event.target.value);
+                    currentAudio.currentTime -= 10; // Rewind 10 seconds
                 }
             });
 
-            sheikhs.forEach((sheikh) => {
-                const sheikhItem = document.createElement('div');
-                sheikhItem.className = 'sheikh-item';
-                sheikhItem.innerHTML = `
-                    <img src="${sheikh.imageUrl}" alt="${sheikh.name}">
-                    <div class="sheikh-name">${sheikh.name}</div>
-                `;
-                sheikhItem.addEventListener('click', () => {
-                    document.querySelectorAll('.sheikh-item').forEach(item => item.classList.remove('active'));
-                    sheikhItem.classList.add('active');
-                    loadSurahAudio(surahId, sheikh);
-                });
-
-                sheikhList.appendChild(sheikhItem);
-            });
-
-            function toggleDarkMode() {
-                document.body.classList.toggle('dark-mode');
-                darkModeToggle.classList.toggle('fa-sun');
-                darkModeToggle.classList.toggle('fa-moon');
-            }
-
-            darkModeToggle.addEventListener('click', toggleDarkMode);
-
-            setTimeout(() => {
-                if (!document.querySelector('.sheikh-item.active')) {
-                    Swal.fire({
-                        title: 'Are you confused in finding a good reciter? Try your luck!',
-                        showCancelButton: true,
-                        confirmButtonText: 'Spin!',
-                        cancelButtonText: 'Cancel'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            let currentIndex = 0;
-                            const spinDuration = 3000; // Spin for 3 seconds
-
-                            const intervalId = setInterval(() => {
-                                const sheikh = sheikhs[currentIndex];
-                                Swal.update({
-                                    title: 'Spinning...',
-                                    html: `Selected Sheikh: ${sheikh.name}`,
-                                    showConfirmButton: false
-                                });
-
-                                currentIndex = (currentIndex + 1) % sheikhs.length;
-                            }, 100);
-
-                            setTimeout(() => {
-                                clearInterval(intervalId);
-                                const selectedSheikh = sheikhs[Math.floor(Math.random() * sheikhs.length)];
-                                Swal.fire({
-                                    title: 'Selected Sheikh!',
-                                    text: selectedSheikh.name,
-                                    icon: 'success'
-                                }).then(() => {
-                                    loadSurahAudio(surahId, selectedSheikh);
-                                });
-                            }, spinDuration);
-                        }
-                    });
-                }
-            }, 5000);
-
-            if ('wakeLock' in navigator) {
-                let wakeLock = null;
-
-                const requestWakeLock = async () => {
-                    try {
-                        wakeLock = await navigator.wakeLock.request('screen');
-                    } catch (err) {
-                        console.error('Error requesting wake lock:', err);
-                    }
-                };
-
-                document.addEventListener('visibilitychange', () => {
-                    if (wakeLock !== null && document.visibilityState === 'visible') {
-                        requestWakeLock();
-                    }
-                });
-
-                requestWakeLock();
-            }
+            setupSheikhList();
         });
     </script>
 </body>
