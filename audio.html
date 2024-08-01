@@ -223,21 +223,19 @@
                                     window.location.href = `audioSurah.html?surah=${surah.id}`;
                                 } else {
                                     Swal.fire({
-                                        title: 'Log In Required',
-                                        text: 'You need to log in to Bookmark and create a playlist.',
-                                        icon: 'info',
-                                        showCancelButton: true,
-                                        confirmButtonText: 'Log In',
-                                        confirmButtonText: 'Continue',
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            window.location.href = 'login.html';
-                                             window.location.href = 'audiosurah.html';
-                                        }
-                                    });
-                                }
-                            }
-                        });
+    title: 'Log In Required',
+    text: 'You need to log in to Bookmark and create a playlist.',
+    icon: 'info',
+    showCancelButton: true,
+    confirmButtonText: 'Log In',
+    cancelButtonText: 'Continue', // Added cancel button text
+}).then((result) => {
+    if (result.isConfirmed) {
+        window.location.href = 'login.html';
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+        window.location.href = 'audiosurah.html';
+    }
+});
 
                         fragment.appendChild(surahDiv);
                     });
