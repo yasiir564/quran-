@@ -191,27 +191,8 @@
                     surahInfo.innerHTML = `<strong>${surah.name_simple}</strong> <br> ${surah.name_arabic} <br> <span>${surah.id}</span>`;
                     surahDiv.appendChild(surahInfo);
 
-                    surahDiv.addEventListener('click', (e) => {
-                        if (e.target.tagName !== 'I') {
-                            if (isUserLoggedIn()) {
-                                window.location.href = `audioSurah.html?surah=${surah.id}`;
-                            } else {
-                                Swal.fire({
-                                    title: 'Log In Required',
-                                    text: 'You need to log in to Bookmark and create a playlist.',
-                                    icon: 'info',
-                                    showCancelButton: true,
-                                    confirmButtonText: 'Log In',
-                                    cancelButtonText: 'Continue To reciters',
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        window.location.href = 'login.html';
-                                    } else if (result.dismiss === Swal.DismissReason.cancel) {
-                                        window.location.href = 'audioSurah.html';
-                                    }
-                                });
-                            }
-                        }
+                    surahDiv.addEventListener('click', () => {
+                        window.location.href = `audioSurah.html?surah=${surah.id}`;
                     });
 
                     fragment.appendChild(surahDiv);
@@ -233,12 +214,20 @@
             darkModeToggle.classList.toggle('fa-moon');
             darkModeToggle.classList.toggle('fa-sun');
         });
+
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            darkModeToggle.classList.remove('fa-moon');
+            darkModeToggle.classList.add('fa-sun');
+        }
     });
 
-    function isUserLoggedIn() {
-        return localStorage.getItem('loggedIn') === 'true';
-    }
-</script>
+    darkModeToggle.addEventListener('click', () => {
+        const darkModeEnabled = document.body.classList.toggle('dark-mode');
+        darkModeToggle.classList.toggle('fa-moon', !darkModeEnabled);
+        darkModeToggle.classList.toggle('fa-sun', darkModeEnabled);
+        localStorage.setItem('darkMode', darkModeEnabled ? 'enabled' : 'disabled');
+    });
+    </script>
 </body>
 </html>
-
