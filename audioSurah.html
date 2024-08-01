@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/css2?family=FontAwesome:6.0.0-beta3">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
-        body {
+       body {
             margin: 0;
             height: 100vh;
             background: linear-gradient(to right, #ffffff, #abbaab);
@@ -36,28 +36,27 @@
             padding: 0 20px;
             box-sizing: border-box;
         }
-      .sheikh-item {
-    padding: 10px;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, background-color 0.3s;
-    border-radius: 15px;
-    text-align: center;
-    overflow: hidden;
-    background-color: #fff;
-    border: 1px solid #e0e0e0;
-}
-.sheikh-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 12px 40px rgba(0, 0, 0, 0.2);
-}
-.sheikh-item img {
-    width: 100%;
-    height: 150px;
-    border-radius: 15px;
-    object-fit: cover;
-}
-
+        .sheikh-item {
+            padding: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, background-color 0.3s;
+            border-radius: 15px;
+            text-align: center;
+            overflow: hidden;
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+        }
+        .sheikh-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+        .sheikh-item img {
+            width: 100%;
+            height: 150px;
+            border-radius: 15px;
+            object-fit: cover;
+        }
         .sheikh-item.active {
             border: 2px solid #3498db;
             background-color: #e6f7ff;
@@ -83,6 +82,7 @@
             cursor: pointer;
             font-size: 1.5em;
             color: #2980b9;
+            transition: color 0.3s ease-in-out;
         }
         .audio-controls button:hover {
             color: #3498db;
@@ -91,60 +91,34 @@
             position: relative;
             width: 90%;
             max-width: 600px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 15px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             text-align: center;
             margin: 20px auto;
+            transition: all 0.3s ease-in-out;
         }
         .audio-player img {
             width: 150px;
             height: 150px;
             border-radius: 50%;
             margin-bottom: 20px;
+            transition: transform 0.3s ease-in-out;
         }
-        .audio-player button {
-            background: none;
-            border: none;
-            font-size: 1.5em;
-            margin: 10px;
-            cursor: pointer;
-        }
-        .audio-player button:hover {
-            color: #2980b9;
+        .audio-player img:hover {
+            transform: scale(1.1);
         }
         .audio-player select {
-            padding: 5px;
-            margin: 10px;
+            padding: 5px;  margin: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.3s ease-in-out;
         }
-        .audio-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            backdrop-filter: blur(5px);
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            overflow: hidden;
+        .audio-player select:focus {
+            border-color: #2980b9;
         }
-        .audio-overlay.active {
-            display: flex;
-        }
-        .audio-overlay .overlay-content {
-            background: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            position: relative;
-            text-align: center;
-            width: 80%;
-            max-width: 600px;
-        }
-        .audio-overlay .close-button {
+        .close-button {
             position: absolute;
             top: 10px;
             right: 10px;
@@ -153,34 +127,27 @@
             border: none;
             font-size: 1.5em;
             cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: background 0.3s ease-in-out;
         }
-        .audio-overlay .surah-title {
-            font-size: 1.2em;
-            margin-bottom: 20px;
+        .close-button:hover {
+            background: rgba(0, 0, 0, 0.9);
         }
-        @media (max-width: 600px) {
-            .audio-player {
-                width: 100%;
-                padding: 10px;
-            }
+        .audio-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
-        /* Dark mode styles */
-        body.dark-mode {
-            background: linear-gradient(to right, #0f0f0f, #434343);
-            color: #ddd;
-        }
-        body.dark-mode header h1 {
-            color: #fff;
-        }
-        body.dark-mode .sheikh-item {
-            background-color: #333;
-        }
-        body.dark-mode .sheikh-item.active {
-            border: 2px solid #ddd;
-            background-color: #444;
-        }
-        body.dark-mode .audio-player {
-            background: rgba(0, 0, 0, 0.8);
+        .audio-overlay.active {
+            display: flex;
         }
     </style>
 </head>
@@ -210,7 +177,7 @@
                         <option value="2">2x</option>
                     </select>
                 </div>
-               <button class="close-button" onclick="toggleOverlay()"><i class="fas fa-times"></i></button>
+<button class="close-button" onclick="toggleOverlay()"><i class="fas fa-times"></i></button>
             </div>
         </div>
     </div>
@@ -290,12 +257,13 @@ const sheikhs = [
                 }
             }
 
-            function toggleOverlay() {
-                audioOverlay.classList.toggle('active');
-                if (!audioOverlay.classList.contains('active') && currentAudio) {
-                    currentAudio.pause();
-                }
-            }
+           function toggleOverlay() {
+    const audioOverlay = document.getElementById('audio-overlay');
+    audioOverlay.classList.toggle('active');
+    if (!audioOverlay.classList.contains('active') && currentAudio) {
+        currentAudio.pause();
+    }
+}
 
             async function loadSurahAudio(surahId, sheikh) {
                 if (currentAudio) {
