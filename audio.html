@@ -10,7 +10,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-  body {
+ body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(to right, #ffffff, #abbaab);
@@ -67,11 +67,10 @@ header {
 }
 
 .surah-list {
-    display: flex;
-    overflow-x: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 10px;
     padding: 20px 0;
-    position: relative;
 }
 
 .surah {
@@ -85,12 +84,7 @@ header {
     transition: transform 0.3s, background-color 0.3s, border-color 0.3s;
     color: #2575fc;
     font-size: 1.2em;
-    flex: 0 0 auto;
-    min-width: 200px;
-}
-
-.surah:nth-child(n+5) {
-    filter: blur(5px);
+    position: relative;
 }
 
 .surah:hover {
@@ -135,24 +129,28 @@ header {
 
 .featured-reciters {
     display: flex;
-    overflow-x: auto; /* Allow horizontal scrolling if needed */
+    overflow-x: auto;
     gap: 10px;
     padding: 20px 0;
-    width: 100%; /* Ensure the container spans the width of its parent */
-    scroll-behavior: smooth; /* Smooth scrolling for better UX */
+    width: 100%;
+    scroll-behavior: smooth;
 }
 
 .reciter-card {
-    background: rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(15px);
+    background: rgba(255, 255, 255, 0.7);
     border: 1px solid #ddd;
     padding: 15px;
     border-radius: 5px;
     min-width: 200px;
     text-align: center;
     transition: transform 0.3s, box-shadow 0.3s;
-    flex: 0 0 auto; /* Prevent flex items from shrinking or growing */
-    position: relative; /* Ensure rating is positioned relative to card */
+    flex: 0 0 auto;
+    position: relative;
+    filter: blur(5px);
+}
+
+.reciter-card:nth-child(-n+4) {
+    filter: none;
 }
 
 .reciter-card img {
@@ -162,25 +160,25 @@ header {
 }
 
 .reciter-card:hover {
-    transform: rotate(360deg);
+    transform: scale(1.05);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .rating {
     margin-top: 10px;
     font-size: 1.2em;
-    color: #ffd700; /* Gold color */
+    color: #ffd700;
 }
 
 .rating i {
     margin: 0 2px;
-    color: #ffd700; /* Gold color */
-    text-shadow: 0 0 5px rgba(255, 215, 0, 0.8); /* Glowing effect */
+    color: #ffd700;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.8);
 }
 
 .reciter-card:hover .rating i {
-    color: #ffcc00; /* Brighter gold on hover */
-    text-shadow: 0 0 10px rgba(255, 215, 0, 1); /* Brighter glowing effect on hover */
+    color: #ffcc00;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 1);
 }
 
 .arrow {
@@ -280,6 +278,7 @@ header {
         width: 30px;
     }
 }
+
 </style>
 
 </head>
