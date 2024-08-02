@@ -346,10 +346,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const surahResponse = await fetch(`https://api.quran.com/api/v4/chapters/${surahId}`);
             const surahData = await surahResponse.json();
             const surahName = surahData.chapter.name_simple;
+            const surahTranslation = surahData.chapter.translated_name.name;
 
             audioElement.src = audioUrl;
             reciterImage.src = sheikh.imageUrl;
-            surahTitle.textContent = `Surah: ${surahName}`; // Update Surah title
+            surahTitle.textContent = `Now playing: Surah ${surahName} (${surahTranslation}) by ${sheikh.name}`; // Update Surah title
             audioOverlay.classList.add('active');
         } catch (error) {
             console.error('Error loading audio:', error);
@@ -386,7 +387,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         sheikhList.appendChild(sheikhItem);
     });
-
     function toggleDarkMode() {
         document.body.classList.toggle('dark-mode');
         darkModeToggle.classList.toggle('fa-sun');
