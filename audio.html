@@ -10,7 +10,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-body {
+      body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(to right, #ffffff, #abbaab);
@@ -35,13 +35,12 @@ header {
 
 .search-container input {
     padding: 10px;
-    width: 100%;
+    width: 60%;
     max-width: 500px;
     border: 2px solid #ddd;
     border-radius: 25px;
     outline: none;
     transition: border-color 0.3s;
-    box-sizing: border-box;
 }
 
 .search-container input:focus {
@@ -50,7 +49,7 @@ header {
 
 .search-container button {
     position: absolute;
-    right: 10%;
+    right: 20%;
     top: 50%;
     transform: translateY(-50%);
     border: none;
@@ -59,16 +58,11 @@ header {
     padding: 10px;
     border-radius: 50%;
     cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.search-container button:hover {
-    background-color: #1e62d0;
 }
 
 .surah-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 10px;
     padding: 20px 0;
 }
@@ -85,6 +79,7 @@ header {
     color: #2575fc;
     font-size: 1.2em;
     position: relative;
+    font-family: 'Poppins', sans-serif;
 }
 
 .surah:hover {
@@ -98,15 +93,11 @@ header {
     position: absolute;
     top: 10px;
     right: 10px;
-    background-color: #000;
-    border-radius: 10px;
+    background-color: #fff;
+    border-radius: 50%;
     padding: 5px;
-    clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
-    transition: transform 0.3s;
-}
-
-.surah span:hover {
-    transform: rotate(360deg);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    font-family: 'Poppins', sans-serif;
 }
 
 .show-more-btn {
@@ -121,44 +112,31 @@ header {
     font-size: 1.2em;
     cursor: pointer;
     transition: background-color 0.3s;
+    font-family: 'Poppins', sans-serif;
 }
 
 .show-more-btn:hover {
     background-color: #0056b3;
 }
 
-.reciter-section-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.reciter-section {
+.featured-reciters {
     display: flex;
     overflow-x: auto;
     gap: 10px;
     padding: 20px 0;
-    scroll-behavior: smooth;
-    width: 80%; /* Adjust this width if needed */
-}
-
-.reciter-cards-container {
-    display: flex;
-    gap: 10px;
+    position: relative;
 }
 
 .reciter-card {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(15px);
     border: 1px solid #ddd;
     padding: 15px;
     border-radius: 5px;
     min-width: 200px;
     text-align: center;
     transition: transform 0.3s, box-shadow 0.3s;
-    flex: 0 0 auto;
-    position: relative;
+    font-family: 'Poppins', sans-serif;
 }
 
 .reciter-card img {
@@ -170,26 +148,6 @@ header {
 .reciter-card:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.rating {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
-    font-size: 1.2em;
-    color: #ffd700;
-}
-
-.rating i {
-    margin: 0 2px;
-    color: #ffd700;
-    text-shadow: 0 0 5px rgba(255, 215, 0, 0.8);
-}
-
-.reciter-card:hover .rating i {
-    color: #ffcc00;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 1);
 }
 
 .arrow {
@@ -205,24 +163,12 @@ header {
     border-radius: 50%;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s, background-color 0.3s;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 1;
 }
 
 .arrow:hover {
     transform: scale(1.1);
     background-color: #2575fc;
     color: #fff;
-}
-
-.arrow-left {
-    left: -50px;
-}
-
-.arrow-right {
-    right: -50px;
 }
 
 .dark-mode {
@@ -243,10 +189,6 @@ header {
     background-color: #4ca1af;
 }
 
-.dark-mode .search-container button:hover {
-    background-color: #3b9d9d;
-}
-
 .dark-mode .show-more-btn {
     background-color: #4ca1af;
 }
@@ -261,6 +203,7 @@ header {
     margin: 20px 0;
     color: #2575fc;
     position: relative;
+    font-family: 'Poppins', sans-serif;
 }
 
 .featured-title:before,
@@ -282,30 +225,36 @@ header {
 }
 
 @media (max-width: 768px) {
+    .surah-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .search-container input {
+        width: 80%;
+    }
+
     .search-container button {
-        right: 5%;
+        right: 10%;
     }
 }
 
 @media (max-width: 480px) {
+    .surah-list {
+        grid-template-columns: 1fr;
+    }
+
     .search-container input {
         width: 90%;
     }
 
     .search-container button {
-        right: 2%;
-    }
-
-    .featured-title:before,
-    .featured-title:after {
-        width: 30px;
+        right: 5%;
     }
 }
 
-
-</style>
-
+    </style>
 </head>
+
 <body>
     <div class="container">
         <header>
@@ -319,351 +268,128 @@ header {
 
         <!-- Featured Reciters -->
         <h2 class="featured-title">Featured Reciters</h2>
-            <div class="reciter-section">
-    <div class="arrow" id="prev-arrow"><i class="fas fa-chevron-left"></i></div>
-    <div class="reciter-cards-container">
-        <div class="reciter-cards">
+        <div class="featured-reciters">
+            <div class="arrow" id="prev-arrow"><i class="fas fa-chevron-left"></i></div>
             <div class="reciter-card" onclick="showReciterAlert()" data-id="1">
-                <img src="qmkxyvfiawea1.jpg" alt="AbdulBaset AbdulSamad">
-                <h3>AbdulBaset AbdulSamad</h3>
-                <div class="rating">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                </div>
-            </div>
-            <!-- Add more reciter cards here following the same structure -->
-            <div class="reciter-card" onclick="showReciterAlert()" data-id="2">
-                <img src="images (6).jpeg" alt="Maher Al-Muaiqly">
-                <h3>Maher Al-Muaiqly</h3>
-                <div class="rating">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                </div>
-            </div>
-            <div class="reciter-card" onclick="showReciterAlert()" data-id="3">
-    <img src="Abdul-Rahman-Al-Sudais.jpg" alt="Abdur-Rahman As-Sudais">
-    <h3>Abdur-Rahman As-Sudais</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+        <img src="qmkxyvfiawea1.jpg" alt="AbdulBaset AbdulSamad">
+        <h3>AbdulBaset AbdulSamad</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="4">
-    <img src="transparent-saud-al-shuraim.webp" alt="Saud Al-Shuraim">
-    <h3>Saud Al-Shuraim</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="2">
+        <img src="images (6).jpeg" alt="Maher Al-Muaiqly">
+        <h3>Maher Al-Muaiqly</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="5">
-    <img src="download (10).jpeg" alt="Mishary Rashid Alafasy">
-    <h3>Mishary Rashid Alafasy</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="3">
+        <img src="Abdul-Rahman-Al-Sudais.jpg" alt="Abdur-Rahman As-Sudais">
+        <h3>Abdur-Rahman As-Sudais</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="6">
-    <img src="ali-jaber.webp" alt="Ali Jaber">
-    <h3>Ali Jaber</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="4">
+        <img src="transparent-saud-al-shuraim.webp" alt="Saud Al-Shuraim">
+        <h3>Saud Al-Shuraim</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="7">
-    <img src="download (11).jpeg" alt="Yasser Al-Dosari">
-    <h3>Yasser Al-Dosari</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="5">
+        <img src="download (10).jpeg" alt="Mishary Rashid Alafasy">
+        <h3>Mishary Rashid Alafasy</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="8">
-    <img src="download (12).jpeg" alt="Salah Al-Budair">
-    <h3>Salah Al-Budair</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="6">
+        <img src="ali-jaber.webp" alt="Ali Jaber">
+        <h3>Ali Jaber</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="9">
-    <img src="download (13).jpeg" alt="Ahmad Al-Ajmi">
-    <h3>Ahmad Al-Ajmi</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="7">
+        <img src="download (11).jpeg" alt="Yasser Al-Dosari">
+        <h3>Yasser Al-Dosari</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="10">
-    <img src="download (14).jpeg" alt="Khalil Al-Husary">
-    <h3>Khalil Al-Husary</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="8">
+        <img src="download (12).jpeg" alt="Salah Al-Budair">
+        <h3>Salah Al-Budair</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="11">
-    <img src="download (15).jpeg" alt="Muhammad Siddiq Al-Minshawi">
-    <h3>Muhammad Siddiq Al-Minshawi</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="9">
+        <img src="download (13).jpeg" alt="Ahmad Al-Ajmi">
+        <h3>Ahmad Al-Ajmi</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="12">
-    <img src="download (16).jpeg" alt="Saad Al-Ghamdi">
-    <h3>Saad Al-Ghamdi</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="10">
+        <img src="download (14).jpeg" alt="Khalil Al-Husary">
+        <h3>Khalil Al-Husary</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="13">
-    <img src="download (17).jpeg" alt="Abu Bakr Al-Shatri">
-    <h3>Abu Bakr Al-Shatri</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="11">
+        <img src="download (15).jpeg" alt="Muhammad Siddiq Al-Minshawi">
+        <h3>Muhammad Siddiq Al-Minshawi</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="14">
-    <img src="download (18).jpeg" alt="Hani Rifai">
-    <h3>Hani Rifai</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="12">
+        <img src="download (16).jpeg" alt="Saad Al-Ghamdi">
+        <h3>Saad Al-Ghamdi</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="15">
-    <img src="download (19).jpeg" alt="Abdullah Basfar">
-    <h3>Abdullah Basfar</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="13">
+        <img src="download (17).jpeg" alt="Abu Bakr Al-Shatri">
+        <h3>Abu Bakr Al-Shatri</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="16">
-    <img src="mohamed-tablawi.jpg" alt="Mohammad Al-Tablawi">
-    <h3>Mohammad Al-Tablawi</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="14">
+        <img src="download (18).jpeg" alt="Hani Rifai">
+        <h3>Hani Rifai</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="17">
-    <img src="download (20).jpeg" alt="Yasir Qadhi">
-    <h3>Yasir Qadhi</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="15">
+        <img src="download (19).jpeg" alt="Abdullah Basfar">
+        <h3>Abdullah Basfar</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="18">
-    <img src="download (21).jpeg" alt="Ali Al-Hudhaifi">
-    <h3>Ali Al-Hudhaifi</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="16">
+        <img src="mohamed-tablawi.jpg" alt="Mohammad Al-Tablawi">
+        <h3>Mohammad Al-Tablawi</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="19">
-    <img src="download (22).jpeg" alt="Ahmed Al-Muaiqly">
-    <h3>Ahmed Al-Muaiqly</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="17">
+        <img src="download (20).jpeg" alt="Khalid Al-Jaleel">
+        <h3>Khalid Al-Jaleel</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="20">
-    <img src="download (23).jpeg" alt="Mohammad Ayyub">
-    <h3>Mohammad Ayyub</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="18">
+        <img src="download (21).jpeg" alt="Yasser Al-Mazroyee">
+        <h3>Yasser Al-Mazroyee</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="21">
-    <img src="download (24).jpeg" alt="Nasser Al-Qatami">
-    <h3>Nasser Al-Qatami</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="19">
+        <img src="download (22).jpeg" alt="Fares Abbad">
+        <h3>Fares Abbad</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="22">
-    <img src="download (25).jpeg" alt="Fares Abbad">
-    <h3>Fares Abbad</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="20">
+        <img src="download (23).jpeg" alt="Abdul-Rahman Al-Ossi">
+        <h3>Abdul-Rahman Al-Ossi</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="23">
-    <img src="download (26).jpeg" alt="Mahmoud Al-Husary">
-    <h3>Mahmoud Al-Husary</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="21">
+        <img src="download (24).jpeg" alt="Ahmad Al-Huthaify">
+        <h3>Ahmad Al-Huthaify</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="24">
-    <img src="download (27).jpeg" alt="Saad Al-Buraik">
-    <h3>Saad Al-Buraik</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="22">
+        <img src="download (25).jpeg" alt="Muhammad Ayyub">
+        <h3>Muhammad Ayyub</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="25">
-    <img src="download (28).jpeg" alt="Ibrahim Al-Jibreen">
-    <h3>Ibrahim Al-Jibreen</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="23">
+        <img src="download (26).jpeg" alt="Muhammad Jibreel">
+        <h3>Muhammad Jibreel</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="26">
-    <img src="download (29).jpeg" alt="Mohammad Al-Khalili">
-    <h3>Mohammad Al-Khalili</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="24">
+        <img src="download (27).jpeg" alt="AbdulRashid Sufi">
+        <h3>AbdulRashid Sufi</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="27">
-    <img src="download (30).jpeg" alt="Abdulrahman Al-Sudais">
-    <h3>Abdulrahman Al-Sudais</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="25">
+        <img src="download (28).jpeg" alt="Ibrahim Al-Akhdar">
+        <h3>Ibrahim Al-Akhdar</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="28">
-    <img src="download (31).jpeg" alt="Nasser Al-Khulaifi">
-    <h3>Nasser Al-Khulaifi</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="26">
+        <img src="download (29).jpeg" alt="Muhammad Al-Luhaidan">
+        <h3>Muhammad Al-Luhaidan</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="29">
-    <img src="download (32).jpeg" alt="Youssef Al-Matrouk">
-    <h3>Youssef Al-Matrouk</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="27">
+        <img src="download (30).jpeg" alt="Yahya Hawwa">
+        <h3>Yahya Hawwa</h3>
     </div>
-</div>
-<div class="reciter-card" onclick="showReciterAlert()" data-id="30">
-    <img src="download (33).jpeg" alt="Mohammed Al-Khatib">
-    <h3>Mohammed Al-Khatib</h3>
-    <div class="rating">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
+    <div class="reciter-card" onclick="showReciterAlert()" data-id="28">
+        <img src="download (31).jpeg" alt="Abdul Wadood Haneef">
+        <h3>Abdul Wadood Haneef</h3>
     </div>
-</div>
-            <!-- Add more reciter cards here following the same structure -->
-        </div>
-    </div>
+
     <div class="arrow" id="next-arrow"><i class="fas fa-chevron-right"></i></div>
 </div>
-
         <!-- Surah List -->
         <div id="surah-list" class="surah-list"></div>
         <button id="show-more-btn" class="show-more-btn">Show More</button>
     </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const surahList = document.getElementById('surah-list');
@@ -700,11 +426,11 @@ header {
 
                     const surahInfo = document.createElement('div');
                     surahInfo.classList.add('surah-info');
-                    surahInfo.innerHTML = `<strong>${surah.name_simple}</strong> <br> ${surah.name_arabic} <br> <span>${surah.id}</span>`;
+                    surahInfo.innerHTML = <strong>${surah.name_simple}</strong> <br> ${surah.name_arabic} <br> <span>${surah.id}</span>;
                     surahDiv.appendChild(surahInfo);
 
                     surahDiv.addEventListener('click', () => {
-                        window.location.href = `audioSurah.html?surah=${surah.id}`;
+                        window.location.href = audioSurah.html?surah=${surah.id};
                     });
 
                     fragment.appendChild(surahDiv);
@@ -774,19 +500,6 @@ header {
                     });
                 }
             });
-            window.addEventListener('scroll', function () {
-    const cards = document.querySelectorAll('.reciter-card');
-    let scrollTop = window.scrollY || document.documentElement.scrollTop;
-    let containerHeight = document.querySelector('.featured-reciters').offsetHeight;
-
-    cards.forEach((card, index) => {
-        let cardOffset = card.offsetTop;
-        if (scrollTop + containerHeight > cardOffset) {
-            card.style.filter = 'none';
-        }
-    });
-});
-
 
             // SweetAlert for Reciter Card Click
             window.showReciterAlert = function () {
