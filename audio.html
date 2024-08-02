@@ -414,139 +414,143 @@ header {
         <button id="show-more-btn" class="show-more-btn">Show More</button>
     </div>
 <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const surahList = document.getElementById('surah-list');
-            const showMoreBtn = document.getElementById('show-more-btn');
-            const searchBar = document.getElementById('search-bar');
-            const darkModeToggle = document.getElementById('dark-mode-toggle');
-            const featuredReciters = document.querySelector('.featured-reciters');
-            const prevArrow = document.getElementById('prev-arrow');
-            const nextArrow = document.getElementById('next-arrow');
-            let surahs = [];
-            let surahDisplayCount = 30;
+    document.addEventListener('DOMContentLoaded', function () {
+        const surahList = document.getElementById('surah-list');
+        const showMoreBtn = document.getElementById('show-more-btn');
+        const searchBar = document.getElementById('search-bar');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const featuredReciters = document.querySelector('.featured-reciters');
+        const prevArrow = document.getElementById('prev-arrow');
+        const nextArrow = document.getElementById('next-arrow');
+        let surahs = [];
+        let surahDisplayCount = 30;
 
-            fetch('https://api.quran.com/api/v4/chapters')
-                .then(response => response.json())
-                .then(data => {
-                    surahs = data.chapters;
-                    displaySurahs(surahs.slice(0, surahDisplayCount));
-                })
-                .catch(error => {
-                    console.error('Error fetching Surahs:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Unable to fetch Surah list. Please try again later.',
-                    });
-                });
-
-            function displaySurahs(surahsToDisplay) {
-                surahList.innerHTML = '';
-                const fragment = document.createDocumentFragment();
-                surahsToDisplay.forEach(surah => {
-                    const surahDiv = document.createElement('div');
-                    surahDiv.classList.add('surah');
-
-                    const surahInfo = document.createElement('div');
-                    surahInfo.classList.add('surah-info');
-                    surahInfo.innerHTML = <strong>${surah.name_simple}</strong> <br> ${surah.name_arabic} <br> <span>${surah.id}</span>;
-                    surahDiv.appendChild(surahInfo);
-
-                    surahDiv.addEventListener('click', () => {
-                        window.location.href = audioSurah.html?surah=${surah.id};
-                    });
-
-                    fragment.appendChild(surahDiv);
-                });
-                surahList.appendChild(fragment);
-
-                // Update Show More button text
-                if (surahDisplayCount >= 114) {
-                    showMoreBtn.textContent = 'Show Less';
-                } else {
-                    showMoreBtn.textContent = 'Show More';
-                }
-            }
-
-            showMoreBtn.addEventListener('click', () => {
-                if (surahDisplayCount >= 114) {
-                    surahDisplayCount = 30;
-                    displaySurahs(surahs.slice(0, surahDisplayCount));
-                } else {
-                    surahDisplayCount += 30;
-                    displaySurahs(surahs.slice(0, surahDisplayCount));
-                }
-            });
-
-            searchBar.addEventListener('input', (event) => {
-                const query = event.target.value.toLowerCase();
-                const filteredSurahs = surahs.filter(surah =>
-                    surah.name_simple.toLowerCase().includes(query) ||
-                    surah.name_arabic.toLowerCase().includes(query)
-                );
-                displaySurahs(filteredSurahs.slice(0, surahDisplayCount));
-            });
-
-            darkModeToggle.addEventListener('click', () => {
-                const darkModeEnabled = document.body.classList.toggle('dark-mode');
-                darkModeToggle.classList.toggle('fa-moon', !darkModeEnabled);
-                darkModeToggle.classList.toggle('fa-sun', darkModeEnabled);
-                localStorage.setItem('darkMode', darkModeEnabled ? 'enabled' : 'disabled');
-            });
-
-            if (localStorage.getItem('darkMode') === 'enabled') {
-                document.body.classList.add('dark-mode');
-                darkModeToggle.classList.remove('fa-moon');
-                darkModeToggle.classList.add('fa-sun');
-            }
-
-            // Featured Reciters Scrolling
-            let scrollAmount = 0;
-            const scrollAmountIncrement = 200;
-
-            nextArrow.addEventListener('click', () => {
-                if (scrollAmount < featuredReciters.scrollWidth - featuredReciters.clientWidth) {
-                    scrollAmount += scrollAmountIncrement;
-                    featuredReciters.scrollTo({
-                        left: scrollAmount,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-
-            prevArrow.addEventListener('click', () => {
-                if (scrollAmount > 0) {
-                    scrollAmount -= scrollAmountIncrement;
-                    featuredReciters.scrollTo({
-                        left: scrollAmount,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-            window.addEventListener('scroll', function () {
-    const cards = document.querySelectorAll('.reciter-card');
-    let scrollTop = window.scrollY || document.documentElement.scrollTop;
-    let containerHeight = document.querySelector('.featured-reciters').offsetHeight;
-
-    cards.forEach((card, index) => {
-        let cardOffset = card.offsetTop;
-        if (scrollTop + containerHeight > cardOffset) {
-            card.style.filter = 'none';
-        }
-    });
-});
-
-
-            // SweetAlert for Reciter Card Click
-            window.showReciterAlert = function () {
+        fetch('https://api.quran.com/api/v4/chapters')
+            .then(response => response.json())
+            .then(data => {
+                surahs = data.chapters;
+                displaySurahs(surahs.slice(0, surahDisplayCount));
+            })
+            .catch(error => {
+                console.error('Error fetching Surahs:', error);
                 Swal.fire({
-                    title: 'Choose a Surah',
-                    text: 'Please select a Surah to continue to reciters.',
-                    icon: 'info',
-                    confirmButtonText: 'OK'
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Unable to fetch Surah list. Please try again later.',
+                });
+            });
+
+        function displaySurahs(surahsToDisplay) {
+            surahList.innerHTML = '';
+            const fragment = document.createDocumentFragment();
+            surahsToDisplay.forEach(surah => {
+                const surahDiv = document.createElement('div');
+                surahDiv.classList.add('surah');
+
+                const surahInfo = document.createElement('div');
+                surahInfo.classList.add('surah-info');
+                // Fixed incorrect use of template literals inside innerHTML
+                surahInfo.innerHTML = `<strong>${surah.name_simple}</strong> <br> ${surah.name_arabic} <br> <span>${surah.id}</span>`;
+                surahDiv.appendChild(surahInfo);
+
+                surahDiv.addEventListener('click', () => {
+                    // Fixed URL format for navigation
+                    window.location.href = `audioSurah.html?surah=${surah.id}`;
+                });
+
+                fragment.appendChild(surahDiv);
+            });
+            surahList.appendChild(fragment);
+
+            // Update Show More button text
+            if (surahDisplayCount >= 114) {
+                showMoreBtn.textContent = 'Show Less';
+            } else {
+                showMoreBtn.textContent = 'Show More';
+            }
+        }
+
+        showMoreBtn.addEventListener('click', () => {
+            if (surahDisplayCount >= 114) {
+                surahDisplayCount = 30;
+                displaySurahs(surahs.slice(0, surahDisplayCount));
+            } else {
+                surahDisplayCount += 30;
+                displaySurahs(surahs.slice(0, surahDisplayCount));
+            }
+        });
+
+        searchBar.addEventListener('input', (event) => {
+            const query = event.target.value.toLowerCase();
+            const filteredSurahs = surahs.filter(surah =>
+                surah.name_simple.toLowerCase().includes(query) ||
+                surah.name_arabic.toLowerCase().includes(query)
+            );
+            displaySurahs(filteredSurahs.slice(0, surahDisplayCount));
+        });
+
+        darkModeToggle.addEventListener('click', () => {
+            const darkModeEnabled = document.body.classList.toggle('dark-mode');
+            darkModeToggle.classList.toggle('fa-moon', !darkModeEnabled);
+            darkModeToggle.classList.toggle('fa-sun', darkModeEnabled);
+            localStorage.setItem('darkMode', darkModeEnabled ? 'enabled' : 'disabled');
+        });
+
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            darkModeToggle.classList.remove('fa-moon');
+            darkModeToggle.classList.add('fa-sun');
+        }
+
+        // Featured Reciters Scrolling
+        let scrollAmount = 0;
+        const scrollAmountIncrement = 200;
+
+        nextArrow.addEventListener('click', () => {
+            if (scrollAmount < featuredReciters.scrollWidth - featuredReciters.clientWidth) {
+                scrollAmount += scrollAmountIncrement;
+                featuredReciters.scrollTo({
+                    left: scrollAmount,
+                    behavior: 'smooth'
                 });
             }
         });
-    </script>
+
+        prevArrow.addEventListener('click', () => {
+            if (scrollAmount > 0) {
+                scrollAmount -= scrollAmountIncrement;
+                featuredReciters.scrollTo({
+                    left: scrollAmount,
+                    behavior: 'smooth'
+                });
+            }
+        });
+
+        // Scroll effect for reciter cards
+        window.addEventListener('scroll', function () {
+            const cards = document.querySelectorAll('.reciter-card');
+            let scrollTop = window.scrollY || document.documentElement.scrollTop;
+            let containerHeight = document.querySelector('.featured-reciters').offsetHeight;
+
+            cards.forEach((card, index) => {
+                let cardOffset = card.offsetTop;
+                if (scrollTop + containerHeight > cardOffset) {
+                    card.style.filter = 'none';
+                }
+            });
+        });
+
+        // SweetAlert for Reciter Card Click
+        window.showReciterAlert = function () {
+            Swal.fire({
+                title: 'Choose a Surah',
+                text: 'Please select a Surah to continue to reciters.',
+                icon: 'info',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+</script>
+
 </body>
 </html> 
