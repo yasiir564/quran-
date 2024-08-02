@@ -10,46 +10,47 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-      body {
+  body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(to right, #ffffff, #abbaab);
     color: #333;
-}
+  }
 
-.container {
+  .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-}
+  }
 
-header {
+  header {
     text-align: center;
-}
+  }
 
-.search-container {
+  .search-container {
     margin: 20px 0;
     position: relative;
     text-align: center;
-}
+  }
 
-.search-container input {
+  .search-container input {
     padding: 10px;
-    width: 60%;
+    width: 100%;
     max-width: 500px;
     border: 2px solid #ddd;
     border-radius: 25px;
     outline: none;
     transition: border-color 0.3s;
-}
+    box-sizing: border-box;
+  }
 
-.search-container input:focus {
+  .search-container input:focus {
     border-color: #2575fc;
-}
+  }
 
-.search-container button {
+  .search-container button {
     position: absolute;
-    right: 20%;
+    right: 10%;
     top: 50%;
     transform: translateY(-50%);
     border: none;
@@ -58,16 +59,21 @@ header {
     padding: 10px;
     border-radius: 50%;
     cursor: pointer;
-}
+    transition: background-color 0.3s;
+  }
 
-.surah-list {
+  .search-container button:hover {
+    background-color: #1e62d0;
+  }
+
+  .surah-list {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 10px;
     padding: 20px 0;
-}
+  }
 
-.surah {
+  .surah {
     background: rgba(255, 255, 255, 0.7);
     border: 1px solid #ddd;
     padding: 15px;
@@ -79,33 +85,31 @@ header {
     color: #2575fc;
     font-size: 1.2em;
     position: relative;
-    font-family: 'Poppins', sans-serif;
-}
+  }
 
-.surah:hover {
+  .surah:hover {
     transform: scale(1.05);
     background-color: #2575fc;
     color: #fff;
-}
+  }
 
-        .surah span {
-            font-size: 0.8em;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: #000000;
-            border-radius: 10px;
-            padding: 5px;
-            clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
-            transition: transform 0.3s;
-        }
+  .surah span {
+    font-size: 0.8em;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #000;
+    border-radius: 10px;
+    padding: 5px;
+    clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+    transition: transform 0.3s;
+  }
 
-        .surah span:hover {
-            transform: rotate(360deg);
-        }
+  .surah span:hover {
+    transform: rotate(360deg);
+  }
 
-
-.show-more-btn {
+  .show-more-btn {
     display: block;
     width: 200px;
     margin: 20px auto;
@@ -117,22 +121,20 @@ header {
     font-size: 1.2em;
     cursor: pointer;
     transition: background-color 0.3s;
-    font-family: 'Poppins', sans-serif;
-}
+  }
 
-.show-more-btn:hover {
+  .show-more-btn:hover {
     background-color: #0056b3;
-}
+  }
 
-.featured-reciters {
+  .featured-reciters {
     display: flex;
     overflow-x: auto;
     gap: 10px;
     padding: 20px 0;
-    position: relative;
-}
+  }
 
-.reciter-card {
+  .reciter-card {
     background: rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(15px);
     border: 1px solid #ddd;
@@ -141,38 +143,37 @@ header {
     min-width: 200px;
     text-align: center;
     transition: transform 0.3s, box-shadow 0.3s;
-    font-family: 'Poppins', sans-serif;
-}
+  }
 
-.reciter-card img {
+  .reciter-card img {
     border-radius: 50%;
     width: 100px;
     height: 100px;
-}
+  }
 
-.reciter-card:hover {
-     transform: rotate(360deg);
+  .reciter-card:hover {
+    transform: rotate(360deg);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-        .rating {
+  }
+
+  .rating {
     margin-top: 10px;
     font-size: 1.2em;
     color: #ffd700; /* Gold color */
-}
+  }
 
-.rating i {
+  .rating i {
     margin: 0 2px;
     color: #ffd700; /* Gold color */
     text-shadow: 0 0 5px rgba(255, 215, 0, 0.8); /* Glowing effect */
-}
+  }
 
-.reciter-card:hover .rating i {
+  .reciter-card:hover .rating i {
     color: #ffcc00; /* Brighter gold on hover */
     text-shadow: 0 0 10px rgba(255, 215, 0, 1); /* Brighter glowing effect on hover */
-}
+  }
 
-
-.arrow {
+  .arrow {
     font-size: 2em;
     cursor: pointer;
     user-select: none;
@@ -185,96 +186,92 @@ header {
     border-radius: 50%;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s, background-color 0.3s;
-}
+  }
 
-.arrow:hover {
+  .arrow:hover {
     transform: scale(1.1);
     background-color: #2575fc;
     color: #fff;
-}
+  }
 
-.dark-mode {
+  .dark-mode {
     background: linear-gradient(to right, #2c3e50, #4ca1af);
     color: #fff;
-}
+  }
 
-.dark-mode .surah {
+  .dark-mode .surah {
     background-color: #444;
     border: 1px solid #555;
-}
+  }
 
-.dark-mode .search-container input {
+  .dark-mode .search-container input {
     border: 2px solid #444;
-}
+  }
 
-.dark-mode .search-container button {
+  .dark-mode .search-container button {
     background-color: #4ca1af;
-}
+  }
 
-.dark-mode .show-more-btn {
-    background-color: #4ca1af;
-}
-
-.dark-mode .show-more-btn:hover {
+  .dark-mode .search-container button:hover {
     background-color: #3b9d9d;
-}
+  }
 
-.featured-title {
+  .dark-mode .show-more-btn {
+    background-color: #4ca1af;
+  }
+
+  .dark-mode .show-more-btn:hover {
+    background-color: #3b9d9d;
+  }
+
+  .featured-title {
     text-align: center;
     font-size: 2em;
     margin: 20px 0;
     color: #2575fc;
     position: relative;
-    font-family: 'Poppins', sans-serif;
-}
+  }
 
-.featured-title:before,
-.featured-title:after {
+  .featured-title:before,
+  .featured-title:after {
     content: '';
     position: absolute;
     top: 50%;
     width: 50px;
     height: 3px;
     background-color: #2575fc;
-}
+  }
 
-.featured-title:before {
-    left: -20px;
-}
+  .featured-title:before {
+    left: -60px;
+  }
 
-.featured-title:after {
-    right: 20px;
-}
+  .featured-title:after {
+    right: -60px;
+  }
 
-@media (max-width: 768px) {
-    .surah-list {
-        grid-template-columns: repeat(2, 1fr);
+  @media (max-width: 768px) {
+    .search-container button {
+      right: 5%;
     }
+  }
 
+  @media (max-width: 480px) {
     .search-container input {
-        width: 80%;
+      width: 90%;
     }
 
     .search-container button {
-        right: 10%;
-    }
-}
-
-@media (max-width: 480px) {
-    .surah-list {
-        grid-template-columns: 1fr;
+      right: 2%;
     }
 
-    .search-container input {
-        width: 90%;
+    .featured-title:before,
+    .featured-title:after {
+      width: 30px;
     }
+  }
+</style>
 
-    .search-container button {
-        right: 5%;
-    }
-}
-
-    </style>
 </head>
 
 <body>
