@@ -6,6 +6,7 @@
     <title>Quran Pro Login Form</title>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <meta name="google-signin-client_id" content="692064901690-k1988525o60rf8s1bop506ea8tll3s7t.apps.googleusercontent.com">
+    <script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300|Lobster|Pacifico|Raleway" rel="stylesheet">
     <style>
@@ -147,16 +148,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function signInWithApple() {
-            // Apple sign-in logic
-            Swal.fire('Apple sign-in not implemented yet.');
-        }
-
-        function signInWithEmail() {
-            // Email sign-in logic
-            Swal.fire('Email sign-in not implemented yet.');
-        }
-
+        // Google Sign-In logic
         function onSignIn(googleUser) {
             const profile = googleUser.getBasicProfile();
             const user = {
@@ -175,8 +167,80 @@
                 window.location.href = 'profile.html';
             });
         }
+
+        // Apple Sign-In logic
+        function signInWithApple() {
+            AppleID.auth.signIn().then(response => {
+                const user = {
+                    username: response.user.fullName.givenName + ' ' + response.user.fullName.familyName,
+                    email: response.user.email,
+                };
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Apple Sign-In successful!',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    localStorage.setItem('loggedInUser', JSON.stringify(user));
+                    window.location.href = 'profile.html';
+                });
+            }).catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Apple Sign-In failed',
+                    text: error.message,
+                    confirmButtonColor: '#17a589'
+                });
+            });
+        }
+
+        // Email Sign-In logic
+        function signInWithEmail() {
+            Swal.fire({
+                title: 'Enter your email address',
+                input: 'email',
+                inputPlaceholder: 'Email address',
+                showCancelButton: true,
+                confirmButtonText: 'Send Activation Link',
+                confirmButtonColor: '#17a589',
+                cancelButtonColor: '#d33',
+                preConfirm: (email) => {
+                    return fetch('https://api.resend.com/email/send', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer YOUR_RESEND_API_KEY'
+                        },
+                        body: JSON.stringify({
+                            from: 'noreply@quranpro.com',
+                            to: email,
+                            subject: 'Activate your Quran Pro account',
+                            html: `<p>Click <a href="https://yourdomain.com/activate?email=${email}">here</a> to activate your account.</p>`
+                        })
+                    }).then(response => {
+                        if (!response.ok) {
+                            throw new Error(response.statusText);
+                        }
+                        return response.json();
+                    }).catch(error => {
+                        Swal.showValidationMessage(`Request failed: ${error}`);
+                    });
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Activation link sent!',
+                        text: 'Please check your email to activate your account.',
+                        confirmButtonColor: '#17a589'
+                    });
+                }
+            });
+        }
     </script>
 </body>
 </html>
+
 
 
