@@ -227,6 +227,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const darkModeToggle = document.getElementById('dark-mode-toggle');
     const reciterImage = document.getElementById('reciter-image');
     const surahTitle = document.getElementById('surah-title');
+    const progressBar = document.getElementById('progress-bar');
+    const progressTime = document.getElementById('progress-time');
     let currentAudio;
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -294,6 +296,20 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function updateProgress() {
+        if (currentAudio) {
+            const progress = (currentAudio.currentTime / currentAudio.duration) * 100;
+            progressBar.style.width = `${progress}%`;
+            progressTime.textContent = formatTime(currentAudio.currentTime);
+        }
+    }
+
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
     async function loadSurahAudio(surahId, sheikh) {
         if (currentAudio) {
             currentAudio.pause();
@@ -325,9 +341,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
             });
 
+            currentAudio.addEventListener('timeupdate', updateProgress);
+
+            const surahResponse = await fetch(`https://api.quran.com/api/v4/chapters/${surahId}`);
+            const surahData = await surahResponse.json();
+            const surahName = surahData.chapter.name_simple;
+
             audioElement.src = audioUrl;
             reciterImage.src = sheikh.imageUrl;
-            surahTitle.textContent = `Surah: ${surahId}`; // Update Surah title
+            surahTitle.textContent = `Surah: ${surahName}`; // Update Surah title
             audioOverlay.classList.add('active');
         } catch (error) {
             console.error('Error loading audio:', error);
@@ -435,3 +457,4 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 </body>
 </html>
+
