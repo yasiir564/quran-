@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -126,6 +127,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="login-page">
         <div class="form">
@@ -196,7 +198,7 @@
             });
         }
 
-        // Email Sign-In logic with Mock Activation
+        // Email Sign-In logic with Activation Link
         function signInWithEmail() {
             Swal.fire({
                 title: 'Enter your email address',
@@ -207,12 +209,33 @@
                 confirmButtonColor: '#17a589',
                 cancelButtonColor: '#d33',
                 preConfirm: (email) => {
-                    // Mock activation logic
-                    localStorage.setItem('pendingEmail', email);
-                    return new Promise((resolve) => {
-                        setTimeout(() => {
-                            resolve(true);
-                        }, 1000);
+                    const activationToken = generateToken();
+                    const activationLink = `https://quran-mocha-one.vercel.app/activate.html?token=${activationToken}`;
+
+                    // Save token and email in localStorage
+                    localStorage.setItem('activationToken', activationToken);
+                    localStorage.setItem('userEmail', email);
+
+                    // Send activation email via Resend API
+                    return fetch('https://api.resend.com/email/send', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer re_ZYURCph7_H8iBkPX4xzP7FG19AWF8Rfiw'
+                        },
+                        body: JSON.stringify({
+                            from: 'noreply@quranpro.com',
+                            to: email,
+                            subject: 'Activate your Quran Pro account',
+                            html: `<p>Click <a href="${activationLink}">here</a> to activate your account.</p>`
+                        })
+                    }).then(response => {
+                        if (!response.ok) {
+                            throw new Error(response.statusText);
+                        }
+                        return response.json();
+                    }).catch(error => {
+                        Swal.showValidationMessage(`Request failed: ${error}`);
                     });
                 }
             }).then((result) => {
@@ -227,6 +250,11 @@
             });
         }
 
+        // Function to generate a unique token
+        function generateToken() {
+            return Math.random().toString(36).substr(2) + Date.now().toString(36);
+        }
+
         // Soft redirect to index.html
         function softRedirect(url) {
             const mainPage = document.createElement('iframe');
@@ -239,7 +267,5 @@
         }
     </script>
 </body>
+
 </html>
-
-
-
