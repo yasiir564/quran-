@@ -215,223 +215,209 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const audioOverlay = document.getElementById('audio-overlay');
-            const audioElement = document.getElementById('audio-element');
-            const playPauseButton = document.getElementById('playPauseButton');
-            const stopButton = document.getElementById('stopButton');
-            const rewindButton = document.getElementById('rewindButton');
-            const speedControl = document.getElementById('speedControl');
-            const sheikhList = document.getElementById('reciter-selector');
-            const darkModeToggle = document.getElementById('dark-mode-toggle');
-            const reciterImage = document.getElementById('reciter-image');
-            const surahTitle = document.getElementById('surah-title');
-            let currentAudio;
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const audioOverlay = document.getElementById('audio-overlay');
+        const audioElement = document.getElementById('audio-element');
+        const playPauseButton = document.getElementById('playPauseButton');
+        const stopButton = document.getElementById('stopButton');
+        const rewindButton = document.getElementById('rewindButton');
+        const speedControl = document.getElementById('speedControl');
+        const sheikhList = document.getElementById('reciter-selector');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const reciterImage = document.getElementById('reciter-image');
+        const surahTitle = document.getElementById('surah-title');
+        let currentAudio;
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const surahId = urlParams.get('surah');
+        const urlParams = new URLSearchParams(window.location.search);
+        const surahId = urlParams.get('surah');
 
-            const sheikhs = [
-                { id: '1', name: 'AbdulBaset AbdulSamad', imageUrl: 'qmkxyvfiawea1.jpg' },
-                { id: '2', name: 'Maher Al-Muaiqly', imageUrl: 'images (6).jpeg' },
-                { id: '3', name: 'Abdur-Rahman As-Sudais', imageUrl: 'Abdul-Rahman-Al-Sudais.jpg' },
-                { id: '4', name: 'Saud Al-Shuraim', imageUrl: 'transparent-saud-al-shuraim.webp' },
-                { id: '5', name: 'Mishary Rashid Alafasy', imageUrl: 'download (10).jpeg' },
-                { id: '6', name: 'Ali Jaber', imageUrl: 'ali-jaber.webp' },
-                { id: '7', name: 'Yasser Al-Dosari', imageUrl: 'download (11).jpeg' },
-                { id: '8', name: 'Salah Al-Budair', imageUrl: 'download (12).jpeg' },
-                { id: '9', name: 'Ahmad Al-Ajmi', imageUrl: 'download (13).jpeg' },
-                { id: '10', name: 'Khalil Al-Husary', imageUrl: 'download (14).jpeg' },
-                { id: '11', name: 'Muhammad Siddiq Al-Minshawi', imageUrl: 'download (15).jpeg' },
-                { id: '12', name: 'Saad Al-Ghamdi', imageUrl: 'download (16).jpeg' },
-                { id: '13', name: 'Abu Bakr Al-Shatri', imageUrl: 'download (17).jpeg' },
-                { id: '14', name: 'Hani Rifai', imageUrl: 'download (18).jpeg' },
-                { id: '15', name: 'Abdullah Basfar', imageUrl: 'download (19).jpeg' },
-                { id: '17', name: 'Mohammad Al-Tablawi', imageUrl: 'mohamed-tablawi.jpg' },
-                { id: '18', name: 'Khalid Al-Jaleel', imageUrl: 'download (20).jpeg' },
-                { id: '19', name: 'Yasser Al-Mazroyee', imageUrl: 'download (21).jpeg' },
-                { id: '20', name: 'Fares Abbad', imageUrl: 'download (22).jpeg' },
-                { id: '22', name: 'Abdul-Rahman Al-Ossi', imageUrl: 'download (23).jpeg' },
-                { id: '23', name: 'Ahmad Al-Huthaify', imageUrl: 'download (24).jpeg' },
-                { id: '24', name: 'Muhammad Ayyub', imageUrl: 'download (25).jpeg' },
-                { id: '25', name: 'Muhammad Jibreel', imageUrl: 'download (26).jpeg' },
-                { id: '26', name: 'AbdulRashid Sufi', imageUrl: 'download (27).jpeg' },
-                { id: '27', name: 'Ibrahim Al-Akhdar', imageUrl: 'download (28).jpeg' },
-                { id: '28', name: 'Muhammad Al-Luhaidan', imageUrl: 'download (29).jpeg' },
-                { id: '29', name: 'Yahya Hawwa', imageUrl: 'download (30).jpeg' },
-                { id: '30', name: 'Abdul Wadood Haneef', imageUrl: 'download (31).jpeg' }
-            ];
+        const sheikhs = [
+            { id: '1', name: 'AbdulBaset AbdulSamad', imageUrl: 'qmkxyvfiawea1.jpg' },
+            { id: '2', name: 'Maher Al-Muaiqly', imageUrl: 'images (6).jpeg' },
+            { id: '3', name: 'Abdur-Rahman As-Sudais', imageUrl: 'Abdul-Rahman-Al-Sudais.jpg' },
+            { id: '4', name: 'Saud Al-Shuraim', imageUrl: 'transparent-saud-al-shuraim.webp' },
+            { id: '5', name: 'Mishary Rashid Alafasy', imageUrl: 'download (10).jpeg' },
+            { id: '6', name: 'Ali Jaber', imageUrl: 'ali-jaber.webp' },
+            { id: '7', name: 'Yasser Al-Dosari', imageUrl: 'download (11).jpeg' },
+            { id: '8', name: 'Salah Al-Budair', imageUrl: 'download (12).jpeg' },
+            { id: '9', name: 'Ahmad Al-Ajmi', imageUrl: 'download (13).jpeg' },
+            { id: '10', name: 'Khalil Al-Husary', imageUrl: 'download (14).jpeg' },
+            { id: '11', name: 'Muhammad Siddiq Al-Minshawi', imageUrl: 'download (15).jpeg' },
+            { id: '12', name: 'Saad Al-Ghamdi', imageUrl: 'download (16).jpeg' },
+            { id: '13', name: 'Abu Bakr Al-Shatri', imageUrl: 'download (17).jpeg' },
+            { id: '14', name: 'Hani Rifai', imageUrl: 'download (18).jpeg' },
+            { id: '15', name: 'Abdullah Basfar', imageUrl: 'download (19).jpeg' },
+            { id: '17', name: 'Mohammad Al-Tablawi', imageUrl: 'mohamed-tablawi.jpg' },
+            { id: '18', name: 'Khalid Al-Jaleel', imageUrl: 'download (20).jpeg' },
+            { id: '19', name: 'Yasser Al-Mazroyee', imageUrl: 'download (21).jpeg' },
+            { id: '20', name: 'Fares Abbad', imageUrl: 'download (22).jpeg' },
+            { id: '22', name: 'Abdul-Rahman Al-Ossi', imageUrl: 'download (23).jpeg' },
+            { id: '23', name: 'Ahmad Al-Huthaify', imageUrl: 'download (24).jpeg' },
+            { id: '24', name: 'Muhammad Ayyub', imageUrl: 'download (25).jpeg' },
+            { id: '25', name: 'Muhammad Jibreel', imageUrl: 'download (26).jpeg' },
+            { id: '26', name: 'AbdulRashid Sufi', imageUrl: 'download (27).jpeg' },
+            { id: '27', name: 'Ibrahim Al-Akhdar', imageUrl: 'download (28).jpeg' },
+            { id: '28', name: 'Muhammad Al-Luhaidan', imageUrl: 'download (29).jpeg' },
+            { id: '29', name: 'Yahya Hawwa', imageUrl: 'download (30).jpeg' },
+            { id: '30', name: 'Abdul Wadood Haneef', imageUrl: 'download (31).jpeg' }
+        ];
 
-            function stopAudio() {
-                if (currentAudio) {
-                    currentAudio.pause();
-                    currentAudio.currentTime = 0;
-                }
+        function stopAudio() {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
+        }
+
+        function playAudio() {
+            if (currentAudio.paused) {
+                currentAudio.play();
+                playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
+            } else {
+                currentAudio.pause();
                 playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
             }
+        }
 
-            function playAudio() {
-                if (currentAudio.paused) {
+        function rewindAudio() {
+            if (currentAudio) {
+                currentAudio.currentTime = Math.max(currentAudio.currentTime - 10, 0);
+            }
+        }
+
+        function toggleOverlay() {
+            audioOverlay.classList.toggle('active');
+            if (!audioOverlay.classList.contains('active') && currentAudio) {
+                currentAudio.pause();
+            }
+        }
+
+        async function loadSurahAudio(surahId, sheikh) {
+            if (currentAudio) {
+                currentAudio.pause();
+            }
+
+            try {
+                const response = await fetch(`https://api.quran.com/v4/chapters/${surahId}`);
+                const data = await response.json();
+                const surahName = data.data.name_simple;
+
+                const audioResponse = await fetch(`https://api.quran.com/api/v4/chapter_recitations/${sheikh.id}/${surahId}`);
+                const audioData = await audioResponse.json();
+                const audioUrl = audioData.audio_file.audio_url;
+
+                currentAudio = new Audio(audioUrl);
+                currentAudio.addEventListener('ended', async () => {
+                    const nextSurahId = parseInt(surahId) + 1;
+                    if (nextSurahId <= 114) {
+                        loadSurahAudio(nextSurahId.toString(), sheikh);
+                    } else {
+                        stopAudio();
+                        Swal.fire({
+                            title: 'End of Quran',
+                            text: 'You have reached the end of the Quran.',
+                            icon: 'info',
+                            confirmButtonText: 'Okay'
+                        });
+                    }
+                });
+
+                currentAudio.addEventListener('canplaythrough', () => {
                     currentAudio.play();
                     playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
-                } else {
-                    currentAudio.pause();
-                    playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
-                }
-            }
-
-            function rewindAudio() {
-                if (currentAudio) {
-                    currentAudio.currentTime = Math.max(currentAudio.currentTime - 10, 0);
-                }
-            }
-
-            function toggleOverlay() {
-                audioOverlay.classList.toggle('active');
-                if (!audioOverlay.classList.contains('active') && currentAudio) {
-                    currentAudio.pause();
-                }
-            }
-
-            async function loadSurahAudio(surahId, sheikh) {
-                if (currentAudio) {
-                    currentAudio.pause();
-                }
-
-                try {
-                    const response = await fetch(`https://api.quran.com/api/v4/chapter_recitations/${sheikh.id}/${surahId}`);
-                    const data = await response.json();
-                    const audioUrl = data.audio_file.audio_url;
-
-                    currentAudio = new Audio(audioUrl);
-                    currentAudio.addEventListener('ended', async () => {
-                        const nextSurahId = parseInt(surahId) + 1;
-                        if (nextSurahId <= 114) {
-                            loadSurahAudio(nextSurahId.toString(), sheikh);
-                        } else {
-                            stopAudio();
-                            Swal.fire({
-                                title: 'End of Quran',
-                                text: 'You have reached the end of the Quran.',
-                                icon: 'info',
-                                confirmButtonText: 'Okay'
-                            });
-                        }
-                    });
-
-                    currentAudio.addEventListener('canplaythrough', () => {
-                        currentAudio.play();
-                        playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
-                    });
-
-                    audioElement.src = audioUrl;
-                    reciterImage.src = sheikh.imageUrl;
-                    surahTitle.textContent = `Surah: ${surahId}`; // Update Surah title
-                    audioOverlay.classList.add('active');
-                } catch (error) {
-                    console.error('Error loading audio:', error);
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Failed to load audio. Please try again later.',
-                        icon: 'error',
-                        confirmButtonText: 'Okay'
-                    });
-                }
-            }
-
-            playPauseButton.addEventListener('click', playAudio);
-            stopButton.addEventListener('click', stopAudio);
-            rewindButton.addEventListener('click', rewindAudio);
-            speedControl.addEventListener('change', (event) => {
-                if (currentAudio) {
-                    currentAudio.playbackRate = parseFloat(event.target.value);
-                }
-            });
-
-            sheikhs.forEach((sheikh) => {
-                const sheikhItem = document.createElement('div');
-                sheikhItem.className = 'sheikh-item';
-                sheikhItem.innerHTML = `
-                    <img src="${sheikh.imageUrl}" alt="${sheikh.name}">
-                    <div class="sheikh-name">${sheikh.name}</div>
-                `;
-                sheikhItem.addEventListener('click', () => {
-                    document.querySelectorAll('.sheikh-item').forEach(item => item.classList.remove('active'));
-                    sheikhItem.classList.add('active');
-                    loadSurahAudio(surahId, sheikh);
                 });
 
-                sheikhList.appendChild(sheikhItem);
-            });
-
-            function toggleDarkMode() {
-                document.body.classList.toggle('dark-mode');
-                darkModeToggle.classList.toggle('fa-sun');
-                darkModeToggle.classList.toggle('fa-moon');
-            }
-
-            darkModeToggle.addEventListener('click', toggleDarkMode);
-
-            setTimeout(() => {
-                if (!document.querySelector('.sheikh-item.active')) {
-                    Swal.fire({
-                        title: 'Are you confused in finding a good reciter? Try your luck!',
-                        showCancelButton: true,
-                        confirmButtonText: 'Spin!',
-                        cancelButtonText: 'Cancel'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            let currentIndex = 0;
-                            const spinDuration = 3000; // Spin for 3 seconds
-
-                            const intervalId = setInterval(() => {
-                                const sheikh = sheikhs[currentIndex];
-                                Swal.update({
-                                    title: 'Spinning...',
-                                    html: `Selected Sheikh: ${sheikh.name}`,
-                                    showConfirmButton: false
-                                });
-
-                                currentIndex = (currentIndex + 1) % sheikhs.length;
-                            }, 100);
-
-                            setTimeout(() => {
-                                clearInterval(intervalId);
-                                const selectedSheikh = sheikhs[Math.floor(Math.random() * sheikhs.length)];
-                                Swal.fire({
-                                    title: 'Selected Sheikh!',
-                                    text: selectedSheikh.name,
-                                    icon: 'success'
-                                }).then(() => {
-                                    loadSurahAudio(surahId, selectedSheikh);
-                                });
-                            }, spinDuration);
-                        }
-                    });
-                }
-            }, 5000);
-
-            if ('wakeLock' in navigator) {
-                let wakeLock = null;
-
-                const requestWakeLock = async () => {
-                    try {
-                        wakeLock = await navigator.wakeLock.request('screen');
-                    } catch (err) {
-                        console.error('Error requesting wake lock:', err);
-                    }
-                };
-
-                document.addEventListener('visibilitychange', () => {
-                    if (wakeLock !== null && document.visibilityState === 'visible') {
-                        requestWakeLock();
-                    }
+                audioElement.src = audioUrl;
+                reciterImage.src = sheikh.imageUrl;
+                surahTitle.textContent = `Now playing: ${surahName} by ${sheikh.name}`;
+                audioOverlay.classList.add('active');
+            } catch (error) {
+                console.error('Error loading audio:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Failed to load audio. Please try again later.',
+                    icon: 'error',
+                    confirmButtonText: 'Okay'
                 });
+            }
+        }
 
-                requestWakeLock();
+        playPauseButton.addEventListener('click', playAudio);
+        stopButton.addEventListener('click', stopAudio);
+        rewindButton.addEventListener('click', rewindAudio);
+        speedControl.addEventListener('change', (event) => {
+            if (currentAudio) {
+                currentAudio.playbackRate = parseFloat(event.target.value);
             }
         });
-    </script>
+
+        sheikhs.forEach((sheikh) => {
+            const sheikhItem = document.createElement('div');
+            sheikhItem.className = 'sheikh-item';
+            sheikhItem.innerHTML = `
+                <img src="${sheikh.imageUrl}" alt="${sheikh.name}">
+                <div class="sheikh-name">${sheikh.name}</div>
+            `;
+            sheikhItem.addEventListener('click', () => {
+                document.querySelectorAll('.sheikh-item').forEach(item => item.classList.remove('active'));
+                sheikhItem.classList.add('active');
+                loadSurahAudio(surahId, sheikh);
+            });
+
+            sheikhList.appendChild(sheikhItem);
+        });
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            darkModeToggle.classList.toggle('fa-sun');
+            darkModeToggle.classList.toggle('fa-moon');
+        }
+
+        darkModeToggle.addEventListener('click', toggleDarkMode);
+
+        setTimeout(() => {
+            if (!document.querySelector('.sheikh-item.active')) {
+                Swal.fire({
+                    title: 'Are you confused in finding a good reciter? Try your luck!',
+                    showCancelButton: true,
+                    confirmButtonText: 'Spin!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        let currentIndex = 0;
+                        const spinDuration = 3000; // Spin for 3 seconds
+
+                        const intervalId = setInterval(() => {
+                            const sheikh = sheikhs[currentIndex];
+                            Swal.update({
+                                title: 'Spinning...',
+                                html: `Selected Sheikh: ${sheikh.name}`,
+                                showConfirmButton: false
+                            });
+
+                            currentIndex = (currentIndex + 1) % sheikhs.length;
+                        }, 200);
+
+                        setTimeout(() => {
+                            clearInterval(intervalId);
+                            const selectedSheikh = sheikhs[currentIndex];
+                            Swal.fire({
+                                title: `You got: ${selectedSheikh.name}`,
+                                imageUrl: selectedSheikh.imageUrl,
+                                imageAlt: selectedSheikh.name,
+                                confirmButtonText: 'Okay'
+                            }).then(() => {
+                                document.querySelector(`.sheikh-item img[src="${selectedSheikh.imageUrl}"]`).parentElement.click();
+                            });
+                        }, spinDuration);
+                    }
+                });
+            }
+        }, 1000);
+    });
+</script>
+
 </body>
 </html>
