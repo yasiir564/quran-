@@ -10,7 +10,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
- body {
+body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(to right, #ffffff, #abbaab);
@@ -127,13 +127,21 @@ header {
     background-color: #0056b3;
 }
 
+.featured-reciters-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
 .featured-reciters {
     display: flex;
     overflow-x: auto;
     gap: 10px;
     padding: 20px 0;
-    width: 100%;
     scroll-behavior: smooth;
+    width: 80%; /* Adjust this width if needed */
 }
 
 .reciter-card {
@@ -194,12 +202,24 @@ header {
     border-radius: 50%;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s, background-color 0.3s;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
 }
 
 .arrow:hover {
     transform: scale(1.1);
     background-color: #2575fc;
     color: #fff;
+}
+
+.arrow-left {
+    left: -50px;
+}
+
+.arrow-right {
+    right: -50px;
 }
 
 .dark-mode {
