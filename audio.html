@@ -748,6 +748,19 @@ header {
                     });
                 }
             });
+            window.addEventListener('scroll', function () {
+    const cards = document.querySelectorAll('.reciter-card');
+    let scrollTop = window.scrollY || document.documentElement.scrollTop;
+    let containerHeight = document.querySelector('.featured-reciters').offsetHeight;
+
+    cards.forEach((card, index) => {
+        let cardOffset = card.offsetTop;
+        if (scrollTop + containerHeight > cardOffset) {
+            card.style.filter = 'none';
+        }
+    });
+});
+
 
             // SweetAlert for Reciter Card Click
             window.showReciterAlert = function () {
