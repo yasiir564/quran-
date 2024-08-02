@@ -216,7 +216,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-   document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
     const audioOverlay = document.getElementById('audio-overlay');
     const audioElement = document.getElementById('audio-element');
     const playPauseButton = document.getElementById('playPauseButton');
@@ -300,13 +300,9 @@
         }
 
         try {
-            const response = await fetch(`https://api.quran.com/v4/chapters/${surahId}`);
+            const response = await fetch(`https://api.quran.com/api/v4/chapter_recitations/${sheikh.id}/${surahId}`);
             const data = await response.json();
-            const surahName = data.chapter.name_simple;
-
-            const audioResponse = await fetch(`https://api.quran.com/api/v4/chapter_recitations/${sheikh.id}/${surahId}`);
-            const audioData = await audioResponse.json();
-            const audioUrl = audioData.audio_file.audio_url;
+            const audioUrl = data.audio_file.audio_url;
 
             currentAudio = new Audio(audioUrl);
             currentAudio.addEventListener('ended', async () => {
@@ -331,7 +327,7 @@
 
             audioElement.src = audioUrl;
             reciterImage.src = sheikh.imageUrl;
-            surahTitle.textContent = `Now playing: ${surahName} by ${sheikh.name}`;
+            surahTitle.textContent = `Surah: ${surahId}`; // Update Surah title
             audioOverlay.classList.add('active');
         } catch (error) {
             console.error('Error loading audio:', error);
@@ -398,26 +394,44 @@
                         });
 
                         currentIndex = (currentIndex + 1) % sheikhs.length;
-                    }, 200);
+                    }, 100);
 
                     setTimeout(() => {
                         clearInterval(intervalId);
-                        const selectedSheikh = sheikhs[currentIndex];
+                        const selectedSheikh = sheikhs[Math.floor(Math.random() * sheikhs.length)];
                         Swal.fire({
-                            title: `You got: ${selectedSheikh.name}`,
-                            imageUrl: selectedSheikh.imageUrl,
-                            imageAlt: selectedSheikh.name,
-                            confirmButtonText: 'Okay'
+                            title: 'Selected Sheikh!',
+                            text: selectedSheikh.name,
+                            icon: 'success'
                         }).then(() => {
-                            document.querySelector(`.sheikh-item img[src="${selectedSheikh.imageUrl}"]`).parentElement.click();
+                            loadSurahAudio(surahId, selectedSheikh);
                         });
                     }, spinDuration);
                 }
             });
         }
-    }, 1000);
-});
+    }, 5000);
 
+    if ('wakeLock' in navigator) {
+        let wakeLock = null;
+
+        const requestWakeLock = async () => {
+            try {
+                wakeLock = await navigator.wakeLock.request('screen');
+            } catch (err) {
+                console.error('Error requesting wake lock:', err);
+            }
+        };
+
+        document.addEventListener('visibilitychange', () => {
+            if (wakeLock !== null && document.visibilityState === 'visible') {
+                requestWakeLock();
+            }
+        });
+
+        requestWakeLock();
+    }
+});
 </script>
 </body>
 </html>
