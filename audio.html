@@ -127,7 +127,7 @@ header {
     background-color: #0056b3;
 }
 
-.featured-reciters-wrapper {
+.reciter-section-wrapper {
     position: relative;
     display: flex;
     align-items: center;
@@ -135,7 +135,7 @@ header {
     margin-top: 20px;
 }
 
-.featured-reciters {
+..reciter-section {
     display: flex;
     overflow-x: auto;
     gap: 10px;
@@ -144,7 +144,7 @@ header {
     width: 80%; /* Adjust this width if needed */
 }
 
-.reciter-card {
+.reciter-cards-container {
     background: rgba(255, 255, 255, 0.7);
     border: 1px solid #ddd;
     padding: 15px;
@@ -315,33 +315,34 @@ header {
 
         <!-- Featured Reciters -->
         <h2 class="featured-title">Featured Reciters</h2>
-        <div class="featured-reciters">
-            <div class="arrow" id="prev-arrow"><i class="fas fa-chevron-left"></i></div>
-            <div class="reciter-cards">
-                <div class="reciter-card" onclick="showReciterAlert()" data-id="1">
-                    <img src="qmkxyvfiawea1.jpg" alt="AbdulBaset AbdulSamad">
-                    <h3>AbdulBaset AbdulSamad</h3>
-                    <div class="rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
+            <div class="reciter-section">
+    <div class="arrow" id="prev-arrow"><i class="fas fa-chevron-left"></i></div>
+    <div class="reciter-cards-container">
+        <div class="reciter-cards">
+            <div class="reciter-card" onclick="showReciterAlert()" data-id="1">
+                <img src="qmkxyvfiawea1.jpg" alt="AbdulBaset AbdulSamad">
+                <h3>AbdulBaset AbdulSamad</h3>
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
                 </div>
-                <!-- Add more reciter cards here following the same structure -->
-                <div class="reciter-card" onclick="showReciterAlert()" data-id="2">
-                    <img src="images (6).jpeg" alt="Maher Al-Muaiqly">
-                    <h3>Maher Al-Muaiqly</h3>
-                    <div class="rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
+            </div>
+            <!-- Add more reciter cards here following the same structure -->
+            <div class="reciter-card" onclick="showReciterAlert()" data-id="2">
+                <img src="images (6).jpeg" alt="Maher Al-Muaiqly">
+                <h3>Maher Al-Muaiqly</h3>
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
                 </div>
-                <div class="reciter-card" onclick="showReciterAlert()" data-id="3">
+            </div>
+            <div class="reciter-card" onclick="showReciterAlert()" data-id="3">
     <img src="Abdul-Rahman-Al-Sudais.jpg" alt="Abdur-Rahman As-Sudais">
     <h3>Abdur-Rahman As-Sudais</h3>
     <div class="rating">
@@ -649,10 +650,11 @@ header {
         <i class="fas fa-star"></i>
     </div>
 </div>
-                <!-- Repeat for other reciter cards -->
-            </div>
-            <div class="arrow" id="next-arrow"><i class="fas fa-chevron-right"></i></div>
+            <!-- Add more reciter cards here following the same structure -->
         </div>
+    </div>
+    <div class="arrow" id="next-arrow"><i class="fas fa-chevron-right"></i></div>
+</div>
 
         <!-- Surah List -->
         <div id="surah-list" class="surah-list"></div>
