@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quran Pro Login Form</title>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <meta name="google-signin-client_id" content="692064901690-k1988525o60rf8s1bop506ea8tll3s7t.apps.googleusercontent.com ">
+    <meta name="google-signin-client_id" content="692064901690-k1988525o60rf8s1bop506ea8tll3s7t.apps.googleusercontent.com">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300|Lobster|Pacifico|Raleway" rel="stylesheet">
     <style>
         body {
             margin: 0;
@@ -16,6 +16,9 @@
             background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
             background: linear-gradient(to right, #ffffff, #abbaab);
             font-family: 'Roboto', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .login-page {
@@ -34,21 +37,23 @@
             padding: 45px;
             text-align: center;
             box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+            border-radius: 15px;
         }
 
-        .form input {
-            outline: 0;
-            background: #f2f2f2;
-            width: calc(100% - 40px);
-            border: 0;
-            margin: 0 0 15px;
-            padding: 15px;
-            box-sizing: border-box;
-            font-size: 14px;
-            border-radius: 10px;
+        .form .heading {
+            font-family: 'Lobster', cursive;
+            font-size: 2em;
+            margin-bottom: 10px;
         }
 
-        .form button {
+        .form .description {
+            font-family: 'Raleway', sans-serif;
+            font-size: 1em;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .form .btn {
             font-family: 'Roboto', sans-serif;
             font-size: 14px;
             font-weight: bold;
@@ -58,114 +63,33 @@
             width: 100%;
             border: 0;
             border-radius: 30px;
-            margin: 0 0 8px;
+            margin: 0 0 15px;
             padding: 15px;
             color: #fff;
             transition: all 0.3s ease;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .form button:hover,
-        .form button:focus {
+        .form .btn img {
+            margin-right: 10px;
+            height: 20px;
+        }
+
+        .form .btn:hover,
+        .form .btn:focus {
             background: #148f77;
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
             transform: translateY(-4px);
         }
 
-        .form button:active {
+        .form .btn:active {
             transform: translateY(2px);
             box-shadow: 0 2.5px 5px rgba(0, 0, 0, 0.2);
         }
 
-        .form .message {
-            margin: 6px 0;
-            color: #808080;
-            font-size: 11px;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .form .message a {
-            color: #fff;
-            text-decoration: none;
-            font-size: 13px;
-        }
-
-        .password-container {
-            position: relative;
-        }
-
-        .password-container input {
-            width: calc(100% - 40px);
-            padding-right: 40px;
-        }
-
-        .password-container .toggle-password {
-            position: absolute;
-            top: 50%;
-            right: 10px;
-            transform: translateY(-50%);
-            cursor: pointer;
-        }
-
-        /* Sidebar Menu */
-        .sidebar {
-            height: 100%;
-            width: 250px;
-            position: fixed;
-            z-index: 1001; /* Ensure sidebar is on top */
-            top: 0;
-            left: -250px;
-            background: linear-gradient(to top, #a8edea, #fed6e3);
-            overflow-x: hidden;
-            transition: left 0.5s ease;
-            padding-top: 60px;
-        }
-
-        .sidebar.open {
-            left: 0;
-        }
-
-        .sidebar a {
-            padding: 10px 15px;
-            text-decoration: none;
-            font-size: 18px;
-            color: #111;
-            display: block;
-            transition: 0.3s;
-        }
-
-        .sidebar a:hover {
-            color: #fff;
-            background-color: #2575fc;
-        }
-
-        .sidebar .closebtn {
-            position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-        }
-
-        .openbtn {
-            font-size: 20px;
-            cursor: pointer;
-            background-color: #2575fc;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            z-index: 1000;
-        }
-
-        .openbtn:hover {
-            background-color: #0056b3;
-        }
-
-        /* Mobile view adjustments */
         @media screen and (max-width: 768px) {
             .login-page {
                 width: 100%;
@@ -184,118 +108,37 @@
                 padding: 20px;
                 box-shadow: none;
             }
-
-            .sidebar {
-                width: 100%;
-                left: -100%;
-                top: 0;
-            }
-
-            .sidebar.open {
-                left: 0;
-            }
-
-            .openbtn {
-                font-size: 18px;
-                padding: 8px 12px;
-            }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div id="main">
-            <button class="openbtn" onclick="openNav()">&#9776; Quran Pro</button>
-        </div>
-    </header>
-
-    <div id="mySidebar" class="sidebar">
-        <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
-        <a href="index.html">
-            <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
-        </a>
-        <a href="juzz.html">
-            <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Juzz
-        </a>
-        <a href="audio.html">
-            <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Listen to Quran
-        </a>
-        <a href="donate.html">
-            <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Donate
-        </a>
-        <a href="islam.html">
-            <lord-icon src="https://cdn.lordicon.com/bhfjfgqz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Hijri
-        </a>
-        <a href="prayer.html">
-            <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Prayer
-        </a>
-    </div>
-
     <div class="login-page">
         <div class="form">
-            <h2>Login to Your Account</h2>
-            <form id="login-form">
-                <input type="text" id="login" placeholder="Username or Email" required>
-                <div class="password-container">
-                    <input type="password" id="password" placeholder="Password" required>
-                    <span class="toggle-password" onclick="togglePassword()">👁️</span>
-                </div>
-                <button type="submit">Login</button>
-                <p class="message">Not registered? <a href="register.html">Create an account</a></p>
-            </form>
+            <h1 class="heading">Welcome to Quran Pro</h1>
+            <p class="description">Your one-stop solution for reading, listening, and understanding the Quran.</p>
             <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
+            <button class="btn" onclick="signInWithApple()">
+                <img src="https://img.icons8.com/ios-filled/50/000000/mac-os.png" alt="Apple Logo">
+                Sign in with Apple
+            </button>
+            <button class="btn" onclick="signInWithEmail()">
+                <img src="https://img.icons8.com/ios-filled/50/000000/email.png" alt="Email Logo">
+                Sign in with Email
+            </button>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function openNav() {
-            document.getElementById("mySidebar").classList.add('open');
+        function signInWithApple() {
+            // Apple sign-in logic
+            Swal.fire('Apple sign-in not implemented yet.');
         }
 
-        function closeNav() {
-            document.getElementById("mySidebar").classList.remove('open');
+        function signInWithEmail() {
+            // Email sign-in logic
+            Swal.fire('Email sign-in not implemented yet.');
         }
-
-        document.getElementById('login-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const login = document.getElementById('login').value;
-            const password = document.getElementById('password').value;
-
-            // Check if users are stored in local storage
-            const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
-            const user = storedUsers.find(user => 
-                (user.username === login || user.email === login) && user.password === password
-            );
-
-            if (user) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Login successful!',
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    localStorage.setItem('loggedInUser', JSON.stringify(user));
-                    window.location.href = 'profile.html'; // Redirect to profile.html
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Invalid username, email, or password!',
-                    confirmButtonColor: '#17a589'
-                });
-            }
-        });
-
-        function togglePassword() {
-            const passwordField = document.getElementById('password');
-            const passwordType = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordField.setAttribute('type', passwordType);
-            document.querySelector('.toggle-password').textContent = passwordType === 'password' ? '👁️' : '🙈';
-        }
-
-        document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
 
         function onSignIn(googleUser) {
             const profile = googleUser.getBasicProfile();
@@ -318,4 +161,5 @@
     </script>
 </body>
 </html>
+
  
