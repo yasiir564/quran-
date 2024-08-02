@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quran Pro Login Form</title>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <meta name="google-signin-client_id" content="692064901690-k1988525o60rf8s1bop506ea8tll3s7t.apps.googleusercontent.com">
+    <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID">
     <script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300|Lobster|Pacifico|Raleway" rel="stylesheet">
     <style>
+        /* Add your existing CSS here */
         body {
             margin: 0;
             height: 100vh;
@@ -164,7 +165,7 @@
                 timer: 1500
             }).then(() => {
                 localStorage.setItem('loggedInUser', JSON.stringify(user));
-                window.location.href = 'profile.html';
+                softRedirect('index.html');
             });
         }
 
@@ -183,7 +184,7 @@
                     timer: 1500
                 }).then(() => {
                     localStorage.setItem('loggedInUser', JSON.stringify(user));
-                    window.location.href = 'profile.html';
+                    softRedirect('index.html');
                 });
             }).catch(error => {
                 Swal.fire({
@@ -195,7 +196,7 @@
             });
         }
 
-        // Email Sign-In logic
+        // Email Sign-In logic with Mock Activation
         function signInWithEmail() {
             Swal.fire({
                 title: 'Enter your email address',
@@ -206,25 +207,12 @@
                 confirmButtonColor: '#17a589',
                 cancelButtonColor: '#d33',
                 preConfirm: (email) => {
-                    return fetch('https://api.resend.com/email/send', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer re_XMoyXXHh_9sdeo27ZVWd3syeFY6eUpGFs'
-                        },
-                        body: JSON.stringify({
-                            from: 'noreply@quranpro.com',
-                            to: email,
-                            subject: 'Activate your Quran Pro account',
-                            html: `<p>Click <a href="https://yourdomain.com/activate?email=${email}">here</a> to activate your account.</p>`
-                        })
-                    }).then(response => {
-                        if (!response.ok) {
-                            throw new Error(response.statusText);
-                        }
-                        return response.json();
-                    }).catch(error => {
-                        Swal.showValidationMessage(`Request failed: ${error}`);
+                    // Mock activation logic
+                    localStorage.setItem('pendingEmail', email);
+                    return new Promise((resolve) => {
+                        setTimeout(() => {
+                            resolve(true);
+                        }, 1000);
                     });
                 }
             }).then((result) => {
@@ -237,6 +225,17 @@
                     });
                 }
             });
+        }
+
+        // Soft redirect to index.html
+        function softRedirect(url) {
+            const mainPage = document.createElement('iframe');
+            mainPage.src = url;
+            mainPage.style.width = '100%';
+            mainPage.style.height = '100vh';
+            mainPage.style.border = 'none';
+            document.body.innerHTML = '';
+            document.body.appendChild(mainPage);
         }
     </script>
 </body>
