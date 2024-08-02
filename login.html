@@ -91,39 +91,16 @@
         }
 
         .g-signin2 {
-            width: 100% !important;
+            display: none;
         }
 
-        .g-signin2 div {
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            background: #17a589;
-            color: white;
-            border-radius: 30px;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Roboto', sans-serif;
-            font-size: 14px;
-            font-weight: bold;
-            letter-spacing: .1em;
+        .google-btn {
+            background: #db4437;
         }
 
-        .g-signin2 div:hover {
-            background: #148f77;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-            transform: translateY(-4px);
-        }
-
-        .g-signin2 div:active {
-            transform: translateY(2px);
-            box-shadow: 0 2.5px 5px rgba(0, 0, 0, 0.2);
-        }
-
-        .g-signin2 img {
-            margin-right: 10px;
-            height: 20px;
+        .google-btn:hover,
+        .google-btn:focus {
+            background: #c33c2f;
         }
 
         @media screen and (max-width: 768px) {
@@ -152,7 +129,10 @@
         <div class="form">
             <h1 class="heading">Welcome to Quran Pro</h1>
             <p class="description">Your one-stop solution for reading, listening, and understanding the Quran.</p>
-            <div class="g-signin2" data-onsuccess="onSignIn with google" data-theme="dark"></div>
+            <button class="btn google-btn" onclick="document.querySelector('.g-signin2 div').click()">
+                <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google Logo">
+                Sign in with Google
+            </button>
             <button class="btn" onclick="signInWithApple()">
                 <img src="https://img.icons8.com/ios-filled/50/000000/mac-os.png" alt="Apple Logo">
                 Sign in with Apple
@@ -161,6 +141,7 @@
                 <img src="https://img.icons8.com/color/48/000000/gmail-new.png" alt="Email Logo">
                 Sign in with Email
             </button>
+            <div class="g-signin2" data-onsuccess="onSignIn"></div>
         </div>
     </div>
 
@@ -197,4 +178,5 @@
     </script>
 </body>
 </html>
+
 
