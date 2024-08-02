@@ -308,6 +308,10 @@
                 const audioData = await audioResponse.json();
                 const audioUrl = audioData.audio_file.audio_url;
 
+                if (!audioUrl) {
+                    throw new Error('Audio URL not found');
+                }
+
                 currentAudio = new Audio(audioUrl);
                 currentAudio.addEventListener('ended', async () => {
                     const nextSurahId = parseInt(surahId) + 1;
@@ -331,7 +335,7 @@
 
                 audioElement.src = audioUrl;
                 reciterImage.src = sheikh.imageUrl;
-                surahTitle.textContent = `Now playing: ${surahName} by ${sheikh.name}`;
+                surahTitle.innerHTML = `<div class="scrolling-text">Now playing: ${surahName} by ${sheikh.name}</div>`;
                 audioOverlay.classList.add('active');
             } catch (error) {
                 console.error('Error loading audio:', error);
@@ -378,46 +382,16 @@
         darkModeToggle.addEventListener('click', toggleDarkMode);
 
         setTimeout(() => {
-            if (!document.querySelector('.sheikh-item.active')) {
+            if (!audioOverlay.classList.contains('active')) {
                 Swal.fire({
-                    title: 'Are you confused in finding a good reciter? Try your luck!',
-                    showCancelButton: true,
-                    confirmButtonText: 'Spin!',
-                    cancelButtonText: 'Cancel'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        let currentIndex = 0;
-                        const spinDuration = 3000; // Spin for 3 seconds
-
-                        const intervalId = setInterval(() => {
-                            const sheikh = sheikhs[currentIndex];
-                            Swal.update({
-                                title: 'Spinning...',
-                                html: `Selected Sheikh: ${sheikh.name}`,
-                                showConfirmButton: false
-                            });
-
-                            currentIndex = (currentIndex + 1) % sheikhs.length;
-                        }, 200);
-
-                        setTimeout(() => {
-                            clearInterval(intervalId);
-                            const selectedSheikh = sheikhs[currentIndex];
-                            Swal.fire({
-                                title: `You got: ${selectedSheikh.name}`,
-                                imageUrl: selectedSheikh.imageUrl,
-                                imageAlt: selectedSheikh.name,
-                                confirmButtonText: 'Okay'
-                            }).then(() => {
-                                document.querySelector(`.sheikh-item img[src="${selectedSheikh.imageUrl}"]`).parentElement.click();
-                            });
-                        }, spinDuration);
-                    }
+                    title: 'Welcome!',
+                    text: 'Click on a reciter to start playing the Quran.',
+                    icon: 'info',
+                    confirmButtonText: 'Okay'
                 });
             }
         }, 1000);
     });
 </script>
-
 </body>
 </html>
