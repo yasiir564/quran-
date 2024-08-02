@@ -387,7 +387,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         sheikhList.appendChild(sheikhItem);
     });
-    function toggleDarkMode() {
+   function toggleDarkMode() {
         document.body.classList.toggle('dark-mode');
         darkModeToggle.classList.toggle('fa-sun');
         darkModeToggle.classList.toggle('fa-moon');
@@ -401,17 +401,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 title: 'Are you confused in finding a good reciter? Try your luck!',
                 showCancelButton: true,
                 confirmButtonText: 'Spin!',
-                cancelButtonText: 'Cancel'
+                cancelButtonText: 'Cancel',
+                allowOutsideClick: false
             }).then((result) => {
                 if (result.isConfirmed) {
                     let currentIndex = 0;
                     const spinDuration = 3000; // Spin for 3 seconds
 
-                    const intervalId = setInterval(() => {
+                    const spinInterval = setInterval(() => {
                         const sheikh = sheikhs[currentIndex];
                         Swal.update({
                             title: 'Spinning...',
-                            html: `Selected Sheikh: ${sheikh.name}`,
+                            html: `<div class="spinner"><img src="${sheikh.imageUrl}" alt="${sheikh.name}"></div><div>Selected Sheikh: ${sheikh.name}</div>`,
                             showConfirmButton: false
                         });
 
@@ -419,12 +420,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     }, 100);
 
                     setTimeout(() => {
-                        clearInterval(intervalId);
+                        clearInterval(spinInterval);
                         const selectedSheikh = sheikhs[Math.floor(Math.random() * sheikhs.length)];
                         Swal.fire({
                             title: 'Selected Sheikh!',
                             text: selectedSheikh.name,
-                            icon: 'success'
+                            icon: 'success',
+                            confirmButtonText: 'Okay'
                         }).then(() => {
                             loadSurahAudio(surahId, selectedSheikh);
                         });
