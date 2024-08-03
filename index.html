@@ -26,30 +26,44 @@ body {
     text-align: center;
 }
 
+/* Announcement Bar */
+.announcement-bar {
+    background: linear-gradient(to right, #2575fc, #6a11cb);
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 1.2em;
+    animation: slideDown 0.5s ease-out;
+    margin-bottom: 10px; /* Space below the announcement bar */
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
 header {
     transition: top 0.3s;
     position: fixed;
     width: 100%;
     z-index: 100;
-}
-
-.header-hidden {
-    top: -100px; /* Adjust this value based on your header height */
-}
-
-.header-visible {
-    top: 0;
+    top: 50px; /* Space below the announcement bar */
 }
 
 /* Ensure header-icons are positioned correctly */
 .header-icons {
     position: fixed; /* Fixed position to keep icons at the top right */
-    top: 10px;
+    top: 60px; /* Space below the announcement bar */
     right: 20px;
     display: flex;
     gap: 15px;
     z-index: 1; /* High z-index to ensure it's on top */
-    margin-bottom: 10px; /* Added space below header icons */
 }
 
 .header-icons a {
@@ -61,6 +75,42 @@ header {
 .header-icons a lord-icon {
     width: 40px;
     height: 40px;
+}
+
+.quran-pro-btn {
+    position: fixed;
+    top: 60px; /* Space below the announcement bar */
+    left: 70px; /* Space for sidebar button */
+    z-index: 1;
+    background-color: #2575fc;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.openbtn {
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #2575fc;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    position: fixed;
+    top: 60px; /* Space below the announcement bar */
+    left: 10px;
+    z-index: 1000; /* High z-index to ensure it's on top */
+}
+
+.openbtn:hover {
+    background-color: #0056b3;
+}
+
+#main {
+    transition: margin-left .5s;
+    padding: 70px 20px 20px; /* Space for fixed elements */
+    margin-top: 10px;
 }
 
 /* Search Container */
@@ -282,7 +332,6 @@ body.dark-mode h1 {
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
-    margin-bottom: 10px; /* Added space below sidebar */
 }
 
 .sidebar a {
@@ -307,44 +356,18 @@ body.dark-mode h1 {
     margin-left: 50px;
 }
 
-#main {
-    transition: margin-left .5s;
-    padding: 16px;
+/* Fixed Sidebar */
+.sidebar.fixed {
+    top: 60px; /* Adjust this value to match the height of the header and announcement bar */
+    height: calc(100% - 60px); /* Adjust this value to match the height of the header and announcement bar */
 }
 
-@media screen and (max-height: 450px) {
-    .sidebar {padding-top: 15px;}
-    .sidebar a {font-size: 18px;}
-}
-
-.openbtn {
-    font-size: 20px;
-    cursor: pointer;
-    background-color: #2575fc;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 1000; /* High z-index to ensure it's on top */
-}
-
-.openbtn:hover {
-    background-color: #0056b3;
-}
-
-/* Navigation */
-nav ul {
-    display: none;
-}
-
+/* Mobile Cards */
 .mobile-cards {
     display: flex;
     justify-content: space-around;
-    margin-top: 10px;
-    flex-wrap: wrap; /* Default wrapping for larger screens */
-    position: relative; /* Needed for the arrow indicator */
+    margin-top: 20px;
+    flex-wrap: wrap;
 }
 
 .card {
@@ -352,12 +375,13 @@ nav ul {
     margin: 10px;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
     text-align: center;
     color: white;
-    position: relative;
-    width: 100px; /* Default size
-    margin-bottom: 10px; /* Added space between mobile cards */
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    width: 100px;
+    height: 100px;
 }
 
 .card:hover {
@@ -365,184 +389,36 @@ nav ul {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.card:before {
-    content: "";
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-top: 10px solid #2575fc; /* Match the card's background color */
-}
-
-.card p {
-    margin: 0;
-}
-
+/* Responsive Styles */
 @media (max-width: 768px) {
+    .header-icons {
+        top: 70px;
+    }
+
+    .quran-pro-btn {
+        top: 70px;
+    }
+
     .mobile-cards {
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        overflow-x: scroll;
+        margin-top: 80px;
+        padding-left: 10px;
     }
 
     .card {
-        flex: 1 1 45%;
+        flex: 0 0 auto;
+        margin: 10px 5px;
+        width: 180px;
+        height: 180px;
     }
 }
 
 @media (max-width: 480px) {
     .card {
-        flex: 1 1 100%;
+        width: 160px;
+        height: 160px;
     }
-}
-
-.announcement-bar {
-    background: linear-gradient(to right, #2575fc, #6a11cb);
-    color: #fff;
-    padding: 10px 20px;
-    text-align: center;
-    font-size: 1em;
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 20px; /* Added space below the announcement bar */
-}
-
-.announcement-bar:before {
-    content: "";
-    position: absolute;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, #2575fc, #6a11cb, #2575fc, #6a11cb);
-    top: -50%;
-    left: -50%;
-    animation: rotateAnnouncementBg 10s linear infinite;
-    z-index: 0;
-}
-
-@keyframes rotateAnnouncementBg {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.announcement-bar p {
-    position: relative;
-    z-index: 1;
-    margin: 0;
-}
-
-.announcement-bar span {
-    font-weight: bold;
-    animation: blink 2s infinite;
-}
-
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-
-/* Audio Player */
-audio {
-    width: 100%;
-    margin: 10px 0;
-}
-
-.audio-container {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: #2575fc;
-    padding: 10px;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 100;
-}
-
-.audio-container button {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 1.5em;
-    cursor: pointer;
-    margin: 0 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-audio {
-    width: calc(100% - 140px); /* Adjust width to fit the control buttons */
-}
-
-/* Control buttons */
-.audio-container .control-buttons {
-    display: flex;
-    align-items: center;
-}
-
-.audio-container .control-buttons button {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 1.5em;
-    cursor: pointer;
-    margin: 0 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Announcement Bar */
-.announcement-bar {
-    background: linear-gradient(to right, #2575fc, #6a11cb);
-    color: #fff;
-    padding: 10px 20px;
-    text-align: center;
-    font-size: 1em;
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 20px;
-}
-
-.announcement-bar:before {
-    content: "";
-    position: absolute;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, #2575fc, #6a11cb, #2575fc, #6a11cb);
-    top: -50%;
-    left: -50%;
-    animation: rotateAnnouncementBg 10s linear infinite;
-    z-index: 0;
-}
-
-.announcement-bar p {
-    position: relative;
-    z-index: 1;
-    margin: 0;
-}
-
-.announcement-bar span {
-    font-weight: bold;
-    animation: blink 2s infinite;
-}
-
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-
-@keyframes rotateAnnouncementBg {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Miscellaneous */
-.spacer {
-    height: 20px; /* Adjust height as needed */
 }
 
 </style>
