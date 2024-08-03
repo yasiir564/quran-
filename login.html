@@ -15,9 +15,7 @@
         body {
             margin: 0;
             height: 100vh;
-            background: #abbaab;
-            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
-            background: linear-gradient(to right, #ffffff, #abbaab);
+            background: linear-gradient(to right, #00c6ff, #0072ff);
             font-family: 'Roboto', sans-serif;
             display: flex;
             align-items: center;
@@ -106,6 +104,21 @@
             background: #c33c2f;
         }
 
+        .footer-text {
+            font-size: 12px;
+            color: #fff;
+            margin-top: 20px;
+        }
+
+        .footer-text a {
+            color: #17a589;
+            text-decoration: none;
+        }
+
+        .footer-text a:hover {
+            text-decoration: underline;
+        }
+
         @media screen and (max-width: 768px) {
             .login-page {
                 width: 100%;
@@ -146,6 +159,9 @@
                 Sign in with Email
             </button>
             <div class="g-signin2" data-onsuccess="onSignIn"></div>
+            <div class="footer-text">
+                By signing in you accept our <a href="termsandconditions.html">terms and conditions</a> and <a href="privacypolicy.html">privacy policy</a>.
+            </div>
         </div>
     </div>
 
