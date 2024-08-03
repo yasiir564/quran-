@@ -6,6 +6,7 @@
     <title>User Profile</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
     <style>
         body {
@@ -15,11 +16,14 @@
             background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
             background: linear-gradient(to right, #ffffff, #abbaab);
             font-family: 'Amiri', serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .container {
             display: flex;
-            justify-content: flex-end;
+            justify-content: center;
             align-items: center;
             max-width: 1200px;
             margin: 0 auto;
@@ -256,14 +260,15 @@
             <p id="user-email">Email</p>
             <button type="button" id="logout-button" class="logout-button">Log Out</button>
         </div>
+
         <div class="card-container">
-            <div class="card" id="bookmarks-card">
-                <i class="fas fa-bookmark"></i>
-                <p>Bookmarks</p>
+            <div class="card" id="read-quran-card">
+                <i class="fas fa-book"></i>
+                <p>Read Quran</p>
             </div>
-            <div class="card" id="playlist-card">
-                <i class="fas fa-list"></i>
-                <p>Audio Playlist</p>
+            <div class="card" id="listen-quran-card">
+                <i class="fas fa-headphones"></i>
+                <p>Listen to Quran</p>
             </div>
             <div class="card" id="donate-card">
                 <i class="fas fa-donate"></i>
@@ -276,7 +281,69 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+            if (!isLoggedIn) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Please Log In',
+                    text: 'Please log in to update your profile.',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.href = 'login.html';
+                });
+            } else {
+                // Fetch and display user information
+                const userName = localStorage.getItem("userName");
+                const userEmail = localStorage.getItem("userEmail");
+                const profilePic = localStorage.getItem("profilePic");
+
+                document.getElementById("user-name").textContent = userName;
+                document.getElementById("user-email").textContent = userEmail;
+                if (profilePic) {
+                    document.getElementById("profile-pic").innerHTML = `<img src="${profilePic}" alt="Profile Picture" class="profile-pic">`;
+                } else {
+                    document.getElementById("profile-pic").textContent = userName.charAt(0);
+                }
+            }
+
+            document.getElementById("logout-button").addEventListener("click", function() {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You will be logged out.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, log out!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        localStorage.setItem("isLoggedIn", "false");
+                        localStorage.removeItem("userName");
+                        localStorage.removeItem("userEmail");
+                        localStorage.removeItem("profilePic");
+                        window.location.href = 'login.html';
+                    }
+                });
+            });
+
+            document.getElementById("profile-pic-input").addEventListener("change", function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const profilePicUrl = e.target.result;
+                        localStorage.setItem("profilePic", profilePicUrl);
+                        document.getElementById("profile-pic").innerHTML = `<img src="${profilePicUrl}" alt="Profile Picture" class="profile-pic">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+
         function openNav() {
             document.getElementById("mySidebar").style.left = "0";
         }
