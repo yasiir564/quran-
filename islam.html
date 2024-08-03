@@ -219,12 +219,6 @@
             background-color: #145a8a;
         }
 
-        #islamicDate {
-            margin-top: 20px;
-            font-size: 1.2em;
-            font-weight: bold;
-        }
-
         #showMore {
             margin-top: 20px;
             padding: 10px 20px;
@@ -239,6 +233,53 @@
         #showMore:hover {
             background-color: #145a8a;
         }
+
+        .calendar-wrapper {
+            position: relative;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .calendar-header {
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .calendar-day {
+            background-color: #f8f9fa;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .calendar-day:hover {
+            background-color: #e2e6ea;
+            transform: scale(1.05);
+        }
+
+        .calendar-day.important {
+            background-color: #ffeeba;
+            color: #856404;
+        }
+
+        .calendar-day .day-number {
+            font-size: 1.2em;
+        }
+
+        .calendar-day .event-info {
+            font-size: 0.8em;
+            color: #6c757d;
+        }
     </style>
 </head>
 <body>
@@ -248,13 +289,11 @@
             <i id="dark-mode-toggle" class="fas fa-moon dark-mode-toggle"></i>
             <span class="close-button" onclick="window.location.href='index.html'">×</span>
         </header>
-        <div id="islamicDate"></div>
-        <div id="calendar-controls">
-            <button id="prevMonth">Previous</button>
-            <button id="nextMonth">Next</button>
-        </div>
-        <div id="calendar">
-            <!-- Calendar will be generated here -->
+        <div class="calendar-wrapper">
+            <div class="calendar-header" id="calendarHeader"></div>
+            <div class="calendar-days" id="calendarDays">
+                <!-- Calendar days will be generated here -->
+            </div>
         </div>
         <button id="showMore" style="display:none;">Show More</button>
         <div class="goal-setting">
@@ -271,52 +310,49 @@
 
     <script>
         const months = [
-            "Muharram", "Safar", "Rabi' al-Awwal", "Rabi' al-Thani", "Jumada al-Awwal", 
-            "Jumada al-Thani", "Rajab", "Sha'ban", "Ramadan", "Shawwal", "Dhu al-Qi'dah", "Dhu al-Hijjah"
+            "Muharram", "Safar", "Rabi' al-Awwal", "Rabi' al-Thani", "Jumada al-Awwal", "Jumada al-Thani",
+            "Rajab", "Sha'ban", "Ramadan", "Shawwal", "Dhu al-Qa'dah", "Dhu al-Hijjah"
         ];
 
-        let currentMonth = 0; // Start with Muharram
-
         const importantDates = {
-            "Muharram": { 1: "Islamic New Year", 10: "Day of Ashura" },
-            "Safar": { 20: "Arba'een", 27: "Death of Prophet Muhammad's Uncle Abu Talib" },
-            "Rabi' al-Awwal": { 12: "Mawlid al-Nabi" },
-            "Ramadan": { 17: "Battle of Badr", 27: "Laylat al-Qadr" },
-            "Shawwal": { 1: "Eid al-Fitr" },
-            "Dhu al-Hijjah": { 9: "Day of Arafah", 10: "Eid al-Adha", 18: "Eid al-Ghadeer" }
+            "Muharram": { 10: "Day of Ashura" },
+            "Ramadan": { 27: "Laylat al-Qadr" },
+            "Dhu al-Hijjah": { 10: "Eid al-Adha" }
         };
 
+        let currentMonth = new Date().getMonth(); // Assuming current month is 0-indexed
+
         function hijriDate(gregorianDate) {
-            // Use the Umm al-Qura calendar for better accuracy
+            // Simple placeholder for Hijri date conversion
             const date = new Date(gregorianDate);
             const iYear = date.getFullYear() - 622;
-            const iMonth = date.getMonth() + 1; // Simplified for demonstration
+            const iMonth = date.getMonth() + 1;
             const iDay = date.getDate();
             return { day: iDay, month: iMonth - 1, year: iYear };
         }
 
         function generateCalendar(month) {
-            const calendar = document.getElementById('calendar');
-            calendar.innerHTML = `<div class="header">${months[month]}</div>`;
+            const calendarHeader = document.getElementById('calendarHeader');
+            const calendarDays = document.getElementById('calendarDays');
+            calendarDays.innerHTML = '';
+            calendarHeader.textContent = months[month];
+
             const daysInMonth = 30; // Simplified for demonstration
-            const today = new Date();
-            const hijri = hijriDate(today);
             let showMore = false;
 
             for (let day = 1; day <= daysInMonth; day++) {
                 const dayElement = document.createElement('div');
-                dayElement.className = 'day';
+                dayElement.className = 'calendar-day';
+                dayElement.innerHTML = `<div class="day-number">${day}</div>`;
                 if (importantDates[months[month]] && importantDates[months[month]][day]) {
-                    dayElement.classList.add('important-date');
-                    dayElement.innerHTML = `${day}<br>${importantDates[months[month]][day]}`;
-                } else {
-                    dayElement.textContent = day;
+                    dayElement.classList.add('important');
+                    dayElement.innerHTML += `<div class="event-info">${importantDates[months[month]][day]}</div>`;
                 }
                 if (day > 5) {
                     dayElement.style.display = 'none';
                     showMore = true;
                 }
-                calendar.appendChild(dayElement);
+                calendarDays.appendChild(dayElement);
             }
 
             if (showMore) {
@@ -331,7 +367,7 @@
             const hijri = hijriDate(date);
             const islamicMonth = months[hijri.month];
             const islamicYear = hijri.year;
-            const islamicDateElement = document.getElementById('islamicDate');
+            const islamicDateElement = document.getElementById('calendarHeader');
             islamicDateElement.textContent = `${islamicMonth} ${hijri.day}, ${islamicYear} - ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
         }
 
@@ -383,14 +419,13 @@
         });
 
         document.getElementById('showMore').addEventListener('click', () => {
-            const days = document.querySelectorAll('.day');
+            const days = document.querySelectorAll('.calendar-day');
             days.forEach(day => {
                 day.style.display = 'block';
             });
             document.getElementById('showMore').style.display = 'none';
         });
 
-        // Initialize the calendar and date
         generateCalendar(currentMonth);
         updateIslamicDateTime();
     </script>
