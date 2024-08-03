@@ -201,29 +201,29 @@
             color: #fff;
         }
 
-        #calendar:before, #calendar:after {
-    content: '';
-    position: absolute;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, #ffafbd, #ffc3a0, #ffafbd, #ffc3a0);
-    top: -50%;
-    left: -50%;
-    animation: rotateBg 10s linear infinite;
-    z-index: 0;
-}
+        #calendar-controls {
+            margin-bottom: 20px;
+        }
 
-@keyframes rotateBg {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+        #calendar-controls button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #1c92d2;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-#calendar p {
-    position: relative;
-    z-index: 1;
-    margin: 0;
-}
+        #calendar-controls button:hover {
+            background-color: #145a8a;
+        }
 
+        #islamicDate {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
 
         #showMore {
             margin-top: 20px;
@@ -297,7 +297,7 @@
 
         function generateCalendar(month) {
             const calendar = document.getElementById('calendar');
-            calendar.innerHTML = `<div class="header">${months[month]}</div>`;
+            calendar.innerHTML = <div class="header">${months[month]}</div>;
             const daysInMonth = 30; // Simplified for demonstration
             const today = new Date();
             const hijri = hijriDate(today);
@@ -308,7 +308,7 @@
                 dayElement.className = 'day';
                 if (importantDates[months[month]] && importantDates[months[month]][day]) {
                     dayElement.classList.add('important-date');
-                    dayElement.innerHTML = `${day}<br>${importantDates[months[month]][day]}`;
+                    dayElement.innerHTML = ${day}<br>${importantDates[months[month]][day]};
                 } else {
                     dayElement.textContent = day;
                 }
@@ -332,7 +332,7 @@
             const islamicMonth = months[hijri.month];
             const islamicYear = hijri.year;
             const islamicDateElement = document.getElementById('islamicDate');
-            islamicDateElement.textContent = `${islamicMonth} ${hijri.day}, ${islamicYear} - ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+            islamicDateElement.textContent = ${islamicMonth} ${hijri.day}, ${islamicYear} - ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()};
         }
 
         setInterval(updateIslamicDateTime, 1000);
