@@ -428,32 +428,30 @@ body.dark-mode h1 {
 <body>
     <header>
         <div class="announcement-bar">
-        <p>Special Announcement: New Quran reciters added!</p>
-    </div>
-     <div class="header-icons">
-    <!-- Login Icon -->
-    <a href="login.html" title="Login">
-        <lord-icon
-            src="https://cdn.lordicon.com/bhfjfgqz.json"
-            trigger="hover"
-            colors="primary:#0057b7"
-            style="width:50px;height:50px;">
-        </lord-icon>
-    </a>
-    <a href="profile.html" title="user profile">
-        <lord-icon
-            src="https://cdn.lordicon.com/oezixobx.json"
-            trigger="hover"
-            colors="primary:#0057b7"
-            style="width:50px;height:50px;">
-        </lord-icon>
-    </a>
-    
-    
-</div>
+            <p>Special Announcement: New Quran reciters added!</p>
+        </div>
+        <div class="header-icons">
+            <!-- Login Icon -->
+            <a href="login.html" title="Login">
+                <lord-icon
+                    src="https://cdn.lordicon.com/bhfjfgqz.json"
+                    trigger="hover"
+                    colors="primary:#0057b7"
+                    style="width:50px;height:50px;">
+                </lord-icon>
+            </a>
+            <a href="profile.html" title="User Profile">
+                <lord-icon
+                    src="https://cdn.lordicon.com/oezixobx.json"
+                    trigger="hover"
+                    colors="primary:#0057b7"
+                    style="width:50px;height:50px;">
+                </lord-icon>
+            </a>
+        </div>
 
- <div id="mySidebar" class="sidebar">
-    <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
+        <div id="mySidebar" class="sidebar">
+            <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
             <a href="index.html">
                 <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
             </a>
@@ -466,11 +464,11 @@ body.dark-mode h1 {
             <a href="donate.html">
                 <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Donate with love
             </a>
-     <a href="islam.html">
-                <lord-icon src="https://cdn.lordicon.com/bhfjfgqz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> islamic calender
+            <a href="islam.html">
+                <lord-icon src="https://cdn.lordicon.com/bhfjfgqz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Islamic Calendar
             </a>
-     <a href="prayer.html">
-                <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> prayer Times
+            <a href="prayer.html">
+                <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Prayer Times
             </a>
         </div>
 
@@ -479,35 +477,35 @@ body.dark-mode h1 {
         </div>
     </header>
 
-   <div class="container">
-    <div class="mobile-cards">
-        <a href="index.html" class="card" style="background-image: url('Untitled Project (37).jpg');">
-            <p>Read Quran</p>
-        </a>
-        <a href="juzz.html" class="card" style="background-image: url('Untitled Project (34).jpg');">
-            <p>Read in Juzz</p>
-        </a>
-        <a href="audio.html" class="card" style="background-image: url('Untitled Project (36).jpg');">
-            <p>Quran Audio</p>
-        </a>
-        <a href="Tasbih.html" class="card" style="background-image: url('Untitled Project (33).jpg');">
-            <p>Do Tasbih</p>
-        </a>
+    <div class="container">
+        <div class="mobile-cards">
+            <a href="index.html" class="card" style="background-image: url('Untitled Project (37).jpg');">
+                <p>Read Quran</p>
+            </a>
+            <a href="juzz.html" class="card" style="background-image: url('Untitled Project (34).jpg');">
+                <p>Read in Juzz</p>
+            </a>
+            <a href="audio.html" class="card" style="background-image: url('Untitled Project (36).jpg');">
+                <p>Quran Audio</p>
+            </a>
+            <a href="Tasbih.html" class="card" style="background-image: url('Untitled Project (33).jpg');">
+                <p>Do Tasbih</p>
+            </a>
+        </div>
+        <div id="calendar"></div>
+        <div class="text-links">
+            <a href="surah-yaseen.html">Surah Yaseen</a>
+            <a href="ayat-al-kursi.html">Ayat Al-Kursi</a>
+            <a href="surah-al-kahf.html">Surah Al-Kahf</a>
+        </div>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search for a Surah...">
+            <button id="search-button"><i class="fas fa-search"></i></button>
+        </div>
+        <button id="dark-mode-toggle"><i class="fas fa-adjust"></i></button>
+        <div id="surah-list"></div>
+        <div class="loader" id="loader"></div>
     </div>
-    <div id="calendar"></div>
-    <div class="text-links">
-        <a href="surah-yaseen.html">Surah Yaseen</a>
-        <a href="ayat-al-kursi.html">Ayat Al-Kursi</a>
-        <a href="surah-al-kahf.html">Surah Al-Kahf</a>
-    </div>
-    <div class="search-container">
-        <input type="text" id="search-input" placeholder="Search for a Surah...">
-        <button id="search-button"><i class="fas fa-search"></i></button>
-    </div>
-    <button id="dark-mode-toggle"><i class="fas fa-adjust"></i></button>
-    <div id="surah-list"></div>
-    <div class="loader" id="loader"></div>
-</div>
 
     <footer>
         <div class="container">
