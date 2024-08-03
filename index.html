@@ -11,7 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
     <style>
-  /* General Styles */
+ /* General Styles */
 body {
     animation: gradientAnimation 10s infinite;
     font-family: 'Amiri', serif;
@@ -276,7 +276,7 @@ body.dark-mode h1 {
     width: 250px;
     position: fixed;
     z-index: 1;
-    top: 0;
+    top: 60px; /* Adjust to make space for the announcement bar */
     left: -250px;
     background: linear-gradient(to top, #a8edea, #fed6e3);
     overflow-x: hidden;
@@ -357,220 +357,124 @@ nav ul {
     position: relative;
     width: 100px; /* Default size for desktop */
     height: 100px; /* Default size for desktop */
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    overflow: hidden;
-    background-size: cover;
-    background-position: center;
 }
 
-.card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 2px solid transparent;
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.5);
-    z-index: 1;
+.card .reciter-icon {
+    display: block;
+    margin: 0 auto 10px auto;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
 }
 
-.card:hover::before {
-    border-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.5);
+.card h3 {
+    margin: 10px 0 0 0;
+    font-size: 1em;
 }
 
 .card:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.card p {
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 5px;
-    border-radius: 5px;
-    margin: 0;
-    position: relative;
-    z-index: 2;
-}
-
-/* Responsive Styles */
-@media (max-width: 768px) {
+/* Responsive for smaller screens */
+@media (max-width: 600px) {
     .mobile-cards {
-        flex-wrap: nowrap; /* No wrapping for horizontal scroll */
-        overflow-x: scroll; /* Enable horizontal scroll */
-        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-        margin-top: 80px; /* Add space between cards and header */
-        padding-left: 10px; /* Add some padding to the left for better alignment */
+        flex-direction: row;
+        overflow-x: auto; /* Enable horizontal scrolling */
+        white-space: nowrap;
+        width: 100%; /* Ensure it spans the full width */
     }
 
     .card {
-        flex: 0 0 auto; /* Cards do not shrink or grow, keeping their size */
-        margin: 10px 5px; /* Adjust margins for horizontal alignment */
-        width: 180px; /* Larger card size for mobile */
-        height: 180px; /* Larger card size for mobile */
+        display: inline-block;
+        width: 80px; /* Adjust size for mobile */
+        height: 80px; /* Adjust size for mobile */
     }
 
-    /* Optional: Hide scrollbar for a cleaner look */
+    .card h3 {
+        font-size: 0.8em; /* Adjust font size for mobile */
+    }
+
+    /* Hide and customize the scrollbar */
     .mobile-cards::-webkit-scrollbar {
-        display: none; /* For WebKit browsers */
+        display: none; /* Hide scrollbar for WebKit browsers */
     }
 
     .mobile-cards {
-        -ms-overflow-style: none;  /* For Internet Explorer and Edge */
-        scrollbar-width: none;  /* For Firefox */
-    }
-
-    /* Scroll Indicator Arrow */
-    .scroll-arrow {
-        display: block;
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 2em;
-        color: #2575fc;
-        z-index: 10;
-        animation: bounce 1.5s infinite;
-        cursor: pointer;
-    }
-
-    /* Scroll Arrow Animation */
-    @keyframes bounce {
-        0%, 100% {
-            transform: translateY(-50%) translateX(0);
-        }
-        50% {
-            transform: translateY(-50%) translateX(5px);
-        }
+        -ms-overflow-style: none; /* Hide scrollbar for Internet Explorer */
+        scrollbar-width: none; /* Hide scrollbar for Firefox */
     }
 }
 
-@media (max-width: 480px) {
-    .card {
-        width: 160px;
-        height: 160px;
+.arrow-indicator {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid black;
+    position: absolute;
+    bottom: -10px; /* Adjust this value to position the arrow correctly */
+    left: 50%;
+    transform: translateX(-50%);
+    display: none; /* Hide by default */
+}
+
+@media (max-width: 600px) {
+    .arrow-indicator {
+        display: block; /* Show arrow for small screens */
     }
 }
 
-/* Add the arrow icon using a pseudo-element */
-.scroll-arrow::before {
-    content: '➔'; /* Use a right arrow character */
-}
-
-.text-links {
-    margin-top: 20px;
-    text-align: center;
-}
-
-.text-links a {
-    display: block;
-    font-size: 1.2em;
-    color: #2575fc;
-    text-decoration: none;
-    margin: 10px 0;
-}
-
-.text-links a:hover {
-    text-decoration: underline;
-}
-
-/* Footer Styles */
-footer {
-    background-color: #2575fc;
-    color: #fff;
-    padding: 20px 0;
-}
-
-footer .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+/* Audio Player */
+#audio-player-container {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    padding: 10px;
     display: flex;
-    flex-wrap: wrap;
+    align-items: center;
     justify-content: space-between;
-}
-
-footer h3 {
-    font-size: 1.5em;
-    margin-bottom: 10px;
-}
-
-footer p, footer ul {
-    margin: 0;
-    padding: 0;
-}
-
-footer ul {
-    list-style: none;
-    padding: 0;
-}
-
-footer ul li {
-    margin-bottom: 10px;
-}
-
-footer ul li a {
-    color: #fff;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-footer ul li a:hover {
-    color: #f0f0f0;
-    text-decoration: underline;
-}
-
-footer .donate-btn {
-    display: inline-block;
-    background-color: #ff5722;
-    color: #fff;
-    padding: 15px 30px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background-color 0.3s;
-}
-
-footer .donate-btn:hover {
-    background-color: #e64a19;
-}
-
-footer .text-center {
-    text-align: center;
-    margin-top: 20px;
-}
-        /* Announcement Bar */
-.announcement-bar {
-    background: linear-gradient(90deg, #2575fc, #6a11cb);
     color: white;
+}
+
+#audio-player-container audio {
+    width: 100%;
+    margin: 0 20px;
+}
+
+#playing-reciter-icon {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin-left: 10px;
+}
+
+#playing-reciter-name {
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+#close-audio-player {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+/* Announcement Bar */
+#announcement-bar {
+    background-color: #f39c12;
+    color: white;
+    padding: 10px;
     text-align: center;
-    padding: 10px 0;
     font-size: 1.2em;
-    animation: slideDown 0.5s ease-out;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 2000;
 }
-
-@media (max-width: 768px) {
-    .announcement-bar {
-        font-size: 1em;
-    }
-}
-
-@keyframes slideDown {
-    from {
-        transform: translateY(-100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
 </style>
 </head>
 <body>
