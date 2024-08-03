@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300|Lobster|Pacifico|Raleway" rel="stylesheet">
     <style>
+        /* Add your existing CSS here */
         body {
             margin: 0;
             height: 100vh;
@@ -21,49 +22,23 @@
             justify-content: center;
         }
 
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .overlay.show {
-            visibility: visible;
-            opacity: 1;
-        }
-
         .login-page {
             width: 90%;
             max-width: 360px;
-            background: white;
-            border-radius: 15px;
+            padding: 8% 0 0;
+            margin: auto;
+        }
+
+        .form {
             position: relative;
-            z-index: 1001;
+            z-index: 1;
+            background: #00c6ff;
+            max-width: 360px;
+            margin: 0 auto 100px;
             padding: 45px;
             text-align: center;
             box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: transparent;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #333;
+            border-radius: 15px;
         }
 
         .form .heading {
@@ -76,7 +51,7 @@
             font-family: 'Raleway', sans-serif;
             font-size: 1em;
             margin-bottom: 20px;
-            color: #333;
+            color: #fff;
         }
 
         .form .btn {
@@ -131,7 +106,7 @@
 
         .footer-text {
             font-size: 12px;
-            color: #333;
+            color: #fff;
             margin-top: 20px;
         }
 
@@ -151,7 +126,8 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 20px;
+                padding: 0;
+                margin: 0;
             }
 
             .form {
@@ -166,42 +142,31 @@
 </head>
 
 <body>
-    <div class="overlay" id="overlay">
-        <div class="login-page">
-            <button class="close-btn" onclick="closeOverlay()">×</button>
-            <div class="form">
-                <h1 class="heading">Welcome to Quran Pro</h1>
-                <p class="description">Your one-stop solution for reading, listening, and understanding the Quran.</p>
-                <button class="btn google-btn" onclick="document.querySelector('.g-signin2 div').click()">
-                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google Logo">
-                    Sign in with Google
-                </button>
-                <button class="btn" onclick="signInWithApple()">
-                    <img src="https://img.icons8.com/ios-filled/50/000000/mac-os.png" alt="Apple Logo">
-                    Sign in with Apple
-                </button>
-                <button class="btn" onclick="signInWithEmail()">
-                    <img src="https://img.icons8.com/color/48/000000/gmail-new.png" alt="Email Logo">
-                    Sign in with Email
-                </button>
-                <div class="g-signin2" data-onsuccess="onSignIn"></div>
-                <div class="footer-text">
-                    By signing in you accept our <a href="termsandconditions.html">terms and conditions</a> and <a href="privacypolicy.html">privacy policy</a>.
-                </div>
+    <div class="login-page">
+        <div class="form">
+            <h1 class="heading">Welcome to Quran Pro</h1>
+            <p class="description">Your one-stop solution for reading, listening, and understanding the Quran.</p>
+            <button class="btn google-btn" onclick="document.querySelector('.g-signin2 div').click()">
+                <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google Logo">
+                Sign in with Google
+            </button>
+            <button class="btn" onclick="signInWithApple()">
+                <img src="https://img.icons8.com/ios-filled/50/000000/mac-os.png" alt="Apple Logo">
+                Sign in with Apple
+            </button>
+            <button class="btn" onclick="signInWithEmail()">
+                <img src="https://img.icons8.com/color/48/000000/gmail-new.png" alt="Email Logo">
+                Sign in with Email
+            </button>
+            <div class="g-signin2" data-onsuccess="onSignIn"></div>
+            <div class="footer-text">
+                By signing in you accept our <a href="termsandconditions.html">terms and conditions</a> and <a href="privacypolicy.html">privacy policy</a>.
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function openOverlay() {
-            document.getElementById('overlay').classList.add('show');
-        }
-
-        function closeOverlay() {
-            document.getElementById('overlay').classList.remove('show');
-        }
-
         // Google Sign-In logic
         function onSignIn(googleUser) {
             const profile = googleUser.getBasicProfile();
@@ -275,7 +240,7 @@
                             'Authorization': 'Bearer re_ZYURCph7_H8iBkPX4xzP7FG19AWF8Rfiw'
                         },
                         body: JSON.stringify({
-                            from: 'noreply@quranpro.com',
+                            from: 'yassinosman345@gmail.com',
                             to: email,
                             subject: 'Activate your Quran Pro account',
                             html: `<p>Click <a href="${activationLink}">here</a> to activate your account.</p>`
