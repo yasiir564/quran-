@@ -342,27 +342,27 @@ nav ul {
 .mobile-cards {
     display: flex;
     justify-content: space-around;
+    flex-wrap: wrap; /* Allow cards to wrap on smaller screens */
     margin-top: 10px;
 }
 
-
 .card {
-    background-size: cover;
-    background-position: center;
     padding: 15px;
     margin: 10px;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s, box-shadow 0.3s;
     text-align: center;
-    color: white; /* Ensures text is readable on background image */
+    color: white;
     position: relative;
-    width: 100px; /* Adjust width as needed */
-    height: 100px; /* Adjust height as needed */
+    width: 100px;
+    height: 100px;
     display: flex;
     align-items: flex-end;
     justify-content: center;
     overflow: hidden;
+    background-size: cover;
+    background-position: center;
 }
 
 .card::before {
@@ -390,7 +390,7 @@ nav ul {
 }
 
 .card p {
-    background-color: rgba(0, 0, 0, 0.5); /* Adds a semi-transparent background to text */
+    background-color: rgba(0, 0, 0, 0.5);
     padding: 5px;
     border-radius: 5px;
     margin: 0;
@@ -398,24 +398,26 @@ nav ul {
     z-index: 2;
 }
 
+/* Responsive Styles */
 @media (max-width: 768px) {
-    .mobile-cards {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
     .card {
-        flex: 1 1 calc(50% - 20px);
-        margin: 10px;
-        text-align: center;
-    }
-
-    .card .lord-icon {
-        font-size: 3em;
+        width: 80px;
+        height: 80px;
     }
 }
 
+@media (max-width: 480px) {
+    .mobile-cards {
+        flex-direction: column; /* Stack cards vertically on small screens */
+        align-items: center;
+    }
+
+    .card {
+        width: 90px;
+        height: 90px;
+        margin: 5px 0; /* Adjust margins for stacked layout */
+    }
+}
 .text-links {
     margin-top: 20px;
     text-align: center;
