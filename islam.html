@@ -11,9 +11,9 @@
         body {
             margin: 0;
             height: 100vh;
-            background: #1c92d2;
-            background: -webkit-linear-gradient(to right, #f2fcfe, #1c92d2);
-            background: linear-gradient(to right, #f2fcfe, #1c92d2);
+            background: #abbaab;
+            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
+            background: linear-gradient(to right, #ffffff, #abbaab);
             font-family: 'Amiri', serif;
         }
 
@@ -78,11 +78,9 @@
             border: 1px solid #ddd;
             padding: 10px;
             text-align: center;
-            border-radius: 50%;
+            border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s, background-color 0.3s;
-            font-size: 1.5em;
-            position: relative;
         }
 
         .day:hover, .event:hover, .goal:hover {
@@ -105,7 +103,7 @@
 
         .header {
             grid-column: span 7;
-            background-color: #1c92d2;
+            background-color: #4CAF50;
             color: white;
             text-align: center;
             padding: 10px;
@@ -130,7 +128,7 @@
         }
 
         .goal-form button {
-            background-color: #1c92d2;
+            background-color: #4CAF50;
             color: white;
             border: none;
             cursor: pointer;
@@ -138,7 +136,7 @@
         }
 
         .goal-form button:hover {
-            background-color: #145a8a;
+            background-color: #45a049;
         }
 
         .goals-list {
@@ -209,35 +207,20 @@
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
-            background-color: #1c92d2;
+            background-color: #4CAF50;
             color: white;
             cursor: pointer;
             transition: background-color 0.3s;
         }
 
         #calendar-controls button:hover {
-            background-color: #145a8a;
+            background-color: #45a049;
         }
 
         #islamicDate {
             margin-top: 20px;
             font-size: 1.2em;
             font-weight: bold;
-        }
-
-        #showMore {
-            margin-top: 20px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #1c92d2;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        #showMore:hover {
-            background-color: #145a8a;
         }
     </style>
 </head>
@@ -248,7 +231,6 @@
             <i id="dark-mode-toggle" class="fas fa-moon dark-mode-toggle"></i>
             <span class="close-button" onclick="window.location.href='index.html'">×</span>
         </header>
-        <div id="islamicDate"></div>
         <div id="calendar-controls">
             <button id="prevMonth">Previous</button>
             <button id="nextMonth">Next</button>
@@ -256,7 +238,7 @@
         <div id="calendar">
             <!-- Calendar will be generated here -->
         </div>
-        <button id="showMore" style="display:none;">Show More</button>
+        <div id="islamicDate"></div>
         <div class="goal-setting">
             <h2>Set Your Goals</h2>
             <form class="goal-form" id="goalForm">
@@ -280,59 +262,50 @@
         const importantDates = {
             "Muharram": { 1: "Islamic New Year", 10: "Day of Ashura" },
             "Safar": { 20: "Arba'een", 27: "Death of Prophet Muhammad's Uncle Abu Talib" },
-            "Rabi' al-Awwal": { 12: "Mawlid al-Nabi" },
+            "Rabi' al-Awwal": { 12: "Mawlid al-Nabi (Birth of the Prophet Muhammad)" },
+            "Rabi' al-Thani": { 8: "Death of Imam Hasan al-Askari" },
+            "Jumada al-Awwal": { 13: "Birth of Fatimah Zahra", 27: "Miraj (Ascension of the Prophet Muhammad)" },
+            "Jumada al-Thani": { 3: "Martyrdom of Fatimah Zahra" },
+            "Rajab": { 1: "Laylat al-Raghaib", 27: "Isra and Miraj" },
+            "Sha'ban": { 15: "Mid-Sha'ban (Night of Forgiveness)" },
             "Ramadan": { 17: "Battle of Badr", 27: "Laylat al-Qadr" },
             "Shawwal": { 1: "Eid al-Fitr" },
+            "Dhu al-Qi'dah": { 25: "Death of Imam Jafar al-Sadiq" },
             "Dhu al-Hijjah": { 9: "Day of Arafah", 10: "Eid al-Adha", 18: "Eid al-Ghadeer" }
         };
 
-        function hijriDate(gregorianDate) {
-            // Use the Umm al-Qura calendar for better accuracy
-            const date = new Date(gregorianDate);
-            const iYear = date.getFullYear() - 622;
-            const iMonth = date.getMonth() + 1; // Simplified for demonstration
-            const iDay = date.getDate();
-            return { day: iDay, month: iMonth - 1, year: iYear };
-        }
+        const daysInMonth = 30; // Simplified for demonstration
 
         function generateCalendar(month) {
             const calendar = document.getElementById('calendar');
-            calendar.innerHTML = <div class="header">${months[month]}</div>;
-            const daysInMonth = 30; // Simplified for demonstration
-            const today = new Date();
-            const hijri = hijriDate(today);
-            let showMore = false;
-
+            calendar.innerHTML = `<div class="header">${months[month]}</div>`;
             for (let day = 1; day <= daysInMonth; day++) {
                 const dayElement = document.createElement('div');
                 dayElement.className = 'day';
                 if (importantDates[months[month]] && importantDates[months[month]][day]) {
                     dayElement.classList.add('important-date');
-                    dayElement.innerHTML = ${day}<br>${importantDates[months[month]][day]};
+                    dayElement.innerHTML = `${day}<br>${importantDates[months[month]][day]}`;
                 } else {
                     dayElement.textContent = day;
                 }
-                if (day > 5) {
-                    dayElement.style.display = 'none';
-                    showMore = true;
-                }
                 calendar.appendChild(dayElement);
             }
+        }
 
-            if (showMore) {
-                document.getElementById('showMore').style.display = 'block';
-            } else {
-                document.getElementById('showMore').style.display = 'none';
-            }
+        function updateIslamicDate() {
+            const date = new Date();
+            const islamicMonth = months[currentMonth];
+            const islamicYear = date.getFullYear() + 622; // Simplified conversion to Hijri year
+            const islamicDateElement = document.getElementById('islamicDate');
+            islamicDateElement.textContent = `${islamicMonth} ${date.getDate()}, ${islamicYear}`;
         }
 
         function updateIslamicDateTime() {
             const date = new Date();
-            const hijri = hijriDate(date);
-            const islamicMonth = months[hijri.month];
-            const islamicYear = hijri.year;
+            const islamicMonth = months[currentMonth];
+            const islamicYear = date.getFullYear() + 622; // Simplified conversion to Hijri year
             const islamicDateElement = document.getElementById('islamicDate');
-            islamicDateElement.textContent = ${islamicMonth} ${hijri.day}, ${islamicYear} - ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()};
+            islamicDateElement.textContent = `${islamicMonth} ${date.getDate()}, ${islamicYear} - ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
         }
 
         setInterval(updateIslamicDateTime, 1000);
@@ -375,24 +348,18 @@
         document.getElementById('prevMonth').addEventListener('click', () => {
             currentMonth = (currentMonth - 1 + months.length) % months.length;
             generateCalendar(currentMonth);
+            updateIslamicDate();
         });
 
         document.getElementById('nextMonth').addEventListener('click', () => {
             currentMonth = (currentMonth + 1) % months.length;
             generateCalendar(currentMonth);
-        });
-
-        document.getElementById('showMore').addEventListener('click', () => {
-            const days = document.querySelectorAll('.day');
-            days.forEach(day => {
-                day.style.display = 'block';
-            });
-            document.getElementById('showMore').style.display = 'none';
+            updateIslamicDate();
         });
 
         // Initialize the calendar and date
         generateCalendar(currentMonth);
-        updateIslamicDateTime();
+        updateIslamicDate();
     </script>
 </body>
 </html>
