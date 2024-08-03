@@ -14,11 +14,21 @@
             verifyTokenFromURL();
         }
 
-        // Copy the verifyTokenFromURL function here
+        // Function to verify token from URL
         function verifyTokenFromURL() {
             const urlParams = new URLSearchParams(window.location.search);
             const token = urlParams.get('token');
             const storedToken = localStorage.getItem('activationToken');
+
+            if (!token) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Activation',
+                    text: 'No activation token provided.',
+                    confirmButtonColor: '#d33'
+                });
+                return;
+            }
 
             if (token === storedToken) {
                 Swal.fire({
@@ -26,9 +36,11 @@
                     title: 'Account Activated!',
                     text: 'Your account has been successfully activated.',
                     confirmButtonColor: '#17a589'
+                }).then(() => {
+                    localStorage.removeItem('activationToken'); // Optionally remove the token
+                    // Redirect to the main page or perform further actions after activation
+                    window.location.href = 'index.html';
                 });
-                localStorage.removeItem('activationToken'); // Optionally remove the token
-                // Redirect or perform further actions after activation
             } else {
                 Swal.fire({
                     icon: 'error',
