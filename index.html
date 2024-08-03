@@ -49,6 +49,7 @@ header {
     display: flex;
     gap: 15px;
     z-index: 1; /* High z-index to ensure it's on top */
+    margin-bottom: 10px; /* Added space below header icons */
 }
 
 .header-icons a {
@@ -281,6 +282,7 @@ body.dark-mode h1 {
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
+    margin-bottom: 10px; /* Added space below sidebar */
 }
 
 .sidebar a {
@@ -354,111 +356,197 @@ nav ul {
     text-align: center;
     color: white;
     position: relative;
-    width: calc(25% - 40px); /* Adjusted width to fit in a row with margins */
+    width: 100px; /* Default size
+    margin-bottom: 10px; /* Added space between mobile cards */
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.card a {
-    text-decoration: none;
-    color: white;
-}
-
-.card a:hover {
-    text-decoration: underline;
-}
-
-.card img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 50%; /* Makes the image round */
-    margin-bottom: 10px;
-}
-
-/* Adjusted colors */
-.card:nth-child(1) {
-    background: linear-gradient(135deg, #f093fb, #f5576c);
-}
-
-.card:nth-child(2) {
-    background: linear-gradient(135deg, #4facfe, #00f2fe);
-}
-
-.card:nth-child(3) {
-    background: linear-gradient(135deg, #43e97b, #38f9d7);
-}
-
-.card:nth-child(4) {
-    background: linear-gradient(135deg, #fa709a, #fee140);
-}
-
-.card:nth-child(5) {
-    background: linear-gradient(135deg, #f093fb, #f5576c);
-}
-
-.card:nth-child(6) {
-    background: linear-gradient(135deg, #4facfe, #00f2fe);
-}
-
-.card:nth-child(7) {
-    background: linear-gradient(135deg, #43e97b, #38f9d7);
-}
-
-.card:nth-child(8) {
-    background: linear-gradient(135deg, #fa709a, #fee140);
-}
-
-/* Responsive adjustments */
-@media (max-width: 992px) {
-    .card {
-        width: calc(50% - 40px); /* Two cards per row */
-    }
-}
-
-@media (max-width: 768px) {
-    .card {
-        width: calc(50% - 20px); /* Two cards per row */
-    }
-}
-
-@media (max-width: 480px) {
-    .card {
-        width: calc(100% - 20px); /* One card per row */
-    }
-}
-
-.card::after {
-    content: '';
+.card:before {
+    content: "";
     position: absolute;
-    bottom: -20px;
+    bottom: -10px;
     left: 50%;
     transform: translateX(-50%);
     width: 0;
     height: 0;
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
-    border-top: 10px solid rgba(0, 0, 0, 0.1); /* Adjust the color and transparency as needed */
+    border-top: 10px solid #2575fc; /* Match the card's background color */
 }
 
-.announcement {
-    background-color: #2575fc;
+.card p {
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .mobile-cards {
+        flex-wrap: wrap;
+    }
+
+    .card {
+        flex: 1 1 45%;
+    }
+}
+
+@media (max-width: 480px) {
+    .card {
+        flex: 1 1 100%;
+    }
+}
+
+.announcement-bar {
+    background: linear-gradient(to right, #2575fc, #6a11cb);
     color: #fff;
-    padding: 10px;
+    padding: 10px 20px;
     text-align: center;
+    font-size: 1em;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px; /* Added space below the announcement bar */
+}
+
+.announcement-bar:before {
+    content: "";
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, #2575fc, #6a11cb, #2575fc, #6a11cb);
+    top: -50%;
+    left: -50%;
+    animation: rotateAnnouncementBg 10s linear infinite;
+    z-index: 0;
+}
+
+@keyframes rotateAnnouncementBg {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.announcement-bar p {
     position: relative;
     z-index: 1;
-    margin-top: 20px; /* Adjust margin to add spacing */
+    margin: 0;
+}
+
+.announcement-bar span {
+    font-weight: bold;
+    animation: blink 2s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Audio Player */
+audio {
+    width: 100%;
+    margin: 10px 0;
+}
+
+.audio-container {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #2575fc;
+    padding: 10px;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+}
+
+.audio-container button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5em;
+    cursor: pointer;
+    margin: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 audio {
-    width: 100%;
-    margin-top: 10px;
+    width: calc(100% - 140px); /* Adjust width to fit the control buttons */
+}
+
+/* Control buttons */
+.audio-container .control-buttons {
+    display: flex;
+    align-items: center;
+}
+
+.audio-container .control-buttons button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5em;
+    cursor: pointer;
+    margin: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Announcement Bar */
+.announcement-bar {
+    background: linear-gradient(to right, #2575fc, #6a11cb);
+    color: #fff;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 1em;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.announcement-bar:before {
+    content: "";
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, #2575fc, #6a11cb, #2575fc, #6a11cb);
+    top: -50%;
+    left: -50%;
+    animation: rotateAnnouncementBg 10s linear infinite;
+    z-index: 0;
+}
+
+.announcement-bar p {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+}
+
+.announcement-bar span {
+    font-weight: bold;
+    animation: blink 2s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+@keyframes rotateAnnouncementBg {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Miscellaneous */
+.spacer {
+    height: 20px; /* Adjust height as needed */
 }
 
 </style>
+
 
 </head>
 <body>
