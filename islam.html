@@ -150,6 +150,19 @@
             padding: 10px;
             margin-top: 10px;
             border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .goal-text {
+            flex: 1;
+        }
+
+        .delete-goal {
+            cursor: pointer;
+            color: #ff0000;
+            margin-left: 10px;
         }
 
         .close-button {
@@ -203,6 +216,12 @@
         #calendar-controls button:hover {
             background-color: #45a049;
         }
+
+        #islamicDate {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -216,9 +235,10 @@
             <button id="prevMonth">Previous</button>
             <button id="nextMonth">Next</button>
         </div>
-        <div class="calendar" id="calendar">
+        <div id="calendar">
             <!-- Calendar will be generated here -->
         </div>
+        <div id="islamicDate"></div>
         <div class="goal-setting">
             <h2>Set Your Goals</h2>
             <form class="goal-form" id="goalForm">
@@ -272,6 +292,24 @@
             }
         }
 
+        function updateIslamicDate() {
+            const date = new Date();
+            const islamicMonth = months[currentMonth];
+            const islamicYear = date.getFullYear() + 622; // Simplified conversion to Hijri year
+            const islamicDateElement = document.getElementById('islamicDate');
+            islamicDateElement.textContent = `${islamicMonth} ${date.getDate()}, ${islamicYear}`;
+        }
+
+        function updateIslamicDateTime() {
+            const date = new Date();
+            const islamicMonth = months[currentMonth];
+            const islamicYear = date.getFullYear() + 622; // Simplified conversion to Hijri year
+            const islamicDateElement = document.getElementById('islamicDate');
+            islamicDateElement.textContent = `${islamicMonth} ${date.getDate()}, ${islamicYear} - ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+        }
+
+        setInterval(updateIslamicDateTime, 1000);
+
         document.getElementById('goalForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const goalInput = document.getElementById('goalInput');
@@ -279,7 +317,17 @@
             if (goal) {
                 const goalsList = document.getElementById('goalsList');
                 const li = document.createElement('li');
-                li.textContent = goal;
+                const goalText = document.createElement('span');
+                goalText.className = 'goal-text';
+                goalText.textContent = goal;
+                const deleteButton = document.createElement('span');
+                deleteButton.className = 'delete-goal';
+                deleteButton.innerHTML = '&times;';
+                deleteButton.addEventListener('click', () => {
+                    goalsList.removeChild(li);
+                });
+                li.appendChild(goalText);
+                li.appendChild(deleteButton);
                 goalsList.appendChild(li);
                 goalInput.value = '';
             }
@@ -300,15 +348,18 @@
         document.getElementById('prevMonth').addEventListener('click', () => {
             currentMonth = (currentMonth - 1 + months.length) % months.length;
             generateCalendar(currentMonth);
+            updateIslamicDate();
         });
 
         document.getElementById('nextMonth').addEventListener('click', () => {
             currentMonth = (currentMonth + 1) % months.length;
             generateCalendar(currentMonth);
+            updateIslamicDate();
         });
 
-        // Initialize the calendar
+        // Initialize the calendar and date
         generateCalendar(currentMonth);
+        updateIslamicDate();
     </script>
 </body>
 </html>
