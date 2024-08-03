@@ -544,11 +544,40 @@ footer .text-center {
     text-align: center;
     margin-top: 20px;
 }
+        /* Announcement Bar */
+.announcement-bar {
+    background: linear-gradient(90deg, #2575fc, #6a11cb);
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 1.2em;
+    animation: slideDown 0.5s ease-out;
+}
+
+@media (max-width: 768px) {
+    .announcement-bar {
+        font-size: 1em;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
 
 </style>
 </head>
 <body>
     <header>
+        <div class="announcement-bar">
+        <p>Special Announcement: New Quran reciters added!</p>
+    </div>
      <div class="header-icons">
     <!-- Login Icon -->
     <a href="login.html" title="Login">
