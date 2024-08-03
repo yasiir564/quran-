@@ -342,8 +342,8 @@ nav ul {
 .mobile-cards {
     display: flex;
     justify-content: space-around;
-    flex-wrap: wrap; /* Allow cards to wrap on smaller screens */
     margin-top: 10px;
+    flex-wrap: wrap; /* Default wrapping for larger screens */
 }
 
 .card {
@@ -400,22 +400,32 @@ nav ul {
 
 /* Responsive Styles */
 @media (max-width: 768px) {
+    .mobile-cards {
+        flex-wrap: nowrap; /* No wrapping for horizontal scroll */
+        overflow-x: scroll; /* Enable horizontal scroll */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    }
+
     .card {
-        width: 80px;
-        height: 80px;
+        flex: 0 0 auto; /* Cards do not shrink or grow, keeping their size */
+        margin: 10px 5px; /* Adjust margins for horizontal alignment */
+    }
+
+    /* Optional: Hide scrollbar for a cleaner look */
+    .mobile-cards::-webkit-scrollbar {
+        display: none; /* For WebKit browsers */
+    }
+
+    .mobile-cards {
+        -ms-overflow-style: none;  /* For Internet Explorer and Edge */
+        scrollbar-width: none;  /* For Firefox */
     }
 }
 
 @media (max-width: 480px) {
-    .mobile-cards {
-        flex-direction: column; /* Stack cards vertically on small screens */
-        align-items: center;
-    }
-
     .card {
         width: 90px;
         height: 90px;
-        margin: 5px 0; /* Adjust margins for stacked layout */
     }
 }
 .text-links {
