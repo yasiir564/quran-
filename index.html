@@ -347,7 +347,7 @@ nav ul {
 }
 
 .card {
-    padding: 15px;
+    padding: 20px;
     margin: 10px;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -355,8 +355,8 @@ nav ul {
     text-align: center;
     color: white;
     position: relative;
-    width: 100px;
-    height: 100px;
+    width: 150px; /* Increase the size of the cards */
+    height: 150px; /* Increase the size of the cards */
     display: flex;
     align-items: flex-end;
     justify-content: center;
@@ -404,11 +404,15 @@ nav ul {
         flex-wrap: nowrap; /* No wrapping for horizontal scroll */
         overflow-x: scroll; /* Enable horizontal scroll */
         -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        margin-top: 80px; /* Add space between cards and header */
+        padding-left: 10px; /* Add some padding to the left for better alignment */
     }
 
     .card {
         flex: 0 0 auto; /* Cards do not shrink or grow, keeping their size */
         margin: 10px 5px; /* Adjust margins for horizontal alignment */
+        width: 180px; /* Make the cards larger */
+        height: 180px; /* Make the cards larger */
     }
 
     /* Optional: Hide scrollbar for a cleaner look */
@@ -424,8 +428,8 @@ nav ul {
 
 @media (max-width: 480px) {
     .card {
-        width: 90px;
-        height: 90px;
+        width: 160px;
+        height: 160px;
     }
 }
 .text-links {
