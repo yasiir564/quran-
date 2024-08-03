@@ -344,6 +344,7 @@ nav ul {
     justify-content: space-around;
     margin-top: 10px;
     flex-wrap: wrap; /* Default wrapping for larger screens */
+    position: relative; /* Needed for the arrow indicator */
 }
 
 .card {
@@ -355,8 +356,8 @@ nav ul {
     text-align: center;
     color: white;
     position: relative;
-    width: 150px; /* Increase the size of the cards */
-    height: 150px; /* Increase the size of the cards */
+    width: 100px; /* Default size for desktop */
+    height: 100px; /* Default size for desktop */
     display: flex;
     align-items: flex-end;
     justify-content: center;
@@ -411,8 +412,8 @@ nav ul {
     .card {
         flex: 0 0 auto; /* Cards do not shrink or grow, keeping their size */
         margin: 10px 5px; /* Adjust margins for horizontal alignment */
-        width: 180px; /* Make the cards larger */
-        height: 180px; /* Make the cards larger */
+        width: 180px; /* Larger card size for mobile */
+        height: 180px; /* Larger card size for mobile */
     }
 
     /* Optional: Hide scrollbar for a cleaner look */
@@ -424,6 +425,30 @@ nav ul {
         -ms-overflow-style: none;  /* For Internet Explorer and Edge */
         scrollbar-width: none;  /* For Firefox */
     }
+
+    /* Scroll Indicator Arrow */
+    .scroll-arrow {
+        display: block;
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 2em;
+        color: #2575fc;
+        z-index: 10;
+        animation: bounce 1.5s infinite;
+        cursor: pointer;
+    }
+
+    /* Scroll Arrow Animation */
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(-50%) translateX(0);
+        }
+        50% {
+            transform: translateY(-50%) translateX(5px);
+        }
+    }
 }
 
 @media (max-width: 480px) {
@@ -431,6 +456,11 @@ nav ul {
         width: 160px;
         height: 160px;
     }
+}
+
+/* Add the arrow icon using a pseudo-element */
+.scroll-arrow::before {
+    content: '➔'; /* Use a right arrow character */
 }
 .text-links {
     margin-top: 20px;
