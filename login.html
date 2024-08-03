@@ -187,6 +187,42 @@
             });
         }
 
+        // Error handling for Google Sign-In
+        function onFailure(error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Google Sign-In failed',
+                text: error.details,
+                confirmButtonColor: '#d33'
+            });
+        }
+
+        // Render the Google Sign-In button
+        function renderButton() {
+            gapi.signin2.render('g-signin2', {
+                'scope': 'profile email',
+                'width': 240,
+                'height': 50,
+                'longtitle': true,
+                'theme': 'dark',
+                'onsuccess': onSignIn,
+                'onfailure': onFailure
+            });
+        }
+
+        // Load the Google API client
+        function loadGoogleAPI() {
+            gapi.load('auth2', function() {
+                gapi.auth2.init();
+                renderButton();
+            });
+        }
+
+        // Initialize the Google API client when the page loads
+        window.onload = function() {
+            loadGoogleAPI();
+        }
+
         // Apple Sign-In logic
         function signInWithApple() {
             AppleID.auth.signIn().then(response => {
@@ -240,7 +276,7 @@
                             'Authorization': 'Bearer re_ZYURCph7_H8iBkPX4xzP7FG19AWF8Rfiw'
                         },
                         body: JSON.stringify({
-                            from: 'yassinosman345@gmail.com',
+                            from: 'noreply@quranpro.com',
                             to: email,
                             subject: 'Activate your Quran Pro account',
                             html: `<p>Click <a href="${activationLink}">here</a> to activate your account.</p>`
@@ -285,4 +321,3 @@
 </body>
 
 </html>
-
