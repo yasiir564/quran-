@@ -214,11 +214,63 @@
                 width: 100%;
             }
         }
+        /* Announcement Bar */
+.announcement-bar {
+    background: linear-gradient(to right, #2575fc, #6a11cb);
+    color: #fff;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 1em;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.announcement-bar:before {
+    content: "";
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, #2575fc, #6a11cb, #2575fc, #6a11cb);
+    top: -50%;
+    left: -50%;
+    animation: rotateAnnouncementBg 10s linear infinite;
+    z-index: 0;
+}
+
+.announcement-bar p {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+}
+
+.announcement-bar span {
+    font-weight: bold;
+    animation: blink 2s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+@keyframes rotateAnnouncementBg {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Miscellaneous */
+.spacer {
+    height: 20px; /* Adjust height as needed */
+}
     </style>
 </head>
 <body>
     <div class="container">
         <header>
+            <div class="announcement-bar">
+            <p>Welcome to Quran Pro created by Yassin!</p>
+        </div>
             <h1>Surah</h1>
             <div class="search-container">
                 <input type="text" id="search-input" placeholder="Search for an Ayah...">
