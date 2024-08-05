@@ -903,20 +903,25 @@ footer .text-center {
             }
         });
 
-        const surahs = await db.getAll('surahs');
-        if (surahs.length) {
-            return surahs;
-        } else {
-            const response = await fetch('https://api.alquran.cloud/v1/surah');
-            const data = await response.json();
-            const tx = db.transaction('surahs', 'readwrite');
-            for (const surah of data.data) {
-                tx.store.put(surah);
-            }
-            await tx.done;
-            return data.data;
-        }
+const surahs = await db.getAll('surahs');
+if (surahs.length) {
+    return surahs.map((surah, index) => ({
+        ...surah,
+        number: index + 1,
+    }));
+} else {
+    const response = await fetch('https://api.alquran.cloud/v1/surah');
+    const data = await response.json();
+    const tx = db.transaction('surahs', 'readwrite');
+    for (const surah of data.data) {
+        tx.store.put(surah);
     }
+    await tx.done;
+    return data.data.map((surah, index) => ({
+        ...surah,
+        number: index + 1,
+    }));
+}
 
     const surahList = document.getElementById('surah-list');
     const loader = document.getElementById('loader');
