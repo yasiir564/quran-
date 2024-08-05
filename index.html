@@ -156,6 +156,24 @@ header {
 .surah span:hover {
   transform: rotate(360deg);
 }
+    /* Responsive Design */
+@media (max-width: 1200px) {
+  .surah-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .surah-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .surah-list {
+    grid-template-columns: 1fr;
+  }
+}
 @media (max-width: 768px) {
     .surah {
         flex: 1 1 calc(50% - 20px);
