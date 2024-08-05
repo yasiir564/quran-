@@ -147,6 +147,7 @@ header {
   top: 10px;
   right: 10px;
   background-color: #000;
+  color: #fff;
   border-radius: 10px;
   padding: 5px;
   clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
@@ -952,7 +953,7 @@ footer .text-center {
         surahs.forEach(surah => {
             const surahDiv = document.createElement('div');
             surahDiv.classList.add('surah');
-            surahDiv.innerText = `${surah.number}. ${surah.englishName}`;
+            surahDiv.innerHTML = `<span>${surah.number}</span> ${surah.englishName}`;
             surahDiv.addEventListener('click', () => {
                 window.location.href = `surah.html?surah=${surah.number}`;
             });
@@ -999,7 +1000,6 @@ footer .text-center {
     const calendarDiv = document.getElementById('calendar');
     calendarDiv.innerHTML = `<p id="hijri-date">${hijriDate}</p><p id="hijri-date-arabic">${hijriDateArabic}</p>`;
 
-    // Hide header on scroll down, show on scroll up or stop
     let lastScrollTop = 0;
     const header = document.querySelector('header');
     let scrollTimeout;
@@ -1010,36 +1010,27 @@ footer .text-center {
         const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
         if (currentScrollTop > lastScrollTop) {
-            // Scroll down
             header.classList.remove('header-visible');
             header.classList.add('header-hidden');
         } else {
-            // Scroll up
             header.classList.remove('header-hidden');
             header.classList.add('header-visible');
         }
 
-        lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop; // For mobile or negative scrolling
+        lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
 
-        // Show header after user stops scrolling
         scrollTimeout = setTimeout(() => {
             header.classList.remove('header-hidden');
             header.classList.add('header-visible');
         }, 200);
     });
 
-    // *** Add these to handle login state and reload page ***
-    
     function loginUser() {
-        // Example login logic (replace with actual validation logic)
         const username = document.getElementById('username-input').value;
         const password = document.getElementById('password-input').value;
 
         if (username === 'admin' && password === 'password123') {
-            // Set a flag indicating the user is logged in
             localStorage.setItem('loggedInUser', JSON.stringify({username: username, email: 'admin@example.com'}));
-            
-            // Reload the page after login
             location.reload();
         } else {
             alert('Invalid login credentials');
@@ -1050,6 +1041,7 @@ footer .text-center {
         loginUser();
     });
 });
+
 </script>
 </body>
 </html>
