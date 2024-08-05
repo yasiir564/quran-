@@ -145,7 +145,7 @@ header {
   font-size: 0.8em;
   position: absolute;
   top: 10px;
-  right: 10px;
+  left: 10px;
   background-color: #000;
   border-radius: 10px;
   padding: 5px;
@@ -970,7 +970,7 @@ footer .text-center {
         surahs.forEach(surah => {
             const surahDiv = document.createElement('div');
             surahDiv.classList.add('surah');
-            surahDiv.innerHTML = `<span>${surah.number}</span> ${surah.englishName}${surah.name_arabic}`;
+            surahDiv.innerHTML = `<span>${surah.number}</span> ${surah.englishName};
             surahDiv.addEventListener('click', () => {
                 window.location.href = `surah.html?surah=${surah.number}`;
             });
