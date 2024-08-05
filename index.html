@@ -970,7 +970,7 @@ footer .text-center {
         surahs.forEach(surah => {
             const surahDiv = document.createElement('div');
             surahDiv.classList.add('surah');
-            surahDiv.innerHTML = `<span>${surah.number}</span> ${surah.englishName};
+            surahDiv.innerHTML = `<span>${surah.number}</span> ${surah.englishName}`;
             surahDiv.addEventListener('click', () => {
                 window.location.href = `surah.html?surah=${surah.number}`;
             });
