@@ -138,6 +138,21 @@ header {
     transform: scale(1.05);
     background-color: #f0f0f0;
 }
+    .surah span {
+  font-size: 0.8em;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #000;
+  border-radius: 10px;
+  padding: 5px;
+  clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+  transition: transform 0.3s;
+}
+
+.surah span:hover {
+  transform: rotate(360deg);
+}
 
 @media (max-width: 768px) {
     .surah {
