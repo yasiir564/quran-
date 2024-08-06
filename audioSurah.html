@@ -263,6 +263,7 @@
             <div class="audio-player" id="audio-player">
                 <img id="reciter-image" src="" alt="Reciter">
                 <audio id="audio-element" controls></audio>
+                 <button id="close-overlay">X</button>
                 <div class="audio-controls">
                     <button id="rewindButton"><i class="fas fa-backward"></i></button>
                     <button id="playPauseButton"><i class="fas fa-play"></i></button>
@@ -405,6 +406,7 @@ document.addEventListener('DOMContentLoaded', function () {
             currentAudio.addEventListener('canplaythrough', () => {
                 currentAudio.play();
                 playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
+                audioOverlay.classList.remove('active');
             });
 
             currentAudio.addEventListener('timeupdate', updateProgress);
@@ -453,7 +455,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         sheikhList.appendChild(sheikhItem);
     });
-   function toggleDarkMode() {
+
+    function toggleDarkMode() {
         document.body.classList.toggle('dark-mode');
         darkModeToggle.classList.toggle('fa-sun');
         darkModeToggle.classList.toggle('fa-moon');
@@ -485,6 +488,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         currentIndex = (currentIndex + 1) % sheikhs.length;
                     }, 100);
 
+                    audioOverlay.classList.add('active'); // Show the overlay
                     setTimeout(() => {
                         clearInterval(spinInterval);
                         const selectedSheikh = sheikhs[Math.floor(Math.random() * sheikhs.length)];
@@ -501,6 +505,13 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
     }, 5000);
+
+    // Redirect to audio.html when 'x' is clicked on the overlay
+    audioOverlay.addEventListener('click', (event) => {
+        if (event.target.id === 'close-overlay') {
+            window.location.href = 'audio.html';
+        }
+    });
 
     if ('wakeLock' in navigator) {
         let wakeLock = null;
@@ -522,6 +533,7 @@ document.addEventListener('DOMContentLoaded', function () {
         requestWakeLock();
     }
 });
+
 </script>
 </body>
 </html>
