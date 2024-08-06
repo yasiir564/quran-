@@ -192,6 +192,21 @@ header {
         flex: 1 1 100%;
     }
 }
+    #show-more-button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#show-more-button:hover {
+    background-color: #0056b3;
+}
 
 .loader {
     border: 16px solid #f3f3f3;
@@ -843,7 +858,7 @@ footer .text-center {
 
     <script src="https://unpkg.com/idb@6.1.0/build/iife/index-min.js"></script>
 <script>
- document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', async function() {
     const user = JSON.parse(localStorage.getItem('loggedInUser'));
 
     function resetPage() {
@@ -974,7 +989,9 @@ footer .text-center {
         const surahs = await getSurahData();
         loader.style.display = 'none';
         const fragment = document.createDocumentFragment();
-        surahs.forEach(surah => {
+        
+        // Display the first 15 surahs
+        surahs.slice(0, 15).forEach(surah => {
             const surahDiv = document.createElement('div');
             surahDiv.classList.add('surah');
             surahDiv.innerHTML = `<span>${surah.number}</span> ${surah.englishName} <div class="arabic-name">${surah.name}</div>`;
@@ -983,6 +1000,27 @@ footer .text-center {
             });
             fragment.appendChild(surahDiv);
         });
+
+        // Add the "Show More" button
+        const showMoreButton = document.createElement('button');
+        showMoreButton.id = 'show-more-button';
+        showMoreButton.textContent = 'Show More';
+        fragment.appendChild(showMoreButton);
+
+        // Event listener for "Show More" button
+        showMoreButton.addEventListener('click', () => {
+            surahs.slice(15).forEach(surah => {
+                const surahDiv = document.createElement('div');
+                surahDiv.classList.add('surah');
+                surahDiv.innerHTML = `<span>${surah.number}</span> ${surah.englishName} <div class="arabic-name">${surah.name}</div>`;
+                surahDiv.addEventListener('click', () => {
+                    window.location.href = `surah.html?surah=${surah.number}`;
+                });
+                fragment.appendChild(surahDiv);
+            });
+            showMoreButton.style.display = 'none'; // Hide the button after showing all Surahs
+        });
+
         surahList.appendChild(fragment);
     } catch (error) {
         loader.style.display = 'none';
