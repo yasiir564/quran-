@@ -1,4 +1,94 @@
-<div class="container">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Footer</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Amiri', serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Footer Styles */
+footer {
+    background-color: #2575fc;
+    color: #fff;
+    padding: 20px 0;
+}
+
+footer .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+footer h3 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+footer p, footer ul {
+    margin: 0;
+    padding: 0;
+}
+
+footer ul {
+    list-style: none;
+    padding: 0;
+}
+
+footer ul li {
+    margin-bottom: 10px;
+}
+
+footer ul li a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+footer ul li a:hover {
+    color: #f0f0f0;
+    text-decoration: underline;
+}
+
+footer .donate-btn {
+    display: inline-block;
+    background-color: #ff5722;
+    color: #fff;
+    padding: 15px 30px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+footer .donate-btn:hover {
+    background-color: #e64a19;
+}
+
+footer .text-center {
+    text-align: center;
+    margin-top: 20px;
+}
+        /* Responsive Styles */
+        @media screen and (max-width: 768px) {
+            .footer .footer-links a {
+                display: block;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Footer HTML Structure -->
+   <div class="container">
     <div>
         <h3>About Quran Pro</h3>
         <p>Quran Pro is a comprehensive app to help you read, listen, and understand the Quran.</p>
@@ -22,3 +112,5 @@
 <div class="text-center">
     <p>&copy; 2024 Quran Pro. All rights reserved.</p>
 </div>
+</body>
+</html>
