@@ -20,50 +20,96 @@
             padding: 10px 0;
         }
 
-        .header-icons {
-            display: flex;
-            justify-content: flex-end;
-            padding: 10px;
-        }
+      header {
+    transition: top 0.3s;
+    position: fixed;
+    width: 100%;
+    z-index: 100;
+}
 
-        .header-icons a {
-            margin-left: 15px;
-        }
+.header-hidden {
+    top: -100px; /* Adjust this value based on your header height */
+}
+
+.header-visible {
+    top: 0;
+}
+
+/* Ensure header-icons are positioned correctly */
+.header-icons {
+    position: fixed; /* Fixed position to keep icons at the top right */
+    top: 46px;
+    right: 20px;
+    display: flex;
+    gap: 15px;
+    z-index: 1; /* High z-index to ensure it's on top */
+    margin-bottom: 10px; /* Added space below header icons */
+}
+
+.header-icons a {
+    color: #2575fc;
+    text-decoration: none;
+    font-size: 1em; /* Adjust size if needed */
+}
+
+.header-icons a lord-icon {
+    width: 40px;
+    height: 40px;
+}
 
         .openbtn {
-            font-size: 20px;
-            cursor: pointer;
-            background-color: #0057b7;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-        }
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #2575fc;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    position: fixed;
+    top: 50px;
+    left: 10px;
+    z-index: 1000; /* High z-index to ensure it's on top */
+}
 
-        .sidebar {
-            height: 100%;
-            width: 250px;
-            position: fixed;
-            top: 0;
-            left: -250px;
-            background-color: #111;
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-            z-index: 1000;
-        }
+.openbtn:hover {
+    background-color: #0056b3;
+}
 
-        .sidebar a {
-            padding: 10px 15px;
-            text-decoration: none;
-            font-size: 25px;
-            color: white;
-            display: block;
-            transition: 0.3s;
-        }
+       /* Sidebar Menu */
+.sidebar {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1;
+    top: 1;
+    left: -250px;
+    background: linear-gradient(to top, #a8edea, #fed6e3);
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    margin-bottom: 10px; /* Added space below sidebar */
+}
 
-        .sidebar a:hover {
-            color: #f1f1f1;
-        }
+.sidebar a {
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #111;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar a:hover {
+    color: #fff;
+    background-color: #2575fc;
+}
+
+.sidebar .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
 
         .closebtn {
             position: absolute;
@@ -99,6 +145,51 @@
                 text-align: center;
             }
         }
+        /* Announcement Bar */
+.announcement-bar {
+    background: linear-gradient(to right, #2575fc, #6a11cb);
+    color: #fff;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 1em;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.announcement-bar:before {
+    content: "";
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background:  linear-gradient(45deg, #ffafbd, #ffc3a0, #ffafbd, #ffc3a0);
+    top: -50%;
+    left: -50%;
+    animation: rotateAnnouncementBg 10s linear infinite;
+    z-index: 0;
+}
+
+.announcement-bar p {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+}
+
+.announcement-bar span {
+    font-weight: bold;
+    animation: blink 2s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+@keyframes rotateAnnouncementBg {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
     </style>
 </head>
 <body>
