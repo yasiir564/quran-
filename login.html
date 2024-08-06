@@ -166,6 +166,12 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init('Z7J4TDmdVO8jfmZmI');
+        })();
+    </script>
     <script>
         // Google Sign-In logic
         function onSignIn(googleUser) {
@@ -262,67 +268,76 @@
                 cancelButtonColor: '#d33',
                 preConfirm: (email) => {
                     const otp = generateOTP();
-                    localStorage.setItem('otp', otp);
-                    localStorage.setItem('userEmail', email);
-
-                    // Send OTP email via EmailJS
-                    return emailjs.send('service_2nbq6va', 'template_enghje1', {
-                        to_email: email,
-                        otp: otp
-                    }).then(() => {
-                        return true;
-                    }).catch(error => {
-                        Swal.showValidationMessage(`Request failed: ${error}`);
-                    });
+                    return sendOTPEmail(email, otp);
                 }
-            }).then((result) => {
+            }).then(result => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: 'Enter the OTP sent to your email',
+                        title: 'Enter the OTP',
                         input: 'text',
                         inputPlaceholder: 'OTP',
                         showCancelButton: true,
                         confirmButtonText: 'Verify OTP',
                         confirmButtonColor: '#17a589',
                         cancelButtonColor: '#d33',
-                        preConfirm: (inputOTP) => {
-                            const storedOTP = localStorage.getItem('otp');
-                            if (inputOTP === storedOTP) {
-                                const user = {
-                                    email: localStorage.getItem('userEmail')
-                                };
-                                localStorage.setItem('loggedInUser', JSON.stringify(user));
-                                return true;
+                        preConfirm: (otpInput) => {
+                            if (otpInput === localStorage.getItem('otp')) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Email Sign-In successful!',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                }).then(() => {
+                                    localStorage.removeItem('otp');
+                                    window.location.href = 'profile.html';
+                                });
                             } else {
-                                Swal.showValidationMessage('Invalid OTP. Please try again.');
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Invalid OTP',
+                                    text: 'Please enter the correct OTP',
+                                    confirmButtonColor: '#d33'
+                                });
                             }
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Email Sign-In successful!',
-                                showConfirmButton: false,
-                                timer: 1500
-                            }).then(() => {
-                                window.location.href = 'profile.html';
-                            });
                         }
                     });
                 }
             });
         }
 
-        // Function to generate a unique OTP
+        // Function to generate OTP
         function generateOTP() {
-            return Math.floor(100000 + Math.random() * 900000).toString();
+            const otp = Math.floor(100000 + Math.random() * 900000).toString();
+            localStorage.setItem('otp', otp);
+            return otp;
         }
-    </script>
-    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
-    <script type="text/javascript">
-        (function() {
-            emailjs.init('Z7J4TDmdVO8jfmZmI');
-        })();
+
+        // Function to send OTP via email using EmailJS
+        function sendOTPEmail(email, otp) {
+            const templateParams = {
+                user_email: email,
+                otp: otp
+            };
+
+            return emailjs.send('service_2af2c9r', 'template_enghje1', templateParams)
+                .then(() => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'OTP sent successfully!',
+                        text: 'Please check your email for the OTP.',
+                        confirmButtonColor: '#17a589'
+                    });
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Failed to send OTP',
+                        text: 'Please try again.',
+                        confirmButtonColor: '#d33'
+                    });
+                    console.error('Error sending OTP:', error);
+                });
+        }
     </script>
 </body>
 
