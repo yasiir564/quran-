@@ -17,6 +17,8 @@ body {
     margin: 0;
     padding: 0;
     position: relative;
+    .blur-effect * {
+    filter: blur(5px);
 }
 
 .container {
@@ -1101,6 +1103,15 @@ document.addEventListener('DOMContentLoaded', async function() {
             header.classList.add('header-visible');
             sidebar.classList.remove('blur-effect');
         }, 200);
+    });
+    window.addEventListener('scroll', function() {
+        document.body.classList.add('blur-effect');
+    });
+
+    window.addEventListener('scroll', function() {
+        if (window.scrollY === 0) {
+            document.body.classList.remove('blur-effect');
+        }
     });
 
     function loginUser() {
