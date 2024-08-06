@@ -11,23 +11,24 @@
     <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
 <style>
 body {
-    animation: gradientAnimation 10s infinite;
     font-family: 'Amiri', serif;
     margin: 0;
     padding: 0;
     position: relative;
 }
 
-/* Styles for blurred elements */
+/* Blur effect with a transition */
 .blur-effect {
-    filter: blur(5px);
-    transition: filter 0.3s ease;
+    filter: blur(2px); /* Light blur effect */
+    transition: filter 0.3s ease-in-out; /* Smooth transition */
 }
 
-/* Specific blur for sections in viewport */
-.section.blur {
-    filter: blur(5px);
-    transition: filter 0.3s ease;
+/* Optional: Style for sections */
+.section {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    /* Add more styles as needed */
 }
 
 .container {
@@ -1115,24 +1116,23 @@ document.addEventListener('DOMContentLoaded', async function() {
         }, 200);
     }
 
-    function checkScroll() {
+   function checkScroll() {
         const sections = document.querySelectorAll('.section');
         sections.forEach(section => {
             const rect = section.getBoundingClientRect();
-            if (rect.top < window.innerHeight && rect.bottom >= 0) {
-                section.classList.add('blur');
+            // Check if the element is below the viewport but not completely out of view
+            if (rect.top < window.innerHeight + 50 && rect.bottom >= 0) {
+                section.classList.add('blur-effect');
             } else {
-                section.classList.remove('blur');
+                section.classList.remove('blur-effect');
             }
         });
     }
 
-    window.addEventListener('scroll', () => {
-        applyScrollEffects();
-        checkScroll();
-    });
-
+    window.addEventListener('scroll', checkScroll);
     window.addEventListener('load', checkScroll);
+});
+
 
     function loginUser() {
         const username = document.getElementById('username-input').value;
