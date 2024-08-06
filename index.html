@@ -985,13 +985,19 @@ document.addEventListener('DOMContentLoaded', async function() {
     const loader = document.getElementById('loader');
     loader.style.display = 'block';
 
+    let surahs = [];
     try {
-        const surahs = await getSurahData();
+        surahs = await getSurahData();
         loader.style.display = 'none';
+        showSurahs(0, 15);
+    } catch (error) {
+        loader.style.display = 'none';
+        console.error('Error fetching Surahs:', error);
+    }
+
+    function showSurahs(start, end) {
         const fragment = document.createDocumentFragment();
-        
-        // Display the first 15 surahs
-        surahs.slice(0, 15).forEach(surah => {
+        surahs.slice(start, end).forEach(surah => {
             const surahDiv = document.createElement('div');
             surahDiv.classList.add('surah');
             surahDiv.innerHTML = `<span>${surah.number}</span> ${surah.englishName} <div class="arabic-name">${surah.name}</div>`;
@@ -1000,31 +1006,30 @@ document.addEventListener('DOMContentLoaded', async function() {
             });
             fragment.appendChild(surahDiv);
         });
-
-        // Add the "Show More" button
-        const showMoreButton = document.createElement('button');
-        showMoreButton.id = 'show-more-button';
-        showMoreButton.textContent = 'Show More';
-        fragment.appendChild(showMoreButton);
-
-        // Event listener for "Show More" button
-        showMoreButton.addEventListener('click', () => {
-            surahs.slice(15).forEach(surah => {
-                const surahDiv = document.createElement('div');
-                surahDiv.classList.add('surah');
-                surahDiv.innerHTML = `<span>${surah.number}</span> ${surah.englishName} <div class="arabic-name">${surah.name}</div>`;
-                surahDiv.addEventListener('click', () => {
-                    window.location.href = `surah.html?surah=${surah.number}`;
-                });
-                fragment.appendChild(surahDiv);
-            });
-            showMoreButton.style.display = 'none'; // Hide the button after showing all Surahs
-        });
-
+        surahList.innerHTML = '';
         surahList.appendChild(fragment);
-    } catch (error) {
-        loader.style.display = 'none';
-        console.error('Error fetching Surahs:', error);
+        
+        // Add "Show More" button if there are more Surahs to show
+        if (end < surahs.length) {
+            const showMoreButton = document.createElement('button');
+            showMoreButton.id = 'show-more-button';
+            showMoreButton.textContent = 'Show More';
+            showMoreButton.addEventListener('click', () => {
+                showSurahs(start + 15, end + 15);
+            });
+            surahList.appendChild(showMoreButton);
+        }
+
+        // Add "Show Less" button if currently showing more than 15 Surahs
+        if (start > 0) {
+            const showLessButton = document.createElement('button');
+            showLessButton.id = 'show-less-button';
+            showLessButton.textContent = 'Show Less';
+            showLessButton.addEventListener('click', () => {
+                showSurahs(0, 15);
+            });
+            surahList.appendChild(showLessButton);
+        }
     }
 
     const searchInput = document.getElementById('search-input');
