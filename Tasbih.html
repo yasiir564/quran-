@@ -304,22 +304,7 @@ function closeNav() {
     document.getElementById("mySidebar").style.left = "-250px";
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    loadHeaderFooter();
-    
-    let header = document.querySelector("header");
-    let prevScrollPos = window.pageYOffset;
-    window.onscroll = function () {
-        let currentScrollPos = window.pageYOffset;
-        if (prevScrollPos > currentScrollPos) {
-            header.classList.remove("header-hidden");
-            header.classList.add("header-visible");
-        } else {
-            header.classList.remove("header-visible");
-            header.classList.add("header-hidden");
-        }
-        prevScrollPos = currentScrollPos;
-    };
+
 });
     </script>
 </body>
