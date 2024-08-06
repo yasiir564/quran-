@@ -10,27 +10,26 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
 <style>
-body {
-    font-family: 'Amiri', serif;
-    margin: 0;
-    padding: 0;
-    position: relative;
-}
+  body {
+            animation: gradientAnimation 10s infinite;
+            font-family: 'Amiri', serif;
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
 
-/* Blur effect with a transition */
-.blur-effect {
-    filter: blur(2px); /* Light blur effect */
-    transition: filter 0.3s ease-in-out; /* Smooth transition */
-}
+        .section {
+            padding: 50px;
+            margin: 20px;
+            background-color: white;
+            border: 1px solid #ccc;
+            position: relative;
+            z-index: 1; /* Ensures the element is above the blurred background */
+        }
 
-/* Optional: Style for sections */
-.section {
-    margin: 20px;
-    padding: 20px;
-    border: 1px solid #ccc;
-    /* Add more styles as needed */
-}
-
+        .blur {
+            filter: blur(5px);
+        }
 .container {
     max-width: 800px;
     margin: 0 auto;
@@ -1116,23 +1115,24 @@ document.addEventListener('DOMContentLoaded', async function() {
         }, 200);
     }
 
-   function checkScroll() {
+    function checkScroll() {
         const sections = document.querySelectorAll('.section');
         sections.forEach(section => {
             const rect = section.getBoundingClientRect();
-            // Check if the element is below the viewport but not completely out of view
-            if (rect.top < window.innerHeight + 50 && rect.bottom >= 0) {
-                section.classList.add('blur-effect');
+            if (rect.top < window.innerHeight && rect.bottom >= 0) {
+                section.classList.add('blur');
             } else {
-                section.classList.remove('blur-effect');
+                section.classList.remove('blur');
             }
         });
     }
 
-    window.addEventListener('scroll', checkScroll);
-    window.addEventListener('load', checkScroll);
-});
+    window.addEventListener('scroll', () => {
+        applyScrollEffects();
+        checkScroll();
+    });
 
+    window.addEventListener('load', checkScroll);
 
     function loginUser() {
         const username = document.getElementById('username-input').value;
@@ -1149,6 +1149,5 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('login-button').addEventListener('click', loginUser);
 });
 </script>
-
 </body>
 </html>
