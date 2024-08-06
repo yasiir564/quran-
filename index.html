@@ -19,7 +19,14 @@ body {
     position: relative;
 }
 
-.blur-effect * {
+.section {
+    padding: 50px;
+    margin: 20px;
+    background-color: white;
+    border: 1px solid #ccc;
+}
+
+.blur {
     filter: blur(5px);
 }
 
@@ -1106,15 +1113,20 @@ document.addEventListener('DOMContentLoaded', async function() {
             sidebar.classList.remove('blur-effect');
         }, 200);
     });
-    window.addEventListener('scroll', function() {
-        document.body.classList.add('blur-effect');
-    });
-
-    window.addEventListener('scroll', function() {
-        if (window.scrollY === 0) {
-            document.body.classList.remove('blur-effect');
+   function checkScroll() {
+    const sections = document.querySelectorAll('.section');
+    sections.forEach(section => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom >= 0) {
+            section.classList.add('blur');
+        } else {
+            section.classList.remove('blur');
         }
     });
+}
+
+window.addEventListener('scroll', checkScroll);
+window.addEventListener('load', checkScroll);
 
     function loginUser() {
         const username = document.getElementById('username-input').value;
