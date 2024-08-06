@@ -253,31 +253,36 @@
             });
         }
 
-        // Email Sign-In logic with OTP
-        function signInWithEmail() {
-            Swal.fire({
-                title: 'Enter your email address',
-                input: 'email',
-                inputPlaceholder: 'Email address',
-                showCancelButton: true,
-                 confirmButtonText: 'Send OTP',
-                confirmButtonColor: '#17a589',
-                cancelButtonColor: '#d33',
-                preConfirm: (email) => {
-                    const otp = generateOTP();
-                    return sendOTPEmail(email, otp);
+       // Email Sign-In logic with OTP
+    function signInWithEmail() {
+        Swal.fire({
+            title: 'Enter your email address',
+            input: 'email',
+            inputPlaceholder: 'Email address',
+            showCancelButton: true,
+            confirmButtonText: 'Send OTP',
+            confirmButtonColor: '#17a589',
+            cancelButtonColor: '#d33',
+            preConfirm: (email) => {
+                if (!email) {
+                    Swal.showValidationMessage('Please enter a valid email address');
+                    return false;
                 }
-            }).then(result => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Enter the OTP',
-                        input: 'text',
-                        inputPlaceholder: 'OTP',
-                        showCancelButton: true,
-                        confirmButtonText: 'Verify OTP',
-                        confirmButtonColor: '#17a589',
-                        cancelButtonColor: '#d33',
-                        preConfirm: (otpInput) => {
+                const otp = generateOTP();
+                return sendOTPEmail(email, otp);
+            }
+        }).then(result => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Enter the OTP',
+                    input: 'text',
+                    inputPlaceholder: 'OTP',
+                    showCancelButton: true,
+                    confirmButtonText: 'Verify OTP',
+                    confirmButtonColor: '#17a589',
+                    cancelButtonColor: '#d33',
+                    preConfirm: (otpInput) => {
+                        return new Promise((resolve) => {
                             if (otpInput === localStorage.getItem('otp')) {
                                 Swal.fire({
                                     icon: 'success',
@@ -288,54 +293,56 @@
                                     localStorage.removeItem('otp');
                                     window.location.href = 'profile.html';
                                 });
+                                resolve(true);
                             } else {
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Invalid OTP',
                                     text: 'Please enter the correct OTP',
                                     confirmButtonColor: '#d33'
-                                });
+                                }).then(() => resolve(false));
                             }
-                        }
-                    });
-                }
-            });
-        }
-
-        // Function to generate OTP
-        function generateOTP() {
-            const otp = Math.floor(100000 + Math.random() * 900000).toString();
-            localStorage.setItem('otp', otp);
-            return otp;
-        }
-
-        // Function to send OTP via email using EmailJS
-        function sendOTPEmail(email, otp) {
-            const templateParams = {
-                user_email: email,
-                otp: otp
-            };
-
-            return emailjs.send("service_2af2c9r", "template_enghje1", templateParams)
-                .then(() => {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'OTP sent successfully!',
-                        text: 'Please check your email for the OTP.',
-                        confirmButtonColor: '#17a589'
-                    });
-                })
-                .catch(error => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Failed to send OTP',
-                        text: 'Please try again.',
-                        confirmButtonColor: '#d33'
-                    });
-                    console.error('Error sending OTP:', error);
+                        });
+                    }
                 });
-        }
-    </script>
+            }
+        });
+    }
+
+    // Function to generate OTP
+    function generateOTP() {
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        localStorage.setItem('otp', otp);
+        return otp;
+    }
+
+    // Function to send OTP via email using EmailJS
+    function sendOTPEmail(email, otp) {
+        const templateParams = {
+            user_email: email,
+            otp: otp
+        };
+
+        return emailjs.send("service_2af2c9r", "template_enghje1", templateParams)
+            .then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'OTP sent successfully!',
+                    text: 'Please check your email for the OTP.',
+                    confirmButtonColor: '#17a589'
+                });
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed to send OTP',
+                    text: 'Please try again.',
+                    confirmButtonColor: '#d33'
+                });
+                console.error('Error sending OTP:', error);
+            });
+    }
+</script>
 </body>
 
 </html>
