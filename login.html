@@ -183,7 +183,7 @@
                 timer: 1500
             }).then(() => {
                 localStorage.setItem('loggedInUser', JSON.stringify(user));
-                softRedirect('index.html');
+                window.location.href = 'profile.html';
             });
         }
 
@@ -238,7 +238,7 @@
                     timer: 1500
                 }).then(() => {
                     localStorage.setItem('loggedInUser', JSON.stringify(user));
-                    softRedirect('index.html');
+                    window.location.href = 'profile.html';
                 });
             }).catch(error => {
                 Swal.fire({
@@ -250,42 +250,27 @@
             });
         }
 
-        // Email Sign-In logic with Activation Link
+        // Email Sign-In logic with OTP
         function signInWithEmail() {
             Swal.fire({
                 title: 'Enter your email address',
                 input: 'email',
                 inputPlaceholder: 'Email address',
                 showCancelButton: true,
-                confirmButtonText: 'Send Activation Link',
+                confirmButtonText: 'Send OTP',
                 confirmButtonColor: '#17a589',
                 cancelButtonColor: '#d33',
                 preConfirm: (email) => {
-                    const activationToken = generateToken();
-                    const activationLink = `https://quran-mocha-one.vercel.app/activate.html?token=${activationToken}`;
-
-                    // Save token and email in localStorage
-                    localStorage.setItem('activationToken', activationToken);
+                    const otp = generateOTP();
+                    localStorage.setItem('otp', otp);
                     localStorage.setItem('userEmail', email);
 
-                    // Send activation email via Resend API
-                    return fetch('https://api.resend.com/email/send', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer re_ZYURCph7_H8iBkPX4xzP7FG19AWF8Rfiw'
-                        },
-                        body: JSON.stringify({
-                            from: 'noreply@quranpro.com',
-                            to: email,
-                            subject: 'Activate your Quran Pro account',
-                            html: `<p>Click <a href="${activationLink}">here</a> to activate your account.</p>`
-                        })
-                    }).then(response => {
-                        if (!response.ok) {
-                            throw new Error(response.statusText);
-                        }
-                        return response.json();
+                    // Send OTP email via EmailJS
+                    return emailjs.send('service_2nbq6va', 'template_enghje1', {
+                        to_email: email,
+                        otp: otp
+                    }).then(() => {
+                        return true;
                     }).catch(error => {
                         Swal.showValidationMessage(`Request failed: ${error}`);
                     });
@@ -293,30 +278,51 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        icon: 'success',
-                        title: 'Activation link sent!',
-                        text: 'Please check your email to activate your account.',
-                        confirmButtonColor: '#17a589'
+                        title: 'Enter the OTP sent to your email',
+                        input: 'text',
+                        inputPlaceholder: 'OTP',
+                        showCancelButton: true,
+                        confirmButtonText: 'Verify OTP',
+                        confirmButtonColor: '#17a589',
+                        cancelButtonColor: '#d33',
+                        preConfirm: (inputOTP) => {
+                            const storedOTP = localStorage.getItem('otp');
+                            if (inputOTP === storedOTP) {
+                                const user = {
+                                    email: localStorage.getItem('userEmail')
+                                };
+                                localStorage.setItem('loggedInUser', JSON.stringify(user));
+                                return true;
+                            } else {
+                                Swal.showValidationMessage('Invalid OTP. Please try again.');
+                            }
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Email Sign-In successful!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                window.location.href = 'profile.html';
+                            });
+                        }
                     });
                 }
             });
         }
 
-        // Function to generate a unique token
-        function generateToken() {
-            return Math.random().toString(36).substr(2) + Date.now().toString(36);
+        // Function to generate a unique OTP
+        function generateOTP() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
         }
-
-        // Soft redirect to index.html
-        function softRedirect(url) {
-            const mainPage = document.createElement('iframe');
-            mainPage.src = url;
-            mainPage.style.width = '100%';
-            mainPage.style.height = '100vh';
-            mainPage.style.border = 'none';
-            document.body.innerHTML = '';
-            document.body.appendChild(mainPage);
-        }
+    </script>
+    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init('Z7J4TDmdVO8jfmZmI');
+        })();
     </script>
 </body>
 
