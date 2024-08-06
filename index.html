@@ -926,9 +926,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
-    document.querySelector('.search-container button').addEventListener('click', function() {
-        performSearch();
-    });
+    document.querySelector('.search-container button').addEventListener('click', performSearch);
 
     document.querySelector('#search-input').addEventListener('keypress', function(event) {
         if (event.key === 'Enter') {
@@ -936,13 +934,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     });
 
-    document.querySelector('.openbtn').addEventListener('click', function() {
-        openNav();
-    });
+    document.querySelector('.openbtn').addEventListener('click', openNav);
 
-    document.getElementById('closeSidebarBtn').addEventListener('click', function() {
-        closeNav();
-    });
+    document.getElementById('closeSidebarBtn').addEventListener('click', closeNav);
 
     function showLoader() {
         document.getElementById('loader').style.display = 'block';
@@ -954,14 +948,10 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     function loadContent() {
         showLoader();
-        setTimeout(() => {
-            hideLoader();
-        }, 2000);
+        setTimeout(hideLoader, 2000);
     }
 
-    window.onload = function() {
-        loadContent();
-    };
+    window.onload = loadContent;
 
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/service-worker.js')
@@ -1067,9 +1057,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     });
 
-    darkModeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-    });
+    darkModeToggle.addEventListener('click', toggleDarkMode);
 
     const hijriDate = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
         day: 'numeric',
@@ -1087,42 +1075,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     calendarDiv.innerHTML = `<p id="hijri-date">${hijriDate}</p><p id="hijri-date-arabic">${hijriDateArabic}</p>`;
 
     let lastScrollTop = 0;
-    const header = document.querySelector('header');
-    let scrollTimeout;
-
-    window.addEventListener('scroll', () => {
-        clearTimeout(scrollTimeout);
-
-        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-        if (currentScrollTop > lastScrollTop) {
-            header.classList.remove('header-visible');
-            header.classList.add('header-hidden');
-        } else {
-            header.classList.remove('header-hidden');
-            header.classList.add('header-visible');
-        }
-
-        lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
-
-        scrollTimeout = setTimeout(() => {
-            header.classList.remove('header-hidden');
-            header.classList.add('header-visible');
-        }, 200);
-    });
-
-    function loginUser() {
-        const username = document.getElementById('username-input').value;
-        const password = document.getElementById('password-input').value;
-
-        if (username === 'admin' && password === 'password123') {
-            localStorage.setItem('loggedInUser', JSON.stringify({username: username, email: 'admin@example.com'}));
-            location.reload();
-        } else {
-            alert('Invalid login credentials');
-        }
-    }
-     let lastScrollTop = 0;
     const header = document.querySelector('header');
     const sidebar = document.getElementById('mySidebar');
     let scrollTimeout;
@@ -1151,11 +1103,20 @@ document.addEventListener('DOMContentLoaded', async function() {
         }, 200);
     });
 
-    document.getElementById('login-button').addEventListener('click', function() {
-        loginUser();
-    });
-});
+    function loginUser() {
+        const username = document.getElementById('username-input').value;
+        const password = document.getElementById('password-input').value;
 
+        if (username === 'admin' && password === 'password123') {
+            localStorage.setItem('loggedInUser', JSON.stringify({username: username, email: 'admin@example.com'}));
+            location.reload();
+        } else {
+            alert('Invalid login credentials');
+        }
+    }
+
+    document.getElementById('login-button').addEventListener('click', loginUser);
+});
 </script>
 </body>
 </html>
