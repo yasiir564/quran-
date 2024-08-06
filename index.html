@@ -1112,20 +1112,20 @@ document.addEventListener('DOMContentLoaded', async function() {
             sidebar.classList.remove('blur-effect');
         }, 200);
     });
-   function checkScroll() {
-    const sections = document.querySelectorAll('.section');
-    sections.forEach(section => {
-        const rect = section.getBoundingClientRect();
-        if (rect.top < window.innerHeight && rect.bottom >= 0) {
-            section.classList.add('blur');
-        } else {
-            section.classList.remove('blur');
+ function checkScroll() {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom >= 0) {
+                    section.classList.add('blur');
+                } else {
+                    section.classList.remove('blur');
+                }
+            });
         }
-    });
-}
 
-window.addEventListener('scroll', checkScroll);
-window.addEventListener('load', checkScroll);
+        window.addEventListener('scroll', checkScroll);
+        window.addEventListener('load', checkScroll);
 
     function loginUser() {
         const username = document.getElementById('username-input').value;
