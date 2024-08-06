@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="main.js" defer></script>
     <style>
         body {
             display: flex;
@@ -180,6 +181,7 @@
     </style>
 </head>
 <body>
+     <header></header>
     <span class="close-button" onclick="window.location.href='index.html'">×</span>
     <i id="dark-mode-toggle" class="fas fa-moon dark-mode-toggle"></i>
 
@@ -197,6 +199,7 @@
         <button id="saveTasbih">Save</button>
         <button id="viewSavedTasbih">Saved Tasbih</button>
     </div>
+    <footer></footer>
 
     <audio id="clickSound" src="http://hayatinitiative.org/wp-content/uploads/2024/07/mixkit-arcade-game-jump-coin-216.wav"></audio>
 
@@ -272,6 +275,51 @@
                 }
             });
         });
+        function loadHeaderFooter() {
+    const header = document.querySelector('header');
+    const footer = document.querySelector('footer');
+
+    fetch('header.html')
+        .then(response => response.text())
+        .then(data => {
+            header.innerHTML = data;
+            // Add event listeners for the sidebar after loading the header
+            document.querySelector(".openbtn").addEventListener("click", openNav);
+            document.querySelector(".closebtn").addEventListener("click", closeNav);
+        });
+
+    fetch('footer.html')
+        .then(response => response.text())
+        .then(data => {
+            footer.innerHTML = data;
+        });
+}
+
+function openNav() {
+    document.getElementById("mySidebar").style.left = "0";
+}
+
+function closeNav() {
+    document.getElementById("mySidebar").style.left = "-250px";
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    loadHeaderFooter();
+    
+    let header = document.querySelector("header");
+    let prevScrollPos = window.pageYOffset;
+    window.onscroll = function () {
+        let currentScrollPos = window.pageYOffset;
+        if (prevScrollPos > currentScrollPos) {
+            header.classList.remove("header-hidden");
+            header.classList.add("header-visible");
+        } else {
+            header.classList.remove("header-visible");
+            header.classList.add("header-hidden");
+        }
+        prevScrollPos = currentScrollPos;
+    };
+});
     </script>
 </body>
 </html>
