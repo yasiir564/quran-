@@ -1089,11 +1089,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     const sidebar = document.getElementById('mySidebar');
     let scrollTimeout;
 
-    window.addEventListener('scroll', () => {
-        clearTimeout(scrollTimeout);
-
+    function applyScrollEffects() {
         const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
+        // Handle header visibility
         if (currentScrollTop > lastScrollTop) {
             header.classList.remove('header-visible');
             header.classList.add('header-hidden');
@@ -1106,26 +1105,33 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
 
+        // Reset header visibility after scroll
+        clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
             header.classList.remove('header-hidden');
             header.classList.add('header-visible');
             sidebar.classList.remove('blur-effect');
         }, 200);
-    });
- function checkScroll() {
-            const sections = document.querySelectorAll('.section');
-            sections.forEach(section => {
-                const rect = section.getBoundingClientRect();
-                if (rect.top < window.innerHeight && rect.bottom >= 0) {
-                    section.classList.add('blur');
-                } else {
-                    section.classList.remove('blur');
-                }
-            });
-        }
+    }
 
-        window.addEventListener('scroll', checkScroll);
-        window.addEventListener('load', checkScroll);
+    function checkScroll() {
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(section => {
+            const rect = section.getBoundingClientRect();
+            if (rect.top < window.innerHeight && rect.bottom >= 0) {
+                section.classList.add('blur');
+            } else {
+                section.classList.remove('blur');
+            }
+        });
+    }
+
+    window.addEventListener('scroll', () => {
+        applyScrollEffects();
+        checkScroll();
+    });
+
+    window.addEventListener('load', checkScroll);
 
     function loginUser() {
         const username = document.getElementById('username-input').value;
@@ -1142,5 +1148,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('login-button').addEventListener('click', loginUser);
 });
 </script>
+
 </body>
 </html>
