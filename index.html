@@ -192,22 +192,35 @@ header {
         flex: 1 1 100%;
     }
 }
-  .show-more-btn {
-  display: block;
-  width: 200px;
-  margin: 20px auto;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: #007bff;
-  color: #fff;
-  font-size: 1.2em;
-  cursor: pointer;
-  transition: background-color 0.3s;
+ #show-more-button, #show-less-button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
 }
 
-.show-more-btn:hover {
-  background-color: #0056b3;
+#show-more-button:hover, #show-less-button:hover {
+    background-color: #0056b3;
+}
+
+@media (max-width: 768px) {
+    #show-more-button, #show-less-button {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    #show-more-button, #show-less-button {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
 }
 
 .loader {
