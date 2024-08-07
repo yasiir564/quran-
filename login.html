@@ -10,6 +10,7 @@
     <script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300|Lobster|Pacifico|Raleway" rel="stylesheet">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -165,9 +166,23 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-    <script>
-        emailjs.init('Z7J4TDmdVO8jfmZmI');
+    <script type="text/javascript">
+        // Initialize EmailJS
+        (function() {
+            emailjs.init('Z7J4TDmdVO8jfmZmI'); // Replace with your EmailJS public key
+        })();
+
+        window.onload = function() {
+            document.getElementById('contact-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+                emailjs.sendForm('service_2af2c9r', 'template_enghje1', this)
+                    .then(() => {
+                        console.log('SUCCESS!');
+                    }, (error) => {
+                        console.log('FAILED...', error);
+                    });
+            });
+        }
 
         function onSignIn(googleUser) {
             const profile = googleUser.getBasicProfile();
@@ -250,72 +265,101 @@
             Swal.fire({
                 title: 'Enter your email address',
                 input: 'email',
-                inputPlaceholder: 'Enter your email address',
+                inputPlaceholder: 'Email address',
                 showCancelButton: true,
                 confirmButtonText: 'Send OTP',
-                showLoaderOnConfirm: true,
-                preConfirm: (email) => {
-                    return fetch('/api/send-otp', {
+                confirmButtonColor: '#17a589',
+                cancelButtonColor: '#d33',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'You need to enter an email address!';
+                    }
+                }
+            }).then(result => {
+                if (result.isConfirmed) {
+                    const email = result.value;
+
+                    fetch('/api/send-otp', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ email: email })
+                        body: JSON.stringify({ email })
                     })
-                    .then(response => {
-                        return response.text().then(text => {
-                            try {
-                                return JSON.parse(text);
-                            } catch (err) {
-                                console.error('Server response is not valid JSON:', text);
-                                throw new Error('Invalid JSON response');
-                            }
-                        });
-                    })
+                    .then(response => response.json())
                     .then(data => {
-                        if (!data.success) {
-                            throw new Error('OTP sending failed.');
-                        }
-                        return Swal.fire({
-                            title: 'Enter the OTP sent to your email',
-                            input: 'text',
-                            inputPlaceholder: 'Enter OTP',
-                            showCancelButton: true,
-                            confirmButtonText: 'Verify OTP',
-                            showLoaderOnConfirm: true,
-                            preConfirm: (otp) => {
-                                return fetch('/api/verify-otp', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json'
-                                    },
-                                    body: JSON.stringify({ email: email, enteredOtp: otp })
-                                })
-                                .then(response => {
-                                    return response.text().then(text => {
-                                        try {
-                                            return JSON.parse(text);
-                                        } catch (err) {
-                                            console.error('Server response is not valid JSON:', text);
-                                            throw new Error('Invalid JSON response');
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'OTP Sent!',
+                                text: 'Check your email for the OTP.',
+                                icon: 'success'
+                            }).then(() => {
+                                Swal.fire({
+                                    title: 'Enter OTP',
+                                    input: 'text',
+                                    inputPlaceholder: 'Enter OTP',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Verify OTP',
+                                    confirmButtonColor: '#17a589',
+                                    cancelButtonColor: '#d33',
+                                    inputValidator: (value) => {
+                                        if (!value) {
+                                            return 'You need to enter the OTP!';
                                         }
-                                    });
-                                })
-                                .then(data => {
-                                    if (data.success) {
-                                        Swal.fire('Success!', 'You are now signed in.', 'success');
-                                    } else {
-                                        throw new Error('Invalid OTP.');
                                     }
-                                })
-                                .catch(error => {
-                                    Swal.showValidationMessage(`Verification failed: ${error.message}`);
+                                }).then(otpResult => {
+                                    if (otpResult.isConfirmed) {
+                                        const otp = otpResult.value;
+
+                                        fetch('/api/verify-otp', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            body: JSON.stringify({ email, otp })
+                                        })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.success) {
+                                                Swal.fire({
+                                                    title: 'OTP Verified!',
+                                                    text: 'You are now logged in.',
+                                                    icon: 'success'
+                                                }).then(() => {
+                                                    window.location.href = 'profile.html'; // Redirect after successful login
+                                                });
+                                            } else {
+                                                Swal.fire({
+                                                    title: 'Verification Failed',
+                                                    text: data.message,
+                                                    icon: 'error'
+                                                });
+                                            }
+                                        })
+                                        .catch(error => {
+                                            Swal.fire({
+                                                title: 'Verification Error',
+                                                text: 'An error occurred while verifying OTP.',
+                                                icon: 'error'
+                                            });
+                                        });
+                                    }
                                 });
-                            }
-                        });
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error',
+                                text: data.message,
+                                icon: 'error'
+                            });
+                        }
                     })
                     .catch(error => {
-                        Swal.showValidationMessage(`Request failed: ${error.message}`);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'An error occurred while sending OTP.',
+                            icon: 'error'
+                        });
                     });
                 }
             });
