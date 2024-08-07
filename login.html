@@ -10,8 +10,8 @@
     <script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300|Lobster|Pacifico|Raleway" rel="stylesheet">
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
+        /* Add your existing CSS here */
         body {
             margin: 0;
             height: 100vh;
@@ -166,24 +166,11 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-    <script type="text/javascript">
-        // Initialize EmailJS
-        (function() {
-            emailjs.init('Z7J4TDmdVO8jfmZmI'); // Replace with your EmailJS public key
-        })();
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script>
+        emailjs.init('Z7J4TDmdVO8jfmZmI');
 
-        window.onload = function() {
-            document.getElementById('contact-form').addEventListener('submit', function(event) {
-                event.preventDefault();
-                emailjs.sendForm('service_2af2c9r', 'template_enghje1', this)
-                    .then(() => {
-                        console.log('SUCCESS!');
-                    }, (error) => {
-                        console.log('FAILED...', error);
-                    });
-            });
-        }
-
+        // Google Sign-In logic
         function onSignIn(googleUser) {
             const profile = googleUser.getBasicProfile();
             const user = {
@@ -203,6 +190,7 @@
             });
         }
 
+        // Error handling for Google Sign-In
         function onFailure(error) {
             Swal.fire({
                 icon: 'error',
@@ -212,6 +200,7 @@
             });
         }
 
+        // Render the Google Sign-In button
         function renderButton() {
             gapi.signin2.render('g-signin2', {
                 'scope': 'profile email',
@@ -224,6 +213,7 @@
             });
         }
 
+        // Load the Google API client
         function loadGoogleAPI() {
             gapi.load('auth2', function() {
                 gapi.auth2.init();
@@ -231,10 +221,12 @@
             });
         }
 
+        // Initialize the Google API client when the page loads
         window.onload = function() {
             loadGoogleAPI();
         }
 
+        // Apple Sign-In logic
         function signInWithApple() {
             AppleID.auth.signIn().then(response => {
                 const user = {
@@ -261,110 +253,96 @@
             });
         }
 
-        function signInWithEmail() {
-            Swal.fire({
-                title: 'Enter your email address',
-                input: 'email',
-                inputPlaceholder: 'Email address',
-                showCancelButton: true,
-                confirmButtonText: 'Send OTP',
-                confirmButtonColor: '#17a589',
-                cancelButtonColor: '#d33',
-                inputValidator: (value) => {
-                    if (!value) {
-                        return 'You need to enter an email address!';
-                    }
+       // Email Sign-In logic with OTP
+    function signInWithEmail() {
+        Swal.fire({
+            title: 'Enter your email address',
+            input: 'email',
+            inputPlaceholder: 'Email address',
+            showCancelButton: true,
+            confirmButtonText: 'Send OTP',
+            confirmButtonColor: '#17a589',
+            cancelButtonColor: '#d33',
+            preConfirm: (email) => {
+                if (!email) {
+                    Swal.showValidationMessage('Please enter a valid email address');
+                    return false;
                 }
-            }).then(result => {
-                if (result.isConfirmed) {
-                    const email = result.value;
-
-                    fetch('/api/send-otp', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ email })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire({
-                                title: 'OTP Sent!',
-                                text: 'Check your email for the OTP.',
-                                icon: 'success'
-                            }).then(() => {
+                const otp = generateOTP();
+                return sendOTPEmail(email, otp);
+            }
+        }).then(result => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Enter the OTP',
+                    input: 'text',
+                    inputPlaceholder: 'OTP',
+                    showCancelButton: true,
+                    confirmButtonText: 'Verify OTP',
+                    confirmButtonColor: '#17a589',
+                    cancelButtonColor: '#d33',
+                    preConfirm: (otpInput) => {
+                        return new Promise((resolve) => {
+                            if (otpInput === localStorage.getItem('otp')) {
                                 Swal.fire({
-                                    title: 'Enter OTP',
-                                    input: 'text',
-                                    inputPlaceholder: 'Enter OTP',
-                                    showCancelButton: true,
-                                    confirmButtonText: 'Verify OTP',
-                                    confirmButtonColor: '#17a589',
-                                    cancelButtonColor: '#d33',
-                                    inputValidator: (value) => {
-                                        if (!value) {
-                                            return 'You need to enter the OTP!';
-                                        }
-                                    }
-                                }).then(otpResult => {
-                                    if (otpResult.isConfirmed) {
-                                        const otp = otpResult.value;
-
-                                        fetch('/api/verify-otp', {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/json'
-                                            },
-                                            body: JSON.stringify({ email, otp })
-                                        })
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            if (data.success) {
-                                                Swal.fire({
-                                                    title: 'OTP Verified!',
-                                                    text: 'You are now logged in.',
-                                                    icon: 'success'
-                                                }).then(() => {
-                                                    window.location.href = 'profile.html'; // Redirect after successful login
-                                                });
-                                            } else {
-                                                Swal.fire({
-                                                    title: 'Verification Failed',
-                                                    text: data.message,
-                                                    icon: 'error'
-                                                });
-                                            }
-                                        })
-                                        .catch(error => {
-                                            Swal.fire({
-                                                title: 'Verification Error',
-                                                text: 'An error occurred while verifying OTP.',
-                                                icon: 'error'
-                                            });
-                                        });
-                                    }
+                                    icon: 'success',
+                                    title: 'Email Sign-In successful!',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                }).then(() => {
+                                    localStorage.removeItem('otp');
+                                    window.location.href = 'profile.html';
                                 });
-                            });
-                        } else {
-                            Swal.fire({
-                                title: 'Error',
-                                text: data.message,
-                                icon: 'error'
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'An error occurred while sending OTP.',
-                            icon: 'error'
+                                resolve(true);
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Invalid OTP',
+                                    text: 'Please enter the correct OTP',
+                                    confirmButtonColor: '#d33'
+                                }).then(() => resolve(false));
+                            }
                         });
-                    });
-                }
+                    }
+                });
+            }
+        });
+    }
+
+    // Function to generate OTP
+    function generateOTP() {
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        localStorage.setItem('otp', otp);
+        return otp;
+    }
+
+    // Function to send OTP via email using EmailJS
+    function sendOTPEmail(email, otp) {
+        const templateParams = {
+            user_email: email,
+            otp: otp
+        };
+
+        return emailjs.send("service_2af2c9r", "template_enghje1", templateParams)
+            .then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'OTP sent successfully!',
+                    text: 'Please check your email for the OTP.',
+                    confirmButtonColor: '#17a589'
+                });
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed to send OTP',
+                    text: 'Please try again.',
+                    confirmButtonColor: '#d33'
+                });
+                console.error('Error sending OTP:', error);
             });
-        }
-    </script>
+    }
+</script>
 </body>
 
 </html>
