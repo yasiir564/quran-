@@ -1,139 +1,77 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const { Pool } = require('pg');
-const emailjs = require('emailjs-com');
-const config = require('./config');
-
+const jwt = require('jsonwebtoken'); // Assuming you're using JWT for token management
+const nodemailer = require('nodemailer'); // For sending OTP emails
 const app = express();
-const pool = new Pool({
-  connectionString: config.POSTGRES_URL,
-});
-
-emailjs.init(config.EMAILJS_USER_ID);
 
 app.use(bodyParser.json());
 
-app.post('/api/signup', async (req, res) => {
-  const { email, password, username } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
+// Middleware to verify Google token
+const verifyGoogleToken = (token) => {
+    // Verify Google token here
+    // Return user profile if valid, otherwise return null
+};
 
-  try {
-    const result = await pool.query(
-      'INSERT INTO users (email, password, username) VALUES ($1, $2, $3) RETURNING *',
-      [email, hashedPassword, username]
-    );
-    const user = result.rows[0];
-    res.status(201).json({ user });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// Mock database for storing OTPs (in a real application, use a database)
+let otps = {};
 
-app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    const user = result.rows[0];
-
-    if (user && await bcrypt.compare(password, user.password)) {
-      const token = jwt.sign({ id: user.id, email: user.email }, config.JWT_SECRET);
-      res.json({ token });
+// Google Sign-In Route
+app.post('/api/google-signin', (req, res) => {
+    const { token } = req.body;
+    const userProfile = verifyGoogleToken(token);
+    if (userProfile) {
+        const jwtToken = jwt.sign(userProfile, 'your_secret_key');
+        res.json({ success: true, token: jwtToken });
     } else {
-      res.status(401).json({ error: 'Invalid email or password' });
+        res.status(401).json({ success: false, message: 'Invalid Google token' });
     }
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
 });
 
-app.post('/api/google-signin', async (req, res) => {
-  const { email, username, profilePic } = req.body;
+// Email OTP Sending Route
+app.post('/api/send-otp', (req, res) => {
+    const { email } = req.body;
+    const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate 6-digit OTP
+    otps[email] = otp; // Store OTP in mock database
 
-  try {
-    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    let user = result.rows[0];
+    // Send OTP via email (using nodemailer)
+    const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: 'your-email@gmail.com',
+            pass: 'your-email-password'
+        }
+    });
 
-    if (!user) {
-      const insertResult = await pool.query(
-        'INSERT INTO users (email, username, profile_pic) VALUES ($1, $2, $3) RETURNING *',
-        [email, username, profilePic]
-      );
-      user = insertResult.rows[0];
-    }
+    const mailOptions = {
+        from: 'your-email@gmail.com',
+        to: email,
+        subject: 'Your OTP Code',
+        text: `Your OTP code is ${otp}`
+    };
 
-    const token = jwt.sign({ id: user.id, email: user.email }, config.JWT_SECRET);
-    res.json({ token });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return res.status(500).json({ success: false, message: 'Failed to send OTP' });
+        }
+        res.json({ success: true, message: 'OTP sent' });
+    });
 });
 
-app.post('/api/apple-signin', async (req, res) => {
-  const { email, username } = req.body;
-
-  try {
-    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    let user = result.rows[0];
-
-    if (!user) {
-      const insertResult = await pool.query(
-        'INSERT INTO users (email, username) VALUES ($1, $2) RETURNING *',
-        [email, username]
-      );
-      user = insertResult.rows[0];
-    }
-
-    const token = jwt.sign({ id: user.id, email: user.email }, config.JWT_SECRET);
-    res.json({ token });
-  } catch (error) {
-    res.status 500).json({ error: error.message });
-  }
-});
-
-app.post('/api/send-otp', async (req, res) => {
-  const { email } = req.body;
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-  const templateParams = {
-    user_email: email,
-    otp: otp
-  };
-
-  try {
-    await emailjs.send(config.EMAILJS_SERVICE_ID, config.EMAILJS_TEMPLATE_ID, templateParams);
-    
-    // Save OTP to database
-    await pool.query('INSERT INTO otps (email, otp) VALUES ($1, $2)', [email, otp]);
-    
-    res.json({ otp });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.post('/api/verify-otp', async (req, res) => {
-  const { email, enteredOtp } = req.body;
-
-  try {
-    const result = await pool.query('SELECT * FROM otps WHERE email = $1 ORDER BY created_at DESC LIMIT 1', [email]);
-    const otpRecord = result.rows[0];
-
-    if (otpRecord && otpRecord.otp === enteredOtp) {
-      // Clean up OTP record after verification
-      await pool.query('DELETE FROM otps WHERE email = $1', [email]);
-
-      res.json({ success: true });
+// OTP Verification Route
+app.post('/api/verify-otp', (req, res) => {
+    const { email, enteredOtp } = req.body;
+    const storedOtp = otps[email];
+    if (storedOtp && storedOtp === enteredOtp) {
+        delete otps[email]; // Remove OTP after successful verification
+        const jwtToken = jwt.sign({ email: email }, 'your_secret_key');
+        res.json({ success: true, token: jwtToken });
     } else {
-      res.status(401).json({ error: 'Invalid OTP' });
+        res.status(401).json({ success: false, message: 'Invalid OTP' });
     }
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
 });
 
-app.listen(3000, () => {
-  console.log('Server running on port 3000');
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
