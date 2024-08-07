@@ -1,77 +1,54 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const jwt = require('jsonwebtoken'); // Assuming you're using JWT for token management
-const nodemailer = require('nodemailer'); // For sending OTP emails
+const emailjs = require('emailjs-com'); // Ensure you have installed emailjs-com package
+const { v4: uuidv4 } = require('uuid');
 const app = express();
+const port = 3000;
 
 app.use(bodyParser.json());
 
-// Middleware to verify Google token
-const verifyGoogleToken = (token) => {
-    // Verify Google token here
-    // Return user profile if valid, otherwise return null
-};
+// Dummy database for storing OTPs
+let otpDatabase = {};
 
-// Mock database for storing OTPs (in a real application, use a database)
-let otps = {};
+// Initialize EmailJS
+emailjs.init('YOUR_EMAILJS_USER_ID');
 
-// Google Sign-In Route
-app.post('/api/google-signin', (req, res) => {
-    const { token } = req.body;
-    const userProfile = verifyGoogleToken(token);
-    if (userProfile) {
-        const jwtToken = jwt.sign(userProfile, 'your_secret_key');
-        res.json({ success: true, token: jwtToken });
-    } else {
-        res.status(401).json({ success: false, message: 'Invalid Google token' });
-    }
-});
-
-// Email OTP Sending Route
+// Endpoint to send OTP
 app.post('/api/send-otp', (req, res) => {
     const { email } = req.body;
     const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate 6-digit OTP
-    otps[email] = otp; // Store OTP in mock database
 
-    // Send OTP via email (using nodemailer)
-    const transporter = nodemailer.createTransport({
-        service: 'Gmail',
-        auth: {
-            user: 'your-email@gmail.com',
-            pass: 'your-email-password'
-        }
-    });
+    // Store the OTP in the database with an expiration time
+    otpDatabase[email] = { otp, expiresAt: Date.now() + 300000 }; // OTP expires in 5 minutes
 
-    const mailOptions = {
-        from: 'your-email@gmail.com',
-        to: email,
-        subject: 'Your OTP Code',
-        text: `Your OTP code is ${otp}`
+    const templateParams = {
+        to_email: email,
+        otp
     };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            return res.status(500).json({ success: false, message: 'Failed to send OTP' });
-        }
-        res.json({ success: true, message: 'OTP sent' });
-    });
+    emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
+        .then(() => {
+            res.json({ success: true, message: 'OTP sent successfully.' });
+        })
+        .catch((error) => {
+            console.error('EmailJS Error:', error);
+            res.status(500).json({ success: false, message: 'Failed to send OTP.' });
+        });
 });
 
-// OTP Verification Route
+// Endpoint to verify OTP
 app.post('/api/verify-otp', (req, res) => {
     const { email, enteredOtp } = req.body;
-    const storedOtp = otps[email];
-    if (storedOtp && storedOtp === enteredOtp) {
-        delete otps[email]; // Remove OTP after successful verification
-        const jwtToken = jwt.sign({ email: email }, 'your_secret_key');
-        res.json({ success: true, token: jwtToken });
+    const storedOtp = otpDatabase[email];
+
+    if (storedOtp && storedOtp.otp === enteredOtp && storedOtp.expiresAt > Date.now()) {
+        delete otpDatabase[email]; // OTP is verified, remove it from the database
+        res.json({ success: true, message: 'OTP verified successfully.' });
     } else {
-        res.status(401).json({ success: false, message: 'Invalid OTP' });
+        res.status(400).json({ success: false, message: 'Invalid or expired OTP.' });
     }
 });
 
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
 });
