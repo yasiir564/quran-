@@ -18,26 +18,29 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
         }
 
         .container {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
             height: 100vh;
+            width: 100%;
         }
 
         .profile-section {
             text-align: center;
-            width: 300px;
+            width: 100%;
+            max-width: 300px;
             padding: 20px;
             background-color: #1a1a1a;
             border-radius: 10px;
             color: #fff;
-            margin-right: 20px;
+            margin-bottom: 20px;
         }
 
         .profile-pic-container {
@@ -109,6 +112,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
+            width: 100%;
         }
 
         .card {
@@ -197,6 +201,20 @@
 
         .openbtn:hover {
             background-color: #0056b3;
+        }
+
+        @media screen and (max-width: 768px) {
+            .card-container {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-section {
+                width: 100%;
+            }
+
+            .openbtn {
+                top: 60px;
+            }
         }
     </style>
 </head>
@@ -296,9 +314,10 @@
                 });
             } else {
                 // Fetch and display user information
-                const userName = localStorage.getItem("userName");
-                const userEmail = localStorage.getItem("userEmail");
-                const profilePic = localStorage.getItem("profilePic");
+                const user = JSON.parse(localStorage.getItem("loggedInUser"));
+                const userName = user.name || "Username"; // Assuming user.name contains the user's name
+                const userEmail = user.email || "Email";
+                const profilePic = user.profilePic; // Assuming user.profilePic contains the profile picture URL
 
                 document.getElementById("user-name").textContent = userName;
                 document.getElementById("user-email").textContent = userEmail;
@@ -321,9 +340,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         localStorage.setItem("isLoggedIn", "false");
-                        localStorage.removeItem("userName");
-                        localStorage.removeItem("userEmail");
-                        localStorage.removeItem("profilePic");
+                        localStorage.removeItem("loggedInUser");
                         window.location.href = 'login.html';
                     }
                 });
@@ -335,7 +352,9 @@
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         const profilePicUrl = e.target.result;
-                        localStorage.setItem("profilePic", profilePicUrl);
+                        const user = JSON.parse(localStorage.getItem("loggedInUser"));
+                        user.profilePic = profilePicUrl;
+                        localStorage.setItem("loggedInUser", JSON.stringify(user));
                         document.getElementById("profile-pic").innerHTML = `<img src="${profilePicUrl}" alt="Profile Picture" class="profile-pic">`;
                     };
                     reader.readAsDataURL(file);
@@ -355,3 +374,4 @@
     </script>
 </body>
 </html>
+
