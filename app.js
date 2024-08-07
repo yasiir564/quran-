@@ -89,7 +89,7 @@ app.post('/api/apple-signin', async (req, res) => {
     const token = jwt.sign({ id: user.id, email: user.email }, config.JWT_SECRET);
     res.json({ token });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status 500).json({ error: error.message });
   }
 });
 
@@ -104,19 +104,33 @@ app.post('/api/send-otp', async (req, res) => {
 
   try {
     await emailjs.send(config.EMAILJS_SERVICE_ID, config.EMAILJS_TEMPLATE_ID, templateParams);
+    
+    // Save OTP to database
+    await pool.query('INSERT INTO otps (email, otp) VALUES ($1, $2)', [email, otp]);
+    
     res.json({ otp });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-app.post('/api/verify-otp', (req, res) => {
-  const { otp, enteredOtp } = req.body;
+app.post('/api/verify-otp', async (req, res) => {
+  const { email, enteredOtp } = req.body;
 
-  if (otp === enteredOtp) {
-    res.json({ success: true });
-  } else {
-    res.status(401).json({ error: 'Invalid OTP' });
+  try {
+    const result = await pool.query('SELECT * FROM otps WHERE email = $1 ORDER BY created_at DESC LIMIT 1', [email]);
+    const otpRecord = result.rows[0];
+
+    if (otpRecord && otpRecord.otp === enteredOtp) {
+      // Clean up OTP record after verification
+      await pool.query('DELETE FROM otps WHERE email = $1', [email]);
+
+      res.json({ success: true });
+    } else {
+      res.status(401).json({ error: 'Invalid OTP' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
