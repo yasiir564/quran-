@@ -165,29 +165,85 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <script>
+        emailjs.init('Z7J4TDmdVO8jfmZmI');
+
         function onSignIn(googleUser) {
-            var profile = googleUser.getBasicProfile();
-            var id_token = googleUser.getAuthResponse().id_token;
-            fetch('/api/google-signin', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ token: id_token })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire('Success!', 'You are now signed in.', 'success');
-                } else {
-                    Swal.fire('Error', 'Sign-in failed.', 'error');
-                }
+            const profile = googleUser.getBasicProfile();
+            const user = {
+                username: profile.getName(),
+                email: profile.getEmail(),
+                profilePic: profile.getImageUrl()
+            };
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Google Sign-In successful!',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                localStorage.setItem('loggedInUser', JSON.stringify(user));
+                window.location.href = 'profile.html';
             });
         }
 
+        function onFailure(error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Google Sign-In failed',
+                text: error.details,
+                confirmButtonColor: '#d33'
+            });
+        }
+
+        function renderButton() {
+            gapi.signin2.render('g-signin2', {
+                'scope': 'profile email',
+                'width': 240,
+                'height': 50,
+                'longtitle': true,
+                'theme': 'dark',
+                'onsuccess': onSignIn,
+                'onfailure': onFailure
+            });
+        }
+
+        function loadGoogleAPI() {
+            gapi.load('auth2', function() {
+                gapi.auth2.init();
+                renderButton();
+            });
+        }
+
+        window.onload = function() {
+            loadGoogleAPI();
+        }
+
         function signInWithApple() {
-            // Implement sign-in with Apple here
+            AppleID.auth.signIn().then(response => {
+                const user = {
+                    username: response.user.fullName.givenName + ' ' + response.user.fullName.familyName,
+                    email: response.user.email,
+                };
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Apple Sign-In successful!',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    localStorage.setItem('loggedInUser', JSON.stringify(user));
+                    window.location.href = 'profile.html';
+                });
+            }).catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Apple Sign-In failed',
+                    text: error.message,
+                    confirmButtonColor: '#17a589'
+                });
+            });
         }
 
         function signInWithEmail() {
@@ -206,8 +262,20 @@
                         },
                         body: JSON.stringify({ email: email })
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        return response.text().then(text => {
+                            try {
+                                return JSON.parse(text);
+                            } catch (err) {
+                                console.error('Server response is not valid JSON:', text);
+                                throw new Error('Invalid JSON response');
+                            }
+                        });
+                    })
                     .then(data => {
+                        if (!data.success) {
+                            throw new Error('OTP sending failed.');
+                        }
                         return Swal.fire({
                             title: 'Enter the OTP sent to your email',
                             input: 'text',
@@ -223,19 +291,31 @@
                                     },
                                     body: JSON.stringify({ email: email, enteredOtp: otp })
                                 })
-                                .then(response => response.json())
+                                .then(response => {
+                                    return response.text().then(text => {
+                                        try {
+                                            return JSON.parse(text);
+                                        } catch (err) {
+                                            console.error('Server response is not valid JSON:', text);
+                                            throw new Error('Invalid JSON response');
+                                        }
+                                    });
+                                })
                                 .then(data => {
                                     if (data.success) {
                                         Swal.fire('Success!', 'You are now signed in.', 'success');
                                     } else {
-                                        Swal.fire('Error', 'Invalid OTP.', 'error');
+                                        throw new Error('Invalid OTP.');
                                     }
+                                })
+                                .catch(error => {
+                                    Swal.showValidationMessage(`Verification failed: ${error.message}`);
                                 });
                             }
                         });
                     })
                     .catch(error => {
-                        Swal.showValidationMessage(`Request failed: ${error}`);
+                        Swal.showValidationMessage(`Request failed: ${error.message}`);
                     });
                 }
             });
