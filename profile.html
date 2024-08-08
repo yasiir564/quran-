@@ -7,216 +7,215 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
     <style>
-body {
-    margin: 0;
-    height: 100vh;
-    background: #abbaab;
-    background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
-    background: linear-gradient(to right, #ffffff, #abbaab);
-    font-family: 'Amiri', serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
+        body {
+            margin: 0;
+            height: 100vh;
+            background: #abbaab;
+            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
+            background: linear-gradient(to right, #ffffff, #abbaab);
+            font-family: 'Amiri', serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
 
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    height: 100vh;
-    width: 100%;
-}
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
 
-.profile-section {
-    text-align: center;
-    width: 100%;
-    max-width: 300px;
-    padding: 20px;
-    background-color: #1a1a1a;
-    border-radius: 10px;
-    color: #fff;
-    margin-bottom: 20px;
-}
+        .profile-section {
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
+            padding: 20px;
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            color: #fff;
+            margin-bottom: 20px;
+        }
 
-.profile-pic-container {
-    position: relative;
-    width: 150px;
-    height: 150px;
-    margin: 0 auto 20px;
-}
+        .profile-pic-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+        }
 
-.profile-pic {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-}
+        .profile-pic {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+        }
 
-.upload-btn {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 24px;
-}
+        .upload-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+        }
 
-.default-avatar {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background-color: #777;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 50px;
-}
+        .default-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #777;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 50px;
+        }
 
-.logout-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #d9534f;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    text-align: center;
-    margin-top: 20px;
-    border-radius: 5px;
-}
+        .logout-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #d9534f;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
 
-.logout-button:hover {
-    background-color: #c9302c;
-}
+        .logout-button:hover {
+            background-color: #c9302c;
+        }
 
-input[type="file"] {
-    display: none;
-}
+        input[type="file"] {
+            display: none;
+        }
 
-.card-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    width: 100%;
-}
+        .card-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+        }
 
-.card {
-    background-color: #1a1a1a;
-    color: #fff;
-    padding: 15px;
-    border-radius: 10px;
-    text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
-    cursor: pointer;
-}
+        .card {
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
 
-.card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-}
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
 
-.card i {
-    font-size: 40px;
-    margin-bottom: 10px;
-}
+        .card i {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
 
-.header-icons {
-    display: flex;
-    justify-content: flex-end;
-    padding: 10px;
-}
+        .header-icons {
+            display: flex;
+            justify-content: flex-end;
+            padding: 10px;
+        }
 
-.header-icons a {
-    margin-left: 20px;
-}
+        .header-icons a {
+            margin-left: 20px;
+        }
 
-/* Sidebar Menu */
-.sidebar {
-    height: 100%;
-    width: 250px;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: -250px;
-    background: linear-gradient(to top, #a8edea, #fed6e3);
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-}
+        /* Sidebar Menu */
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: -250px;
+            background: linear-gradient(to top, #a8edea, #fed6e3);
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
 
-.sidebar a {
-    padding: 10px 15px;
-    text-decoration: none;
-    font-size: 18px;
-    color: #111;
-    display: block;
-    transition: 0.3s;
-}
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #111;
+            display: block;
+            transition: 0.3s;
+        }
 
-.sidebar a:hover {
-    color: #fff;
-    background-color: #2575fc;
-}
+        .sidebar a:hover {
+            color: #fff;
+            background-color: #2575fc;
+        }
 
-.sidebar .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-}
+        .sidebar .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
 
-#main {
-    transition: margin-left .5s;
-    padding: 16px;
-}
+        #main {
+            transition: margin-left .5s;
+            padding: 16px;
+        }
 
-.openbtn {
-    font-size: 20px;
-    cursor: pointer;
-    background-color: #2575fc;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 1000;
-}
+        .openbtn {
+            font-size: 20px;
+            cursor: pointer;
+            background-color: #2575fc;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+        }
 
-.openbtn:hover {
-    background-color: #0056b3;
-}
+        .openbtn:hover {
+            background-color: #0056b3;
+        }
 
-@media screen and (max-width: 768px) {
-    .card-container {
-        grid-template-columns: 1fr;
-    }
+        @media screen and (max-width: 768px) {
+            .card-container {
+                grid-template-columns: 1fr;
+            }
 
-    .profile-section {
-        width: 100%;
-    }
+            .profile-section {
+                width: 100%;
+            }
 
-    .openbtn {
-        top: 60px;
-    }
-}
-
+            .openbtn {
+                top: 60px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -272,107 +271,93 @@ input[type="file"] {
             <div class="profile-pic-container">
                 <div id="profile-pic" class="default-avatar">A</div>
                 <label for="profile-pic-input" class="upload-btn">+</label>
-                <input type="file" id="profile-pic-input" accept="image/*">
+                <input type="file" id="profile-pic-input" accept="image/*" onchange="uploadProfilePic(event)">
             </div>
-            <h2 id="user-name">Username</h2>
-            <p id="user-email">Email</p>
-            <button type="button" id="logout-button" class="logout-button">Log Out</button>
+            <h2 id="username">User Name</h2>
+            <button class="logout-button" onclick="logout()">Logout</button>
         </div>
-
         <div class="card-container">
-            <div class="card" id="read-quran-card">
-                <i class="fas fa-book"></i>
+            <div class="card">
+                <i class="fas fa-quran"></i>
                 <p>Read Quran</p>
             </div>
-            <div class="card" id="listen-quran-card">
-                <i class="fas fa-headphones"></i>
-                <p>Listen to Quran</p>
+            <div class="card">
+                <i class="fas fa-mosque"></i>
+                <p>Find Mosques</p>
             </div>
-            <div class="card" id="donate-card">
-                <i class="fas fa-donate"></i>
-                <p>Donate</p>
+            <div class="card">
+                <i class="fas fa-calendar-alt"></i>
+                <p>Prayer Times</p>
             </div>
-            <div class="card" id="settings-card">
-                <i class="fas fa-cog"></i>
-                <p>Settings</p>
+            <div class="card">
+                <i class="fas fa-podcast"></i>
+                <p>Podcasts</p>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-
-            if (!isLoggedIn) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Please Log In',
-                    text: 'Please log in to update your profile.',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    window.location.href = 'login.html';
-                });
-            } else {
-                // Fetch and display user information
-                const user = JSON.parse(localStorage.getItem("loggedInUser"));
-                const userName = user.name || "Username"; // Assuming user.name contains the user's name
-                const userEmail = user.email || "Email";
-                const profilePic = user.profilePic; // Assuming user.profilePic contains the profile picture URL
-
-                document.getElementById("user-name").textContent = userName;
-                document.getElementById("user-email").textContent = userEmail;
-                if (profilePic) {
-                    document.getElementById("profile-pic").innerHTML = `<img src="${profilePic}" alt="Profile Picture" class="profile-pic">`;
-                } else {
-                    document.getElementById("profile-pic").textContent = userName.charAt(0);
-                }
-            }
-
-            document.getElementById("logout-button").addEventListener("click", function() {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You will be logged out.",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, log out!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        localStorage.setItem("isLoggedIn", "false");
-                        localStorage.removeItem("loggedInUser");
-                        window.location.href = 'login.html';
-                    }
-                });
-            });
-
-            document.getElementById("profile-pic-input").addEventListener("change", function(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const profilePicUrl = e.target.result;
-                        const user = JSON.parse(localStorage.getItem("loggedInUser"));
-                        user.profilePic = profilePicUrl;
-                        localStorage.setItem("loggedInUser", JSON.stringify(user));
-                        document.getElementById("profile-pic").innerHTML = `<img src="${profilePicUrl}" alt="Profile Picture" class="profile-pic">`;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        });
-
         function openNav() {
             document.getElementById("mySidebar").style.left = "0";
+            document.getElementById("main").style.marginLeft = "250px";
         }
 
         function closeNav() {
             document.getElementById("mySidebar").style.left = "-250px";
+            document.getElementById("main").style.marginLeft= "0";
         }
 
-        document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
+        document.getElementById("closeSidebarBtn").onclick = closeNav;
+
+        function logout() {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You will be logged out!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d9534f',
+                cancelButtonColor: '#007bff',
+                confirmButtonText: 'Logout'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('isLoggedIn');
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+
+        function uploadProfilePic(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const profilePic = document.getElementById('profile-pic');
+                profilePic.src = e.target.result;
+                profilePic.classList.remove('default-avatar');
+                profilePic.classList.add('profile-pic');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const profilePicElement = document.getElementById('profile-pic');
+            const usernameElement = document.getElementById('username');
+
+            if (isLoggedIn) {
+                const userProfile = JSON.parse(localStorage.getItem('userProfile'));
+                usernameElement.textContent = userProfile.name;
+                if (userProfile.profilePic) {
+                    profilePicElement.src = userProfile.profilePic;
+                    profilePicElement.classList.remove('default-avatar');
+                    profilePicElement.classList.add('profile-pic');
+                } else {
+                    profilePicElement.textContent = userProfile.name.charAt(0).toUpperCase();
+                }
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
     </script>
 </body>
 </html>
-
