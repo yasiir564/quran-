@@ -269,11 +269,8 @@
     <div class="container">
         <div class="profile-section">
             <div class="profile-pic-container">
-                <div id="profile-pic" class="default-avatar">A</div>
-                <label for="profile-pic-input" class="upload-btn">
-                    <i class="fas fa-camera"></i>
-                </label>
-                <input id="profile-pic-input" type="file" accept="image/*">
+                <div class="default-avatar" id="profile-pic">A</div>
+                <input id="fileInput" type="file" accept="image/*">
             </div>
             <h2 id="profile-username">Username</h2>
             <p id="profile-email">Email</p>
@@ -312,51 +309,58 @@
             document.getElementById("mySidebar").style.left = "-250px";
         };
 
-        // Fetch user profile details
-        async function fetchUserProfile() {
-            try {
-                const response = await axios.get('/api/user/profile');
-                const profile = response.data;
+        // Delay function to wait for 10 seconds
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
 
+        // Fetch user profile details from local storage
+        function fetchUserProfile() {
+            const username = localStorage.getItem('username');
+            const email = localStorage.getItem('email');
+            const profilePicture = localStorage.getItem('profilePicture');
+
+            if (username && email) {
                 // Update profile section with user data
-                document.getElementById('profile-username').innerText = profile.username;
-                document.getElementById('profile-email').innerText = profile.email;
+                document.getElementById('profile-username').innerText = username;
+                document.getElementById('profile-email').innerText = email;
 
                 // Set profile picture if available
-                if (profile.profilePicture) {
-                    document.getElementById('profile-pic').style.backgroundImage = `url(${profile.profilePicture})`;
+                if (profilePicture) {
+                    document.getElementById('profile-pic').style.backgroundImage = `url(${profilePicture})`;
                     document.getElementById('profile-pic').innerText = '';
                 } else {
-                    document.getElementById('profile-pic').innerText = profile.username.charAt(0).toUpperCase();
+                    document.getElementById('profile-pic').innerText = username.charAt(0).toUpperCase();
                 }
-            } catch (error) {
-                console.error('Error fetching user profile:', error);
+            } else {
+                throw new Error('User not logged in');
             }
         }
 
         // Check user login status
         async function checkLoginStatus() {
             try {
-                const response = await axios.get('/api/user/status');
-                if (!response.data.loggedIn) {
+                const loggedIn = localStorage.getItem('loggedIn') === 'true';
+                if (!loggedIn) {
+                    await delay(10000);
                     window.location.href = 'login.html';
                 } else {
                     fetchUserProfile();
                 }
             } catch (error) {
                 console.error('Error checking login status:', error);
+                await delay(10000);
                 window.location.href = 'login.html';
             }
         }
 
         // Handle logout
-        document.getElementById('logoutBtn').onclick = async function() {
-            try {
-                await axios.post('/api/user/logout');
-                window.location.href = 'login.html';
-            } catch (error) {
-                console.error('Error logging out:', error);
-            }
+        document.getElementById('logoutBtn').onclick = function() {
+            localStorage.removeItem('loggedIn');
+            localStorage.removeItem('username');
+            localStorage.removeItem('email');
+            localStorage.removeItem('profilePicture');
+            window.location.href = 'login.html';
         };
 
         // Initialize the profile page
