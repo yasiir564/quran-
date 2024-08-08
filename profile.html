@@ -273,104 +273,94 @@
                 <label for="profile-pic-input" class="upload-btn">
                     <i class="fas fa-camera"></i>
                 </label>
-                <input id="profile-pic-input" type="file" accept="image/*" onchange="uploadProfilePic(event)">
+                <input id="profile-pic-input" type="file" accept="image/*">
             </div>
-            <h2 id="username">User Name</h2>
-            <button class="logout-button" onclick="logout()">Logout</button>
+            <h2 id="profile-username">Username</h2>
+            <p id="profile-email">Email</p>
+            <button class="logout-button" id="logoutBtn">Logout</button>
         </div>
         <div class="card-container">
             <div class="card">
-                <i class="fas fa-quran"></i>
-                <p>Read Quran</p>
+                <i class="fas fa-user"></i>
+                <p>Update Profile</p>
             </div>
             <div class="card">
-                <i class="fas fa-mosque"></i>
-                <p>Find Mosques</p>
+                <i class="fas fa-cog"></i>
+                <p>Settings</p>
             </div>
             <div class="card">
-                <i class="fas fa-calendar-alt"></i>
-                <p>Prayer Times</p>
+                <i class="fas fa-lock"></i>
+                <p>Privacy</p>
             </div>
             <div class="card">
-                <i class="fas fa-podcast"></i>
-                <p>Podcasts</p>
+                <i class="fas fa-question-circle"></i>
+                <p>Help</p>
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // Function to open the sidebar menu
         function openNav() {
             document.getElementById("mySidebar").style.left = "0";
-            document.getElementById("main").style.marginLeft = "250px";
         }
 
-        function closeNav() {
+        // Function to close the sidebar menu
+        document.getElementById("closeSidebarBtn").onclick = function() {
             document.getElementById("mySidebar").style.left = "-250px";
-            document.getElementById("main").style.marginLeft= "0";
-        }
+        };
 
-        document.getElementById("closeSidebarBtn").onclick = closeNav;
+        // Fetch user profile details
+        async function fetchUserProfile() {
+            try {
+                const response = await axios.get('/api/user/profile');
+                const profile = response.data;
 
-        function logout() {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You will be logged out!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d9534f',
-                cancelButtonColor: '#007bff',
-                confirmButtonText: 'Logout'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    localStorage.removeItem('isLoggedIn');
-                    localStorage.removeItem('userProfile');
-                    window.location.href = 'login.html';
-                }
-            });
-        }
+                // Update profile section with user data
+                document.getElementById('profile-username').innerText = profile.username;
+                document.getElementById('profile-email').innerText = profile.email;
 
-        function uploadProfilePic(event) {
-            const file = event.target.files[0];
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const profilePic = document.getElementById('profile-pic');
-                profilePic.src = e.target.result;
-                profilePic.classList.remove('default-avatar');
-                profilePic.classList.add('profile-pic');
-
-                // Save profile picture in local storage
-                const userProfile = JSON.parse(localStorage.getItem('userProfile')) || {};
-                userProfile.profilePic = e.target.result;
-                localStorage.setItem('userProfile', JSON.stringify(userProfile));
-            };
-            reader.readAsDataURL(file);
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
-            const profilePicElement = document.getElementById('profile-pic');
-            const usernameElement = document.getElementById('username');
-
-            if (isLoggedIn) {
-                const userProfile = JSON.parse(localStorage.getItem('userProfile'));
-                if (userProfile) {
-                    usernameElement.textContent = userProfile.name || 'User Name';
-                    if (userProfile.profilePic) {
-                        profilePicElement.src = userProfile.profilePic;
-                        profilePicElement.classList.remove('default-avatar');
-                        profilePicElement.classList.add('profile-pic');
-                    } else {
-                        profilePicElement.textContent = userProfile.name ? userProfile.name.charAt(0).toUpperCase() : 'A';
-                    }
+                // Set profile picture if available
+                if (profile.profilePicture) {
+                    document.getElementById('profile-pic').style.backgroundImage = `url(${profile.profilePicture})`;
+                    document.getElementById('profile-pic').innerText = '';
                 } else {
-                    console.error("User profile not found in local storage.");
+                    document.getElementById('profile-pic').innerText = profile.username.charAt(0).toUpperCase();
                 }
-            } else {
-                console.error("User is not logged in. Redirecting to login page.");
+            } catch (error) {
+                console.error('Error fetching user profile:', error);
+            }
+        }
+
+        // Check user login status
+        async function checkLoginStatus() {
+            try {
+                const response = await axios.get('/api/user/status');
+                if (!response.data.loggedIn) {
+                    window.location.href = 'login.html';
+                } else {
+                    fetchUserProfile();
+                }
+            } catch (error) {
+                console.error('Error checking login status:', error);
                 window.location.href = 'login.html';
             }
-        });
+        }
+
+        // Handle logout
+        document.getElementById('logoutBtn').onclick = async function() {
+            try {
+                await axios.post('/api/user/logout');
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error('Error logging out:', error);
+            }
+        };
+
+        // Initialize the profile page
+        checkLoginStatus();
     </script>
 </body>
 </html>
