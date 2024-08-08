@@ -68,11 +68,14 @@ header {
     text-decoration: none;
     font-size: 1em; /* Adjust size if needed */
 }
-    .header-icons a .icon-container {
+  .header-icons a .icon-container {
     background-color: #0057b7; /* Blue background color */
-    border-radius: 10px; /* Optional: round the corners */
-    padding: 10px; /* Optional: add some padding */
-    display: inline-block; /* Ensure the background wraps around the icon */
+    border-radius: 10px; /* Round the corners */
+    display: flex; /* Center the icon within the container */
+    align-items: center; /* Vertically center the icon */
+    justify-content: center; /* Horizontally center the icon */
+    width: 40px; /* Match the size of the icon */
+    height: 40px; /* Match the size of the icon */
 }
 
 .header-icons a lord-icon {
