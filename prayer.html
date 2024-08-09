@@ -167,6 +167,28 @@
                 width: 100%;
                 padding: 15px;
             }
+
+            .country-search input {
+                flex-grow: unset;
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .country-search {
+                flex-direction: column;
+            }
+
+            .prayer-time {
+                flex-direction: column;
+                align-items: center;
+                text-align: left;
+            }
+
+            .prayer-time span {
+                width: 100%;
+                display: block;
+            }
         }
     </style>
 </head>
@@ -219,7 +241,7 @@
 
             // Get user's location
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition, showError);
+                navigator.geolocation.getCurrentPosition(showPosition, showError, {timeout: 10000});
             } else {
                 Swal.fire("Error", "Geolocation is not supported by this browser.", "error");
             }
@@ -231,19 +253,10 @@
             }
 
             function showError(error) {
-                switch (error.code) {
-                    case error.PERMISSION_DENIED:
-                        Swal.fire("Error", "User denied the request for Geolocation.", "error");
-                        break;
-                    case error.POSITION_UNAVAILABLE:
-                        Swal.fire("Error", "Location information is unavailable.", "error");
-                        break;
-                    case error.TIMEOUT:
-                        Swal.fire("Error", "The request to get user location timed out.", "error");
-                        break;
-                    case error.UNKNOWN_ERROR:
-                        Swal.fire("Error", "An unknown error occurred.", "error");
-                        break;
+                if (error.code === error.PERMISSION_DENIED) {
+                    Swal.fire("Location Denied", "Please allow location access in your browser settings.", "error");
+                } else {
+                    Swal.fire("Error", "Unable to retrieve your location.", "error");
                 }
             }
 
@@ -262,12 +275,9 @@
                         document.getElementById("asr").textContent = timings.Asr;
                         document.getElementById("maghrib").textContent = timings.Maghrib;
                         document.getElementById("isha").textContent = timings.Isha;
-
-                        let location = data.data.meta.timezone;
-                        document.getElementById("location").textContent = `Location: ${location}`;
                         displayNextPrayer(timings);
                     })
-                    .catch(error => Swal.fire("Error", "Error fetching prayer times.", "error"));
+                    .catch(error => Swal.fire("Error", "Failed to fetch prayer times.", "error"));
             }
 
             // Display next prayer time
@@ -346,4 +356,3 @@
     </script>
 </body>
 </html>
-
