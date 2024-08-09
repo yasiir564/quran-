@@ -45,6 +45,188 @@
             right: 10px;
             color: #fff;
         }
+        /* Sidebar Menu */
+.sidebar {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: -250px;
+    background: linear-gradient(to top, #a8edea, #fed6e3);
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    margin-bottom: 10px; /* Added space below sidebar */
+}
+
+.sidebar a {
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #111;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar a:hover {
+    color: #fff;
+    background-color: #2575fc;
+}
+
+.sidebar .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+#main {
+    transition: margin-left .5s;
+    padding: 16px;
+}
+
+.openbtn {
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #2575fc;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    position: fixed;
+    top: 50px;
+    left: 10px;
+    z-index: 1000; /* High z-index to ensure it's on top */
+}
+
+.openbtn:hover {
+    background-color: #0056b3;
+}
+
+/* Navigation */
+nav ul {
+    display: none;
+}
+
+.mobile-cards {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 50px;
+    flex-wrap: wrap; /* Default wrapping for larger screens */
+    position: relative; /* Needed for the arrow indicator */
+}
+
+.card {
+    padding: 20px;
+    margin: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: center;
+    color: white;
+    position: relative;
+    width: 100px; /* Default size for desktop */
+    height: 100px; /* Default size for desktop */
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.5);
+    z-index: 1;
+}
+
+.card:hover::before {
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.5);
+}
+
+.card:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.card p {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 5px;
+    border-radius: 5px;
+    margin: 0;
+    position: relative;
+    z-index: 2;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .mobile-cards {
+        flex-wrap: nowrap; /* No wrapping for horizontal scroll */
+        overflow-x: scroll; /* Enable horizontal scroll */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        margin-top: 80px; /* Add space between cards and header */
+        padding-left: 10px; /* Add some padding to the left for better alignment */
+    }
+
+    .card {
+        flex: 0 0 auto; /* Cards do not shrink or grow, keeping their size */
+        margin: 10px 5px; /* Adjust margins for horizontal alignment */
+        width: 180px; /* Larger card size for mobile */
+        height: 180px; /* Larger card size for mobile */
+    }
+
+    /* Optional: Hide scrollbar for a cleaner look */
+    .mobile-cards::-webkit-scrollbar {
+        display: none; /* For WebKit browsers */
+    }
+
+    .mobile-cards {
+        -ms-overflow-style: none;  /* For Internet Explorer and Edge */
+        scrollbar-width: none;  /* For Firefox */
+    }
+
+    /* Scroll Indicator Arrow */
+    .scroll-arrow {
+        display: block;
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 2em;
+        color: #2575fc;
+        z-index: 10;
+        animation: bounce 1.5s infinite;
+        cursor: pointer;
+    }
+
+    /* Scroll Arrow Animation */
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(-50%) translateX(0);
+        }
+        50% {
+            transform: translateY(-50%) translateX(5px);
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .card {
+        width: 160px;
+        height: 160px;
+    }
+}
 
         .tasbih-counter {
             width: 80%;
@@ -185,6 +367,28 @@
      <header></header>
     <span class="close-button" onclick="window.location.href='index.html'">×</span>
     <i id="dark-mode-toggle" class="fas fa-moon dark-mode-toggle"></i>
+     <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
+        <a href="index.html">
+            <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
+        </a>
+        <a href="juzz.html">
+            <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read in Juzz
+        </a>
+        <a href="audio.html">
+            <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Listen to Quran
+        </a>
+        <a href="prayer.html">
+            <lord-icon src="https://cdn.lordicon.com/tftaqjwp.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Prayer Time
+        </a>
+        <a href="donate.html">
+            <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Donate with Love
+        </a>
+    </div>
+
+    <div id="main">
+        <button class="openbtn" onclick="openNav()">&#9776; Quran Pro</button>
+    </div>
 
     <div class="tasbih-counter">
         <div class="label label-left">Quran pro</div>
@@ -206,6 +410,19 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script>
+        function openNav() {
+    document.getElementById("mySidebar").style.left = "0";
+    document.getElementById("main").style.marginLeft = "250px";
+}
+
+function closeNav() {
+    document.getElementById("mySidebar").style.left = "-250px";
+    document.getElementById("main").style.marginLeft = "0";
+}
+
+// Event listener for close button
+document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
+        
         document.addEventListener('DOMContentLoaded', function () {
             const countDisplay = document.getElementById('countDisplay');
             const countButton = document.getElementById('countButton');
