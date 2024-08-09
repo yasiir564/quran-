@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prayer Times</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Nunito:wght@300;400;600&display=swap');
         @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
         @import url('https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css');
 
         body {
-            font-family: 'Amiri', serif;
-            background: #abbaab;
+            font-family: 'Nunito', sans-serif;
             background: linear-gradient(to right, #ffffff, #abbaab);
             margin: 0;
             min-height: 100vh;
@@ -24,38 +23,43 @@
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.9);
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
             text-align: center;
-            width: 90%;
+            width: 95%;
             max-width: 400px;
             position: relative;
         }
 
         .clock {
-            font-family: 'Lobster', cursive;
+            font-family: 'Roboto', sans-serif;
             font-size: 3em;
             margin-bottom: 20px;
             color: #333;
+            font-weight: 700;
         }
 
         .prayer-time {
             display: flex;
             justify-content: space-between;
-            padding: 10px;
+            align-items: center;
+            padding: 15px 10px;
             margin: 10px 0;
-            border-bottom: 1px solid #ccc;
-            width: 100%;
+            border-radius: 10px;
+            background-color: #f0f0f0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .prayer-time span:first-child {
-            font-weight: bold;
+            font-weight: 600;
             color: #555;
+            font-size: 1.2em;
         }
 
         .prayer-time span:last-child {
+            font-size: 1.2em;
             color: #007BFF;
         }
 
@@ -89,16 +93,13 @@
         }
 
         body.dark-mode .container {
-            background: rgba(50, 50, 50, 0.8);
+            background: rgba(50, 50, 50, 0.9);
             color: #ddd;
         }
 
         body.dark-mode .prayer-time {
-            border-bottom: 1px solid #555;
-        }
-
-        body.dark-mode .prayer-time span:first-child {
-            color: #ccc;
+            background-color: #333;
+            color: #ddd;
         }
 
         body.dark-mode .prayer-time span:last-child {
@@ -110,7 +111,7 @@
         }
 
         .country-search {
-            margin-bottom: 10px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -122,15 +123,21 @@
             border-radius: 5px;
             flex-grow: 1;
             margin-right: 10px;
+            font-family: 'Roboto', sans-serif;
         }
 
         .country-search button {
-            padding: 10px 20px;
+            padding: 10px;
             border: none;
             border-radius: 5px;
             background-color: #007BFF;
             color: white;
             cursor: pointer;
+            font-size: 1em;
+        }
+
+        .country-search button i {
+            margin-right: 5px;
         }
 
         .country-list {
@@ -167,34 +174,13 @@
                 width: 100%;
                 padding: 15px;
             }
-
-            .country-search input {
-                flex-grow: unset;
-                width: 100%;
-                margin-right: 0;
-                margin-bottom: 10px;
-            }
-
-            .country-search {
-                flex-direction: column;
-            }
-
-            .prayer-time {
-                flex-direction: column;
-                align-items: center;
-                text-align: left;
-            }
-
-            .prayer-time span {
-                width: 100%;
-                display: block;
-            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <div class="close-button">&times;</div>
+        <div class="close-button" onclick="window.location.href='index.html'">&times;</div>
         <div class="dark-mode-toggle">
             <i class="fas fa-moon"></i>
         </div>
@@ -203,7 +189,7 @@
         <div id="location"></div>
         <div class="country-search">
             <input type="text" id="country-search-input" placeholder="Search for a country...">
-            <button id="search-button">Search</button>
+            <button id="search-button"><i class="fas fa-search"></i> Search</button>
         </div>
         <div id="country-list" class="country-list"></div>
         <div id="prayer-times">
@@ -241,7 +227,9 @@
 
             // Get user's location
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition, showError, {timeout: 10000});
+                navigator.geolocation.getCurrentPosition(showPosition, showError, {
+                    timeout: 10000
+                });
             } else {
                 Swal.fire("Error", "Geolocation is not supported by this browser.", "error");
             }
@@ -253,10 +241,32 @@
             }
 
             function showError(error) {
-                if (error.code === error.PERMISSION_DENIED) {
-                    Swal.fire("Location Denied", "Please allow location access in your browser settings.", "error");
-                } else {
-                    Swal.fire("Error", "Unable to retrieve your location.", "error");
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        Swal.fire({
+                            title: "Location Access Required",
+                            text: "Please enable location access to get accurate prayer times.",
+                            icon: "warning",
+                            confirmButtonText: "Open Settings"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                if (navigator.userAgent.match(/Android/i)) {
+                                    window.location.href = "geo:0,0?q=Settings";
+                                } else if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+                                    window.location.href = "App-Prefs:root=Privacy&path=LOCATION";
+                                }
+                            }
+                        });
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        Swal.fire("Error", "Location information is unavailable.", "error");
+                        break;
+                    case error.TIMEOUT:
+                        Swal.fire("Error", "The request to get user location timed out.", "error");
+                        break;
+                    case error.UNKNOWN_ERROR:
+                        Swal.fire("Error", "An unknown error occurred.", "error");
+                        break;
                 }
             }
 
@@ -268,91 +278,53 @@
                 }
                 fetch(url)
                     .then(response => response.json())
-                    .then(data => {
-                        let timings = data.data.timings;
+                    .then(data => {const timings = data.data.timings;
                         document.getElementById("fajr").textContent = timings.Fajr;
                         document.getElementById("dhuhr").textContent = timings.Dhuhr;
                         document.getElementById("asr").textContent = timings.Asr;
                         document.getElementById("maghrib").textContent = timings.Maghrib;
                         document.getElementById("isha").textContent = timings.Isha;
-                        displayNextPrayer(timings);
+
+                        if (data.data.meta.timezone) {
+                            document.getElementById("location").textContent = `Timezone: ${data.data.meta.timezone}`;
+                        }
                     })
-                    .catch(error => Swal.fire("Error", "Failed to fetch prayer times.", "error"));
-            }
-
-            // Display next prayer time
-            function displayNextPrayer(timings) {
-                const now = new Date();
-                const prayerTimes = {
-                    Fajr: new Date(`${now.toDateString()} ${timings.Fajr}`),
-                    Dhuhr: new Date(`${now.toDateString()} ${timings.Dhuhr}`),
-                    Asr: new Date(`${now.toDateString()} ${timings.Asr}`),
-                    Maghrib: new Date(`${now.toDateString()} ${timings.Maghrib}`),
-                    Isha: new Date(`${now.toDateString()} ${timings.Isha}`)
-                };
-                let nextPrayer = null;
-                for (let [prayer, time] of Object.entries(prayerTimes)) {
-                    if (now < time) {
-                        nextPrayer = prayer;
-                        break;
-                    }
-                }
-                if (!nextPrayer) {
-                    nextPrayer = "Fajr";
-                }
-                document.querySelector('.prayer-time span').textContent = `${nextPrayer}:`;
-            }
-
-            // Country search functionality
-            document.getElementById("search-button").addEventListener("click", function() {
-                let searchInput = document.getElementById("country-search-input").value.trim();
-                if (searchInput) {
-                    searchCountry(searchInput);
-                } else {
-                    Swal.fire("Error", "Please enter a country name.", "error");
-                }
-            });
-
-            function searchCountry(query) {
-                const countries = [
-                    // Add country list here
-                    { name: "Kenya", city: "Nairobi", flag: "https://restcountries.com/v3.1/all" },
-                    // Add more countries as needed
-                ];
-
-                let filteredCountries = countries.filter(country => country.name.toLowerCase().includes(query.toLowerCase()));
-                displayCountryList(filteredCountries);
-            }
-
-            function displayCountryList(countries) {
-                const countryList = document.getElementById("country-list");
-                countryList.innerHTML = "";
-
-                if (countries.length > 0) {
-                    countries.forEach(country => {
-                        const listItem = document.createElement("div");
-                        listItem.classList.add("country-list-item");
-                        listItem.innerHTML = `<img src="${country.flag}" alt="${country.name} flag"><span>${country.name}</span>`;
-                        listItem.addEventListener("click", () => fetchPrayerTimes(null, null, country));
-                        countryList.appendChild(listItem);
+                    .catch(error => {
+                        Swal.fire("Error", "Failed to fetch prayer times.", "error");
                     });
-                } else {
-                    countryList.innerHTML = "<div>No countries found.</div>";
-                }
             }
 
-            // Dark mode toggle functionality
-            document.querySelector('.dark-mode-toggle').addEventListener('click', () => {
-                document.body.classList.toggle('dark-mode');
-                document.querySelector('.dark-mode-toggle i').classList.toggle('fa-sun');
-                document.querySelector('.dark-mode-toggle i').classList.toggle('fa-moon');
+            // Search country functionality
+            document.getElementById("search-button").addEventListener("click", function() {
+                const country = document.getElementById("country-search-input").value.trim();
+                if (country) {
+                    fetch(`https://restcountries.com/v3.1/name/${country}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data && data[0]) {
+                                fetchPrayerTimes(null, null, {
+                                    name: data[0].name.common,
+                                    city: data[0].capital ? data[0].capital[0] : country
+                                });
+                            } else {
+                                Swal.fire("Error", "Country not found.", "error");
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire("Error", "Failed to fetch country information.", "error");
+                        });
+                }
             });
 
-            // Close button functionality
-            document.querySelector('.close-button').addEventListener('click', () => {
-                window.close();
+            // Dark mode toggle
+            document.querySelector(".dark-mode-toggle").addEventListener("click", function() {
+                document.body.classList.toggle("dark-mode");
+                const icon = document.querySelector(".dark-mode-toggle i");
+                icon.classList.toggle("fa-sun");
+                icon.classList.toggle("fa-moon");
             });
         });
     </script>
 </body>
+
 </html>
