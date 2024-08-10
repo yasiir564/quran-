@@ -39,6 +39,36 @@ header {
     padding-top: 60px;
 }
 
+/* CSS for the blur effect */
+.body-blur {
+    position: relative;
+}
+
+.content {
+    filter: blur(5px);
+    transition: filter 0.3s ease;
+}
+
+/* Make sure the sidebar is clear and not affected by the blur effect */
+.sidebar {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0; /* Changed from -250px to 0 to keep it in view */
+    background: linear-gradient(to top, #a8edea, #fed6e3);
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+#main {
+    transition: margin-left .5s;
+    padding: 16px;
+    margin-left: 250px; /* Adjust margin to ensure the content is not hidden under the sidebar */
+}
+
 .sidebar a {
     padding: 10px 15px;
     text-decoration: none;
@@ -53,14 +83,6 @@ header {
     background-color: #2575fc;
 }
 
-.sidebar .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-}
-
 .openbtn {
     font-size: 20px;
     cursor: pointer;
@@ -71,17 +93,11 @@ header {
     position: fixed;
     top: 50px;
     left: 10px;
-    z-index: 1000;
+    z-index: 1000; /* High z-index to ensure it's on top */
 }
 
 .openbtn:hover {
     background-color: #0056b3;
-}
-
-/* Blur effect for the content when sidebar is open */
-.blurred {
-    filter: blur(5px);
-    transition: filter 0.5s ease;
 }
 
 .search-container {
@@ -490,15 +506,19 @@ header {
         <button id="show-more-btn" class="show-more-btn">Show More</button>
     </div>
 <script>
-    function openNav() {
+  function openNav() {
     document.getElementById("mySidebar").style.left = "0";
-    document.body.classList.add("blurred");
+    document.querySelector(".content").classList.add("body-blur");
 }
 
-document.getElementById("closeSidebarBtn").addEventListener("click", function() {
+function closeNav() {
     document.getElementById("mySidebar").style.left = "-250px";
-    document.body.classList.remove("blurred");
-});
+    document.querySelector(".content").classList.remove("body-blur");
+}
+
+// Adding event listeners
+document.getElementById("openSidebarBtn").addEventListener("click", openNav);
+document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
     document.addEventListener('DOMContentLoaded', function () {
         const surahList = document.getElementById('surah-list');
         const showMoreBtn = document.getElementById('show-more-btn');
