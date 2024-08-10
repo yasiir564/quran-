@@ -508,17 +508,14 @@ header {
 <script>
   function openNav() {
     document.getElementById("mySidebar").style.left = "0";
-    document.querySelector(".content").classList.add("body-blur");
+    document.body.classList.add("blurred");
 }
 
-function closeNav() {
+document.getElementById("closeSidebarBtn").addEventListener("click", function() {
     document.getElementById("mySidebar").style.left = "-250px";
-    document.querySelector(".content").classList.remove("body-blur");
-}
+    document.body.classList.remove("blurred");
+});
 
-// Adding event listeners
-document.getElementById("openSidebarBtn").addEventListener("click", openNav);
-document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
     document.addEventListener('DOMContentLoaded', function () {
         const surahList = document.getElementById('surah-list');
         const showMoreBtn = document.getElementById('show-more-btn');
