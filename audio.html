@@ -13,7 +13,10 @@
      crossorigin="anonymous"></script>
     <style>
  body {
-            background: linear-gradient(to top, #a8edea, #fed6e3);
+            background: #abbaab;  /* fallback for old browsers */
+            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);  /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to right, #ffffff, #abbaab); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+ }
             font-family: 'Amiri', serif;
             margin: 0;
             padding: 0;
@@ -97,7 +100,7 @@ header {
     padding: 10px 15px;
     border: none;
     position: fixed;
-    top: 40px;
+    top: 38px;
     left: 10px;
     z-index: 1000; /* High z-index to ensure it's on top */
 }
@@ -105,7 +108,8 @@ header {
 .openbtn:hover {
     background-color: #0056b3;
 }
-         @keyframes gradientAnimation {
+        
+    @keyframes gradientAnimation {
     0% {
         background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
     }
