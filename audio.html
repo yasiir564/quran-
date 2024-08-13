@@ -15,7 +15,7 @@
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(to right, #ffffff, #abbaab);
+  animation: gradientAnimation 10s infinite;
   color: #333;
 }
 
@@ -344,6 +344,17 @@ header {
   .search-container input {
     width: 90%;
   }
+    @keyframes gradientAnimation {
+    0% {
+        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+    }
+    50% {
+        background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
+    }
+    100% {
+        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+    }
+}
 
   .search-container button {
     right: 2%;
