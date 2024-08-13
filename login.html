@@ -253,7 +253,7 @@
             });
         }
 
-        // Email Sign-In logic without OTP
+       // Email Sign-In logic
         function signInWithEmail() {
             Swal.fire({
                 title: 'Enter your email address',
@@ -265,33 +265,48 @@
                 cancelButtonColor: '#d33',
                 preConfirm: (email) => {
                     if (!email) {
-                        Swal.showValidationMessage('Please enter a valid email address');
+                        Swal.showValidationMessage('Email is required');
                         return false;
                     }
                     return email;
                 }
-            }).then(result => {
-                if (result.isConfirmed) {
-                      const email = result.value;
-
-                    // Assuming email validation is successful
-                    const user = {
-                        email: email
+            }).then((result) => {
+                if (result.value) {
+                    const emailData = {
+                        from: 'Acme <onboarding@resend.dev>',
+                        to: [result.value],
+                        subject: 'Sign In to Quran Pro',
+                        html: `<strong>Click <a href="https://quranproo.com/complete-signin.html?email=${result.value}">here</a> to complete the sign-in process.</strong>`
                     };
 
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Email Sign-In successful!',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        localStorage.setItem('loggedInUser', JSON.stringify(user));
-                        window.location.href = 'profile.html';
+                    fetch('https://api.resend.dev/emails', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer re_AD3UNV7w_HujeTSupo6vSozPbkguGCxZm'
+                        },
+                        body: JSON.stringify(emailData)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Email sent!',
+                            text: 'Please check your inbox to complete the sign-in process.',
+                            confirmButtonColor: '#17a589'
+                        });
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Email sending failed',
+                            text: error.message,
+                            confirmButtonColor: '#17a589'
+                        });
                     });
                 }
             });
         }
     </script>
 </body>
-
 </html>
