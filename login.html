@@ -15,7 +15,7 @@
         body {
             margin: 0;
             height: 100vh;
-            background: linear-gradient(to right, #00c6ff, #0072ff);
+            background:animation: gradientAnimation 10s infinite;
             font-family: 'Roboto', sans-serif;
             display: flex;
             align-items: center;
@@ -118,6 +118,17 @@
         .footer-text a:hover {
             text-decoration: underline;
         }
+        @keyframes gradientAnimation {
+    0% {
+        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+    }
+    50% {
+        background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
+    }
+    100% {
+        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+    }
+}
 
         @media screen and (max-width: 768px) {
             .login-page {
