@@ -26,7 +26,7 @@
             height: 100%;
             width: 250px;
             position: fixed;
-            z-index: 1;
+            z-index: 1001;
             top: 0;
             left: -250px;
             background: linear-gradient(to top, #a8edea, #fed6e3);
@@ -269,7 +269,15 @@
             };
 
             localStorage.setItem('user', JSON.stringify(user));
-            window.location.href = "index.html";
+
+            Swal.fire({
+                title: 'Login Successful!',
+                text: 'Welcome, ' + profile.getName(),
+                icon: 'success',
+                confirmButtonText: 'Continue'
+            }).then(() => {
+                window.location.href = "index.html";
+            });
         }
 
         function signInWithApple() {
@@ -283,7 +291,14 @@
                     };
 
                     localStorage.setItem('user', JSON.stringify(userData));
-                    window.location.href = "index.html";
+                    Swal.fire({
+                        title: 'Login Successful!',
+                        text: 'Welcome, ' + userData.name,
+                        icon: 'success',
+                        confirmButtonText: 'Continue'
+                    }).then(() => {
+                        window.location.href = "index.html";
+                    });
                 } else {
                     console.error('Error signing in with Apple.');
                 }
@@ -323,3 +338,4 @@
 </body>
 
 </html>
+
