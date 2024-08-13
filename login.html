@@ -28,7 +28,7 @@
     width: 250px;
     position: fixed;
     z-index: 1;
-    top: 0;
+    top: 1;
     left: -250px;
     background: linear-gradient(to top, #a8edea, #fed6e3);
     overflow-x: hidden;
@@ -63,6 +63,10 @@
     transition: margin-left .5s;
     padding: 16px;
 }
+    @media screen and (max-height: 450px) {
+    .sidebar {padding-top: 15px;}
+    .sidebar a {font-size: 18px;}
+}
 
 .openbtn {
     font-size: 20px;
@@ -72,7 +76,7 @@
     padding: 10px 15px;
     border: none;
     position: fixed;
-    top: 42px;
+    top: 50px;
     left: 10px;
     z-index: 1000; /* High z-index to ensure it's on top */
 }
