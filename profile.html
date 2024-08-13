@@ -12,14 +12,13 @@
         body {
             margin: 0;
             height: 100vh;
-            background: #abbaab;
-            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
-            background: linear-gradient(to right, #ffffff, #abbaab);
+            background-color: #0e0e0e;
             font-family: 'Amiri', serif;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            color: #fff;
         }
 
         .container {
@@ -39,7 +38,6 @@
             padding: 20px;
             background-color: #1a1a1a;
             border-radius: 10px;
-            color: #fff;
             margin-bottom: 20px;
         }
 
@@ -135,74 +133,6 @@
             margin-bottom: 10px;
         }
 
-        .header-icons {
-            display: flex;
-            justify-content: flex-end;
-            padding: 10px;
-        }
-
-        .header-icons a {
-            margin-left: 20px;
-        }
-
-        /* Sidebar Menu */
-        .sidebar {
-            height: 100%;
-            width: 250px;
-            position: fixed;
-            z-index: 1;
-            top: 0;
-            left: -250px;
-            background: linear-gradient(to top, #a8edea, #fed6e3);
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-        }
-
-        .sidebar a {
-            padding: 10px 15px;
-            text-decoration: none;
-            font-size: 18px;
-            color: #111;
-            display: block;
-            transition: 0.3s;
-        }
-
-        .sidebar a:hover {
-            color: #fff;
-            background-color: #2575fc;
-        }
-
-        .sidebar .closebtn {
-            position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-        }
-
-        #main {
-            transition: margin-left .5s;
-            padding: 16px;
-        }
-
-        .openbtn {
-            font-size: 20px;
-            cursor: pointer;
-            background-color: #2575fc;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            z-index: 1000;
-        }
-
-        .openbtn:hover {
-            background-color: #0056b3;
-        }
-
         @media screen and (max-width: 768px) {
             .card-container {
                 grid-template-columns: 1fr;
@@ -211,60 +141,10 @@
             .profile-section {
                 width: 100%;
             }
-
-            .openbtn {
-                top: 60px;
-            }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="header-icons">
-            <a href="login.html" title="Login">
-                <lord-icon
-                    src="https://cdn.lordicon.com/bhfjfgqz.json"
-                    trigger="hover"
-                    colors="primary:#0057b7"
-                    style="width:50px;height:50px;">
-                </lord-icon>
-            </a>
-            <a href="profile.html" title="User Profile">
-                <lord-icon
-                    src="https://cdn.lordicon.com/oezixobx.json"
-                    trigger="hover"
-                    colors="primary:#0057b7"
-                    style="width:50px;height:50px;">
-                </lord-icon>
-            </a>
-        </div>
-
-        <div id="mySidebar" class="sidebar">
-            <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
-            <a href="index.html">
-                <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
-            </a>
-            <a href="juzz.html">
-                <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Juzz
-            </a>
-            <a href="audio.html">
-                <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Listen to Quran
-            </a>
-            <a href="donate.html">
-                <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Donate
-            </a>
-            <a href="islam.html">
-                <lord-icon src="https://cdn.lordicon.com/bhfjfgqz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Hijri
-            </a>
-            <a href="prayer.html">
-                <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Prayer
-            </a>
-        </div>
-
-        <div id="main">
-            <button class="openbtn" onclick="openNav()">&#9776; Quran Pro</button>
-        </div>
-    </header>
 
     <div class="container">
         <div class="profile-section">
@@ -277,21 +157,21 @@
             <button class="logout-button" id="logoutBtn">Logout</button>
         </div>
         <div class="card-container">
-            <div class="card">
-                <i class="fas fa-user"></i>
-                <p>Update Profile</p>
+            <div class="card" onclick="window.location.href='bookmark.html'">
+                <i class="fas fa-bookmark"></i>
+                <p>User Bookmarks</p>
             </div>
-            <div class="card">
-                <i class="fas fa-cog"></i>
-                <p>Settings</p>
+            <div class="card" onclick="window.location.href='playlist.html'">
+                <i class="fas fa-list"></i>
+                <p>User Playlist</p>
             </div>
-            <div class="card">
-                <i class="fas fa-lock"></i>
-                <p>Privacy</p>
+            <div class="card" onclick="window.location.href='donate.html'">
+                <i class="fas fa-donate"></i>
+                <p>Donate</p>
             </div>
-            <div class="card">
-                <i class="fas fa-question-circle"></i>
-                <p>Help</p>
+            <div class="card" onclick="window.location.href='chartbot.html'">
+                <i class="fas fa-chart-line"></i>
+                <p>Chat with AI</p>
             </div>
         </div>
     </div>
@@ -299,21 +179,6 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Function to open the sidebar menu
-        function openNav() {
-            document.getElementById("mySidebar").style.left = "0";
-        }
-
-        // Function to close the sidebar menu
-        document.getElementById("closeSidebarBtn").onclick = function() {
-            document.getElementById("mySidebar").style.left = "-250px";
-        };
-
-        // Delay function to wait for 10 seconds
-        function delay(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
         // Fetch user profile details from local storage
         function fetchUserProfile() {
             const username = localStorage.getItem('username');
@@ -333,24 +198,17 @@
                     document.getElementById('profile-pic').innerText = username.charAt(0).toUpperCase();
                 }
             } else {
-                throw new Error('User not logged in');
+                window.location.href = 'login.html';
             }
         }
 
         // Check user login status
-        async function checkLoginStatus() {
-            try {
-                const loggedIn = localStorage.getItem('loggedIn') === 'true';
-                if (!loggedIn) {
-                    await delay(10000);
-                    window.location.href = 'login.html';
-                } else {
-                    fetchUserProfile();
-                }
-            } catch (error) {
-                console.error('Error checking login status:', error);
-                await delay(10000);
+        function checkLoginStatus() {
+            const loggedIn = localStorage.getItem('loggedIn') === 'true';
+            if (!loggedIn) {
                 window.location.href = 'login.html';
+            } else {
+                fetchUserProfile();
             }
         }
 
