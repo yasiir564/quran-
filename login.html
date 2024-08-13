@@ -12,85 +12,76 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:300|Lobster|Pacifico|Raleway" rel="stylesheet">
     <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
     <style>
-        /* Add your existing CSS here */
         body {
             margin: 0;
             height: 100vh;
-           animation: gradientAnimation 10s infinite;
+            animation: gradientAnimation 10s infinite;
             font-family: 'Amiri', serif;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-         /* Sidebar Menu */
-.sidebar {
-    height: 100%;
-    width: 250px;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: -250px;
-    background: linear-gradient(to top, #a8edea, #fed6e3);
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-    margin-bottom: 10px; /* Added space below sidebar */
-}
 
-.sidebar a {
-    padding: 10px 15px;
-    text-decoration: none;
-    font-size: 18px;
-    color: #111;
-    display: block;
-    transition: 0.3s;
-}
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: -250px;
+            background: linear-gradient(to top, #a8edea, #fed6e3);
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
 
-.sidebar a:hover {
-    color: #fff;
-    background-color: #2575fc;
-}
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #111;
+            display: block;
+            transition: 0.3s;
+        }
 
-.sidebar .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-}
+        .sidebar a:hover {
+            color: #fff;
+            background-color: #2575fc;
+        }
 
-#main {
-    transition: margin-left .5s;
-    padding: 16px;
-}
+        .sidebar .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
 
-@media screen and (max-height: 450px) {
-    .sidebar {padding-top: 15px;}
-    .sidebar a {font-size: 18px;}
-}
+        .openbtn {
+            font-size: 20px;
+            cursor: pointer;
+            background-color: #2575fc;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            position: fixed;
+            top: 30px;
+            left: 10px;
+            z-index: 1000;
+        }
 
-.openbtn {
-    font-size: 20px;
-    cursor: pointer;
-    background-color: #2575fc;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    position: fixed;
-    top: 30px;
-    left: 10px;
-    z-index: 1000; /* High z-index to ensure it's on top */
-}
-
-.openbtn:hover {
-    background-color: #0056b3;
-}
+        .openbtn:hover {
+            background-color: #0056b3;
+        }
 
         .login-page {
-            width: 90%;
+            width: 100%;
             max-width: 360px;
-            padding: 8% 0 0;
+            padding: 8% 0;
             margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .form {
@@ -98,7 +89,7 @@
             z-index: 1;
             background: #2575fc;
             max-width: 360px;
-            margin: 0 auto 100px;
+            width: 90%;
             padding: 45px;
             text-align: center;
             box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
@@ -170,7 +161,7 @@
 
         .footer-text {
             font-size: 12px;
-            color:#fff;
+            color: #fff;
             margin-top: 20px;
         }
 
@@ -182,32 +173,29 @@
         .footer-text a:hover {
             text-decoration: underline;
         }
+
         @keyframes gradientAnimation {
-    0% {
-        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-    }
-    50% {
-        background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
-    }
-    100% {
-        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-    }
-}
+            0% {
+                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+            }
+
+            50% {
+                background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
+            }
+
+            100% {
+                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+            }
+        }
 
         @media screen and (max-width: 768px) {
             .login-page {
-                width: 100%;
                 height: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
                 padding: 0;
                 margin: 0;
             }
 
             .form {
-                width: 90%;
-                max-width: none;
                 margin: 0;
                 padding: 20px;
                 box-shadow: none;
@@ -217,7 +205,7 @@
 </head>
 
 <body>
-      <div id="mySidebar" class="sidebar">
+    <div id="mySidebar" class="sidebar">
         <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
         <a href="index.html">
             <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
@@ -239,6 +227,7 @@
     <div id="main">
         <button class="openbtn" onclick="openNav()">&#9776; Quran Pro</button>
     </div>
+
     <div class="login-page">
         <div class="form">
             <h1 class="heading">Welcome to Quran Pro</h1>
@@ -252,170 +241,85 @@
                 Sign in with Apple
             </button>
             <button class="btn" onclick="signInWithEmail()">
-                <img src="https://img.icons8.com/color/48/000000/gmail-new.png" alt="Email Logo">
+                <img src="https://img.icons8.com/ios-glyphs/30/000000/new-post.png" alt="Email Logo">
                 Sign in with Email
             </button>
             <div class="g-signin2" data-onsuccess="onSignIn"></div>
-            <div class="footer-text">
-                By signing in you accept our <a href="termsandconditions.html">terms and conditions</a> and <a href="privacypolicy.html">privacy policy</a>.
-            </div>
+            <p class="footer-text">By signing in, you agree to our <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a>.</p>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-           function openNav() {
-    document.getElementById("mySidebar").style.left = "0";
-    document.getElementById("main").style.marginLeft = "250px";
-}
+        function openNav() {
+            document.getElementById("mySidebar").style.left = "0";
+        }
 
-function closeNav() {
-    document.getElementById("mySidebar").style.left = "-250px";
-    document.getElementById("main").style.marginLeft = "0";
-}
+        document.getElementById("closeSidebarBtn").addEventListener("click", function () {
+            document.getElementById("mySidebar").style.left = "-250px";
+        });
 
-// Event listener for close button
-document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
-        emailjs.init('Z7J4TDmdVO8jfmZmI');
-
-        // Google Sign-In logic
         function onSignIn(googleUser) {
-            const profile = googleUser.getBasicProfile();
-            const user = {
-                username: profile.getName(),
+            var profile = googleUser.getBasicProfile();
+            var user = {
+                id: profile.getId(),
+                name: profile.getName(),
+                imageUrl: profile.getImageUrl(),
                 email: profile.getEmail(),
-                profilePic: profile.getImageUrl()
             };
 
-            Swal.fire({
-                icon: 'success',
-                title: 'Google Sign-In successful!',
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                localStorage.setItem('loggedInUser', JSON.stringify(user));
-                window.location.href = 'profile.html';
-            });
+            localStorage.setItem('user', JSON.stringify(user));
+            window.location.href = "index.html";
         }
 
-        // Error handling for Google Sign-In
-        function onFailure(error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Google Sign-In failed',
-                text: error.details,
-                confirmButtonColor: '#d33'
-            });
-        }
-
-        // Render the Google Sign-In button
-        function renderButton() {
-            gapi.signin2.render('g-signin2', {
-                'scope': 'profile email',
-                'width': 240,
-                'height': 50,
-                'longtitle': true,
-                'theme': 'dark',
-                'onsuccess': onSignIn,
-                'onfailure': onFailure
-            });
-        }
-
-        // Load the Google API client
-        function loadGoogleAPI() {
-            gapi.load('auth2', function() {
-                gapi.auth2.init();
-                renderButton();
-            });
-        }
-
-        // Initialize the Google API client when the page loads
-        window.onload = function() {
-            loadGoogleAPI();
-        }
-
-        // Apple Sign-In logic
         function signInWithApple() {
-            AppleID.auth.signIn().then(response => {
-                const user = {
-                    username: response.user.fullName.givenName + ' ' + response.user.fullName.familyName,
-                    email: response.user.email,
-                };
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Apple Sign-In successful!',
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    localStorage.setItem('loggedInUser', JSON.stringify(user));
-                    window.location.href = 'profile.html';
-                });
-            }).catch(error => {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Apple Sign-In failed',
-                    text: error.message,
-                    confirmButtonColor: '#17a589'
-                });
-            });
-        }
-
-       // Email Sign-In logic
-        function signInWithEmail() {
-            Swal.fire({
-                title: 'Enter your email address',
-                input: 'email',
-                inputPlaceholder: 'Email address',
-                showCancelButton: true,
-                confirmButtonText: 'Sign In',
-                confirmButtonColor: '#17a589',
-                cancelButtonColor: '#d33',
-                preConfirm: (email) => {
-                    if (!email) {
-                        Swal.showValidationMessage('Email is required');
-                        return false;
-                    }
-                    return email;
-                }
-            }).then((result) => {
-                if (result.value) {
-                    const emailData = {
-                        from: 'Acme <onboarding@resend.dev>',
-                        to: [result.value],
-                        subject: 'Sign In to Quran Pro',
-                        html: `<strong>Click <a href="https://quranproo.com/complete-signin.html?email=${result.value}">here</a> to complete the sign-in process.</strong>`
+            AppleID.auth.signIn().then(function (response) {
+                if (response && response.user) {
+                    var user = response.user;
+                    var userData = {
+                        id: user.id,
+                        name: user.name.firstName + ' ' + user.name.lastName,
+                        email: user.email,
                     };
 
-                    fetch('https://api.resend.dev/emails', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer re_AD3UNV7w_HujeTSupo6vSozPbkguGCxZm'
-                        },
-                        body: JSON.stringify(emailData)
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Email sent!',
-                            text: 'Please check your inbox to complete the sign-in process.',
-                            confirmButtonColor: '#17a589'
-                        });
-                    })
-                    .catch(error => {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Email sending failed',
-                            text: error.message,
-                            confirmButtonColor: '#17a589'
-                        });
-                    });
+                    localStorage.setItem('user', JSON.stringify(userData));
+                    window.location.href = "index.html";
+                } else {
+                    console.error('Error signing in with Apple.');
                 }
+            }).catch(function (error) {
+                console.error(error);
+            });
+        }
+
+        function signInWithEmail() {
+            Swal.fire({
+                title: 'Enter your email',
+                input: 'email',
+                inputLabel: 'Email Address',
+                inputPlaceholder: 'Enter your email address'
+            }).then((result) => {
+                if (result.value) {
+                    var email = result.value;
+                    sendEmailLink(email);
+                }
+            });
+        }
+
+        function sendEmailLink(email) {
+            var userData = {
+                email: email
+            };
+            localStorage.setItem('user', JSON.stringify(userData));
+            Swal.fire(
+                'Email Sent!',
+                'Please check your email for the sign-in link.',
+                'success'
+            ).then(() => {
+                window.location.href = "index.html";
             });
         }
     </script>
 </body>
+
 </html>
