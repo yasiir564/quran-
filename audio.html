@@ -12,27 +12,27 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1850217813586802"
      crossorigin="anonymous"></script>
     <style>
- body {
-            background: #abbaab;  /* fallback for old browsers */
-            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);  /* Chrome 10-25, Safari 5.1-6 */
-            background: linear-gradient(to right, #ffffff, #abbaab); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
- }
-            font-family: 'Amiri', serif;
-            margin: 0;
-            padding: 0;
-            position: relative;
-        }
+body {
+    background: #abbaab;
+    background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
+    background: linear-gradient(to right, #ffffff, #abbaab);
+    font-family: 'Amiri', serif;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
 
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
 header {
-  text-align: center;
+    text-align: center;
 }
-        .sidebar {
+
+.sidebar {
     height: 100%;
     width: 250px;
     position: fixed;
@@ -43,21 +43,7 @@ header {
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
-}
-
-/* Sidebar Menu */
-.sidebar {
-    height: 100%;
-    width: 250px;
-    position: fixed;
-    z-index: 1;
-    top: 1;
-    left: -250px;
-    background: linear-gradient(to top, #a8edea, #fed6e3);
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-    margin-bottom: 10px; /* Added space below sidebar */
+    margin-bottom: 10px;
 }
 
 .sidebar a {
@@ -88,8 +74,8 @@ header {
 }
 
 @media screen and (max-height: 450px) {
-    .sidebar {padding-top: 15px;}
-    .sidebar a {font-size: 18px;}
+    .sidebar { padding-top: 15px; }
+    .sidebar a { font-size: 18px; }
 }
 
 .openbtn {
@@ -102,14 +88,14 @@ header {
     position: fixed;
     top: 30px;
     left: 10px;
-    z-index: 1000; /* High z-index to ensure it's on top */
+    z-index: 1000;
 }
 
 .openbtn:hover {
     background-color: #0056b3;
 }
-        
-    @keyframes gradientAnimation {
+
+@keyframes gradientAnimation {
     0% {
         background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
     }
@@ -121,256 +107,260 @@ header {
     }
 }
 
-
-
-
 .search-container {
-  margin: 20px 0;
-  position: relative;
-  text-align: center;
+    margin: 20px 0;
+    position: relative;
+    text-align: center;
 }
 
 .search-container input {
-  padding: 10px;
-  width: 100%;
-  max-width: 500px;
-  border: 2px solid #ddd;
-  border-radius: 25px;
-  outline: none;
-  transition: border-color 0.3s;
-  box-sizing: border-box;
+    padding: 10px;
+    width: 100%;
+    max-width: 500px;
+    border: 2px solid #ddd;
+    border-radius: 25px;
+    outline: none;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
 }
 
 .search-container input:focus {
-  border-color: #2575fc;
+    border-color: #2575fc;
 }
 
 .search-container button {
-  position: absolute;
-  right: 10%;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
-  background: #2575fc;
-  color: #fff;
-  padding: 10px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background-color 0.3s;
+    position: absolute;
+    right: 10%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: #2575fc;
+    color: #fff;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 .search-container button:hover {
-  background-color: #1e62d0;
+    background-color: #1e62d0;
 }
 
 .surah-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 10px;
-  padding: 20px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    padding: 20px 0;
 }
 
 .surah {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid #ddd;
-  padding: 15px;
-  margin: 10px;
-  cursor: pointer;
-  text-align: center;
-  border-radius: 5px;
-  transition: transform 0.3s, background-color 0.3s, border-color 0.3s;
-  color: #2575fc;
-  font-size: 1.2em;
-  position: relative;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 10px;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 5px;
+    transition: transform 0.3s, background-color 0.3s, border-color 0.3s;
+    color: #2575fc;
+    font-size: 1.2em;
+    position: relative;
 }
 
 .surah:hover {
-  transform: scale(1.05);
-  background-color: #2575fc;
-  color: #fff;
+    transform: scale(1.05);
+    background-color: #2575fc;
+    color: #fff;
 }
 
 .surah span {
-  font-size: 0.8em;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: #000;
-  border-radius: 10px;
-  padding: 5px;
-  clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
-  transition: transform 0.3s;
+    font-size: 0.8em;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #000;
+    border-radius: 10px;
+    padding: 5px;
+    clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+    transition: transform 0.3s;
 }
 
 .surah span:hover {
-  transform: rotate(360deg);
+    transform: rotate(360deg);
 }
 
 .show-more-btn {
-  display: block;
-  width: 200px;
-  margin: 20px auto;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: #007bff;
-  color: #fff;
-  font-size: 1.2em;
-  cursor: pointer;
-  transition: background-color 0.3s;
+    display: block;
+    width: 200px;
+    margin: 20px auto;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 .show-more-btn:hover {
-  background-color: #0056b3;
+    background-color: #0056b3;
 }
 
 .featured-reciters {
-  display: flex;
-  flex-wrap: nowrap; /* Ensure items are in a horizontal row */
-  overflow-x: auto; /* Allow horizontal scrolling if needed */
-  gap: 10px;
-  padding: 20px 0;
-  width: 100%; /* Ensure the container spans the width of its parent */
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 10px;
+    padding: 20px 0;
+    width: 100%;
 }
 
 .reciter-card {
-  background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(15px);
-  border: 1px solid #ddd;
-  padding: 15px;
-  border-radius: 5px;
-  min-width: 200px;
-  text-align: center;
-  transition: transform 0.3s, box-shadow 0.3s;
-  flex: 0 0 auto; /* Prevent flex items from shrinking or growing */
-  position: relative; /* Ensure rating is positioned relative to card */
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(15px);
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    min-width: 200px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    flex: 0 0 auto;
+    position: relative;
 }
 
 .reciter-card img {
-  border-radius: 50%;
-  width: 100px;
-  height: 100px;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
 }
 
 .reciter-card:hover {
-  transform: rotate(360deg);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transform: rotate(360deg);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .rating {
-  margin-top: 10px;
-  font-size: 1.2em;
-  color: #ffd700; /* Gold color */
+    margin-top: 10px;
+    font-size: 1.2em;
+    color: #ffd700;
 }
 
 .rating i {
-  margin: 0 2px;
-  color: #ffd700; /* Gold color */
-  text-shadow: 0 0 5px rgba(255, 215, 0, 0.8); /* Glowing effect */
+    margin: 0 2px;
+    color: #ffd700;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.8);
 }
 
 .reciter-card:hover .rating i {
-  color: #ffcc00; /* Brighter gold on hover */
-  text-shadow: 0 0 10px rgba(255, 215, 0, 1); /* Brighter glowing effect on hover */
+    color: #ffcc00;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 1);
 }
 
 .arrow {
-  font-size: 2em;
-  cursor: pointer;
-  user-select: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 50%;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s, background-color 0.3s;
+    font-size: 2em;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, background-color 0.3s;
 }
 
 .arrow:hover {
-  transform: scale(1.1);
-  background-color: #2575fc;
-  color: #fff;
+    transform: scale(1.1);
+    background-color: #2575fc;
+    color: #fff;
 }
 
 .dark-mode {
-  background: linear-gradient(to right, #2c3e50, #4ca1af);
-  color: #fff;
+    background: linear-gradient(to right, #2c3e50, #4ca1af);
+    color: #fff;
 }
 
 .dark-mode .surah {
-  background-color: #444;
-  border: 1px solid #555;
+    background-color: #444;
+    border: 1px solid #555;
 }
 
 .dark-mode .search-container input {
-  border: 2px solid #444;
+    border: 2px solid #444;
 }
 
 .dark-mode .search-container button {
-  background-color: #4ca1af;
+    background-color: #4ca1af;
 }
 
 .dark-mode .search-container button:hover {
-  background-color: #3b9d9d;
+    background-color: #3b9d9d;
 }
 
 .dark-mode .show-more-btn {
-  background-color: #4ca1af;
+    background-color: #4ca1af;
 }
 
 .dark-mode .show-more-btn:hover {
-  background-color: #3b9d9d;
+    background-color: #3b9d9d;
 }
 
 .featured-title {
-  text-align: center;
-  font-size: 2em;
-  margin: 20px 0;
-  color: #2575fc;
-  position: relative;
+    text-align: center;
+    font-size: 2em;
+    margin: 20px 0;
+    color: #2575fc;
+    position: relative;
 }
 
 .featured-title:before,
 .featured-title:after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  width: 50px;
-  height: 3px;
-  background-color: #2575fc;
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 50px;
+    height: 3px;
+    background-color: #2575fc;
 }
 
 .featured-title:before {
-  left: -30px;
+    left: -30px;
 }
 
 .featured-title:after {
-  right: -22px;
+    right: -22px;
 }
 
-@media (max-width: 768px) {
-  .search-container button {
-    right: 5%;
-  }
+.track-text {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2em;
+    color: #2575fc;
+    z-index: 1000;
 }
 
-@media (max-width: 480px) {
-  .search-container input {
-    width: 90%;
-  }
-   
-  .search-container button {
-    right: 2%;
-  }
-
-  .featured-title:before,
-  .featured-title:after {
-    width: 30px;
-  }
+.dark-mode-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
 }
+
+@media screen and (max-width: 768px) {
+    .reciter-card {
+        min-width: 150px;
+    }
+
+    .search-container button {
+        right: 5%;
+    }
+}
+
 
 </style>
 
@@ -398,6 +388,7 @@ header {
     <div id="main">
         <button class="openbtn" onclick="openNav()">&#9776; Quran Pro</button>
     </div>
+    
             <h1>Tracks</h1>
             <div class="search-container">
                 <input type="text" id="search-bar" placeholder="Search Surahs...">
