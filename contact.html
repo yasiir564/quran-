@@ -5,169 +5,149 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Contact Quran Pro for inquiries about our services. Reach us via email, phone, or visit our office in Nairobi, Kenya.">
     <title>Contact Us - Quran Pro</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap">
     <style>
+        :root {
+            --primary-color: #1e3a8a;
+            --secondary-color: #3b82f6;
+            --text-color: #ffffff;
+            --card-bg: #2563eb;
+        }
+
         body {
-            font-family: 'Roboto', sans-serif;
-            animation: gradientAnimation 10s infinite;
+            font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
-            text-align: center;
-            color: #fff;
-            transition: filter 0.3s ease;
-            position: relative;
-            overflow-x: hidden;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-        .blurred {
-            filter: blur(5px);
-        }
-
-        .swal2-container {
-            z-index: 10000;
-        }
-
-        header {
-            background-color: rgba(255, 255, 255, 0.2);
-            padding: 1em;
-        }
-        
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        
-        nav ul li {
-            display: inline;
-            margin-right: 1em;
-        }
-        
-        nav ul li a {
-            color: #fff;
-            text-decoration: none;
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 2rem auto;
         }
 
         .contact-info {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            padding: 2em;
-            gap: 1em;
+            gap: 2rem;
+            margin-bottom: 3rem;
         }
 
         .contact-item {
-            background-color: rgba(255, 255, 255, 0.2);
-            margin: 1em;
-            padding: 2em;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            width: calc(33.33% - 2em);
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: calc(33.33% - 2rem);
             max-width: 300px;
             text-align: center;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeIn 1s ease-out;
         }
 
         .contact-item:hover {
             transform: translateY(-10px);
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
         }
 
         .contact-item h2 {
-            margin: 1em 0 0.5em 0;
+            margin: 1rem 0 0.5rem;
             font-weight: 500;
+            font-size: 1.5rem;
         }
 
         .contact-item p {
             margin: 0;
             font-weight: 300;
+            font-size: 1rem;
         }
 
         .feedback {
-            margin: 2em 0;
-        }
-
-        #feedbackBtn {
-            background-color: #0056b3;
-            color: #fff;
-            border: none;
-            padding: 1em 2em;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-
-        #feedbackBtn:hover {
-            background-color: #004494;
-            transform: translateY(-5px);
-        }
-
-        #backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            backdrop-filter: blur(5px);
-            z-index: 9999;
-            display: none;
-        }
-
-        footer {
-            background-color: rgba(0, 0, 0, 0.1);
-            padding: 1em;
-            margin-top: 2em;
-        }
-        
-        .social-links a {
-            color: #fff;
-            margin: 0 0.5em;
-        }
-        
-        .faq {
-            max-width: 800px;
-            margin: 2em auto;
-            text-align: left;
-            padding: 0 1em;
-        }
-        
-        .faq h2 {
+            margin: 2rem 0;
             text-align: center;
         }
 
-        @media screen and (max-width: 1024px) {
-            .contact-item {
-                width: calc(50% - 2em);
-            }
+        #feedbackBtn {
+            background-color: var(--text-color);
+            color: var(--primary-color);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        #feedbackBtn:hover {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .faq {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 3rem;
+            animation: slideUp 1s ease-out;
+        }
+
+        .faq h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .faq-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .faq-question {
+            font-weight: 500;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .faq-question:hover {
+            color: var(--secondary-color);
+        }
+
+        .faq-answer {
+            font-weight: 300;
+            font-size: 1rem;
+            display: none;
+            padding-left: 1rem;
+            border-left: 2px solid var(--secondary-color);
+            margin-top: 0.5rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @media screen and (max-width: 768px) {
             .contact-item {
-                width: calc(100% - 2em);
-                max-width: 80%;
-            }
-        }
-
-        @media screen and (max-width: 480px) {
-            .contact-item {
-                max-width: 95%;
-            }
-
-            #feedbackBtn {
-                padding: 0.8em 1.5em;
-                font-size: 0.9em;
-            }
-        }
-
-        @keyframes gradientAnimation {
-            0% {
-                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-            }
-            50% {
-                background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
-            }
-            100% {
-                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+                width: calc(100% - 2rem);
+                max-width: none;
             }
         }
     </style>
@@ -175,24 +155,13 @@
     <script src="https://cdn.lordicon.com/lusqsztk.js" defer></script>
 </head>
 <body>
-    <div id="backdrop"></div>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#services">Services</a></li>
-                <li><a href="#contact">Contact</a></li>
-                <li><a href="#faq">FAQ</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <section id="contact" class="contact-info">
+    <div class="container">
+        <section class="contact-info">
             <div class="contact-item">
                 <lord-icon
                     src="https://cdn.lordicon.com/zpxybbhl.json"
                     trigger="hover"
-                    colors="primary:#ffffff,secondary:#08a88a"
+                    colors="primary:#ffffff,secondary:#ffffff"
                     style="width:100px;height:100px"
                     aria-label="Email icon">
                 </lord-icon>
@@ -203,7 +172,7 @@
                 <lord-icon
                     src="https://cdn.lordicon.com/tftaqjwp.json"
                     trigger="hover"
-                    colors="primary:#ffffff,secondary:#08a88a"
+                    colors="primary:#ffffff,secondary:#ffffff"
                     style="width:100px;height:100px"
                     aria-label="Phone icon">
                 </lord-icon>
@@ -214,7 +183,7 @@
                 <lord-icon
                     src="https://cdn.lordicon.com/dxjqoygy.json"
                     trigger="hover"
-                    colors="primary:#ffffff,secondary:#08a88a"
+                    colors="primary:#ffffff,secondary:#ffffff"
                     style="width:100px;height:100px"
                     aria-label="Location icon">
                 </lord-icon>
@@ -225,27 +194,24 @@
         <section class="feedback">
             <button id="feedbackBtn" aria-label="Send Feedback">Send Feedback</button>
         </section>
-        <section id="faq" class="faq">
+        <section class="faq">
             <h2>Frequently Asked Questions</h2>
-            <h3>What services does Quran Pro offer?</h3>
-            <p>Quran Pro offers various services including Quran recitation classes, Tajweed lessons, and Islamic studies courses.</p>
-            <h3>Do you offer online classes?</h3>
-            <p>Yes, we offer both in-person and online classes to accommodate different learning preferences and locations.</p>
-            <h3>How can I enroll in a course?</h3>
-            <p>You can enroll in a course by contacting us via email or phone. Our team will guide you through the enrollment process and help you choose the right course for your needs.</p>
+            <div class="faq-item">
+                <div class="faq-question">What services does Quran Pro offer?</div>
+                <div class="faq-answer">Quran Pro offers various services including Quran recitation classes, Tajweed lessons, and Islamic studies courses.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Do you offer online classes?</div>
+                <div class="faq-answer">Yes, we offer both in-person and online classes to accommodate different learning preferences and locations.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">How can I enroll in a course?</div>
+                <div class="faq-answer">You can enroll in a course by contacting us via email or phone. Our team will guide you through the enrollment process and help you choose the right course for your needs.</div>
+            </div>
         </section>
-    </main>
-    <footer>
-        <div class="social-links">
-            <a href="#" aria-label="Facebook">Facebook</a>
-            <a href="#" aria-label="Twitter">Twitter</a>
-            <a href="#" aria-label="Instagram">Instagram</a>
-        </div>
-        <p>&copy; 2024 Quran Pro. All rights reserved.</p>
-    </footer>
+    </div>
     <script>
         document.getElementById('feedbackBtn').addEventListener('click', function() {
-            document.getElementById('backdrop').style.display = 'block';
             Swal.fire({
                 title: 'Send Feedback',
                 input: 'textarea',
@@ -268,8 +234,13 @@
                     });
                 },
                 allowOutsideClick: () => !Swal.isLoading()
-            }).then(() => {
-                document.getElementById('backdrop').style.display = 'none';
+            });
+        });
+
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
             });
         });
     </script>
