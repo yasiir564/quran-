@@ -14,16 +14,7 @@
             text-align: center;
             color: #fff;
             transition: filter 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .blurred {
-            filter: blur(5px);
-        }
-
-        .swal2-container {
-            z-index: 10000;
+            overflow-x: hidden;
         }
 
         .contact-info {
@@ -89,6 +80,24 @@
             backdrop-filter: blur(5px);
             z-index: 9999;
             display: none;
+            pointer-events: none;
+        }
+
+        @media screen and (max-width: 768px) {
+            .contact-item {
+                max-width: 80%;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .contact-item {
+                max-width: 95%;
+            }
+
+            #feedbackBtn {
+                padding: 0.8em 1.5em;
+                font-size: 0.9em;
+            }
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
