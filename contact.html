@@ -8,13 +8,22 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #00c6ff, #0072ff);
+           animation: gradientAnimation 10s infinite;
             margin: 0;
             padding: 0;
             text-align: center;
             color: #fff;
             transition: filter 0.3s ease;
-            overflow-x: hidden;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blurred {
+            filter: blur(5px);
+        }
+
+        .swal2-container {
+            z-index: 10000;
         }
 
         .contact-info {
@@ -80,10 +89,8 @@
             backdrop-filter: blur(5px);
             z-index: 9999;
             display: none;
-            pointer-events: none;
         }
-
-        @media screen and (max-width: 768px) {
+          @media screen and (max-width: 768px) {
             .contact-item {
                 max-width: 80%;
             }
@@ -99,6 +106,17 @@
                 font-size: 0.9em;
             }
         }
+        @keyframes gradientAnimation {
+    0% {
+        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+    }
+    50% {
+        background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
+    }
+    100% {
+        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+    }
+}
     </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.lordicon.com/lusqsztk.js"></script>
@@ -125,7 +143,7 @@
                     style="width:100px;height:100px">
                 </lord-icon>
                 <h2>Call Us</h2>
-                <p>+123-456-7890</p>
+                <p>+254726057525</p>
             </div>
             <div class="contact-item">
                 <lord-icon
@@ -135,7 +153,7 @@
                     style="width:100px;height:100px">
                 </lord-icon>
                 <h2>Visit Us</h2>
-                <p>123 Quran Pro St, City, Country</p>
+                <p> Quran Pro , Nairobi, Kenya</p>
             </div>
         </section>
         <section class="feedback">
@@ -174,4 +192,3 @@
     </script>
 </body>
 </html>
-
