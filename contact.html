@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contact Quran Pro for inquiries about our services. Reach us via email, phone, or visit our office in Nairobi, Kenya.">
     <title>Contact Us - Quran Pro</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
     <style>
@@ -15,7 +16,7 @@
             color: #fff;
             transition: filter 0.3s ease;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
         .blurred {
@@ -24,6 +25,26 @@
 
         .swal2-container {
             z-index: 10000;
+        }
+
+        header {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 1em;
+        }
+        
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        nav ul li {
+            display: inline;
+            margin-right: 1em;
+        }
+        
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
         }
 
         .contact-info {
@@ -92,6 +113,28 @@
             display: none;
         }
 
+        footer {
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 1em;
+            margin-top: 2em;
+        }
+        
+        .social-links a {
+            color: #fff;
+            margin: 0 0.5em;
+        }
+        
+        .faq {
+            max-width: 800px;
+            margin: 2em auto;
+            text-align: left;
+            padding: 0 1em;
+        }
+        
+        .faq h2 {
+            text-align: center;
+        }
+
         @media screen and (max-width: 1024px) {
             .contact-item {
                 width: calc(50% - 2em);
@@ -128,19 +171,30 @@
             }
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.lordicon.com/lusqsztk.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
+    <script src="https://cdn.lordicon.com/lusqsztk.js" defer></script>
 </head>
 <body>
     <div id="backdrop"></div>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+        </nav>
+    </header>
     <main>
-        <section class="contact-info">
+        <section id="contact" class="contact-info">
             <div class="contact-item">
                 <lord-icon
                     src="https://cdn.lordicon.com/zpxybbhl.json"
                     trigger="hover"
                     colors="primary:#ffffff,secondary:#08a88a"
-                    style="width:100px;height:100px">
+                    style="width:100px;height:100px"
+                    aria-label="Email icon">
                 </lord-icon>
                 <h2>Email Us</h2>
                 <p>contact@quranpro.com</p>
@@ -150,7 +204,8 @@
                     src="https://cdn.lordicon.com/tftaqjwp.json"
                     trigger="hover"
                     colors="primary:#ffffff,secondary:#08a88a"
-                    style="width:100px;height:100px">
+                    style="width:100px;height:100px"
+                    aria-label="Phone icon">
                 </lord-icon>
                 <h2>Call Us</h2>
                 <p>+254726057525</p>
@@ -160,16 +215,34 @@
                     src="https://cdn.lordicon.com/dxjqoygy.json"
                     trigger="hover"
                     colors="primary:#ffffff,secondary:#08a88a"
-                    style="width:100px;height:100px">
+                    style="width:100px;height:100px"
+                    aria-label="Location icon">
                 </lord-icon>
                 <h2>Visit Us</h2>
-                <p> Quran Pro , Nairobi, Kenya</p>
+                <p>Quran Pro, Nairobi, Kenya</p>
             </div>
         </section>
         <section class="feedback">
-            <button id="feedbackBtn">Send Feedback</button>
+            <button id="feedbackBtn" aria-label="Send Feedback">Send Feedback</button>
+        </section>
+        <section id="faq" class="faq">
+            <h2>Frequently Asked Questions</h2>
+            <h3>What services does Quran Pro offer?</h3>
+            <p>Quran Pro offers various services including Quran recitation classes, Tajweed lessons, and Islamic studies courses.</p>
+            <h3>Do you offer online classes?</h3>
+            <p>Yes, we offer both in-person and online classes to accommodate different learning preferences and locations.</p>
+            <h3>How can I enroll in a course?</h3>
+            <p>You can enroll in a course by contacting us via email or phone. Our team will guide you through the enrollment process and help you choose the right course for your needs.</p>
         </section>
     </main>
+    <footer>
+        <div class="social-links">
+            <a href="#" aria-label="Facebook">Facebook</a>
+            <a href="#" aria-label="Twitter">Twitter</a>
+            <a href="#" aria-label="Instagram">Instagram</a>
+        </div>
+        <p>&copy; 2024 Quran Pro. All rights reserved.</p>
+    </footer>
     <script>
         document.getElementById('feedbackBtn').addEventListener('click', function() {
             document.getElementById('backdrop').style.display = 'block';
