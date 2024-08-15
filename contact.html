@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Quran Pro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1em 0;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 2em;
+        }
+
+        .contact-item {
+            background-color: #fff;
+            margin: 1em;
+            padding: 1em;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            text-align: center;
+        }
+
+        .contact-item h2 {
+            margin: 0.5em 0;
+        }
+
+        .feedback {
+            margin: 2em 0;
+        }
+
+        #feedbackBtn {
+            background-color: #08a88a;
+            color: #fff;
+            border: none;
+            padding: 1em 2em;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+
+        #feedbackBtn:hover {
+            background-color: #067960;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.lordicon.com/lusqsztk.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Contact Us</h1>
+    </header>
+    <main>
+        <section class="contact-info">
+            <div class="contact-item">
+                <lord-icon
+                    src="https://cdn.lordicon.com/bhfjfgqz.json"
+                    trigger="hover"
+                    colors="primary:#121331,secondary:#08a88a"
+                    style="width:100px;height:100px">
+                </lord-icon>
+                <h2>Email Us</h2>
+                <p>contact@quranpro.com</p>
+            </div>
+            <div class="contact-item">
+                <lord-icon
+                    src="https://cdn.lordicon.com/bhfjfgqz.json"
+                    trigger="hover"
+                    colors="primary:#121331,secondary:#08a88a"
+                    style="width:100px;height:100px">
+                </lord-icon>
+                <h2>Call Us</h2>
+                <p>+123-456-7890</p>
+            </div>
+            <div class="contact-item">
+                <lord-icon
+                    src="https://cdn.lordicon.com/bhfjfgqz.json"
+                    trigger="hover"
+                    colors="primary:#121331,secondary:#08a88a"
+                    style="width:100px;height:100px">
+                </lord-icon>
+                <h2>Visit Us</h2>
+                <p>123 Quran Pro St, City, Country</p>
+            </div>
+        </section>
+        <section class="feedback">
+            <button id="feedbackBtn">Send Feedback</button>
+        </section>
+    </main>
+    <script>
+        document.getElementById('feedbackBtn').addEventListener('click', function() {
+            Swal.fire({
+                title: 'Send Feedback',
+                input: 'textarea',
+                inputLabel: 'Your feedback',
+                inputPlaceholder: 'Type your feedback here...',
+                showCancelButton: true,
+                confirmButtonText: 'Send',
+                showLoaderOnConfirm: true,
+                preConfirm: (feedback) => {
+                    return new Promise((resolve) => {
+                        setTimeout(() => {
+                            resolve();
+                        }, 2000);
+                    }).then(() => {
+                        Swal.fire({
+                            title: 'Feedback Sent!',
+                            text: 'Thank you for your feedback.',
+                            icon: 'success',
+                        });
+                    });
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            });
+        });
+    </script>
+</body>
+</html>
