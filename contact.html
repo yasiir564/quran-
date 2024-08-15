@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-           animation: gradientAnimation 10s infinite;
+            animation: gradientAnimation 10s infinite;
             margin: 0;
             padding: 0;
             text-align: center;
@@ -31,6 +31,7 @@
             justify-content: center;
             flex-wrap: wrap;
             padding: 2em;
+            gap: 1em;
         }
 
         .contact-item {
@@ -39,7 +40,7 @@
             padding: 2em;
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            width: 100%;
+            width: calc(33.33% - 2em);
             max-width: 300px;
             text-align: center;
             transition: transform 0.3s, box-shadow 0.3s;
@@ -90,8 +91,16 @@
             z-index: 9999;
             display: none;
         }
-          @media screen and (max-width: 768px) {
+
+        @media screen and (max-width: 1024px) {
             .contact-item {
+                width: calc(50% - 2em);
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .contact-item {
+                width: calc(100% - 2em);
                 max-width: 80%;
             }
         }
@@ -106,17 +115,18 @@
                 font-size: 0.9em;
             }
         }
+
         @keyframes gradientAnimation {
-    0% {
-        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-    }
-    50% {
-        background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
-    }
-    100% {
-        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-    }
-}
+            0% {
+                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+            }
+            50% {
+                background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
+            }
+            100% {
+                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+            }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.lordicon.com/lusqsztk.js"></script>
