@@ -4,45 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us - Quran Pro</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
             margin: 0;
             padding: 0;
             text-align: center;
-        }
-
-        header {
-            background-color: #333;
             color: #fff;
-            padding: 1em 0;
-        }
-
-        h1 {
-            margin: 0;
-            font-size: 2em;
         }
 
         .contact-info {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            padding: 2em;
+            padding: 4em 2em;
         }
 
         .contact-item {
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.2);
             margin: 1em;
-            padding: 1em;
+            padding: 2em;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 200px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            width: 250px;
             text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .contact-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
         }
 
         .contact-item h2 {
-            margin: 0.5em 0;
+            margin: 1em 0 0.5em 0;
+            font-weight: 500;
+        }
+
+        .contact-item p {
+            margin: 0;
+            font-weight: 300;
         }
 
         .feedback {
@@ -50,34 +53,32 @@
         }
 
         #feedbackBtn {
-            background-color: #08a88a;
+            background-color: #0056b3;
             color: #fff;
             border: none;
             padding: 1em 2em;
             border-radius: 5px;
             cursor: pointer;
             font-size: 1em;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.3s;
         }
 
         #feedbackBtn:hover {
-            background-color: #067960;
+            background-color: #004494;
+            transform: translateY(-5px);
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.lordicon.com/lusqsztk.js"></script>
 </head>
 <body>
-    <header>
-        <h1>Contact Us</h1>
-    </header>
     <main>
         <section class="contact-info">
             <div class="contact-item">
                 <lord-icon
                     src="https://cdn.lordicon.com/bhfjfgqz.json"
                     trigger="hover"
-                    colors="primary:#121331,secondary:#08a88a"
+                    colors="primary:#ffffff,secondary:#08a88a"
                     style="width:100px;height:100px">
                 </lord-icon>
                 <h2>Email Us</h2>
@@ -87,7 +88,7 @@
                 <lord-icon
                     src="https://cdn.lordicon.com/bhfjfgqz.json"
                     trigger="hover"
-                    colors="primary:#121331,secondary:#08a88a"
+                    colors="primary:#ffffff,secondary:#08a88a"
                     style="width:100px;height:100px">
                 </lord-icon>
                 <h2>Call Us</h2>
@@ -97,7 +98,7 @@
                 <lord-icon
                     src="https://cdn.lordicon.com/bhfjfgqz.json"
                     trigger="hover"
-                    colors="primary:#121331,secondary:#08a88a"
+                    colors="primary:#ffffff,secondary:#08a88a"
                     style="width:100px;height:100px">
                 </lord-icon>
                 <h2>Visit Us</h2>
@@ -137,3 +138,4 @@
     </script>
 </body>
 </html>
+
