@@ -8,12 +8,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
-        body {
+       body {
             margin: 0;
             height: 100vh;
-            background: #abbaab;
-            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
-            background: linear-gradient(to right, #ffffff, #abbaab);
+            background: #abbaab;  /* fallback for old browsers */
+            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);  /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to right, #ffffff, #abbaab); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
         }
 
         .container {
@@ -109,18 +109,9 @@
             padding-bottom: 10px;
         }
 
-        .audio-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: 10px 0;
-            flex-wrap: wrap;
-        }
-
         .audio {
-            flex-grow: 1;
-            margin: 5px;
-            max-width: 100%;
+            display: block;
+            margin: 10px 0;
         }
 
         .audio.loading::after {
@@ -222,77 +213,61 @@
             .search-container button {
                 width: 100%;
             }
-            
-            .audio-container {
-                flex-direction: column;
-            }
-            
-            .audio {
-                width: 100%;
-                margin: 5px 0;
-            }
         }
+        /* Announcement Bar */
+.announcement-bar {
+    background: linear-gradient(to right, #2575fc, #6a11cb);
+    color: #fff;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 1em;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
 
-        .announcement-bar {
-            background: linear-gradient(to right, #2575fc, #6a11cb);
-            color: #fff;
-            padding: 10px 20px;
-            text-align: center;
-            font-size: 1em;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
+.announcement-bar:before {
+    content: "";
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, #2575fc, #6a11cb, #2575fc, #6a11cb);
+    top: -50%;
+    left: -50%;
+    animation: rotateAnnouncementBg 10s linear infinite;
+    z-index: 0;
+}
 
-        .announcement-bar:before {
-            content: "";
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, #2575fc, #6a11cb, #2575fc, #6a11cb);
-            top: -50%;
-            left: -50%;
-            animation: rotateAnnouncementBg 10s linear infinite;
-            z-index: 0;
-        }
+.announcement-bar p {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+}
 
-        .announcement-bar p {
-            position: relative;
-            z-index: 1;
-            margin: 0;
-        }
+.announcement-bar span {
+    font-weight: bold;
+    animation: blink 2s infinite;
+}
 
-        .announcement-bar span {
-            font-weight: bold;
-            animation: blink 2s infinite;
-        }
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
 
-        @keyframes rotateAnnouncementBg {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+@keyframes rotateAnnouncementBg {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 
-        .spacer {
-            height: 20px;
-        }
-
+/* Miscellaneous */
+.spacer {
+    height: 20px; /* Adjust height as needed */
+}
         .download-button {
             font-weight: bold;
             text-decoration: underline;
             color: #007bff;
             cursor: pointer;
-        }
-
-        #reciter-select {
-            padding: 5px;
-            font-size: 0.9em;
-            margin: 5px;
-        }
-
-        #playback-speed {
-            padding: 5px;
-            font-size: 0.9em;
-            margin: 5px;
         }
     </style>
 </head>
@@ -300,8 +275,8 @@
     <div class="container">
         <header>
              <div class="announcement-bar">
-                <p>NOW U CAN DOWNLOAD QURAN IN PDF IN ENGLISH TRANSLATION <a href="https://drive.google.com/file/d/1gRGJhASWSb1fRqDEOZL_QB8xiLIeRGK0/view?usp=sharing" class="download-button">DOWNLOAD!</a></p>
-            </div>
+        <p>NOW U CAN DOWNLOAD QURAN IN PDF IN ENGLISH TRANSLATION <a href="https://drive.google.com/file/d/1gRGJhASWSb1fRqDEOZL_QB8xiLIeRGK0/view?usp=sharing" class="download-button">DOWNLOAD!</a></p>
+    </div>
             <h1>Surah</h1>
             <div class="search-container">
                 <input type="text" id="search-input" placeholder="Search for an Ayah...">
@@ -310,20 +285,6 @@
             <i id="dark-mode-toggle" class="fas fa-moon"></i>
             <span class="close-button" onclick="window.location.href='index.html'">×</span>
         </header>
-        <div>
-            <select id="reciter-select">
-                <option value="ar.alafasy">Mishary Rashid Alafasy</option>
-                <!-- Other reciters will be dynamically added here -->
-            </select>
-            <select id="playback-speed">
-                <option value="0.5">0.5x</option>
-                <option value="0.75">0.75x</option>
-                <option value="1" selected>1x</option>
-                <option value="1.25">1.25x</option>
-                <option value="1.5">1.5x</option>
-                <option value="2">2x</option>
-            </select>
-        </div>
         <div id="surah-content"></div>
         <div class="loader" id="loader"></div>
         <div class="buttons">
@@ -341,11 +302,8 @@
             const searchInput = document.getElementById('search-input');
             const searchButton = document.getElementById('search-button');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
-            const reciterSelect = document.getElementById('reciter-select');
-            const playbackSpeed = document.getElementById('playback-speed');
             let autoNextSurahTimeout;
             let wakeLock = null;
-            let currentReciter = 'ar.alafasy';
 
             async function requestWakeLock() {
                 try {
@@ -376,7 +334,7 @@
             document.addEventListener('visibilitychange', handleVisibilityChange);
             requestWakeLock();
 
-            function loadSurah(surahNumber, reciter) {
+            function loadSurah(surahNumber) {
                 surahContent.style.display = 'none';
                 loader.style.display = 'block';
 
@@ -391,7 +349,7 @@
                 Promise.all([
                     fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`),
                     fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`),
-                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/${reciter}`)
+                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`)
                 ])
                 .then(responses => Promise.all(responses.map(response => response.json())))
                 .then(([surahData, translationData, audioData]) => {
@@ -409,12 +367,10 @@
                             <div class="translation" id="translation-${index}">
                                 ${translationData.data.ayahs[index].text}
                             </div>
-                            <div class="audio-container">
-                                <audio class="audio" id="audio-${index}" controls>
-                                    <source src="${audioData.data.ayahs[index].audio}" type="audio/mpeg">
-                                    Your browser does not support the audio element.
-                                </audio>
-                            </div>`).join('')}
+                            <audio class="audio" id="audio-${index}" controls>
+                                <source src="${audioData.data.ayahs[index].audio}" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>`).join('')}
                     `;
 
                     const audios = document.querySelectorAll('.audio');
@@ -470,11 +426,11 @@
                 }, 3000);
             }
 
-            loadSurah(surahNumber, currentReciter);
+            loadSurah(surahNumber);
 
             document.getElementById('repeat-surah').addEventListener('click', () => {
                 clearTimeout(autoNextSurahTimeout);
-                loadSurah(surahNumber, currentReciter);
+                loadSurah(surahNumber);
             });
 
             document.getElementById('next-surah').addEventListener('click', () => {
@@ -504,37 +460,6 @@
                     darkModeToggle.classList.remove('fa-sun');
                     darkModeToggle.classList.add('fa-moon');
                 }
-            });
-
-            // Load reciters from audiosurah.html
-            fetch('audiosurah.html')
-                .then(response => response.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const reciters = doc.querySelectorAll('.reciter');
-                    reciters.forEach(reciter => {
-                        const name = reciter.querySelector('h3').textContent;
-                        const id = reciter.id;
-                        const option = document.createElement('option');
-                        option.value = id;
-                        option.textContent = name;
-                        reciterSelect.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error loading reciters:', error));
-
-            reciterSelect.addEventListener('change', (e) => {
-                currentReciter = e.target.value;
-                loadSurah(surahNumber, currentReciter);
-            });
-
-            playbackSpeed.addEventListener('change', (e) => {
-                const speed = parseFloat(e.target.value);
-                const audios = document.querySelectorAll('.audio');
-                audios.forEach(audio => {
-                    audio.playbackRate = speed;
-                });
             });
         });
     </script>
