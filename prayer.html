@@ -21,7 +21,7 @@
 
         body {
             font-family: 'Nunito', sans-serif;
-            background: linear-gradient(to right, var(--bg-color), #abbaab);
+           animation: gradientAnimation 10s infinite;
             margin: 0;
             min-height: 100vh;
             display: flex;
@@ -57,6 +57,19 @@
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
+        }
+        @keyframes gradientAnimation {
+            0% {
+                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+            }
+
+            50% {
+                background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
+            }
+
+            100% {
+                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+            }
         }
 
         .prayer-time {
