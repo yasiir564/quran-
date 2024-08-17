@@ -242,6 +242,11 @@ h1 {
 .surah span:hover {
     transform: rotate(360deg);
 }
+        @media screen and (max-width: 768px) {
+    .surah-list {
+        grid-template-columns: 1fr; /* Single column for mobile */
+        gap: 15px; /* Slightly increased gap for better separation */
+    }
 .show-more-btn {
     display: block;
     width: 200px;
@@ -564,10 +569,10 @@ h1 {
             <div class="rating"></div>
         </div>
     </div>
-    <div class="arrow" id="next-arrow"><i class="fas fa-chevron-right"></i></div>
+    
 </div>
 
-    <div class="arrow" id="next-arrow"><i class="fas fa-chevron-right"></i></div>
+    
 </div>
         <!-- Surah List -->
         <div id="surah-list" class="surah-list"></div>
