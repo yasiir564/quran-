@@ -638,8 +638,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchBar = document.getElementById('search-bar');
     const darkModeToggle = document.getElementById('dark-mode-toggle');
     const featuredReciters = document.querySelector('.featured-reciters');
-    const prevArrow = document.getElementById('prev-arrow');
-    const nextArrow = document.getElementById('next-arrow');
     let surahs = [];
     let surahDisplayCount = 30;
 
@@ -709,47 +707,16 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Dark mode toggle
-   const darkModeToggle = document.getElementById('dark-mode-toggle');
-
-darkModeToggle.addEventListener('change', () => {
-    document.body.classList.toggle('dark-mode');
-    const isDarkMode = document.body.classList.contains('dark-mode');
-    localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
-});
-
-if (localStorage.getItem('darkMode') === 'enabled') {
-    document.body.classList.add('dark-mode');
-    darkModeToggle.checked = true;
-}
-
-    // Featured Reciters Scrolling
-    let scrollAmount = 0;
-    const scrollStep = 300;
-
-    nextArrow.addEventListener('click', () => {
-        scrollAmount = Math.min(scrollAmount + scrollStep, featuredReciters.scrollWidth - featuredReciters.clientWidth);
-        featuredReciters.scrollTo({
-            left: scrollAmount,
-            behavior: 'smooth'
-        });
-        updateArrowVisibility();
+    darkModeToggle.addEventListener('change', () => {
+        document.body.classList.toggle('dark-mode');
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
     });
 
-    prevArrow.addEventListener('click', () => {
-        scrollAmount = Math.max(scrollAmount - scrollStep, 0);
-        featuredReciters.scrollTo({
-            left: scrollAmount,
-            behavior: 'smooth'
-        });
-        updateArrowVisibility();
-    });
-
-    function updateArrowVisibility() {
-        prevArrow.style.display = scrollAmount <= 0 ? 'none' : 'flex';
-        nextArrow.style.display = scrollAmount >= featuredReciters.scrollWidth - featuredReciters.clientWidth ? 'none' : 'flex';
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        document.body.classList.add('dark-mode');
+        darkModeToggle.checked = true;
     }
-
-    featuredReciters.addEventListener('scroll', updateArrowVisibility);
 
     // Add star ratings to reciter cards
     const reciterCards = document.querySelectorAll('.reciter-card');
@@ -769,9 +736,6 @@ if (localStorage.getItem('darkMode') === 'enabled') {
                 ${halfStar ? '<i class="fas fa-star-half-alt"></i>' : ''}
                 ${'<i class="far fa-star"></i>'.repeat(emptyStars)}`;
     }
-
-    // Initialize
-    updateArrowVisibility();
 });
 
 function showReciterAlert() {
