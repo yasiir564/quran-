@@ -9,235 +9,298 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
     body {
-        margin: 0;
-        min-height: 100vh;
-        background: linear-gradient(to right, #ffffff, #abbaab);
-        font-family: 'Amiri', serif;
-        overflow-x: hidden;
-        transition: background 0.3s ease;
-    }
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(to right, #ffffff, #abbaab);
+    font-family: 'Amiri', serif;
+    overflow-x: hidden;
+    transition: background 0.3s ease;
+}
 
-    header {
-        text-align: center;
-        padding: 20px 0;
-        position: relative;
-    }
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+}
 
-    h1 {
-        font-size: 2.5em;
-        color: #000;
-        margin: 0;
-    }
+h1 {
+    font-size: 2.5em;
+    color: #2c3e50;
+    margin: 0;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    font-family: 'Amiri', serif;
+}
 
+.sheikh-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.sheikh-item {
+    padding: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, background-color 0.3s;
+    border-radius: 15px;
+    text-align: center;
+    overflow: hidden;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+}
+
+.sheikh-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.sheikh-item img {
+    width: 100%;
+    height: 150px;
+    border-radius: 15px;
+    object-fit: cover;
+}
+
+.sheikh-item.active {
+    border: 2px solid #3498db;
+    background-color: #e6f7ff;
+}
+
+.sheikh-name {
+    font-size: 1em;
+    color: #000;
+    margin-top: 10px;
+}
+
+.audio-overlay {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.audio-overlay.active {
+    display: flex;
+}
+
+.audio-player {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+}
+
+.audio-player img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-right: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.player-info {
+    flex-grow: 1;
+}
+
+.surah-title {
+    font-size: 1.2em;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.reciter-name {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.audio-controls {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.audio-controls button {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    color: #3498db;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: color 0.3s ease;
+}
+
+.audio-controls button:hover {
+    color: #2980b9;
+}
+
+#playPauseButton {
+    font-size: 2em;
+}
+
+.progress-container {
+    flex-grow: 1;
+    height: 10px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    margin: 0 10px;
+    position: relative;
+    cursor: pointer;
+}
+
+#progress-bar {
+    height: 100%;
+    background-color: #3498db;
+    border-radius: 5px;
+    width: 0;
+    transition: width 0.1s linear;
+}
+
+#progress-time {
+    position: absolute;
+    top: -25px;
+    right: 0;
+    font-size: 0.8em;
+    color: #666;
+}
+
+#speedControl {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #3498db;
+    background-color: white;
+    color: #3498db;
+    font-size: 0.9em;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.slider:after {
+    content: '☀️';
+    position: absolute;
+    top: 50%;
+    left: 8px;
+    transform: translateY(-50%);
+    font-size: 16px;
+}
+
+input:checked + .slider:after {
+    content: '🌙';
+    left: auto;
+    right: 8px;
+}
+
+body.dark-mode {
+    background: linear-gradient(to right, #2c3e50, #34495e);
+    color: #ecf0f1;
+}
+
+body.dark-mode .sheikh-item {
+    background-color: #34495e;
+    color: #ecf0f1;
+}
+
+body.dark-mode .audio-overlay {
+    background: rgba(52, 73, 94, 0.9);
+}
+
+body.dark-mode .surah-title,
+body.dark-mode .reciter-name {
+    color: #ecf0f1;
+}
+
+body.dark-mode .audio-controls button {
+    color: #3498db;
+}
+
+body.dark-mode #speedControl {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+}
+
+@media (max-width: 768px) {
     .sheikh-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 20px;
-        padding: 20px;
-        box-sizing: border-box;
-    }
-
-    .sheikh-item {
-        padding: 10px;
-        cursor: pointer;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s, background-color 0.3s;
-        border-radius: 15px;
-        text-align: center;
-        overflow: hidden;
-        background-color: #fff;
-        border: 1px solid #e0e0e0;
-    }
-
-    .sheikh-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    }
-
-    .sheikh-item img {
-        width: 100%;
-        height: 150px;
-        border-radius: 15px;
-        object-fit: cover;
-    }
-
-    .sheikh-item.active {
-        border: 2px solid #3498db;
-        background-color: #e6f7ff;
-    }
-
-    .sheikh-name {
-        font-size: 1em;
-        color: #000;
-        margin-top: 10px;
-    }
-
-    .audio-overlay {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-        padding: 20px;
-        box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .audio-overlay.active {
-        display: flex;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     }
 
     .audio-player {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        max-width: 800px;
+        flex-direction: column;
+        text-align: center;
     }
 
     .audio-player img {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        margin-right: 20px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .player-info {
-        flex-grow: 1;
-    }
-
-    .surah-title {
-        font-size: 1.2em;
-        color: #333;
-        font-weight: bold;
-        margin-bottom: 5px;
-    }
-
-    .reciter-name {
-        font-size: 0.9em;
-        color: #666;
+        margin-right: 0;
+        margin-bottom: 10px;
     }
 
     .audio-controls {
-        display: flex;
-        align-items: center;
-        margin-top: 10px;
-    }
-
-    .audio-controls button {
-        background: none;
-        border: none;
-        font-size: 1.5em;
-        color: #3498db;
-        cursor: pointer;
-        margin: 0 10px;
-        transition: color 0.3s ease;
-    }
-
-    .audio-controls button:hover {
-        color: #2980b9;
-    }
-
-    #playPauseButton {
-        font-size: 2em;
+        justify-content: center;
     }
 
     .progress-container {
-        flex-grow: 1;
-        height: 5px;
-        background-color: #e0e0e0;
-        border-radius: 5px;
-        margin: 0 10px;
-        position: relative;
-    }
-
-    #progress-bar {
-        height: 100%;
-        background-color: #3498db;
-        border-radius: 5px;
-        width: 0;
-        transition: width 0.1s linear;
+        height: 15px;
     }
 
     #progress-time {
-        position: absolute;
-        top: -20px;
-        right: 0;
-        font-size: 0.8em;
-        color: #666;
+        top: -30px;
     }
-
-    #speedControl {
-        padding: 5px;
-        border-radius: 5px;
-        border: 1px solid #3498db;
-        background-color: white;
-        color: #3498db;
-        font-size: 0.9em;
-    }
-
-    #dark-mode-toggle {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        background: none;
-        border: none;
-        font-size: 1.5em;
-        color: #333;
-        cursor: pointer;
-    }
-
-    body.dark-mode {
-        background: linear-gradient(to right, #2c3e50, #34495e);
-        color: #ecf0f1;
-    }
-
-    body.dark-mode .sheikh-item {
-        background-color: #34495e;
-        color: #ecf0f1;
-    }
-
-    body.dark-mode .audio-overlay {
-        background: rgba(52, 73, 94, 0.9);
-    }
-
-    body.dark-mode .surah-title,
-    body.dark-mode .reciter-name {
-        color: #ecf0f1;
-    }
-
-    body.dark-mode .audio-controls button {
-        color: #3498db;
-    }
-
-    body.dark-mode #speedControl {
-        background-color: #2c3e50;
-        color: #ecf0f1;
-    }
-
-    @media (max-width: 768px) {
-        .sheikh-list {
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        }
-
-        .audio-player {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .audio-player img {
-            margin-right: 0;
-            margin-bottom: 10px;
-        }
-
-        .audio-controls {
-            justify-content: center;
-        }
-    }
+}
     </style>
 </head>
 <body>
@@ -276,23 +339,24 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+   document.addEventListener('DOMContentLoaded', function () {
     const audioOverlay = document.getElementById('audio-overlay');
     const playPauseButton = document.getElementById('playPauseButton');
     const stopButton = document.getElementById('stopButton');
     const rewindButton = document.getElementById('rewindButton');
     const speedControl = document.getElementById('speedControl');
     const sheikhList = document.getElementById('reciter-selector');
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
     const reciterImage = document.getElementById('reciter-image');
     const surahTitle = document.getElementById('surah-title');
     const reciterName = document.getElementById('reciter-name');
     const progressBar = document.getElementById('progress-bar');
     const progressTime = document.getElementById('progress-time');
+    const progressContainer = document.querySelector('.progress-container');
     let currentAudio;
 
     const urlParams = new URLSearchParams(window.location.search);
     const surahId = urlParams.get('surah');
+
 
        const sheikhs = [
         { id: '1', name: 'AbdulBaset AbdulSamad', imageUrl: 'qmkxyvfiawea1.jpg' },
@@ -326,7 +390,7 @@
     ];
 
 
-    function stopAudio() {
+   function stopAudio() {
         if (currentAudio) {
             currentAudio.pause();
             currentAudio.currentTime = 0;
@@ -363,7 +427,7 @@
         if (currentAudio) {
             const progress = (currentAudio.currentTime / currentAudio.duration) * 100;
             progressBar.style.width = `${progress}%`;
-            progressTime.textContent = formatTime(currentAudio.currentTime);
+            progressTime.textContent = `${formatTime(currentAudio.currentTime)} / ${formatTime(currentAudio.duration)}`;
         }
     }
 
@@ -415,6 +479,15 @@
             surahTitle.textContent = `Surah ${surahName} (${surahTranslation})`;
             reciterName.textContent = `Reciter: ${sheikh.name}`;
             audioOverlay.classList.add('active');
+
+            Swal.fire({
+                title: 'Reciter Changed',
+                text: `Now playing: Surah ${surahName} recited by ${sheikh.name}`,
+                icon: 'success',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
         } catch (error) {
             console.error('Error loading audio:', error);
             Swal.fire({
@@ -435,6 +508,14 @@
         }
     });
 
+    progressContainer.addEventListener('click', function(e) {
+        const clickPosition = e.offsetX / this.offsetWidth;
+        if (currentAudio) {
+            currentAudio.currentTime = clickPosition * currentAudio.duration;
+            updateProgress();
+        }
+    });
+
     sheikhs.forEach((sheikh) => {
         const sheikhItem = document.createElement('div');
         sheikhItem.className = 'sheikh-item';
@@ -451,15 +532,23 @@
         sheikhList.appendChild(sheikhItem);
     });
 
+    // Dark mode toggle
+    const darkModeToggle = document.createElement('label');
+    darkModeToggle.className = 'switch';
+    darkModeToggle.innerHTML = `
+        <input type="checkbox" id="darkModeCheckbox">
+        <span class="slider"></span>
+    `;
+    document.querySelector('header').appendChild(darkModeToggle);
+
+    const darkModeCheckbox = document.getElementById('darkModeCheckbox');
+    darkModeCheckbox.addEventListener('change', toggleDarkMode);
+
     function toggleDarkMode() {
         document.body.classList.toggle('dark-mode');
-        darkModeToggle.innerHTML = document.body.classList.contains('dark-mode') ? 
-            '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
     }
 
-    darkModeToggle.addEventListener('click', toggleDarkMode);
-
-    // Implement lazy loading for sheikh images
+    // Lazy loading for sheikh images
     if ('IntersectionObserver' in window) {
         const imageObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
@@ -483,6 +572,7 @@
         });
     }
 
+    // Random sheikh selector
     setTimeout(() => {
         if (!document.querySelector('.sheikh-item.active')) {
             Swal.fire({
@@ -529,6 +619,7 @@
         }
     }, 5000);
 
+    // Wake Lock API
     if ('wakeLock' in navigator) {
         let wakeLock = null;
 
