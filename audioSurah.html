@@ -271,11 +271,14 @@ header {
 }
 
 .switch {
-        position: fixed;
-        display: inline-block;
-        width: 60px;
-        height: 34px;
-    }
+        position: fixed; /* Fixed position to keep icons at the top right */
+    top: 46px;
+    right: 20px;
+    display: flex;
+    gap: 15px;
+    z-index: 1; /* High z-index to ensure it's on top */
+    margin-bottom: 10px; /* Added space below header icons */
+}
 
 .switch input {
     opacity: 0;
