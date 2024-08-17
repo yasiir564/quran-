@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <script src="main.js" defer></script>
     <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
     <style>
         body {
@@ -16,9 +15,9 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background: #abbaab;  /* fallback for old browsers */
-            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);  /* Chrome 10-25, Safari 5.1-6 */
-            background: linear-gradient(to right, #ffffff, #abbaab); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            background: #abbaab;
+            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
+            background: linear-gradient(to right, #ffffff, #abbaab);
             margin: 0;
             font-family: 'Amiri', serif;
             color: #333;
@@ -26,27 +25,62 @@
             position: relative;
         }
 
-        .close-button,
         .dark-mode-toggle {
-            cursor: pointer;
-            font-size: 2em;
-            color: #fff;
             position: absolute;
-            top: 10px;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 1000;
         }
 
-        .close-button {
-            right: 50px;
-            color: #ff0000;
+        /* Modern switch styles */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
         }
 
-        .dark-mode-toggle {
-            right: 10px;
-            color: #fff;
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
         }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
         /* Sidebar Menu */
-.sidebar {
+        .sidebar {
             height: 100%;
             width: 250px;
             position: fixed;
@@ -97,129 +131,6 @@
         .openbtn:hover {
             background-color: #0056b3;
         }
-/* Navigation */
-nav ul {
-    display: none;
-}
-
-.mobile-cards {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 50px;
-    flex-wrap: wrap; /* Default wrapping for larger screens */
-    position: relative; /* Needed for the arrow indicator */
-}
-
-.card {
-    padding: 20px;
-    margin: 10px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
-    text-align: center;
-    color: white;
-    position: relative;
-    width: 100px; /* Default size for desktop */
-    height: 100px; /* Default size for desktop */
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    overflow: hidden;
-    background-size: cover;
-    background-position: center;
-}
-
-.card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 2px solid transparent;
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.5);
-    z-index: 1;
-}
-
-.card:hover::before {
-    border-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.5);
-}
-
-.card:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.card p {
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 5px;
-    border-radius: 5px;
-    margin: 0;
-    position: relative;
-    z-index: 2;
-}
-
-/* Responsive Styles */
-@media (max-width: 768px) {
-    .mobile-cards {
-        flex-wrap: nowrap; /* No wrapping for horizontal scroll */
-        overflow-x: scroll; /* Enable horizontal scroll */
-        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-        margin-top: 80px; /* Add space between cards and header */
-        padding-left: 10px; /* Add some padding to the left for better alignment */
-    }
-
-    .card {
-        flex: 0 0 auto; /* Cards do not shrink or grow, keeping their size */
-        margin: 10px 5px; /* Adjust margins for horizontal alignment */
-        width: 180px; /* Larger card size for mobile */
-        height: 180px; /* Larger card size for mobile */
-    }
-
-    /* Optional: Hide scrollbar for a cleaner look */
-    .mobile-cards::-webkit-scrollbar {
-        display: none; /* For WebKit browsers */
-    }
-
-    .mobile-cards {
-        -ms-overflow-style: none;  /* For Internet Explorer and Edge */
-        scrollbar-width: none;  /* For Firefox */
-    }
-
-    /* Scroll Indicator Arrow */
-    .scroll-arrow {
-        display: block;
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 2em;
-        color: #2575fc;
-        z-index: 10;
-        animation: bounce 1.5s infinite;
-        cursor: pointer;
-    }
-
-    /* Scroll Arrow Animation */
-    @keyframes bounce {
-        0%, 100% {
-            transform: translateY(-50%) translateX(0);
-        }
-        50% {
-            transform: translateY(-50%) translateX(5px);
-        }
-    }
-}
-
-@media (max-width: 480px) {
-    .card {
-        width: 160px;
-        height: 160px;
-    }
-}
 
         .tasbih-counter {
             width: 80%;
@@ -235,7 +146,7 @@ nav ul {
             justify-content: center;
             position: relative;
             padding: 10px;
-            margin-top: 60px; /* Space to avoid overlap */
+            margin-top: 60px;
         }
 
         .screen {
@@ -357,10 +268,14 @@ nav ul {
     </style>
 </head>
 <body>
-     <header></header>
-    <span class="close-button" onclick="window.location.href='index.html'">×</span>
-    <i id="dark-mode-toggle" class="fas fa-moon dark-mode-toggle"></i>
-     <div id="mySidebar" class="sidebar">
+    <header></header>
+    
+    <label class="switch dark-mode-toggle">
+        <input type="checkbox" id="dark-mode-toggle">
+        <span class="slider"></span>
+    </label>
+
+    <div id="mySidebar" class="sidebar">
         <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
         <a href="index.html">
             <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
@@ -404,18 +319,15 @@ nav ul {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script>
         function openNav() {
-    document.getElementById("mySidebar").style.left = "0";
-    document.getElementById("main").style.marginLeft = "250px";
-}
+            document.getElementById("mySidebar").style.left = "0";
+            document.getElementById("main").style.marginLeft = "250px";
+        }
 
-function closeNav() {
-    document.getElementById("mySidebar").style.left = "-250px";
-    document.getElementById("main").style.marginLeft = "0";
-}
+        function closeNav() {
+            document.getElementById("mySidebar").style.left = "-250px";
+            document.getElementById("main").style.marginLeft = "0";
+        }
 
-// Event listener for close button
-document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
-        
         document.addEventListener('DOMContentLoaded', function () {
             const countDisplay = document.getElementById('countDisplay');
             const countButton = document.getElementById('countButton');
@@ -427,6 +339,14 @@ document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
 
             let count = 0;
             let isMuted = false;
+
+            // Show initial message
+            Swal.fire({
+                title: 'Welcome to Dikri Pro',
+                text: 'Start counting your tasbih!',
+                icon: 'info',
+                confirmButtonText: 'OK'
+            });
 
             countButton.addEventListener('click', () => {
                 count++;
@@ -454,15 +374,24 @@ document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
             });
 
             saveTasbihButton.addEventListener('click', () => {
-                const savedCounts = JSON.parse(localStorage.getItem('savedTasbihCounts')) || [];
-                savedCounts.push(count);
-                localStorage.setItem('savedTasbihCounts', JSON.stringify(savedCounts));
-                Swal.fire({
-                    title: 'Saved!',
-                    text: 'Tasbih count has been saved.',
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                });
+                if (count === 0) {
+                    Swal.fire({
+                        title: 'Cannot Save',
+                        text: 'Please count at least once before saving.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    const savedCounts = JSON.parse(localStorage.getItem('savedTasbihCounts')) || [];
+                    savedCounts.push(count);
+                    localStorage.setItem('savedTasbihCounts', JSON.stringify(savedCounts));
+                    Swal.fire({
+                        title: 'Saved!',
+                        text: 'Tasbih count has been saved.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                }
             });
 
             viewSavedTasbihButton.addEventListener('click', () => {
@@ -475,44 +404,35 @@ document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
                 });
             });
 
-            darkModeToggle.addEventListener('click', () => {
+            darkModeToggle.addEventListener('change', () => {
                 document.body.classList.toggle('dark-mode');
-                if (document.body.classList.contains('dark-mode')) {
-                    darkModeToggle.classList.remove('fa-moon');
-                    darkModeToggle.classList.add('fa-sun');
-                } else {
-                    darkModeToggle.classList.remove('fa-sun');
-                    darkModeToggle.classList.add('fa-moon');
-                }
             });
+
+            // Event listener for close button
+            document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
         });
+
         function loadHeaderFooter() {
-    const header = document.querySelector('header');
-    const footer = document.querySelector('footer');
+            const header = document.querySelector('header');
+            const footer = document.querySelector('footer');
 
-    fetch('header.html')
-        .then(response => response.text())
-        .then(data => {
-            header.innerHTML = data;
-            // Add event listeners for the sidebar after loading the header
-            document.querySelector(".openbtn").addEventListener("click", openNav);
-            document.querySelector(".closebtn").addEventListener("click", closeNav);
-        });
+            fetch('header.html')
+                .then(response => response.text())
+                .then(data => {
+                    header.innerHTML = data;
+                    // Add event listeners for the sidebar after loading the header
+                    document.querySelector(".openbtn").addEventListener("click", openNav);
+                    document.querySelector(".closebtn").addEventListener("click", closeNav);
+                });
 
-    fetch('footer.html')
-        .then(response => response.text())
-        .then(data => {
-            footer.innerHTML = data;
-        });
-}
+            fetch('footer.html')
+                .then(response => response.text())
+                .then(data => {
+                    footer.innerHTML = data;
+                });
+        }
 
-function openNav() {
-    document.getElementById("mySidebar").style.left = "0";
-}
-
-function closeNav() {
-    document.getElementById("mySidebar").style.left = "-250px";
-}
+        loadHeaderFooter();
     </script>
 </body>
 </html>
