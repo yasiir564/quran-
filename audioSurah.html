@@ -339,7 +339,7 @@ body.dark-mode #speedControl {
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-   document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener('DOMContentLoaded', function () {
     const audioOverlay = document.getElementById('audio-overlay');
     const playPauseButton = document.getElementById('playPauseButton');
     const stopButton = document.getElementById('stopButton');
@@ -356,6 +356,8 @@ body.dark-mode #speedControl {
 
     const urlParams = new URLSearchParams(window.location.search);
     const surahId = urlParams.get('surah');
+    let currentSurahId = surahId;
+    let currentSheikh = null;
 
 
        const sheikhs = [
@@ -390,7 +392,7 @@ body.dark-mode #speedControl {
     ];
 
 
-   function stopAudio() {
+  function stopAudio() {
         if (currentAudio) {
             currentAudio.pause();
             currentAudio.currentTime = 0;
@@ -437,7 +439,7 @@ body.dark-mode #speedControl {
         return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
     }
 
-    async function loadSurahAudio(surahId, sheikh) {
+    async function loadSurahAudio(surahId, sheikh, isReciterChange = false) {
         if (currentAudio) {
             currentAudio.pause();
         }
@@ -480,14 +482,28 @@ body.dark-mode #speedControl {
             reciterName.textContent = `Reciter: ${sheikh.name}`;
             audioOverlay.classList.add('active');
 
-            Swal.fire({
-                title: 'Reciter Changed',
-                text: `Now playing: Surah ${surahName} recited by ${sheikh.name}`,
-                icon: 'success',
-                timer: 3000,
-                timerProgressBar: true,
-                showConfirmButton: false
-            });
+            if (isReciterChange || sheikh.id !== currentSheikh?.id) {
+                Swal.fire({
+                    title: 'Reciter Changed',
+                    text: `Now playing: Surah ${surahName} recited by ${sheikh.name}`,
+                    icon: 'success',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+                currentSheikh = sheikh;
+            } else if (surahId !== currentSurahId) {
+                Swal.fire({
+                    title: 'Surah Changed',
+                    text: `Now playing: Surah ${surahName}`,
+                    icon: 'info',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+            }
+
+            currentSurahId = surahId;
         } catch (error) {
             console.error('Error loading audio:', error);
             Swal.fire({
@@ -509,7 +525,8 @@ body.dark-mode #speedControl {
     });
 
     progressContainer.addEventListener('click', function(e) {
-        const clickPosition = e.offsetX / this.offsetWidth;
+        const rect = this.getBoundingClientRect();
+        const clickPosition = (e.clientX - rect.left) / rect.width;
         if (currentAudio) {
             currentAudio.currentTime = clickPosition * currentAudio.duration;
             updateProgress();
@@ -526,7 +543,7 @@ body.dark-mode #speedControl {
         sheikhItem.addEventListener('click', () => {
             document.querySelectorAll('.sheikh-item').forEach(item => item.classList.remove('active'));
             sheikhItem.classList.add('active');
-            loadSurahAudio(surahId, sheikh);
+            loadSurahAudio(currentSurahId, sheikh, true);
         });
 
         sheikhList.appendChild(sheikhItem);
@@ -611,7 +628,7 @@ body.dark-mode #speedControl {
                             icon: 'success',
                             confirmButtonText: 'Okay'
                         }).then(() => {
-                            loadSurahAudio(surahId, selectedSheikh);
+                            loadSurahAudio(currentSurahId, selectedSheikh, true);
                         });
                     }, spinDuration);
                 }
