@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tracks</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
@@ -13,338 +15,290 @@
      crossorigin="anonymous"></script>
     <style>
 body {
-    background: #abbaab;
-    background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
-    background: linear-gradient(to right, #ffffff, #abbaab);
-    font-family: 'Amiri', serif;
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     margin: 0;
     padding: 0;
-    position: relative;
+    color: #333;
+    min-height: 100vh;
 }
 
 .container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    text-align: center;
 }
 
 header {
     text-align: center;
+    margin-bottom: 40px;
 }
 
-.sidebar {
-    height: 100%;
-    width: 250px;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: -250px;
-    background: linear-gradient(to top, #a8edea, #fed6e3);
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-    margin-bottom: 10px;
+h1 {
+    font-family: 'Lato', sans-serif;
+    font-size: 2.5em;
+    color: #2c3e50;
+    margin-bottom: 20px;
 }
 
-.sidebar a {
-    padding: 10px 15px;
-    text-decoration: none;
-    font-size: 18px;
-    color: #111;
-    display: block;
-    transition: 0.3s;
-}
-
-.sidebar a:hover {
-    color: #fff;
-    background-color: #2575fc;
-}
-
-.sidebar .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-}
-
-#main {
-    transition: margin-left .5s;
-    padding: 16px;
-}
-
-@media screen and (max-height: 450px) {
-    .sidebar { padding-top: 15px; }
-    .sidebar a { font-size: 18px; }
-}
-
-.openbtn {
-    font-size: 20px;
-    cursor: pointer;
-    background-color: #2575fc;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    position: fixed;
-    top: 30px;
-    left: 10px;
-    z-index: 1000;
-}
-
-.openbtn:hover {
-    background-color: #0056b3;
-}
-
-@keyframes gradientAnimation {
-    0% {
-        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-    }
-    50% {
-        background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
-    }
-    100% {
-        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-    }
-}
-
-/* Search Container */
 .search-container {
-    margin: 10px 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    max-width: 600px;
+    margin: 0 auto;
     position: relative;
 }
 
 .search-container input {
-    padding: 10px;
+    width: 100%;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 30px;
     font-size: 1em;
-    width: 70%;
-    border: 2px solid #ddd;
-    border-radius: 25px;
-    outline: none;
-    padding-left: 20px;
-    transition: all 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
 .search-container input:focus {
-    border-color: #2575fc;
+    outline: none;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 
 .search-container button {
-    padding: 10px;
-    font-size: 1em;
-    border: none;
-    cursor: pointer;
-    border-radius: 50%;
-    background-color: #2575fc;
-    color: #fff;
     position: absolute;
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    color: #3498db;
+    cursor: pointer;
 }
 
+.featured-title {
+    font-size: 1.8em;
+    text-align: center;
+    margin: 40px 0 20px;
+    color: #2c3e50;
+}
+
+.featured-reciters {
+    display: flex;
+    overflow-x: auto;
+    padding: 20px 0;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+.reciter-card {
+    flex: 0 0 auto;
+    width: 200px;
+    margin-right: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.reciter-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.reciter-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.reciter-card h3 {
+    padding: 10px;
+    margin: 0;
+    font-size: 1em;
+    text-align: center;
+}
+
+.rating {
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.rating i {
+    color: #f1c40f;
+    font-size: 1.2em;
+}
 
 .surah-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 10px;
-    padding: 20px 0;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 40px;
 }
 
 .surah {
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid #ddd;
+    background: white;
+    border-radius: 10px;
     padding: 15px;
-    margin: 10px;
-    cursor: pointer;
     text-align: center;
-    border-radius: 5px;
-    transition: transform 0.3s, background-color 0.3s, border-color 0.3s;
-    color: #2575fc;
-    font-size: 1.2em;
-    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
 }
 
 .surah:hover {
-    transform: scale(1.05);
-    background-color: #2575fc;
-    color: #fff;
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.surah-info {
+    font-size: 0.9em;
 }
 
 .surah span {
-    font-size: 0.8em;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #000;
-    border-radius: 10px;
-    padding: 5px;
-    clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
-    transition: transform 0.3s;
-}
-
-.surah span:hover {
-    transform: rotate(360deg);
+    display: inline-block;
+    background-color: #3498db;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    margin-top: 5px;
 }
 
 .show-more-btn {
     display: block;
     width: 200px;
-    margin: 20px auto;
-    padding: 10px;
+    margin: 40px auto;
+    padding: 15px;
+    background-color: #3498db;
+    color: white;
     border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: #fff;
-    font-size: 1.2em;
+    border-radius: 30px;
+    font-size: 1em;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease;
 }
 
 .show-more-btn:hover {
-    background-color: #0056b3;
-}
-
-.featured-reciters {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    gap: 10px;
-    padding: 20px 0;
-    width: 100%;
-}
-
-.reciter-card {
-    background: rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(15px);
-    border: 1px solid #ddd;
-    padding: 15px;
-    border-radius: 5px;
-    min-width: 200px;
-    text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
-    flex: 0 0 auto;
-    position: relative;
-}
-
-.reciter-card img {
-    border-radius: 50%;
-    width: 100px;
-    height: 100px;
-}
-
-.reciter-card:hover {
-    transform: rotate(360deg);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.rating {
-    margin-top: 10px;
-    font-size: 1.2em;
-    color: #ffd700;
-}
-
-.rating i {
-    margin: 0 2px;
-    color: #ffd700;
-    text-shadow: 0 0 5px rgba(255, 215, 0, 0.8);
-}
-
-.reciter-card:hover .rating i {
-    color: #ffcc00;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 1);
+    background-color: #2980b9;
 }
 
 .arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
     font-size: 2em;
+    color: #3498db;
     cursor: pointer;
-    user-select: none;
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.7);
-    border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, background-color 0.3s;
+    transition: background-color 0.3s ease;
 }
 
 .arrow:hover {
-    transform: scale(1.1);
-    background-color: #2575fc;
-    color: #fff;
+    background-color: rgba(255, 255, 255, 0.9);
 }
 
-.dark-mode {
-    background: linear-gradient(to right, #2c3e50, #4ca1af);
-    color: #fff;
+#prev-arrow {
+    left: 10px;
 }
 
-.dark-mode .surah {
-    background-color: #444;
-    border: 1px solid #555;
-}
-
-.dark-mode .search-container input {
-    border: 2px solid #444;
-}
-
-.dark-mode .search-container button {
-    background-color: #4ca1af;
-}
-
-.dark-mode .search-container button:hover {
-    background-color: #3b9d9d;
-}
-
-.dark-mode .show-more-btn {
-    background-color: #4ca1af;
-}
-
-.dark-mode .show-more-btn:hover {
-    background-color: #3b9d9d;
-}
-
-.featured-title {
-    text-align: center;
-    font-size: 2em;
-    margin: 20px 0;
-    color: #2575fc;
-    position: relative;
-}
-
-
-.track-text {
-    position: absolute;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 2em;
-    color: #2575fc;
-    z-index: 1000;
+#next-arrow {
+    right: 10px;
 }
 
 .dark-mode-btn {
     position: fixed;
     top: 20px;
     right: 20px;
-    z-index: 1000;
+    font-size: 1.5em;
+    background: none;
+    border: none;
+    color: #2c3e50;
+    cursor: pointer;
+    transition: color 0.3s ease;
 }
 
-@media screen and (max-width: 768px) {
-    .reciter-card {
-        min-width: 150px;
+.dark-mode-btn:hover {
+    color: #3498db;
+}
+
+.dark-mode {
+    background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+    color: #f5f7fa;
+}
+
+.dark-mode .surah,
+.dark-mode .reciter-card {
+    background-color: #34495e;
+    color: #f5f7fa;
+}
+
+.dark-mode .search-container input {
+    background-color: #34495e;
+    color: #f5f7fa;
+}
+
+.dark-mode .show-more-btn {
+    background-color: #2980b9;
+}
+
+.dark-mode .show-more-btn:hover {
+    background-color: #3498db;
+}
+
+@media (max-width: 768px) {
+    .surah-list {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
 
-    .search-container button {
-        right: 15%;
+    .reciter-card {
+        width: 150px;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    .featured-title {
+        font-size: 1.5em;
+    }
+}
+
+@media (max-width: 480px) {
+    .surah-list {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+
+    .reciter-card {
+        width: 120px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    .featured-title {
+        font-size: 1.3em;
+    }
+
+    .search-container input {
+        padding: 10px 15px;
+    }
+
+    .show-more-btn {
+        width: 150px;
+        padding: 10px;
     }
 }
 
@@ -387,121 +341,153 @@ header {
 
 
         <!-- Featured Reciters -->
-        <h2 class="featured-title">Featured Reciters</h2>
-        <div class="featured-reciters">
-            <div class="arrow" id="prev-arrow"><i class="fas fa-chevron-left"></i></div>
-            <div class="reciter-card" onclick="showReciterAlert()" data-id="1">
-        <img src="qmkxyvfiawea1.jpg" alt="AbdulBaset AbdulSamad">
-        <h3>AbdulBaset AbdulSamad</h3>
+       <h2 class="featured-title">Featured Reciters</h2>
+<div class="featured-reciters-container">
+    <div class="arrow" id="prev-arrow"><i class="fas fa-chevron-left"></i></div>
+    <div class="featured-reciters">
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="1">
+            <img src="qmkxyvfiawea1.jpg" alt="AbdulBaset AbdulSamad">
+            <h3>AbdulBaset AbdulSamad</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="2">
+            <img src="images (6).jpeg" alt="Maher Al-Muaiqly">
+            <h3>Maher Al-Muaiqly</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="3">
+            <img src="Abdul-Rahman-Al-Sudais.jpg" alt="Abdur-Rahman As-Sudais">
+            <h3>Abdur-Rahman As-Sudais</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="4">
+            <img src="transparent-saud-al-shuraim.webp" alt="Saud Al-Shuraim">
+            <h3>Saud Al-Shuraim</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="5">
+            <img src="download (10).jpeg" alt="Mishary Rashid Alafasy">
+            <h3>Mishary Rashid Alafasy</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="6">
+            <img src="ali-jaber.webp" alt="Ali Jaber">
+            <h3>Ali Jaber</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="7">
+            <img src="download (11).jpeg" alt="Yasser Al-Dosari">
+            <h3>Yasser Al-Dosari</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="8">
+            <img src="download (12).jpeg" alt="Salah Al-Budair">
+            <h3>Salah Al-Budair</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="9">
+            <img src="download (13).jpeg" alt="Ahmad Al-Ajmi">
+            <h3>Ahmad Al-Ajmi</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="10">
+            <img src="download (14).jpeg" alt="Khalil Al-Husary">
+            <h3>Khalil Al-Husary</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="11">
+            <img src="download (15).jpeg" alt="Muhammad Siddiq Al-Minshawi">
+            <h3>Muhammad Siddiq Al-Minshawi</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="12">
+            <img src="download (16).jpeg" alt="Saad Al-Ghamdi">
+            <h3>Saad Al-Ghamdi</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="13">
+            <img src="download (17).jpeg" alt="Abu Bakr Al-Shatri">
+            <h3>Abu Bakr Al-Shatri</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="14">
+            <img src="download (18).jpeg" alt="Hani Rifai">
+            <h3>Hani Rifai</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="15">
+            <img src="download (19).jpeg" alt="Abdullah Basfar">
+            <h3>Abdullah Basfar</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="16">
+            <img src="mohamed-tablawi.jpg" alt="Mohammad Al-Tablawi">
+            <h3>Mohammad Al-Tablawi</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="17">
+            <img src="download (20).jpeg" alt="Khalid Al-Jaleel">
+            <h3>Khalid Al-Jaleel</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="18">
+            <img src="download (21).jpeg" alt="Yasser Al-Mazroyee">
+            <h3>Yasser Al-Mazroyee</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="19">
+            <img src="download (22).jpeg" alt="Fares Abbad">
+            <h3>Fares Abbad</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="20">
+            <img src="download (23).jpeg" alt="Abdul-Rahman Al-Ossi">
+            <h3>Abdul-Rahman Al-Ossi</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="21">
+            <img src="download (24).jpeg" alt="Ahmad Al-Huthaify">
+            <h3>Ahmad Al-Huthaify</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="22">
+            <img src="download (25).jpeg" alt="Muhammad Ayyub">
+            <h3>Muhammad Ayyub</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="23">
+            <img src="download (26).jpeg" alt="Muhammad Jibreel">
+            <h3>Muhammad Jibreel</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="24">
+            <img src="download (27).jpeg" alt="AbdulRashid Sufi">
+            <h3>AbdulRashid Sufi</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="25">
+            <img src="download (28).jpeg" alt="Ibrahim Al-Akhdar">
+            <h3>Ibrahim Al-Akhdar</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="26">
+            <img src="download (29).jpeg" alt="Muhammad Al-Luhaidan">
+            <h3>Muhammad Al-Luhaidan</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="27">
+            <img src="download (30).jpeg" alt="Yahya Hawwa">
+            <h3>Yahya Hawwa</h3>
+            <div class="rating"></div>
+        </div>
+        <div class="reciter-card" onclick="showReciterAlert()" data-id="28">
+            <img src="download (31).jpeg" alt="Abdul Wadood Haneef">
+            <h3>Abdul Wadood Haneef</h3>
+            <div class="rating"></div>
+        </div>
     </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="2">
-        <img src="images (6).jpeg" alt="Maher Al-Muaiqly">
-        <h3>Maher Al-Muaiqly</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="3">
-        <img src="Abdul-Rahman-Al-Sudais.jpg" alt="Abdur-Rahman As-Sudais">
-        <h3>Abdur-Rahman As-Sudais</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="4">
-        <img src="transparent-saud-al-shuraim.webp" alt="Saud Al-Shuraim">
-        <h3>Saud Al-Shuraim</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="5">
-        <img src="download (10).jpeg" alt="Mishary Rashid Alafasy">
-        <h3>Mishary Rashid Alafasy</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="6">
-        <img src="ali-jaber.webp" alt="Ali Jaber">
-        <h3>Ali Jaber</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="7">
-        <img src="download (11).jpeg" alt="Yasser Al-Dosari">
-        <h3>Yasser Al-Dosari</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="8">
-        <img src="download (12).jpeg" alt="Salah Al-Budair">
-        <h3>Salah Al-Budair</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="9">
-        <img src="download (13).jpeg" alt="Ahmad Al-Ajmi">
-        <h3>Ahmad Al-Ajmi</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="10">
-        <img src="download (14).jpeg" alt="Khalil Al-Husary">
-        <h3>Khalil Al-Husary</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="11">
-        <img src="download (15).jpeg" alt="Muhammad Siddiq Al-Minshawi">
-        <h3>Muhammad Siddiq Al-Minshawi</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="12">
-        <img src="download (16).jpeg" alt="Saad Al-Ghamdi">
-        <h3>Saad Al-Ghamdi</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="13">
-        <img src="download (17).jpeg" alt="Abu Bakr Al-Shatri">
-        <h3>Abu Bakr Al-Shatri</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="14">
-        <img src="download (18).jpeg" alt="Hani Rifai">
-        <h3>Hani Rifai</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="15">
-        <img src="download (19).jpeg" alt="Abdullah Basfar">
-        <h3>Abdullah Basfar</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="16">
-        <img src="mohamed-tablawi.jpg" alt="Mohammad Al-Tablawi">
-        <h3>Mohammad Al-Tablawi</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="17">
-        <img src="download (20).jpeg" alt="Khalid Al-Jaleel">
-        <h3>Khalid Al-Jaleel</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="18">
-        <img src="download (21).jpeg" alt="Yasser Al-Mazroyee">
-        <h3>Yasser Al-Mazroyee</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="19">
-        <img src="download (22).jpeg" alt="Fares Abbad">
-        <h3>Fares Abbad</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="20">
-        <img src="download (23).jpeg" alt="Abdul-Rahman Al-Ossi">
-        <h3>Abdul-Rahman Al-Ossi</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="21">
-        <img src="download (24).jpeg" alt="Ahmad Al-Huthaify">
-        <h3>Ahmad Al-Huthaify</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="22">
-        <img src="download (25).jpeg" alt="Muhammad Ayyub">
-        <h3>Muhammad Ayyub</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="23">
-        <img src="download (26).jpeg" alt="Muhammad Jibreel">
-        <h3>Muhammad Jibreel</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="24">
-        <img src="download (27).jpeg" alt="AbdulRashid Sufi">
-        <h3>AbdulRashid Sufi</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="25">
-        <img src="download (28).jpeg" alt="Ibrahim Al-Akhdar">
-        <h3>Ibrahim Al-Akhdar</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="26">
-        <img src="download (29).jpeg" alt="Muhammad Al-Luhaidan">
-        <h3>Muhammad Al-Luhaidan</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="27">
-        <img src="download (30).jpeg" alt="Yahya Hawwa">
-        <h3>Yahya Hawwa</h3>
-    </div>
-    <div class="reciter-card" onclick="showReciterAlert()" data-id="28">
-        <img src="download (31).jpeg" alt="Abdul Wadood Haneef">
-        <h3>Abdul Wadood Haneef</h3>
-    </div>
+    <div class="arrow" id="next-arrow"><i class="fas fa-chevron-right"></i></div>
+</div>
 
     <div class="arrow" id="next-arrow"><i class="fas fa-chevron-right"></i></div>
 </div>
@@ -510,152 +496,161 @@ header {
         <button id="show-more-btn" class="show-more-btn">Show More</button>
     </div>
 <script>
-  function openNav() {
-    document.getElementById("mySidebar").style.left = "0";
-    document.body.classList.add("blurred");
-}
+document.addEventListener('DOMContentLoaded', function () {
+    const surahList = document.getElementById('surah-list');
+    const showMoreBtn = document.getElementById('show-more-btn');
+    const searchBar = document.getElementById('search-bar');
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const featuredReciters = document.querySelector('.featured-reciters');
+    const prevArrow = document.getElementById('prev-arrow');
+    const nextArrow = document.getElementById('next-arrow');
+    let surahs = [];
+    let surahDisplayCount = 30;
 
-document.getElementById("closeSidebarBtn").addEventListener("click", function() {
-    document.getElementById("mySidebar").style.left = "-250px";
-    document.body.classList.remove("blurred");
+    // Sidebar functionality
+    function openNav() {
+        document.getElementById("mySidebar").style.left = "0";
+        document.body.classList.add("blurred");
+    }
+
+    document.getElementById("closeSidebarBtn").addEventListener("click", function() {
+        document.getElementById("mySidebar").style.left = "-250px";
+        document.body.classList.remove("blurred");
+    });
+
+    // Fetch surahs and display them
+    fetch('https://api.quran.com/api/v4/chapters')
+        .then(response => response.json())
+        .then(data => {
+            surahs = data.chapters;
+            displaySurahs(surahs.slice(0, surahDisplayCount));
+        })
+        .catch(error => {
+            console.error('Error fetching Surahs:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Unable to fetch Surah list. Please try again later.',
+            });
+        });
+
+    function displaySurahs(surahsToDisplay) {
+        surahList.innerHTML = '';
+        const fragment = document.createDocumentFragment();
+        surahsToDisplay.forEach(surah => {
+            const surahDiv = document.createElement('div');
+            surahDiv.classList.add('surah');
+            surahDiv.innerHTML = `
+                <div class="surah-info">
+                    <strong>${surah.name_simple}</strong>
+                    <br>${surah.name_arabic}
+                    <br><span>${surah.id}</span>
+                </div>
+            `;
+            surahDiv.addEventListener('click', () => {
+                window.location.href = `audioSurah.html?surah=${surah.id}`;
+            });
+            fragment.appendChild(surahDiv);
+        });
+        surahList.appendChild(fragment);
+
+        showMoreBtn.textContent = surahDisplayCount >= 114 ? 'Show Less' : 'Show More';
+    }
+
+    showMoreBtn.addEventListener('click', () => {
+        surahDisplayCount = surahDisplayCount >= 114 ? 30 : surahDisplayCount + 30;
+        displaySurahs(surahs.slice(0, surahDisplayCount));
+    });
+
+    searchBar.addEventListener('input', (event) => {
+        const query = event.target.value.toLowerCase();
+        const filteredSurahs = surahs.filter(surah =>
+            surah.name_simple.toLowerCase().includes(query) ||
+            surah.name_arabic.toLowerCase().includes(query) ||
+            surah.id.toString().includes(query)
+        );
+        displaySurahs(filteredSurahs.slice(0, surahDisplayCount));
+    });
+
+    // Dark mode toggle
+    darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        darkModeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
+    });
+
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        document.body.classList.add('dark-mode');
+        darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    }
+
+    // Featured Reciters Scrolling
+    let scrollAmount = 0;
+    const scrollStep = 300;
+
+    nextArrow.addEventListener('click', () => {
+        scrollAmount = Math.min(scrollAmount + scrollStep, featuredReciters.scrollWidth - featuredReciters.clientWidth);
+        featuredReciters.scrollTo({
+            left: scrollAmount,
+            behavior: 'smooth'
+        });
+        updateArrowVisibility();
+    });
+
+    prevArrow.addEventListener('click', () => {
+        scrollAmount = Math.max(scrollAmount - scrollStep, 0);
+        featuredReciters.scrollTo({
+            left: scrollAmount,
+            behavior: 'smooth'
+        });
+        updateArrowVisibility();
+    });
+
+    function updateArrowVisibility() {
+        prevArrow.style.display = scrollAmount <= 0 ? 'none' : 'flex';
+        nextArrow.style.display = scrollAmount >= featuredReciters.scrollWidth - featuredReciters.clientWidth ? 'none' : 'flex';
+    }
+
+    featuredReciters.addEventListener('scroll', updateArrowVisibility);
+
+    // Add star ratings to reciter cards
+    const reciterCards = document.querySelectorAll('.reciter-card');
+    reciterCards.forEach(card => {
+        const rating = (Math.random() * 2 + 3).toFixed(1); // Random rating between 3.0 and 5.0
+        const ratingDiv = card.querySelector('.rating');
+        ratingDiv.innerHTML = generateStarRating(rating);
+        ratingDiv.setAttribute('title', `Rating: ${rating}`);
+    });
+
+    function generateStarRating(rating) {
+        const fullStars = Math.floor(rating);
+        const halfStar = rating % 1 >= 0.5;
+        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+        return `${'<i class="fas fa-star"></i>'.repeat(fullStars)}
+                ${halfStar ? '<i class="fas fa-star-half-alt"></i>' : ''}
+                ${'<i class="far fa-star"></i>'.repeat(emptyStars)}`;
+    }
+
+    // Initialize
+    updateArrowVisibility();
 });
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const surahList = document.getElementById('surah-list');
-        const showMoreBtn = document.getElementById('show-more-btn');
-        const searchBar = document.getElementById('search-bar');
-        const darkModeToggle = document.getElementById('dark-mode-toggle');
-        const featuredReciters = document.querySelector('.featured-reciters');
-        const prevArrow = document.getElementById('prev-arrow');
-        const nextArrow = document.getElementById('next-arrow');
-        let surahs = [];
-        let surahDisplayCount = 30;
-
-        fetch('https://api.quran.com/api/v4/chapters')
-            .then(response => response.json())
-            .then(data => {
-                surahs = data.chapters;
-                displaySurahs(surahs.slice(0, surahDisplayCount));
-            })
-            .catch(error => {
-                console.error('Error fetching Surahs:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Unable to fetch Surah list. Please try again later.',
-                });
-            });
-
-        function displaySurahs(surahsToDisplay) {
-            surahList.innerHTML = '';
-            const fragment = document.createDocumentFragment();
-            surahsToDisplay.forEach(surah => {
-                const surahDiv = document.createElement('div');
-                surahDiv.classList.add('surah');
-
-                const surahInfo = document.createElement('div');
-                surahInfo.classList.add('surah-info');
-                // Fixed incorrect use of template literals inside innerHTML
-                surahInfo.innerHTML = `<strong>${surah.name_simple}</strong> <br> ${surah.name_arabic} <br> <span>${surah.id}</span>`;
-                surahDiv.appendChild(surahInfo);
-
-                surahDiv.addEventListener('click', () => {
-                    // Fixed URL format for navigation
-                    window.location.href = `audioSurah.html?surah=${surah.id}`;
-                });
-
-                fragment.appendChild(surahDiv);
-            });
-            surahList.appendChild(fragment);
-
-            // Update Show More button text
-            if (surahDisplayCount >= 114) {
-                showMoreBtn.textContent = 'Show Less';
-            } else {
-                showMoreBtn.textContent = 'Show More';
-            }
-        }
-
-        showMoreBtn.addEventListener('click', () => {
-            if (surahDisplayCount >= 114) {
-                surahDisplayCount = 30;
-                displaySurahs(surahs.slice(0, surahDisplayCount));
-            } else {
-                surahDisplayCount += 30;
-                displaySurahs(surahs.slice(0, surahDisplayCount));
-            }
-        });
-
-        searchBar.addEventListener('input', (event) => {
-            const query = event.target.value.toLowerCase();
-            const filteredSurahs = surahs.filter(surah =>
-                surah.name_simple.toLowerCase().includes(query) ||
-                surah.name_arabic.toLowerCase().includes(query)
-            );
-            displaySurahs(filteredSurahs.slice(0, surahDisplayCount));
-        });
-
-        darkModeToggle.addEventListener('click', () => {
-            const darkModeEnabled = document.body.classList.toggle('dark-mode');
-            darkModeToggle.classList.toggle('fa-moon', !darkModeEnabled);
-            darkModeToggle.classList.toggle('fa-sun', darkModeEnabled);
-            localStorage.setItem('darkMode', darkModeEnabled ? 'enabled' : 'disabled');
-        });
-
-        if (localStorage.getItem('darkMode') === 'enabled') {
-            document.body.classList.add('dark-mode');
-            darkModeToggle.classList.remove('fa-moon');
-            darkModeToggle.classList.add('fa-sun');
-        }
-
-        // Featured Reciters Scrolling
-        let scrollAmount = 0;
-        const scrollAmountIncrement = 200;
-
-        nextArrow.addEventListener('click', () => {
-            if (scrollAmount < featuredReciters.scrollWidth - featuredReciters.clientWidth) {
-                scrollAmount += scrollAmountIncrement;
-                featuredReciters.scrollTo({
-                    left: scrollAmount,
-                    behavior: 'smooth'
-                });
-            }
-        });
-
-        prevArrow.addEventListener('click', () => {
-            if (scrollAmount > 0) {
-                scrollAmount -= scrollAmountIncrement;
-                featuredReciters.scrollTo({
-                    left: scrollAmount,
-                    behavior: 'smooth'
-                });
-            }
-        });
-
-        // Scroll effect for reciter cards
-        window.addEventListener('scroll', function () {
-            const cards = document.querySelectorAll('.reciter-card');
-            let scrollTop = window.scrollY || document.documentElement.scrollTop;
-            let containerHeight = document.querySelector('.featured-reciters').offsetHeight;
-
-            cards.forEach((card, index) => {
-                let cardOffset = card.offsetTop;
-                if (scrollTop + containerHeight > cardOffset) {
-                    card.style.filter = 'none';
-                }
-            });
-        });
-
-        // SweetAlert for Reciter Card Click
-        window.showReciterAlert = function () {
-            Swal.fire({
-                title: 'Choose a Surah',
-                text: 'Please select a Surah to continue to reciters.',
-                icon: 'info',
-                confirmButtonText: 'OK'
-            });
-        }
+function showReciterAlert() {
+    Swal.fire({
+        title: 'Choose a Surah',
+        text: 'Please select a Surah to continue to reciters.',
+        icon: 'info',
+        confirmButtonText: 'OK'
     });
+}
+
+// Make openNav function global
+window.openNav = function() {
+    document.getElementById("mySidebar").style.left = "0";
+    document.body.classList.add("blurred");
+};
 </script>
 
 </body>
