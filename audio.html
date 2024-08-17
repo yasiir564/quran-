@@ -242,6 +242,11 @@ h1 {
 .surah span:hover {
     transform: rotate(360deg);
 }
+        @media (max-width: 768px) {
+    .surah-list {
+        grid-template-columns: 1fr;
+    }
+}
        
 .show-more-btn {
     display: block;
@@ -380,6 +385,58 @@ h1 {
         padding: 10px;
     }
 }
+        .switch {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
 
 
 </style>
@@ -414,15 +471,17 @@ h1 {
         <div class="search-container">
             <input type="text" id="search-bar" placeholder="Search Surahs...">
             <button><i class="fas fa-search"></i></button>
-        </div>
-        <i id="dark-mode-toggle" class="fas fa-moon dark-mode-toggle"></i>
+        <label class="switch">
+    <input type="checkbox" id="dark-mode-toggle">
+    <span class="slider round"></span>
+</label>
     </header>
 
 
         <!-- Featured Reciters -->
        <h2 class="featured-title">Featured Reciters</h2>
 <div class="featured-reciters-container">
-    <div class="arrow" id="prev-arrow"><i class="fas fa-chevron-left"></i></div>
+   
     <div class="featured-reciters">
         <div class="reciter-card" onclick="showReciterAlert()" data-id="1">
             <img src="qmkxyvfiawea1.jpg" alt="AbdulBaset AbdulSamad">
@@ -565,7 +624,7 @@ h1 {
             <div class="rating"></div>
         </div>
     </div>
-     <div class="arrow" id="next-arrow"><i class="fas fa-chevron-right"></i></div>
+     
 </div>
         
         <!-- Surah List -->
@@ -650,17 +709,18 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Dark mode toggle
-    darkModeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        const isDarkMode = document.body.classList.contains('dark-mode');
-        darkModeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-        localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
-    });
+   const darkModeToggle = document.getElementById('dark-mode-toggle');
 
-    if (localStorage.getItem('darkMode') === 'enabled') {
-        document.body.classList.add('dark-mode');
-        darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-    }
+darkModeToggle.addEventListener('change', () => {
+    document.body.classList.toggle('dark-mode');
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
+});
+
+if (localStorage.getItem('darkMode') === 'enabled') {
+    document.body.classList.add('dark-mode');
+    darkModeToggle.checked = true;
+}
 
     // Featured Reciters Scrolling
     let scrollAmount = 0;
