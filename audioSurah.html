@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
      <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
     <style>
-   body {
+  body {
     margin: 0;
     min-height: 100vh;
     background: linear-gradient(to right, #ffffff, #abbaab);
@@ -27,56 +27,56 @@ header {
 }
 
 .sidebar {
-            height: 100%;
-            width: 250px;
-            position: fixed;
-            z-index: 1001;
-            top: 0;
-            left: -250px;
-            background: linear-gradient(to top, #a8edea, #fed6e3);
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-        }
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1001;
+    top: 0;
+    left: -250px;
+    background: linear-gradient(to top, #a8edea, #fed6e3);
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
 
-        .sidebar a {
-            padding: 10px 15px;
-            text-decoration: none;
-            font-size: 18px;
-            color: #111;
-            display: block;
-            transition: 0.3s;
-        }
+.sidebar a {
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #111;
+    display: block;
+    transition: 0.3s;
+}
 
-        .sidebar a:hover {
-            color: #fff;
-            background-color: #2575fc;
-        }
+.sidebar a:hover {
+    color: #fff;
+    background-color: #2575fc;
+}
 
-        .sidebar .closebtn {
-            position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-        }
+.sidebar .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
 
-        .openbtn {
-            font-size: 20px;
-            cursor: pointer;
-            background-color: #2575fc;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            position: fixed;
-            top: 30px;
-            left: 10px;
-            z-index: 1000;
-        }
+.openbtn {
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #2575fc;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    position: fixed;
+    top: 30px;
+    left: 10px;
+    z-index: 1000;
+}
 
-        .openbtn:hover {
-            background-color: #0056b3;
-        }
+.openbtn:hover {
+    background-color: #0056b3;
+}
 
 .sheikh-list {
     display: grid;
@@ -120,7 +120,8 @@ header {
     color: #000;
     margin-top: 10px;
 }
-        @keyframes spin {
+
+@keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
@@ -271,13 +272,12 @@ header {
 }
 
 .switch {
-    position: fixed; /* Fixed position to keep icons at the top right */
-    top: 46px;
-    right: 46px;
-    display: flex;
-    gap: 15px;
-    z-index: 1; /* High z-index to ensure it's on top */
-    margin-bottom: 10px; /* Added space below header icons */
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 60px;
+    height: 34px;
+    z-index: 1000;
 }
 
 .switch input {
@@ -316,21 +316,6 @@ input:checked + .slider {
 
 input:checked + .slider:before {
     transform: translateX(26px);
-}
-
-.slider:after {
-    
-    position: absolute;
-    top: 50%;
-    left: 8px;
-    transform: translateY(-50%);
-    font-size: 16px;
-}
-
-input:checked + .slider:after {
-    
-    left: auto;
-    right: 8px;
 }
 
 body.dark-mode {
@@ -416,6 +401,10 @@ body.dark-mode #speedControl {
     <header>
        
     </header>
+    <label class="switch">
+    <input type="checkbox" id="darkModeToggle">
+    <span class="slider"></span>
+</label>
     
     <div id="reciter-selector" class="sheikh-list"></div>
 
