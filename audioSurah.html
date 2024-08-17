@@ -490,7 +490,7 @@ body.dark-mode #speedControl {
         document.getElementById("closeSidebarBtn").addEventListener("click", function () {
             document.getElementById("mySidebar").style.left = "-250px";
         });
-    document.addEventListener('DOMContentLoaded', function () {
+   document.addEventListener('DOMContentLoaded', function () {
     const audioOverlay = document.getElementById('audio-overlay');
     const playPauseButton = document.getElementById('playPauseButton');
     const stopButton = document.getElementById('stopButton');
@@ -503,57 +503,45 @@ body.dark-mode #speedControl {
     const progressBar = document.getElementById('progress-bar');
     const progressTime = document.getElementById('progress-time');
     const progressContainer = document.querySelector('.progress-container');
-    const showRecitersButton = document.getElementById('show-reciters');
     let currentAudio;
 
     const urlParams = new URLSearchParams(window.location.search);
-    const surahId = urlParams.get('surah') || '1';
+    const surahId = urlParams.get('surah');
     let currentSurahId = surahId;
     let currentSheikh = null;
-
-    const sheikhs = [
        const sheikhs = [
-        { id: 'abdulbasit', name: 'AbdulBaset AbdulSamad', imageUrl: 'qmkxyvfiawea1.jpg' },
-        { id: 'alafasy', name: 'Mishary Rashid Alafasy', imageUrl: 'download (10).jpeg' },
-        { id: 'sudais', name: 'Abdur-Rahman As-Sudais', imageUrl: 'Abdul-Rahman-Al-Sudais.jpg' },
-        { id: 'shatri', name: 'Abu Bakr Al-Shatri', imageUrl: 'download (17).jpeg' },
-        { id: 'ajmi', name: 'Ahmad Al-Ajmi', imageUrl: 'download (13).jpeg' },
-        { id: 'ghamadi', name: 'Saad Al-Ghamdi', imageUrl: 'download (16).jpeg' },
-        { id: 'hudhaify', name: 'Ali Al-Hudhaify', imageUrl: 'download (24).jpeg' },
-        { id: 'maher', name: 'Maher Al-Muaiqly', imageUrl: 'images (6).jpeg' },
-        { id: 'minshawi', name: 'Muhammad Siddiq Al-Minshawi', imageUrl: 'download (15).jpeg' },
-        { id: 'tablawy', name: 'Mohammad Al-Tablawi', imageUrl: 'mohamed-tablawi.jpg' },
-        { id: 'basfar', name: 'Abdullah Basfar', imageUrl: 'download (19).jpeg' },
-        { id: 'rifai', name: 'Hani Rifai', imageUrl: 'download (18).jpeg' },
-        { id: 'akhdar', name: 'Ibrahim Al-Akhdar', imageUrl: 'download (28).jpeg' },
-        { id: 'jibreen', name: 'Muhammad Jibreel', imageUrl: 'download (26).jpeg' },
-        { id: 'shuraym', name: 'Saud Al-Shuraim', imageUrl: 'transparent-saud-al-shuraim.webp' },
-        { id: 'husary', name: 'Mahmoud Khalil Al-Husary', imageUrl: 'download (14).jpeg' },
-        { id: 'abdulkareem', name: 'Abdul Kareem Al-Hazmi', imageUrl: 'abdul-kareem-al-hazmi.jpg' },
-        { id: 'ayyub', name: 'Muhammad Ayyub', imageUrl: 'download (25).jpeg' },
-        { id: 'dussary', name: 'Yasser Al-Dussary', imageUrl: 'download (11).jpeg' },
-        { id: 'afasy', name: 'Mishari Alafasy', imageUrl: 'download (10).jpeg' },
-        { id: 'muaiqly', name: 'Maher Al Muaiqly', imageUrl: 'images (6).jpeg' },
-        { id: 'juhany', name: 'Abdullah Al-Juhany', imageUrl: 'abdullah-al-juhany.jpg' },
-        { id: 'shateri', name: 'Abu Bakr Al-Shateri', imageUrl: 'abu-bakr-al-shateri.jpg' },
-        { id: 'qasim', name: 'Nasser Al-Qatami', imageUrl: 'nasser-al-qatami.jpg' },
-        { id: 'tunaiji', name: 'Ahmed Al-Tunaiji', imageUrl: 'ahmed-al-tunaiji.jpg' },
-        { id: 'juhainy', name: 'Abdullah Al-Juhainy', imageUrl: 'abdullah-al-juhainy.jpg' },
-        { id: 'salah', name: 'Mohammed Salah', imageUrl: 'mohammed-salah.jpg' },
-        { id: 'bukhatir', name: 'Ahmed Bukhatir', imageUrl: 'ahmed-bukhatir.jpg' },
-        { id: 'awad', name: 'Abdullah Awad Al-Juhani', imageUrl: 'abdullah-awad-al-juhani.jpg' },
-        { id: 'rashad', name: 'Rashad Alafasy', imageUrl: 'rashad-alafasy.jpg' },
+        { id: '1', name: 'AbdulBaset AbdulSamad', imageUrl: 'qmkxyvfiawea1.jpg' },
+        { id: '2', name: 'Maher Al-Muaiqly', imageUrl: 'images (6).jpeg' },
+        { id: '3', name: 'Abdur-Rahman As-Sudais', imageUrl: 'Abdul-Rahman-Al-Sudais.jpg' },
+        { id: '4', name: 'Saud Al-Shuraim', imageUrl: 'transparent-saud-al-shuraim.webp' },
+        { id: '5', name: 'Mishary Rashid Alafasy', imageUrl: 'download (10).jpeg' },
+        { id: '6', name: 'Ali Jaber', imageUrl: 'ali-jaber.webp' },
+        { id: '7', name: 'Yasser Al-Dosari', imageUrl: 'download (11).jpeg' },
+        { id: '8', name: 'Salah Al-Budair', imageUrl: 'download (12).jpeg' },
+        { id: '9', name: 'Ahmad Al-Ajmi', imageUrl: 'download (13).jpeg' },
+        { id: '10', name: 'Khalil Al-Husary', imageUrl: 'download (14).jpeg' },
+        { id: '11', name: 'Muhammad Siddiq Al-Minshawi', imageUrl: 'download (15).jpeg' },
+        { id: '12', name: 'Saad Al-Ghamdi', imageUrl: 'download (16).jpeg' },
+        { id: '13', name: 'Abu Bakr Al-Shatri', imageUrl: 'download (17).jpeg' },
+        { id: '14', name: 'Hani Rifai', imageUrl: 'download (18).jpeg' },
+        { id: '15', name: 'Abdullah Basfar', imageUrl: 'download (19).jpeg' },
+        { id: '17', name: 'Mohammad Al-Tablawi', imageUrl: 'mohamed-tablawi.jpg' },
+        { id: '18', name: 'Khalid Al-Jaleel', imageUrl: 'download (20).jpeg' },
+        { id: '19', name: 'Yasser Al-Mazroyee', imageUrl: 'download (21).jpeg' },
+        { id: '20', name: 'Fares Abbad', imageUrl: 'download (22).jpeg' },
+        { id: '22', name: 'Abdul-Rahman Al-Ossi', imageUrl: 'download (23).jpeg' },
+        { id: '23', name: 'Ahmad Al-Huthaify', imageUrl: 'download (24).jpeg' },
+        { id: '24', name: 'Muhammad Ayyub', imageUrl: 'download (25).jpeg' },
+        { id: '25', name: 'Muhammad Jibreel', imageUrl: 'download (26).jpeg' },
+        { id: '26', name: 'AbdulRashid Sufi', imageUrl: 'download (27).jpeg' },
+        { id: '27', name: 'Ibrahim Al-Akhdar', imageUrl: 'download (28).jpeg' },
+        { id: '28', name: 'Muhammad Al-Luhaidan', imageUrl: 'download (29).jpeg' },
+        { id: '29', name: 'Yahya Hawwa', imageUrl: 'download (30).jpeg' },
+        { id: '30', name: 'Abdul Wadood Haneef', imageUrl: 'download (31).jpeg' }
     ];
 
-    function showLoading() {
-        document.getElementById('loading-overlay').style.display = 'flex';
-    }
 
-    function hideLoading() {
-        document.getElementById('loading-overlay').style.display = 'none';
-    }
-
-    function stopAudio() {
+  function stopAudio() {
         if (currentAudio) {
             currentAudio.pause();
             currentAudio.currentTime = 0;
@@ -601,21 +589,16 @@ body.dark-mode #speedControl {
     }
 
     async function loadSurahAudio(surahId, sheikh, isReciterChange = false) {
-        showLoading();
         if (currentAudio) {
             currentAudio.pause();
         }
 
         try {
-            const audioUrl = `https://cdn.islamic.network/quran/audio-surah/128/${sheikh.id}/${surahId}.mp3`;
+            const response = await fetch(`https://api.quran.com/api/v4/chapter_recitations/${sheikh.id}/${surahId}`);
+            const data = await response.json();
+            const audioUrl = data.audio_file.audio_url;
+
             currentAudio = new Audio(audioUrl);
-
-            currentAudio.addEventListener('canplaythrough', () => {
-                currentAudio.play();
-                playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
-                hideLoading();
-            });
-
             currentAudio.addEventListener('ended', async () => {
                 const nextSurahId = parseInt(surahId) + 1;
                 if (nextSurahId <= 114) {
@@ -629,6 +612,11 @@ body.dark-mode #speedControl {
                         confirmButtonText: 'Okay'
                     });
                 }
+            });
+
+            currentAudio.addEventListener('canplaythrough', () => {
+                currentAudio.play();
+                playPauseButton.innerHTML = '<i class="fas fa-pause"></i>';
             });
 
             currentAudio.addEventListener('timeupdate', updateProgress);
@@ -667,7 +655,6 @@ body.dark-mode #speedControl {
             currentSurahId = surahId;
         } catch (error) {
             console.error('Error loading audio:', error);
-            hideLoading();
             Swal.fire({
                 title: 'Error',
                 text: 'Failed to load audio. Please try again later.',
@@ -712,6 +699,14 @@ body.dark-mode #speedControl {
     });
 
     // Dark mode toggle
+    const darkModeToggle = document.createElement('label');
+    darkModeToggle.className = 'switch';
+    darkModeToggle.innerHTML = `
+        <input type="checkbox" id="darkModeCheckbox">
+        <span class="slider"></span>
+    `;
+    document.querySelector('header').appendChild(darkModeToggle);
+
     const darkModeCheckbox = document.getElementById('darkModeCheckbox');
     darkModeCheckbox.addEventListener('change', toggleDarkMode);
 
@@ -736,22 +731,73 @@ body.dark-mode #speedControl {
             imageObserver.observe(img);
         });
     } else {
+        // Fallback for browsers that don't support IntersectionObserver
         document.querySelectorAll('img.lazy').forEach(img => {
             img.src = img.dataset.src;
             img.classList.remove('lazy');
         });
     }
 
-    // Mobile overlay for reciters
-    showRecitersButton.addEventListener('click', () => {
-        sheikhList.classList.toggle('active');
-    });
+    // Modern spin option
+    setTimeout(() => {
+        if (!document.querySelector('.sheikh-item.active')) {
+            Swal.fire({
+                title: 'Find a Reciter',
+                text: 'Not sure which reciter to choose? Let us pick one for you!',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Spin!',
+                cancelButtonText: 'Cancel',
+                allowOutsideClick: false,
+                background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+                customClass: {
+                    title: 'swal-title',
+                    content: 'swal-text'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let spinCount = 0;
+                    const maxSpins = 20; // Number of spins before stopping
+                    const spinInterval = 100; // Time between spins in milliseconds
 
-    sheikhList.addEventListener('click', (event) => {
-        if (event.target.closest('.sheikh-item')) {
-            sheikhList.classList.remove('active');
+                    const spinAnimation = setInterval(() => {
+                        const randomSheikh = sheikhs[Math.floor(Math.random() * sheikhs.length)];
+                        Swal.update({
+                            title: 'Selecting a Reciter...',
+                            html: `
+                                <div class="spinner-container">
+                                    <img src="${randomSheikh.imageUrl}" alt="${randomSheikh.name}" class="spinner-image">
+                                    <div class="spinner-name">${randomSheikh.name}</div>
+                                </div>
+                            `,
+                            showConfirmButton: false
+                        });
+
+                        spinCount++;
+                        if (spinCount >= maxSpins) {
+                            clearInterval(spinAnimation);
+                            const selectedSheikh = sheikhs[Math.floor(Math.random() * sheikhs.length)];
+                            setTimeout(() => {
+                                Swal.fire({
+                                    title: 'Reciter Selected!',
+                                    html: `
+                                        <div class="spinner-container">
+                                            <img src="${selectedSheikh.imageUrl}" alt="${selectedSheikh.name}" class="spinner-image" style="animation: none;">
+                                            <div class="spinner-name">${selectedSheikh.name}</div>
+                                        </div>
+                                    `,
+                                    icon: 'success',
+                                    confirmButtonText: 'Listen Now'
+                                }).then(() => {
+                                    loadSurahAudio(currentSurahId, selectedSheikh, true);
+                                });
+                            }, 500);
+                        }
+                    }, spinInterval);
+                }
+            });
         }
-    });
+    }, 5000);
 
     // Wake Lock API
     if ('wakeLock' in navigator) {
@@ -772,11 +818,6 @@ body.dark-mode #speedControl {
         });
 
         requestWakeLock();
-    }
-
-    // Initialize with first sheikh
-    if (sheikhs.length > 0) {
-        loadSurahAudio(currentSurahId, sheikhs[0]);
     }
 });
 </script>
