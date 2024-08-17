@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
-    body {
+   body {
     margin: 0;
     min-height: 100vh;
     background: linear-gradient(to right, #ffffff, #abbaab);
@@ -19,19 +19,10 @@
 
 header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     padding: 20px;
     position: relative;
-}
-
-h1 {
-    font-size: 2.5em;
-    color: #2c3e50;
-    margin: 0;
-    font-weight: 700;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    font-family: 'Amiri', serif;
 }
 
 .sheikh-list {
@@ -76,7 +67,8 @@ h1 {
     color: #000;
     margin-top: 10px;
 }
-        @keyframes spin {
+
+@keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
@@ -271,21 +263,6 @@ input:checked + .slider:before {
     transform: translateX(26px);
 }
 
-.slider:after {
-    content: '☀️';
-    position: absolute;
-    top: 50%;
-    left: 8px;
-    transform: translateY(-50%);
-    font-size: 16px;
-}
-
-input:checked + .slider:after {
-    content: '🌙';
-    left: auto;
-    right: 8px;
-}
-
 body.dark-mode {
     background: linear-gradient(to right, #2c3e50, #34495e);
     color: #ecf0f1;
@@ -316,7 +293,19 @@ body.dark-mode #speedControl {
 
 @media (max-width: 768px) {
     .sheikh-list {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.9);
+        z-index: 1001;
+        overflow-y: auto;
+        display: none;
+    }
+
+    .sheikh-list.active {
+        display: grid;
     }
 
     .audio-player {
@@ -340,12 +329,52 @@ body.dark-mode #speedControl {
     #progress-time {
         top: -30px;
     }
+
+    #show-reciters {
+        display: block;
+    }
+}
+
+#show-reciters {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1002;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
 }
     </style>
 </head>
 <body>
     <header>
-        <h1>Quran Pro Audio Reciters</h1>
+       
         <button id="dark-mode-toggle"><i class="fas fa-moon"></i></button>
     </header>
     <div id="reciter-selector" class="sheikh-list"></div>
