@@ -6,25 +6,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prayer Times</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Nunito:wght@300;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&family=Nunito:wght@300;400;600&display=swap');
         @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
         @import url('https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css');
 
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #333;
+            --container-bg: rgba(255, 255, 255, 0.9);
+            --prayer-time-bg: #f0f0f0;
+            --prayer-time-hover: #f0f8ff;
+        }
+
         body {
             font-family: 'Nunito', sans-serif;
-            background: linear-gradient(to right, #ffffff, #abbaab);
+            background: linear-gradient(to right, var(--bg-color), #abbaab);
             margin: 0;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: background 0.3s;
+            transition: background 0.3s, color 0.3s;
+            color: var(--text-color);
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
+            background: var(--container-bg);
+            padding: 2rem;
             border-radius: 15px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
             text-align: center;
@@ -34,151 +43,137 @@
         }
 
         .clock {
-            font-family: 'Roboto', sans-serif;
-            font-size: 3em;
-            margin-bottom: 20px;
-            color: #333;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
             font-weight: 700;
+            background: linear-gradient(45deg, #007BFF, #00BFFF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .prayer-time {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 10px;
-            margin: 10px 0;
+            padding: 1rem;
+            margin: 0.75rem 0;
             border-radius: 10px;
-            background-color: #f0f0f0;
+            background-color: var(--prayer-time-bg);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, box-shadow 0.3s;
         }
+
         .prayer-time:hover {
-    background-color: #f0f8ff; /* Light blue background on hover */
-    border-radius: 8px;        /* Slightly rounded corners */
-    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* Subtle shadow effect */
-    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
-}
+            background-color: var(--prayer-time-hover);
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        }
 
         .prayer-time span:first-child {
             font-weight: 600;
-            color: #555;
-            font-size: 1.2em;
+            font-size: 1.1rem;
         }
 
         .prayer-time span:last-child {
-            font-size: 1.2em;
+            font-size: 1.1rem;
             color: #007BFF;
         }
 
         #location {
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
             font-style: italic;
             color: #777;
         }
 
-        .close-button {
-            cursor: pointer;
-            color: #ff0000;
+        .dark-mode-toggle {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.5em;
+            top: 1rem;
+            right: 1rem;
+            width: 3rem;
+            height: 1.5rem;
+            background-color: #ccc;
+            border-radius: 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
 
-        .dark-mode-toggle {
-            cursor: pointer;
-            font-size: 1.5em;
-            color: #333;
+        .dark-mode-toggle::after {
+            content: '';
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 0.15rem;
+            left: 0.15rem;
+            width: 1.2rem;
+            height: 1.2rem;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
         }
 
         body.dark-mode {
-            background: linear-gradient(to right, #0f0f0f, #434343);
-            color: #ddd;
+            --bg-color: #0f0f0f;
+            --text-color: #ddd;
+            --container-bg: rgba(50, 50, 50, 0.9);
+            --prayer-time-bg: #333;
+            --prayer-time-hover: #444;
         }
 
-        body.dark-mode .container {
-            background: rgba(50, 50, 50, 0.9);
-            color: #ddd;
+        body.dark-mode .dark-mode-toggle {
+            background-color: #007BFF;
         }
 
-        body.dark-mode .prayer-time {
-            background-color: #333;
-            color: #ddd;
-        }
-
-        body.dark-mode .prayer-time span:last-child {
-            color: #4a90e2;
-        }
-
-        body.dark-mode #location {
-            color: #aaa;
+        body.dark-mode .dark-mode-toggle::after {
+            transform: translateX(1.5rem);
         }
 
         .country-search {
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
         .country-search input {
-            padding: 10px;
+            padding: 0.75rem;
             border: 1px solid #ccc;
             border-radius: 5px;
             flex-grow: 1;
-            margin-right: 10px;
-            font-family: 'Roboto', sans-serif;
+            margin-right: 0.75rem;
+            font-family: 'Montserrat', sans-serif;
         }
 
         .country-search button {
-            padding: 10px;
+            padding: 0.75rem;
             border: none;
             border-radius: 5px;
             background-color: #007BFF;
             color: white;
             cursor: pointer;
-            font-size: 1em;
+            font-size: 1rem;
+            transition: background-color 0.3s;
         }
 
-        .country-search button i {
-            margin-right: 5px;
-        }
-
-        .country-list {
-            max-height: 200px;
-            overflow-y: auto;
-            margin-top: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .country-list-item {
-            padding: 10px;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .country-list-item img {
-            width: 30px;
-            height: 20px;
-            margin-right: 10px;
-        }
-
-        .country-list-item:hover {
-            background-color: #f0f0f0;
+        .country-search button:hover {
+            background-color: #0056b3;
         }
 
         @media (max-width: 600px) {
             .clock {
-                font-size: 2.5em;
+                font-size: 2.5rem;
             }
 
             .container {
-                width: 100%;
-                padding: 15px;
+                width: 90%;
+                padding: 1.5rem;
+            }
+
+            .prayer-time {
+                padding: 0.75rem;
             }
         }
     </style>
@@ -186,10 +181,7 @@
 
 <body>
     <div class="container">
-        <div class="close-button" onclick="window.location.href='index.html'">&times;</div>
-        <div class="dark-mode-toggle">
-            <i class="fas fa-moon"></i>
-        </div>
+        <div class="dark-mode-toggle"></div>
         <div class="clock" id="clock"></div>
         <h1>Prayer Times</h1>
         <div id="location"></div>
@@ -218,144 +210,148 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-       document.addEventListener("DOMContentLoaded", function() {
-    // Clock functionality
-    function updateClock() {
-        const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        const timeString = `${hours}:${minutes}:${seconds}`;
-        document.getElementById('clock').textContent = timeString;
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-
-    // Get user's location
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition, showError);
-    } else {
-        Swal.fire("Error", "Geolocation is not supported by this browser.", "error");
-    }
-
-    function showPosition(position) {
-        let lat = position.coords.latitude;
-        let lon = position.coords.longitude;
-        fetchPrayerTimes(lat, lon);
-    }
-
-    function promptForLocationSettings() {
-        Swal.fire({
-            title: 'Enable Location Services',
-            text: 'Please enable location services on your device.',
-            icon: 'info',
-            confirmButtonText: 'Go to Settings'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                if (navigator.userAgent.match(/Android/i)) {
-                    // Redirect to Android location settings
-                    window.location.href = 'intent://settings#Intent;action=android.settings.LOCATION_SOURCE_SETTINGS;end';
-                } else if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
-                    // Show an instruction alert for iOS users
-                    Swal.fire('Go to your device settings and enable Location Services for your browser.');
-                }
+        document.addEventListener("DOMContentLoaded", function() {
+            // Clock functionality
+            function updateClock() {
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                const timeString = `${hours}:${minutes}:${seconds}`;
+                document.getElementById('clock').textContent = timeString;
             }
-        });
-    }
+            setInterval(updateClock, 1000);
+            updateClock();
 
-    function showError(error) {
-        if (error.code === error.PERMISSION_DENIED) {
-            promptForLocationSettings();
-        } else {
-            Swal.fire("Error", "Failed to access your location.", "error");
-        }
-    }
-
-    // Fetch prayer times
-    function fetchPrayerTimes(lat, lon, country = null) {
-        let url = `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=2`;
-        if (country) {
-            url = `https://api.aladhan.com/v1/timingsByCity?city=${country.city}&country=${country.name}&method=2`;
-        }
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                const timings = data.data.timings;
-                document.getElementById("fajr").textContent = timings.Fajr;
-                document.getElementById("dhuhr").textContent = timings.Dhuhr;
-                document.getElementById("asr").textContent = timings.Asr;
-                document.getElementById("maghrib").textContent = timings.Maghrib;
-                document.getElementById("isha").textContent = timings.Isha;
-
-                if (data.data.meta.timezone) {
-                    document.getElementById("location").textContent = `Timezone: ${data.data.meta.timezone}`;
-                }
-
-                displayNextPrayer(timings);
-            })
-            .catch(error => {
-                Swal.fire("Error", "Failed to fetch prayer times.", "error");
-            });
-    }
-
-    // Display next prayer time
-    function displayNextPrayer(timings) {
-        const now = new Date();
-        const prayerTimes = {
-            Fajr: new Date(`${now.toDateString()} ${timings.Fajr}`),
-            Dhuhr: new Date(`${now.toDateString()} ${timings.Dhuhr}`),
-            Asr: new Date(`${now.toDateString()} ${timings.Asr}`),
-            Maghrib: new Date(`${now.toDateString()} ${timings.Maghrib}`),
-            Isha: new Date(`${now.toDateString()} ${timings.Isha}`)
-        };
-        let nextPrayer = null;
-        for (let [prayer, time] of Object.entries(prayerTimes)) {
-            if (now < time) {
-                nextPrayer = prayer;
-                break;
+            // Get user's location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                Swal.fire("Error", "Geolocation is not supported by this browser.", "error");
             }
-        }
-        if (!nextPrayer) {
-            nextPrayer = "Fajr";
-        }
-        document.querySelector('.prayer-time span').textContent = `${nextPrayer}:`;
-    }
 
-    // Search country functionality
-    document.getElementById("search-button").addEventListener("click", function() {
-        const country = document.getElementById("country-search-input").value.trim();
-        if (country) {
-            fetch(`https://restcountries.com/v3.1/name/${country}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data[0]) {
-                        fetchPrayerTimes(null, null, {
-                            name: data[0].name.common,
-                            city: data[0].capital ? data[0].capital[0] : country
-                        });
-                    } else {
-                        Swal.fire("Error", "Country not found.", "error");
+            function showPosition(position) {
+                let lat = position.coords.latitude;
+                let lon = position.coords.longitude;
+                fetchPrayerTimes(lat, lon);
+            }
+
+            function promptForLocationSettings() {
+                Swal.fire({
+                    title: 'Enable Location Services',
+                    text: 'Please enable location services on your device.',
+                    icon: 'info',
+                    confirmButtonText: 'Go to Settings'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        if (navigator.userAgent.match(/Android/i)) {
+                            window.location.href = 'intent://settings#Intent;action=android.settings.LOCATION_SOURCE_SETTINGS;end';
+                        } else if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+                            Swal.fire('Go to your device settings and enable Location Services for your browser.');
+                        }
                     }
-                })
-                .catch(error => {
-                    Swal.fire("Error", "Failed to fetch country information.", "error");
                 });
-        }
-    });
+            }
 
-    // Dark mode toggle
-    document.querySelector(".dark-mode-toggle").addEventListener("click", function() {
-        document.body.classList.toggle("dark-mode");
-        const icon = document.querySelector(".dark-mode-toggle i");
-        icon.classList.toggle("fa-sun");
-        icon.classList.toggle("fa-moon");
-    });
+            function showError(error) {
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        promptForLocationSettings();
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        Swal.fire("Error", "Location information is unavailable.", "error");
+                        break;
+                    case error.TIMEOUT:
+                        Swal.fire("Error", "The request to get user location timed out.", "error");
+                        break;
+                    case error.UNKNOWN_ERROR:
+                        Swal.fire("Error", "An unknown error occurred.", "error");
+                        break;
+                }
+            }
 
-    // Close button functionality
-    document.querySelector(".close-button").addEventListener("click", function() {
-        window.location.href = 'index.html';
-    });
-});
+            // Fetch prayer times
+            function fetchPrayerTimes(lat, lon, country = null) {
+                let url = `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=2`;
+                if (country) {
+                    url = `https://api.aladhan.com/v1/timingsByCity?city=${country.city}&country=${country.name}&method=2`;
+                }
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        const timings = data.data.timings;
+                        document.getElementById("fajr").textContent = timings.Fajr;
+                        document.getElementById("dhuhr").textContent = timings.Dhuhr;
+                        document.getElementById("asr").textContent = timings.Asr;
+                        document.getElementById("maghrib").textContent = timings.Maghrib;
+                        document.getElementById("isha").textContent = timings.Isha;
+
+                        if (data.data.meta.timezone) {
+                            document.getElementById("location").textContent = `Timezone: ${data.data.meta.timezone}`;
+                        }
+
+                        displayNextPrayer(timings);
+                    })
+                    .catch(error => {
+                        Swal.fire("Error", "Failed to fetch prayer times.", "error");
+                    });
+            }
+
+            // Display next prayer time
+            function displayNextPrayer(timings) {
+                const now = new Date();
+                const prayerTimes = {
+                    Fajr: new Date(`${now.toDateString()} ${timings.Fajr}`),
+                    Dhuhr: new Date(`${now.toDateString()} ${timings.Dhuhr}`),
+                    Asr: new Date(`${now.toDateString()} ${timings.Asr}`),
+                    Maghrib: new Date(`${now.toDateString()} ${timings.Maghrib}`),
+                    Isha: new Date(`${now.toDateString()} ${timings.Isha}`)
+                };
+                let nextPrayer = null;
+                for (let [prayer, time] of Object.entries(prayerTimes)) {
+                    if (now < time) {
+                        nextPrayer = prayer;
+                        break;
+                    }
+                }
+                if (!nextPrayer) {
+                    nextPrayer = "Fajr";
+                }
+                document.querySelector('.prayer-time span').textContent = `${nextPrayer}:`;
+            }
+
+            // Search country functionality
+            document.getElementById("search-button").addEventListener("click", function() {
+                const country = document.getElementById("country-search-input").value.trim();
+                if (country) {
+                    fetch(`https://restcountries.com/v3.1/name/${country}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Country not found');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data && data[0]) {
+                                fetchPrayerTimes(null, null, {
+                                    name: data[0].name.common,
+                                    city: data[0].capital ? data[0].capital[0] : country
+                                });
+                            } else {
+                                throw new Error('Country not found');
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire("Error", error.message, "error");
+                        });
+                }
+            });
+
+            // Dark mode toggle
+            document.querySelector(".dark-mode-toggle").addEventListener("click", function() {
+                document.body.classList.toggle("dark-mode");
+            });
+        });
     </script>
 </body>
 
