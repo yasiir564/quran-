@@ -9,263 +9,275 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background: #abbaab;
-            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
-            background: linear-gradient(to right, #ffffff, #abbaab);
-            margin: 0;
-            font-family: 'Amiri', serif;
-            color: #333;
-            transition: background 0.3s, color 0.3s;
-            position: relative;
-        }
+    html, body {
+        height: 100%;
+        overflow-y: auto;
+    }
 
-          .dark-mode-toggle {
-            position: absolute;
-            top: 30px;
-            left: 10%;
-            transform: translateX(-50%);
-            z-index: 1000;
-        }
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding-top: 60px;
+        background: #abbaab;
+        background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
+        background: linear-gradient(to right, #ffffff, #abbaab);
+        margin: 0;
+        font-family: 'Amiri', serif;
+        color: #333;
+        transition: background 0.3s, color 0.3s;
+        position: relative;
+    }
 
+    .dark-mode-toggle {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+    }
 
-        /* Modern switch styles */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
 
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
 
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 34px;
+    }
 
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
 
-        input:checked + .slider {
-            background-color: #2196F3;
-        }
+    input:checked + .slider {
+        background-color: #2196F3;
+    }
 
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
+    input:checked + .slider:before {
+        transform: translateX(26px);
+    }
 
-        /* Sidebar Menu */
-        .sidebar {
-            height: 100%;
-            width: 250px;
-            position: fixed;
-            z-index: 1001;
-            top: 0;
-            left: -250px;
-            background: linear-gradient(to top, #a8edea, #fed6e3);
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-        }
+    .sidebar {
+        height: 100%;
+        width: 250px;
+        position: fixed;
+        z-index: 1001;
+        top: 0;
+        left: -250px;
+        background: linear-gradient(to top, #a8edea, #fed6e3);
+        overflow-x: hidden;
+        transition: 0.5s;
+        padding-top: 60px;
+    }
 
-        .sidebar a {
-            padding: 10px 15px;
-            text-decoration: none;
-            font-size: 18px;
-            color: #111;
-            display: block;
-            transition: 0.3s;
-        }
+    .sidebar a {
+        padding: 10px 15px;
+        text-decoration: none;
+        font-size: 18px;
+        color: #111;
+        display: block;
+        transition: 0.3s;
+    }
 
-        .sidebar a:hover {
-            color: #fff;
-            background-color: #2575fc;
-        }
+    .sidebar a:hover {
+        color: #fff;
+        background-color: #2575fc;
+    }
 
-        .sidebar .closebtn {
-            position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-        }
+    .sidebar .closebtn {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 36px;
+        margin-left: 50px;
+    }
 
-        .openbtn {
-            font-size: 20px;
-            cursor: pointer;
-            background-color: #2575fc;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            position: fixed;
-            top: 30px;
-            left: 10px;
-            z-index: 1000;
-        }
+    .openbtn {
+        font-size: 20px;
+        cursor: pointer;
+        background-color: #2575fc;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        position: fixed;
+        top: 30px;
+        left: 10px;
+        z-index: 1000;
+    }
 
-        .openbtn:hover {
-            background-color: #0056b3;
-        }
+    .openbtn:hover {
+        background-color: #0056b3;
+    }
 
-        .tasbih-counter {
-            width: 80%;
-            max-width: 300px;
-            height: 220px;
-            background-color: #fff;
-            border: 2px solid #000;
-            border-radius: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            padding: 10px;
-            margin-top: 60px;
-        }
+    .tasbih-counter {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-width: 300px;
+        height: 220px;
+        background-color: #fff;
+        border: 2px solid #000;
+        border-radius: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        z-index: 100;
+    }
 
-        .screen {
-            width: 100px;
-            height: 40px;
-            background-color: #000;
-            color: #fff;
-            font-size: 1.5em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 10px;
-            margin-bottom: 10px;
-        }
+    .screen {
+        width: 100px;
+        height: 40px;
+        background-color: #000;
+        color: #fff;
+        font-size: 1.5em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
 
-        .buttons {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
+    .buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
 
-        .button {
-            width: 50px;
-            height: 50px;
-            background-color: #000;
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            margin: 5px 0;
-        }
+    .button {
+        width: 50px;
+        height: 50px;
+        background-color: #000;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        margin: 5px 0;
+    }
 
-        .reset-button {
-            background-color: red;
-            width: 40px;
-            height: 40px;
-            margin-top: 5px;
-        }
+    .reset-button {
+        background-color: red;
+        width: 40px;
+        height: 40px;
+        margin-top: 5px;
+    }
 
-        .count-button {
-            width: 60px;
-            height: 60px;
-        }
+    .count-button {
+        width: 60px;
+        height: 60px;
+    }
 
-        .button:active {
-            background-color: #444;
-        }
+    .button:active {
+        background-color: #444;
+    }
 
-        .label {
-            font-size: 0.8em;
-            position: absolute;
-            top: 10px;
-        }
+    .label {
+        font-size: 0.8em;
+        position: absolute;
+        top: 10px;
+    }
 
-        .label-left {
-            left: 10px;
-        }
+    .label-left {
+        left: 10px;
+    }
 
-        .label-right {
-            right: 10px;
-        }
+    .label-right {
+        right: 10px;
+    }
 
-        .bottom-buttons {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-        }
+    .bottom-buttons {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        position: fixed;
+        bottom: 20px;
+        left: 0;
+    }
 
-        .bottom-buttons button {
-            background-color: #000;
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            padding: 10px 20px;
-            font-size: 1em;
-            margin: 5px;
-            cursor: pointer;
-        }
+    .bottom-buttons button {
+        background-color: #000;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 20px;
+        font-size: 1em;
+        margin: 5px;
+        cursor: pointer;
+    }
 
-        .bottom-buttons button:hover {
-            background-color: #444;
-        }
+    .bottom-buttons button:hover {
+        background-color: #444;
+    }
 
-        body.dark-mode {
-            background: linear-gradient(to right, #0f0f0f, #434343);
-            color: #ddd;
-        }
+    body.dark-mode {
+        background: linear-gradient(to right, #0f0f0f, #434343);
+        color: #ddd;
+    }
 
-        body.dark-mode .tasbih-counter {
-            background-color: #333;
-            border-color: #444;
-        }
+    body.dark-mode .tasbih-counter {
+        background-color: #333;
+        border-color: #444;
+    }
 
-        body.dark-mode .screen {
-            background-color: #444;
-        }
+    body.dark-mode .screen {
+        background-color: #444;
+    }
 
-        body.dark-mode .button {
-            background-color: #555;
-            color: #ddd;
-        }
+    body.dark-mode .button {
+        background-color: #555;
+        color: #ddd;
+    }
 
-        body.dark-mode .button:active {
-            background-color: #666;
-        }
+    body.dark-mode .button:active {
+        background-color: #666;
+    }
 
-        body.dark-mode .bottom-buttons button {
-            background-color: #444;
-            color: #ddd;
-        }
+    body.dark-mode .bottom-buttons button {
+        background-color: #444;
+        color: #ddd;
+    }
 
-        body.dark-mode .bottom-buttons button:hover {
-            background-color: #555;
-        }
+    body.dark-mode .bottom-buttons button:hover {
+        background-color: #555;
+    }
+
+    .swal2-container {
+        z-index: 10000 !important;
+    }
     </style>
 </head>
 <body>
