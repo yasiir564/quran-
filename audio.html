@@ -13,8 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1850217813586802"
      crossorigin="anonymous"></script>
-    <style>
-        
+   <style>
 body {
     background: #abbaab;
     background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
@@ -23,7 +22,9 @@ body {
     margin: 0;
     padding: 0;
     position: relative;
+    scroll-behavior: smooth; /* Added for smooth scrolling */
 }
+
 .container {
     max-width: 800px;
     margin: 0 auto;
@@ -35,7 +36,8 @@ header {
     text-align: center;
     margin-bottom: 40px;
 }
-      .sidebar {
+
+.sidebar {
     height: 100%;
     width: 250px;
     position: fixed;
@@ -173,6 +175,7 @@ h1 {
     flex: 0 0 auto;
     position: relative;
 }
+
 .reciter-card img {
     border-radius: 50%;
     width: 100px;
@@ -202,84 +205,78 @@ h1 {
 }
 
 .surah-list {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  padding: 20px 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 20px 0;
 }
 
 .surah {
-  background: white;
-  border: 1px solid #ddd;
-  padding: 15px;
-  margin: 10px;
-  cursor: pointer;
-  text-align: center;
-  border-radius: 5px;
-  transition: transform 0.3s, background-color 0.3s, color 0.3s;
-  color: black;
-  font-size: 1.2em;
-  position: relative;
+    background: white;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 10px;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 5px;
+    transition: transform 0.3s, background-color 0.3s, color 0.3s;
+    color: black;
+    font-size: 1.2em;
+    position: relative;
 }
 
 .surah:hover {
-  transform: scale(1.05);
-  background-color: #2575fc;
-  color: white;
+    transform: scale(1.05);
+    background-color: #2575fc;
+    color: white;
 }
 
 .surah span {
-  font-size: 0.8em;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: black;
-  border-radius: 10px;
-  padding: 5px;
-  clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
-  transition: transform 0.3s;
-  color: white; /* Surah numbers in white text */
+    font-size: 0.8em;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: black;
+    border-radius: 10px;
+    padding: 5px;
+    clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+    transition: transform 0.3s;
+    color: white;
 }
 
 .surah span:hover {
-  transform: rotate(360deg);
+    transform: rotate(360deg);
 }
 
 .surah .arabic-name {
-  font-size: 0.8em;
-  color: black;
-  margin-top: 5px;
+    font-size: 0.8em;
+    color: black;
+    margin-top: 5px;
 }
-    /* Responsive Design */
+
+/* Responsive Design */
 @media (max-width: 1200px) {
-  .surah-list {
-    grid-template-columns: repeat(3, 1fr);
-  }
+    .surah-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 @media (max-width: 900px) {
-  .surah-list {
-    grid-template-columns: repeat(2, 1fr);
-  }
+    .surah-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 600px) {
-  .surah-list {
-    grid-template-columns: 1fr;
-  }
-}
-@media (max-width: 768px) {
+    .surah-list {
+        grid-template-columns: 1fr;
+    }
+    
     .surah {
-        flex: 1 1 calc(50% - 20px);
+        margin: 5px 0;
     }
 }
 
-@media (max-width: 480px) {
-    .surah {
-        flex: 1 1 100%;
-    }
-}
-       
 .show-more-btn {
     display: block;
     width: 200px;
@@ -370,7 +367,7 @@ h1 {
 
 @media (max-width: 768px) {
     .surah-list {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-template-columns: 1fr;
     }
 
     .reciter-card {
@@ -392,13 +389,12 @@ h1 {
 
 @media (max-width: 480px) {
     .surah-list {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        grid-template-columns: 1fr;
     }
 
-   .reciter-card {
+    .reciter-card {
         width: 120px;
     }
-
 
     h1 {
         font-size: 1.8em;
@@ -417,7 +413,8 @@ h1 {
         padding: 10px;
     }
 }
-        .switch {
+
+.switch {
     position: fixed;
     top: 20px;
     right: 30px;
@@ -469,8 +466,6 @@ input:checked + .slider:before {
 .slider.round:before {
     border-radius: 50%;
 }
-
-
 </style>
 
 </head>
