@@ -260,27 +260,44 @@
             document.getElementById("mySidebar").style.left = "-250px";
         });
 
-        function onSignIn(googleUser) {
-            var profile = googleUser.getBasicProfile();
-            var user = {
-                id: profile.getId(),
-                name: profile.getName(),
-                imageUrl: profile.getImageUrl(),
-                email: profile.getEmail(),
-            };
-
-            localStorage.setItem('user', JSON.stringify(user));
-
-            Swal.fire({
-                title: 'Login Successful!',
-                text: 'Welcome, ' + profile.getName(),
-                icon: 'success',
-                confirmButtonText: 'Continue'
-            }).then(() => {
-                window.location.href = "https://quranproo.com/index.html";
-            });
+       Certainly. Let's modify the code to ensure the user is logged in and redirected to a profile.html page where their information will be displayed. Here's an updated version of the function:
+javascriptCopyfunction onSignIn(googleUser) {
+    console.log('Google Sign-In successful');
+    
+    var profile = googleUser.getBasicProfile();
+    console.log('Profile:', profile);
+    
+    var user = {
+        id: profile.getId(),
+        name: profile.getName(),
+        imageUrl: profile.getImageUrl(),
+        email: profile.getEmail(),
+    };
+    console.log('User object:', user);
+    
+    // Store user data in localStorage
+    localStorage.setItem('user', JSON.stringify(user));
+    console.log('User stored in localStorage');
+    
+    // Verify storage
+    var storedUser = JSON.parse(localStorage.getItem('user'));
+    console.log('Retrieved user from localStorage:', storedUser);
+    
+    Swal.fire({
+        title: 'Login Successful!',
+        text: 'Welcome, ' + profile.getName(),
+        icon: 'success',
+        confirmButtonText: 'View Profile'
+    }).then((result) => {
+        console.log('SweetAlert result:', result);
+        if (result.isConfirmed) {
+            console.log('Redirecting to profile.html');
+            window.location.href = "profile.html";
         }
-
+    }).catch(error => {
+        console.error('SweetAlert error:', error);
+    });
+}
         function signInWithApple() {
             AppleID.auth.signIn().then(function (response) {
                 if (response && response.user) {
