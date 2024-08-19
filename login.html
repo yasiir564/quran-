@@ -5,17 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quran Pro Login Form</title>
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <meta name="google-signin-client_id" content="622570334543-02ht9pma9auscvbphka646rt7k45tm1f.apps.googleusercontent.com">
-    <script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@11.0.0"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300|Lobster|Pacifico|Raleway" rel="stylesheet">
     <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
     <style>
-       body {
+        body {
             margin: 0;
             height: 100vh;
-            overflow: hidden; /* Remove scroll */
+            overflow: hidden;
             animation: gradientAnimation 10s infinite;
             font-family: 'Amiri', serif;
             display: flex;
@@ -82,7 +80,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-direction: column; /* Adjusted to fit content */
+            flex-direction: column;
         }
 
         .form {
@@ -145,10 +143,6 @@
         .form .btn:active {
             transform: translateY(2px);
             box-shadow: 0 2.5px 5px rgba(0, 0, 0, 0.2);
-        }
-
-        .g-signin2 {
-            display: none;
         }
 
         .google-btn {
@@ -233,7 +227,7 @@
         <div class="form">
             <h1 class="heading">Welcome to Quran Pro</h1>
             <p class="description">Your one-stop solution for reading, listening, and understanding the Quran.</p>
-            <button class="btn google-btn" onclick="document.querySelector('.g-signin2 div').click()">
+            <button class="btn google-btn" onclick="signInWithGoogle()">
                 <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google Logo">
                 Sign in with Google
             </button>
@@ -245,13 +239,19 @@
                 <img src="https://img.icons8.com/color/48/000000/gmail-new.png" alt="Email Logo">
                 Sign in with Email
             </button>
-            <div class="g-signin2" data-onsuccess="onSignIn"></div>
             <p class="footer-text">By signing in, you agree to our <a href="termsandconditions.html">Terms of Service</a> and <a href="privacypolicy.html">Privacy Policy</a>.</p>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // Initialize Appwrite
+        const appwrite = new Appwrite();
+
+        appwrite
+            .setEndpoint('https://cloud.appwrite.io/v1') // Your Appwrite Endpoint
+            .setProject('66c3214a000d33f6408b');              // Your project ID
+
         function openNav() {
             document.getElementById("mySidebar").style.left = "0";
         }
@@ -260,52 +260,12 @@
             document.getElementById("mySidebar").style.left = "-250px";
         });
 
-        function onSignIn(googleUser) {
-            var profile = googleUser.getBasicProfile();
-            var user = {
-                id: profile.getId(),
-                name: profile.getName(),
-                imageUrl: profile.getImageUrl(),
-                email: profile.getEmail(),
-            };
-
-            localStorage.setItem('user', JSON.stringify(user));
-
-            Swal.fire({
-                title: 'Login Successful!',
-                text: 'Welcome, ' + profile.getName(),
-                icon: 'success',
-                confirmButtonText: 'Continue'
-            }).then(() => {
-                window.location.href = "index.html";
-            });
+        function signInWithGoogle() {
+            appwrite.account.createOAuth2Session('google', 'https://quranproo.com/index.html', 'https://quranproo.com/login.html');
         }
 
         function signInWithApple() {
-            AppleID.auth.signIn().then(function (response) {
-                if (response && response.user) {
-                    var user = response.user;
-                    var userData = {
-                        id: user.id,
-                        name: user.name.firstName + ' ' + user.name.lastName,
-                        email: user.email,
-                    };
-
-                    localStorage.setItem('user', JSON.stringify(userData));
-                    Swal.fire({
-                        title: 'Login Successful!',
-                        text: 'Welcome, ' + userData.name,
-                        icon: 'success',
-                        confirmButtonText: 'Continue'
-                    }).then(() => {
-                        window.location.href = "index.html";
-                    });
-                } else {
-                    console.error('Error signing in with Apple.');
-                }
-            }).catch(function (error) {
-                console.error(error);
-            });
+            appwrite.account.createOAuth2Session('apple', 'https://quranproo.com/index.html', 'https://quranproo.com/login.html');
         }
 
         function signInWithEmail() {
@@ -323,20 +283,35 @@
         }
 
         function sendEmailLink(email) {
-            var userData = {
-                email: email
-            };
-            localStorage.setItem('user', JSON.stringify(userData));
-            Swal.fire(
-                'Email Sent!',
-                'Please check your email for the sign-in link.',
-                'success'
-            ).then(() => {
-                window.location.href = "index.html";
+            appwrite.account.createMagicURLSession(
+                'unique()',
+                email,
+                'http://localhost:3000/index.html'
+            ).then(function (response) {
+                Swal.fire(
+                    'Email Sent!',
+                    'Please check your email for the sign-in link.',
+                    'success'
+                );
+            }).catch(function (error) {
+                console.error(error);
+                Swal.fire(
+                    'Error',
+                    'Failed to send login email. Please try again.',
+                    'error'
+                );
             });
         }
+
+        // Check if user is already logged in
+        appwrite.account.get().then(function (response) {
+            // User is logged in, redirect to homepage
+            window.location.href = "index.html";
+        }).catch(function (error) {
+            // User is not logged in, do nothing
+            console.log("User not logged in");
+        });
     </script>
 </body>
 
 </html>
-
