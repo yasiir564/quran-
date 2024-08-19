@@ -165,12 +165,13 @@
         <div class="loader" id="loader"></div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
- <script>
+    <script>
         document.addEventListener('DOMContentLoaded', function () {
             const juzzList = document.getElementById('juzz-list');
             const loader = document.getElementById('loader');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
-const juzzNames = [
+
+ const juzzNames = [
                 { en: 'Alif Lam Meem', ar: 'آلم' },
                 { en: 'Sayaqool', ar: 'سَيَقُولُ' },
                 { en: 'Tilkal Rusulu', ar: 'تِلْكَ الرُّسُلُ' },
@@ -203,29 +204,32 @@ const juzzNames = [
                 { en: 'Amma Yatasa aloon', ar: 'عَمَّ يَتَسَاءَلُونَ' }
             ];
             loader.style.display = 'block';
+
             const fragment = document.createDocumentFragment();
             juzzNames.forEach((juzz, index) => {
                 const juzzDiv = document.createElement('div');
                 juzzDiv.classList.add('juzz');
-                juzzDiv.innerHTML = <strong>Juzz ${index + 1}</strong><br>${juzz.en}<br>${juzz.ar};
+                juzzDiv.innerHTML = `<strong>Juzz ${index + 1}</strong><br>${juzz.en}<br>${juzz.ar}`;
                 juzzDiv.addEventListener('click', () => {
                     Swal.fire({
-                        title: Juzz ${index + 1},
-                        text: You are about to navigate to Juzz ${index + 1}.,
+                        title: `Juzz ${index + 1}`,
+                        text: `You are about to navigate to Juzz ${index + 1}.`,
                         icon: 'info',
                         showCancelButton: true,
                         confirmButtonText: 'Yes, go ahead!',
                         cancelButtonText: 'No, stay here'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            window.location.href = juzz_detail.html?juzz=${index + 1};
+                            window.location.href = `juzz_detail.html?juzz=${index + 1}`;
                         }
                     });
                 });
                 fragment.appendChild(juzzDiv);
             });
             juzzList.appendChild(fragment);
+
             loader.style.display = 'none';
+
             darkModeToggle.addEventListener('click', () => {
                 document.body.classList.toggle('dark-mode');
                 if (document.body.classList.contains('dark-mode')) {
