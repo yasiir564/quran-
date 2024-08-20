@@ -1,380 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quran Pro Login Form</title>
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <meta name="google-signin-client_id" content="622570334543-apthdig9ouj9np7belblpttruqaj9le8.apps.googleusercontent.com">
-    <script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300|Lobster|Pacifico|Raleway" rel="stylesheet">
-    <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
-    <style>
-       body {
-            margin: 0;
-            height: 100vh;
-            overflow: hidden; /* Remove scroll */
-            animation: gradientAnimation 10s infinite;
-            font-family: 'Amiri', serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+  <title>Login</title>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
-        .sidebar {
-            height: 100%;
-            width: 250px;
-            position: fixed;
-            z-index: 1001;
-            top: 0;
-            left: -250px;
-            background: linear-gradient(to top, #a8edea, #fed6e3);
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-        }
-
-        .sidebar a {
-            padding: 10px 15px;
-            text-decoration: none;
-            font-size: 18px;
-            color: #111;
-            display: block;
-            transition: 0.3s;
-        }
-
-        .sidebar a:hover {
-            color: #fff;
-            background-color: #2575fc;
-        }
-
-        .sidebar .closebtn {
-            position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-        }
-
-        .openbtn {
-            font-size: 20px;
-            cursor: pointer;
-            background-color: #2575fc;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            position: fixed;
-            top: 30px;
-            left: 10px;
-            z-index: 1000;
-        }
-
-        .openbtn:hover {
-            background-color: #0056b3;
-        }
-
-        .login-page {
-            width: 100%;
-            max-width: 360px;
-            margin: auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column; /* Adjusted to fit content */
-        }
-
-        .form {
-            position: relative;
-            z-index: 1;
-            background: #2575fc;
-            max-width: 360px;
-            width: 90%;
-            padding: 45px;
-            text-align: center;
-            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
-            border-radius: 15px;
-        }
-
-        .form .heading {
-            font-family: 'Lobster', cursive;
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        .form .description {
-            font-family: 'Raleway', sans-serif;
-            font-size: 1em;
-            margin-bottom: 20px;
-            color: #fff;
-        }
-
-        .form .btn {
-            font-family: 'Roboto', sans-serif;
-            font-size: 14px;
-            font-weight: bold;
-            letter-spacing: .1em;
-            outline: 0;
-            background: #F0FFFF;
-            width: 100%;
-            border: 0;
-            border-radius: 30px;
-            margin: 0 0 15px;
-            padding: 15px;
-            color: #000000;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .form .btn img {
-            margin-right: 10px;
-            height: 20px;
-        }
-
-        .form .btn:hover,
-        .form .btn:focus {
-            background: #F5FFFA;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-            transform: translateY(-4px);
-        }
-
-        .form .btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 2.5px 5px rgba(0, 0, 0, 0.2);
-        }
-
-        .g-signin2 {
-            display: none;
-        }
-
-        .google-btn {
-            background: #db4437;
-        }
-
-        .google-btn:hover,
-        .google-btn:focus {
-            background: #c33c2f;
-        }
-
-        .footer-text {
-            font-size: 12px;
-            color: #fff;
-            margin-top: 20px;
-        }
-
-        .footer-text a {
-            color: #000000;
-            text-decoration: none;
-        }
-
-        .footer-text a:hover {
-            text-decoration: underline;
-        }
-
-        @keyframes gradientAnimation {
-            0% {
-                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-            }
-
-            50% {
-                background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
-            }
-
-            100% {
-                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-            }
-        }
-
-        @media screen and (max-width: 768px) {
-            .login-page {
-                height: 100%;
-                padding: 0;
-                margin: 0;
-            }
-
-            .form {
-                margin: 0;
-                padding: 20px;
-                box-shadow: none;
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <div id="mySidebar" class="sidebar">
-        <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
-        <a href="index.html">
-            <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
-        </a>
-        <a href="juzz.html">
-            <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read in Juzz
-        </a>
-        <a href="audio.html">
-            <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Listen to Quran
-        </a>
-        <a href="prayer.html">
-            <lord-icon src="https://cdn.lordicon.com/tftaqjwp.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Prayer Time
-        </a>
-        <a href="donate.html">
-            <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Donate with Love
-        </a>
-    </div>
-
-    <div id="main">
-        <button class="openbtn" onclick="openNav()">&#9776; Quran Pro</button>
-    </div>
-
-    <div class="login-page">
-        <div class="form">
-            <h1 class="heading">Welcome to Quran Pro</h1>
-            <p class="description">Your one-stop solution for reading, listening, and understanding the Quran.</p>
-            <button class="btn google-btn" onclick="document.querySelector('.g-signin2 div').click()">
-                <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google Logo">
-                Sign in with Google
-            </button>
-            <button class="btn" onclick="signInWithApple()">
-                <img src="https://img.icons8.com/ios-filled/50/000000/mac-os.png" alt="Apple Logo">
-                Sign in with Apple
-            </button>
-            <button class="btn" onclick="signInWithEmail()">
-                <img src="https://img.icons8.com/color/48/000000/gmail-new.png" alt="Email Logo">
-                Sign in with Email
-            </button>
-            <div class="g-signin2" data-onsuccess="onSignIn"></div>
-            <p class="footer-text">By signing in, you agree to our <a href="termsandconditions.html">Terms of Service</a> and <a href="privacypolicy.html">Privacy Policy</a>.</p>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        function openNav() {
-            document.getElementById("mySidebar").style.left = "0";
-        }
-
-        document.getElementById("closeSidebarBtn").addEventListener("click", function () {
-            document.getElementById("mySidebar").style.left = "-250px";
-        });
-
-       Certainly. Let's modify the code to ensure the user is logged in and redirected to a profile.html page where their information will be displayed. Here's an updated version of the function:
-javascriptCopyfunction onSignIn(googleUser) {
-    console.log('Google Sign-In successful');
-    
-    var profile = googleUser.getBasicProfile();
-    console.log('Profile:', profile);
-    
-    var user = {
-        id: profile.getId(),
-        name: profile.getName(),
-        imageUrl: profile.getImageUrl(),
-        email: profile.getEmail(),
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCCHwRT-Nj3GfPZD-If2P7iMajPjAB9RJA",
+      authDomain: "quran-pro-c1df1.firebaseapp.com",
+      projectId: "quran-pro-c1df1",
+      storageBucket: "quran-pro-c1df1.appspot.com",
+      messagingSenderId: "782064856596",
+      appId: "1:782064856596:web:3c11c7a0186a2923bac101",
+      measurementId: "G-RFVGMM8VYQ"
     };
-    console.log('User object:', user);
-    
-    // Store user data in localStorage
-    localStorage.setItem('user', JSON.stringify(user));
-    console.log('User stored in localStorage');
-    
-    // Verify storage
-    var storedUser = JSON.parse(localStorage.getItem('user'));
-    console.log('Retrieved user from localStorage:', storedUser);
-    
-    Swal.fire({
-        title: 'Login Successful!',
-        text: 'Welcome, ' + profile.getName(),
-        icon: 'success',
-        confirmButtonText: 'View Profile'
-    }).then((result) => {
-        console.log('SweetAlert result:', result);
-        if (result.isConfirmed) {
-            console.log('Redirecting to profile.html');
-            window.location.href = "profile.html";
-        }
-    }).catch(error => {
-        console.error('SweetAlert error:', error);
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth(app);
+
+    // Add event listener to the login button
+    document.getElementById('login-button').addEventListener('click', () => {
+      const provider = new GoogleAuthProvider();
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          // Redirect the user to the profile page
+          window.location.href = 'profile.html';
+        })
+        .catch((error) => {
+          // Handle the error
+          alert('Error signing in: ' + error.message);
+        });
     });
-}
-        function signInWithApple() {
-            AppleID.auth.signIn().then(function (response) {
-                if (response && response.user) {
-                    var user = response.user;
-                    var userData = {
-                        id: user.id,
-                        name: user.name.firstName + ' ' + user.name.lastName,
-                        email: user.email,
-                    };
-
-                    localStorage.setItem('user', JSON.stringify(userData));
-                    Swal.fire({
-                        title: 'Login Successful!',
-                        text: 'Welcome, ' + userData.name,
-                        icon: 'success',
-                        confirmButtonText: 'Continue'
-                    }).then(() => {
-                        window.location.href = "index.html";
-                    });
-                } else {
-                    console.error('Error signing in with Apple.');
-                }
-            }).catch(function (error) {
-                console.error(error);
-            });
-        }
-
-        function signInWithEmail() {
-            Swal.fire({
-                title: 'Enter your email',
-                input: 'email',
-                inputLabel: 'Email Address',
-                inputPlaceholder: 'Enter your email address'
-            }).then((result) => {
-                if (result.value) {
-                    var email = result.value;
-                    sendEmailLink(email);
-                }
-            });
-        }
-
-        function sendEmailLink(email) {
-            var userData = {
-                email: email
-            };
-            localStorage.setItem('user', JSON.stringify(userData));
-            Swal.fire(
-                'Email Sent!',
-                'Please check your email for the sign-in link.',
-                'success'
-            ).then(() => {
-                window.location.href = "index.html";
-            });
-        }
-        <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyCCHwRT-Nj3GfPZD-If2P7iMajPjAB9RJA",
-    authDomain: "quran-pro-c1df1.firebaseapp.com",
-    projectId: "quran-pro-c1df1",
-    storageBucket: "quran-pro-c1df1.appspot.com",
-    messagingSenderId: "782064856596",
-    appId: "1:782064856596:web:3c11c7a0186a2923bac101",
-    measurementId: "G-RFVGMM8VYQ"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-    </script>
+  </script>
+</head>
+<body>
+  <h1>Login</h1>
+  <button id="login-button">Sign in with Google</button>
 </body>
-
 </html>
