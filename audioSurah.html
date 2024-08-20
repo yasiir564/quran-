@@ -848,14 +848,19 @@
 
             renderSheikhList(sheikhs);
 
-            // Dark mode toggle
-            const darkModeToggle = document.createElement('label');
-            darkModeToggle.className = 'switch';
-            darkModeToggle.innerHTML = `
-                <input type="checkbox" id="darkModeCheckbox">
-                <span class="slider"></span>
-            `;
-            document.querySelector('header').appendChild(darkModeToggle);
+           function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+}
+
+// Check for saved dark mode preference
+const savedDarkMode = localStorage.getItem('darkMode');
+if (savedDarkMode === 'true') {
+    document.body.classList.add('dark-mode');
+    darkModeCheckbox.checked = true;
+}
+
+darkModeCheckbox.addEventListener('change', toggleDarkMode);
 
             const darkModeCheckbox = document.getElementById('darkModeCheckbox');
             darkModeCheckbox.addEventListener('change', toggleDarkMode);
