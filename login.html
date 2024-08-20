@@ -7,6 +7,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
     // Your web app's Firebase configuration
     const firebaseConfig = {
@@ -23,14 +24,47 @@
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
     const auth = getAuth(app);
+    const db = getFirestore(app);
 
     // Add event listener to the login button
     document.getElementById('login-button').addEventListener('click', () => {
       const provider = new GoogleAuthProvider();
       signInWithPopup(auth, provider)
         .then((result) => {
-          // Redirect the user to the profile page
-          window.location.href = 'profile.html';
+          // Get the user's profile information
+          const user = result.user;
+          const userDocRef = doc(db, "users", user.uid);
+          getDoc(userDocRef)
+            .then((userDoc) => {
+              if (userDoc.exists()) {
+                // Store the user's name and email in local storage
+                localStorage.setItem("userName", userDoc.data().name);
+                localStorage.setItem("userEmail", userDoc.data().email);
+                // Redirect the user to the profile page
+                window.location.href = 'profile.html';
+              } else {
+                // Create a new user document in Firestore
+                userDocRef.set({
+                  name: user.displayName,
+                  email: user.email
+                })
+                .then(() => {
+                  // Store the user's name and email in local storage
+                  localStorage.setItem("userName", user.displayName);
+                  localStorage.setItem("userEmail", user.email);
+                  // Redirect the user to the profile page
+                  window.location.href = 'profile.html';
+                })
+                .catch((error) => {
+                  // Handle the error
+                  alert('Error saving user profile: ' + error.message);
+                });
+              }
+            })
+            .catch((error) => {
+              // Handle the error
+              alert('Error getting user profile: ' + error.message);
+            });
         })
         .catch((error) => {
           // Handle the error
