@@ -16,13 +16,11 @@
             background: linear-gradient(to right, #ffffff, #abbaab); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
         }
 
-
        .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
         nav {
             background-color: #fff;
@@ -67,30 +65,30 @@
         }
 
         .juzz-list {
-             display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 10px;
-  padding: 20px 0;
-}
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            padding: 20px 0;
+        }
 
         .juzz  {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid #ddd;
-  padding: 15px;
-  margin: 10px;
-  cursor: pointer;
-  text-align: center;
-  border-radius: 5px;
-  transition: transform 0.3s, background-color 0.3s, border-color 0.3s;
-  color: #2575fc;
-  font-size: 1.2em;
-  position: relative;
-}
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 5px;
+            transition: transform 0.3s, background-color 0.3s, border-color 0.3s;
+            color: #2575fc;
+            font-size: 1.2em;
+            position: relative;
+        }
         .juzz:hover {
-  transform: scale(1.05);
-  background-color: #2575fc;
-  color: #fff;
-}
+            transform: scale(1.05);
+            background-color: #2575fc;
+            color: #fff;
+        }
 
         @media (max-width: 768px) {
             .juzz {
@@ -171,38 +169,39 @@
             const loader = document.getElementById('loader');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
 
- const juzzNames = [
-    { en: 'Alif Lam Meem', ar: 'الم' },
-    { en: 'Sayaqul', ar: 'سيقول' },
-    { en: 'Tilkar Rusul', ar: 'تلك الرسل' },
-    { en: 'Lan Tanalul Birr', ar: 'لن تنالوا البر' },
-    { en: 'Wal Muhsanat', ar: 'والمحصنات' },
-    { en: 'La Yuhibbullah', ar: 'لا يحب الله' },
-    { en: 'Wa Iza Samiu', ar: 'وإذا سمعوا' },
-    { en: 'Wa Lau Annana', ar: 'ولو أننا' },
-    { en: 'Qalal Malau', ar: 'قال الملأ' },
-    { en: 'Wa A'lamu', ar: 'واعلموا' },
-    { en: 'Yatadhiroon', ar: 'يعتذرون' },
-    { en: 'Wa Ma Min Dabbah', ar: 'وما من دابة' },
-    { en: 'Wa Ma Ubarri'u', ar: 'وما أبرئ' },
-    { en: 'Rubama', ar: 'ربما' },
-    { en: 'Subhanallazi', ar: 'سبحان الذي' },
-    { en: 'Qal Alam', ar: 'قال ألم' },
-    { en: 'Iqtaraba Linnas', ar: 'اقترب للناس' },
-    { en: 'Qad Aflaha', ar: 'قد أفلح' },
-    { en: 'Wa Qalallazina', ar: 'وقال الذين' },
-    { en: 'A'man Khalaq', ar: 'أمن خلق' },
-    { en: 'Utlu Ma Uhiya', ar: 'اتل ما أوحي' },
-    { en: 'Wa Man Yaqnut', ar: 'ومن يقنت' },
-    { en: 'Wa Mali', ar: 'وما لي' },
-    { en: 'Faman Azlam', ar: 'فمن أظلم' },
-    { en: 'Ilaihi Yuraddu', ar: 'إليه يرد' },
-    { en: 'Ha Meem', ar: 'حم' },
-    { en: 'Qala Fama Khatbukum', ar: 'قال فما خطبكم' },
-    { en: 'Qad Sami Allah', ar: 'قد سمع الله' },
-    { en: 'Tabarakallazi', ar: 'تبارك الذي' },
-    { en: 'Amma Yatasa'alun', ar: 'عم يتساءلون' }
-];
+            const juzzNames = [
+                { en: 'Alif Lam Meem', ar: 'الم' },
+                { en: 'Sayaqul', ar: 'سيقول' },
+                { en: 'Tilkar Rusul', ar: 'تلك الرسل' },
+                { en: 'Lan Tanalul Birr', ar: 'لن تنالوا البر' },
+                { en: 'Wal Muhsanat', ar: 'والمحصنات' },
+                { en: 'La Yuhibbullah', ar: 'لا يحب الله' },
+                { en: 'Wa Iza Samiu', ar: 'وإذا سمعوا' },
+                { en: 'Wa Lau Annana', ar: 'ولو أننا' },
+                { en: 'Qalal Malau', ar: 'قال الملأ' },
+                { en: 'Wa A'lamu', ar: 'واعلموا' },
+                { en: 'Yatadhiroon', ar: 'يعتذرون' },
+                { en: 'Wa Ma Min Dabbah', ar: 'وما من دابة' },
+                { en: 'Wa Ma Ubarri'u', ar: 'وما أبرئ' },
+                { en: 'Rubama', ar: 'ربما' },
+                { en: 'Subhanallazi', ar: 'سبحان الذي' },
+                { en: 'Qal Alam', ar: 'قال ألم' },
+                { en: 'Iqtaraba Linnas', ar: 'اقترب للناس' },
+                { en: 'Qad Aflaha', ar: 'قد أفلح' },
+                { en: 'Wa Qalallazina', ar: 'وقال الذين' },
+                { en: 'A'man Khalaq', ar: 'أمن خلق' },
+                { en: 'Utlu Ma Uhiya', ar: 'اتل ما أوحي' },
+                { en: 'Wa Man Yaqnut', ar: 'ومن يقنت' },
+                { en: 'Wa Mali', ar: 'وما لي' },
+                { en: 'Faman Azlam', ar: 'فمن أظلم' },
+                { en: 'Ilaihi Yuraddu', ar: 'إليه يرد' },
+                { en: 'Ha Meem', ar: 'حم' },
+                { en: 'Qala Fama Khatbukum', ar: 'قال فما خطبكم' },
+                { en: 'Qad Sami Allah', ar: 'قد سمع الله' },
+                { en: 'Tabarakallazi', ar: 'تبارك الذي' },
+                { en: 'Amma Yatasa'alun', ar: 'عم يتساءلون' }
+            ];
+
             loader.style.display = 'block';
 
             const fragment = document.createDocumentFragment();
