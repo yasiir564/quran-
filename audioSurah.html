@@ -317,6 +317,48 @@ input:checked + .slider {
 input:checked + .slider:before {
     transform: translateX(26px);
 }
+         .filter-container {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .filter-button {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .filter-button:hover {
+            background-color: #1976D2;
+        }
+
+        .filter-options {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 40px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .filter-option {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .filter-option:hover {
+            background-color: #f0f0f0;
+        }
 
 body.dark-mode {
     background: linear-gradient(to right, #2c3e50, #34495e);
@@ -431,6 +473,13 @@ body.dark-mode #speedControl {
             </div>
         </div>
     </div>
+    <div class="filter-container">
+        <button class="filter-button" id="filterButton">Filter</button>
+        <div class="filter-options" id="filterOptions">
+            <div class="filter-option" data-filter="most-rated">Most Rated</div>
+            <div class="filter-option" data-filter="most-popular">Most Popular</div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
@@ -460,7 +509,8 @@ body.dark-mode #speedControl {
     const surahId = urlParams.get('surah');
     let currentSurahId = surahId;
     let currentSheikh = null;
-       const sheikhs = [
+
+    const sheikhs = [
         { id: '1', name: 'AbdulBaset AbdulSamad', imageUrl: 'qmkxyvfiawea1.jpg' },
         { id: '2', name: 'Maher Al-Muaiqly', imageUrl: 'images (6).jpeg' },
         { id: '3', name: 'Abdur-Rahman As-Sudais', imageUrl: 'Abdul-Rahman-Al-Sudais.jpg' },
@@ -490,9 +540,13 @@ body.dark-mode #speedControl {
         { id: '29', name: 'Yahya Hawwa', imageUrl: 'download (30).jpeg' },
         { id: '30', name: 'Abdul Wadood Haneef', imageUrl: 'download (31).jpeg' }
     ];
+    // Add rating and popularity properties to sheikhs (replace with actual data)
+    sheikhs.forEach(sheikh => {
+        sheikh.rating = Math.random() * 5; // Random rating between 0 and 5
+        sheikh.popularity = Math.floor(Math.random() * 1000000); // Random popularity between 0 and 1,000,000
+    });
 
-
-  function stopAudio() {
+    function stopAudio() {
         if (currentAudio) {
             currentAudio.pause();
             currentAudio.currentTime = 0;
@@ -633,21 +687,51 @@ body.dark-mode #speedControl {
         }
     });
 
-    sheikhs.forEach((sheikh) => {
-        const sheikhItem = document.createElement('div');
-        sheikhItem.className = 'sheikh-item';
-        sheikhItem.innerHTML = `
-            <img class="lazy" data-src="${sheikh.imageUrl}" alt="${sheikh.name}">
-            <div class="sheikh-name">${sheikh.name}</div>
-        `;
-        sheikhItem.addEventListener('click', () => {
-            document.querySelectorAll('.sheikh-item').forEach(item => item.classList.remove('active'));
-            sheikhItem.classList.add('active');
-            loadSurahAudio(currentSurahId, sheikh, true);
+    function renderSheikhList(sheikhs) {
+        sheikhList.innerHTML = '';
+        sheikhs.forEach((sheikh) => {
+            const sheikhItem = document.createElement('div');
+            sheikhItem.className = 'sheikh-item';
+            sheikhItem.innerHTML = `
+                <img class="lazy" data-src="${sheikh.imageUrl}" alt="${sheikh.name}">
+                <div class="sheikh-name">${sheikh.name}</div>
+            `;
+            sheikhItem.addEventListener('click', () => {
+                document.querySelectorAll('.sheikh-item').forEach(item => item.classList.remove('active'));
+                sheikhItem.classList.add('active');
+                loadSurahAudio(currentSurahId, sheikh, true);
+            });
+            sheikhList.appendChild(sheikhItem);
         });
 
-        sheikhList.appendChild(sheikhItem);
-    });
+        initLazyLoading();
+    }
+
+    function initLazyLoading() {
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.classList.remove('lazy');
+                        observer.unobserve(img);
+                    }
+                });
+            });
+
+            document.querySelectorAll('img.lazy').forEach(img => {
+                imageObserver.observe(img);
+            });
+        } else {
+            document.querySelectorAll('img.lazy').forEach(img => {
+                img.src = img.dataset.src;
+                img.classList.remove('lazy');
+            });
+        }
+    }
+
+    renderSheikhList(sheikhs);
 
     // Dark mode toggle
     const darkModeToggle = document.createElement('label');
@@ -665,28 +749,40 @@ body.dark-mode #speedControl {
         document.body.classList.toggle('dark-mode');
     }
 
-    // Lazy loading for sheikh images
-    if ('IntersectionObserver' in window) {
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    img.src = img.dataset.src;
-                    img.classList.remove('lazy');
-                    observer.unobserve(img);
-                }
-            });
-        });
+    // Filter functionality
+    const filterButton = document.getElementById('filterButton');
+    const filterOptions = document.getElementById('filterOptions');
+    const filterOptionElements = document.querySelectorAll('.filter-option');
 
-        document.querySelectorAll('img.lazy').forEach(img => {
-            imageObserver.observe(img);
+    filterButton.addEventListener('click', () => {
+        filterOptions.style.display = filterOptions.style.display === 'block' ? 'none' : 'block';
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!filterButton.contains(event.target) && !filterOptions.contains(event.target)) {
+            filterOptions.style.display = 'none';
+        }
+    });
+
+    filterOptionElements.forEach(option => {
+        option.addEventListener('click', () => {
+            const filter = option.getAttribute('data-filter');
+            filterSheikhs(filter);
+            filterOptions.style.display = 'none';
         });
-    } else {
-        // Fallback for browsers that don't support IntersectionObserver
-        document.querySelectorAll('img.lazy').forEach(img => {
-            img.src = img.dataset.src;
-            img.classList.remove('lazy');
-        });
+    });
+
+    function filterSheikhs(filter) {
+        let filteredSheikhs;
+        if (filter === 'most-rated') {
+            filteredSheikhs = [...sheikhs].sort((a, b) => b.rating - a.rating);
+        } else if (filter === 'most-popular') {
+            filteredSheikhs = [...sheikhs].sort((a, b) => b.popularity - a.popularity);
+        } else {
+            filteredSheikhs = sheikhs;
+        }
+
+        renderSheikhList(filteredSheikhs);
     }
 
     // Modern spin option
