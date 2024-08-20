@@ -8,100 +8,48 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
-       body {
+        body {
             margin: 0;
-            height: 100vh;
-            background: #abbaab;  /* fallback for old browsers */
-            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);  /* Chrome 10-25, Safari 5.1-6 */
-            background: linear-gradient(to right, #ffffff, #abbaab); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            min-height: 100vh;
+            background: linear-gradient(to right, #ffffff, #abbaab);
+            font-family: 'Amiri', Arial, sans-serif;
         }
-
-       .container {
+        .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-
-        nav {
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-        }
-
-        nav ul li {
-            margin: 0 10px;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: #333;
-            font-size: 1.2em;
-            padding: 10px 20px;
-            display: block;
-        }
-
-        nav ul li a:hover {
-            background-color: #f0f0f0;
-            border-radius: 5px;
-        }
-
         header {
             text-align: center;
             margin-bottom: 20px;
             position: relative;
         }
-
         h1 {
             font-size: 2.5em;
-            color: #fff;
+            color: #333;
         }
-
         .juzz-list {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 10px;
             padding: 20px 0;
         }
-
-        .juzz  {
+        .juzz {
             background: rgba(255, 255, 255, 0.7);
             border: 1px solid #ddd;
             padding: 15px;
-            margin: 10px;
             cursor: pointer;
             text-align: center;
             border-radius: 5px;
-            transition: transform 0.3s, background-color 0.3s, border-color 0.3s;
+            transition: transform 0.3s, background-color 0.3s;
             color: #2575fc;
             font-size: 1.2em;
-            position: relative;
         }
         .juzz:hover {
             transform: scale(1.05);
             background-color: #2575fc;
             color: #fff;
         }
-
-        @media (max-width: 768px) {
-            .juzz {
-                flex: 1 1 calc(50% - 20px);
-            }
-        }
-
-        @media (max-width: 480px) {
-            .juzz {
-                flex: 1 1 100%;
-            }
-        }
-
         .loader {
             border: 16px solid #f3f3f3;
             border-radius: 50%;
@@ -111,12 +59,10 @@
             animation: spin 2s linear infinite;
             margin: 50px auto;
         }
-
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
         .close-button {
             cursor: pointer;
             color: #ff0000;
@@ -125,30 +71,25 @@
             right: 10px;
             font-size: 1.5em;
         }
-
-        body.dark-mode {
-            background: linear-gradient(to right, #0f0f0f, #434343);
-            color: #ddd;
-        }
-
-        body.dark-mode .juzz {
-            background-color: #333;
-            color: #ddd;
-        }
-
-        body.dark-mode .juzz:hover {
-            background-color: #444;
-        }
-
-        body.dark-mode h1 {
-            color: #ddd;
-        }
-
         .dark-mode-toggle {
             margin: 10px 0;
             cursor: pointer;
             font-size: 1.5em;
-            color: #fff;
+            color: #333;
+        }
+        body.dark-mode {
+            background: linear-gradient(to right, #0f0f0f, #434343);
+            color: #ddd;
+        }
+        body.dark-mode .juzz {
+            background-color: #333;
+            color: #ddd;
+        }
+        body.dark-mode .juzz:hover {
+            background-color: #444;
+        }
+        body.dark-mode h1 {
+            color: #ddd;
         }
     </style>
 </head>
@@ -204,7 +145,6 @@
 
             loader.style.display = 'block';
 
-            const fragment = document.createDocumentFragment();
             juzzNames.forEach((juzz, index) => {
                 const juzzDiv = document.createElement('div');
                 juzzDiv.classList.add('juzz');
@@ -223,9 +163,8 @@
                         }
                     });
                 });
-                fragment.appendChild(juzzDiv);
+                juzzList.appendChild(juzzDiv);
             });
-            juzzList.appendChild(fragment);
 
             loader.style.display = 'none';
 
