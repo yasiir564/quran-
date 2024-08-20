@@ -1,390 +1,138 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quran Pro Login Form</title>
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <meta name="google-signin-client_id" content="622570334543-apthdig9ouj9np7belblpttruqaj9le8.apps.googleusercontent.com">
-    <script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300|Lobster|Pacifico|Raleway" rel="stylesheet">
-    <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        body {
-            margin: 0;
-            height: 100vh;
-            overflow: hidden; /* Remove scroll */
-            animation: gradientAnimation 10s infinite;
-            font-family: 'Amiri', serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+  <title>Login</title>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
+    import { getAuth, GoogleAuthProvider, AppleAuthProvider, signInWithPopup, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
-        .sidebar {
-            height: 100%;
-            width: 250px;
-            position: fixed;
-            z-index: 1001;
-            top: 0;
-            left: -250px;
-            background: linear-gradient(to top, #a8edea, #fed6e3);
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-        }
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      // Your Firebase configuration details
+    };
 
-        .sidebar a {
-            padding: 10px 15px;
-            text-decoration: none;
-            font-size: 18px;
-            color: #111;
-            display: block;
-            transition: 0.3s;
-        }
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-        .sidebar a:hover {
-            color: #fff;
-            background-color: #2575fc;
-        }
+    // Check if the user is signing in with the email link
+    if (isSignInWithEmailLink(auth, window.location.href)) {
+      let email = localStorage.getItem('emailForSignIn');
+      if (!email) {
+        email = window.prompt('Please provide your email for confirmation');
+      }
+      signInWithEmailLink(auth, email, window.location.href)
+        .then((result) => {
+          // Remove the email from local storage
+          localStorage.removeItem('emailForSignIn');
+          // Get the user's profile information
+          const user = result.user;
+          handleUserProfile(user);
+        })
+        .catch((error) => {
+          alert('Error signing in with email link: ' + error.message);
+        });
+    } else {
+      // Add event listener to the Google sign-in button
+      document.getElementById('google-login-button').addEventListener('click', () => {
+        const provider = new GoogleAuthProvider();
+        signInWithPopup(auth, provider)
+          .then((result) => {
+            handleUserProfile(result.user);
+          })
+          .catch((error) => {
+            alert('Error signing in with Google: ' + error.message);
+          });
+      });
 
-        .sidebar .closebtn {
-            position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-        }
+      // Add event listener to the Apple sign-in button
+      document.getElementById('apple-login-button').addEventListener('click', () => {
+        const provider = new AppleAuthProvider();
+        signInWithPopup(auth, provider)
+          .then((result) => {
+            handleUserProfile(result.user);
+          })
+          .catch((error) => {
+            alert('Error signing in with Apple: ' + error.message);
+          });
+      });
 
-        .openbtn {
-            font-size: 20px;
-            cursor: pointer;
-            background-color: #2575fc;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            position: fixed;
-            top: 30px;
-            left: 10px;
-            z-index: 1000;
-        }
+      // Add event listener to the email sign-in form
+      document.getElementById('email-login-form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const email = document.getElementById('email').value;
+        sendSignInLinkToEmail(auth, email, {
+          url: window.location.href,
+          handleCodeInApp: true
+        })
+        .then(() => {
+          // Store the email in local storage
+          localStorage.setItem('emailForSignIn', email);
+          alert('Please check your email for the activation link.');
+        })
+        .catch((error) => {
+          alert('Error sending activation link: ' + error.message);
+        });
+      });
+    }
 
-        .openbtn:hover {
-            background-color: #0056b3;
-        }
-
-        .login-page {
-            width: 100%;
-            max-width: 360px;
-            margin: auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column; /* Adjusted to fit content */
-        }
-
-        .form {
-            position: relative;
-            z-index: 1;
-            background: #2575fc;
-            max-width: 360px;
-            width: 90%;
-            padding: 45px;
-            text-align: center;
-            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
-            border-radius: 15px;
-        }
-
-        .form .heading {
-            font-family: 'Lobster', cursive;
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        .form .description {
-            font-family: 'Raleway', sans-serif;
-            font-size: 1em;
-            margin-bottom: 20px;
-            color: #fff;
-        }
-
-        .form .btn {
-            font-family: 'Roboto', sans-serif;
-            font-size: 14px;
-            font-weight: bold;
-            letter-spacing: .1em;
-            outline: 0;
-            background: #F0FFFF;
-            width: 100%;
-            border: 0;
-            border-radius: 30px;
-            margin: 0 0 15px;
-            padding: 15px;
-            color: #000000;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .form .btn img {
-            margin-right: 10px;
-            height: 20px;
-        }
-
-        .form .btn:hover,
-        .form .btn:focus {
-            background: #F5FFFA;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-            transform: translateY(-4px);
-        }
-
-        .form .btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 2.5px 5px rgba(0, 0, 0, 0.2);
-        }
-
-        .g-signin2 {
-            display: none;
-        }
-
-        .google-btn {
-            background: #db4437;
-        }
-
-        .google-btn:hover,
-        .google-btn:focus {
-            background: #c33c2f;
-        }
-
-        .footer-text {
-            font-size: 12px;
-            color: #fff;
-            margin-top: 20px;
-        }
-
-        .footer-text a {
-            color: #000000;
-            text-decoration: none;
-        }
-
-        .footer-text a:hover {
-            text-decoration: underline;
-        }
-
-        @keyframes gradientAnimation {
-            0% {
-                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-            }
-
-            50% {
-                background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
-            }
-
-            100% {
-                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-            }
-        }
-
-        @media screen and (max-width: 768px) {
-            .login-page {
-                height: 100%;
-                padding: 0;
-                margin: 0;
-            }
-
-            .form {
-                margin: 0;
-                padding: 20px;
-                box-shadow: none;
-            }
-        }
-    </style>
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-analytics.js";
-        import { getAuth, GoogleAuthProvider, AppleAuthProvider, signInWithPopup, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js";
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            // Your Firebase configuration details
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Check if the user is signing in with the email link
-        if (isSignInWithEmailLink(auth, window.location.href)) {
-            let email = localStorage.getItem('emailForSignIn');
-            if (!email) {
-                email = window.prompt('Please provide your email for confirmation');
-            }
-            signInWithEmailLink(auth, email, window.location.href)
-                .then((result) => {
-                    // Remove the email from local storage
-                    localStorage.removeItem('emailForSignIn');
-                    // Get the user's profile information
-                    const user = result.user;
-                    handleUserProfile(user);
-                })
-                .catch((error) => {
-                    Swal.fire('Error', 'Error signing in with email link: ' + error.message, 'error');
-                });
-        } else {
-            // Add event listener to the Google sign-in button
-            document.getElementById('google-login-button').addEventListener('click', () => {
-                const provider = new GoogleAuthProvider();
-                signInWithPopup(auth, provider)
-                    .then((result) => {
-                        handleUserProfile(result.user);
-                    })
-                    .catch((error) => {
-                        Swal.fire('Error', 'Error signing in with Google: ' + error.message, 'error');
-                    });
+    function handleUserProfile(user) {
+      const userDocRef = doc(db, "users", user.uid);
+      getDoc(userDocRef)
+        .then((userDoc) => {
+          if (userDoc.exists()) {
+            // Store the user's name and email in local storage
+            localStorage.setItem("userName", userDoc.data().name);
+            localStorage.setItem("userEmail", userDoc.data().email);
+            // Redirect the user to the profile page
+            window.location.href = 'profile.html';
+          } else {
+            // Create a new user document in Firestore
+            userDocRef.set({
+              name: user.displayName,
+              email: user.email
+            })
+            .then(() => {
+              // Store the user's name and email in local storage
+              localStorage.setItem("userName", user.displayName);
+              localStorage.setItem("userEmail", user.email);
+              // Redirect the user to the profile page
+              window.location.href = 'profile.html';
+            })
+            .catch((error) => {
+              alert('Error saving user profile: ' + error.message);
             });
-
-            // Add event listener to the Apple sign-in button
-            document.getElementById('apple-login-button').addEventListener('click', () => {
-                const provider = new AppleAuthProvider();
-                signInWithPopup(auth, provider)
-                    .then((result) => {
-                        handleUserProfile(result.user);
-                    })
-                    .catch((error) => {
-                        Swal.fire('Error', 'Error signing in with Apple: ' + error.message, 'error');
-                    });
-            });
-
-            // Add event listener to the email sign-in form
-            document.getElementById('email-login-form').addEventListener('submit', (event) => {
-                event.preventDefault();
-                const email = document.getElementById('email').value;
-                sendSignInLinkToEmail(auth, email, {
-                    url: window.location.href,
-                    handleCodeInApp: true
-                })
-                    .then(() => {
-                        // Store the email in local storage
-                        localStorage.setItem('emailForSignIn', email);
-                        Swal.fire('Success', 'Please check your email for the activation link.', 'success');
-                    })
-                    .catch((error) => {
-                        Swal.fire('Error', 'Error sending activation link: ' + error.message, 'error');
-                    });
-            });
-        }
-
-        function handleUserProfile(user) {
-            const userDocRef = doc(db, "users", user.uid);
-            getDoc(userDocRef)
-                .then((userDoc) => {
-                    if (userDoc.exists()) {
-                        // Store the user's name and email in local storage
-                        localStorage.setItem("userName", userDoc.data().name);
-                        localStorage.setItem("userEmail", userDoc.data().email);
-                        // Redirect the user to the profile page
-                        window.location.href = 'profile.html';
-                    } else {
-                        // Create a new user document in Firestore
-                        userDocRef.set({
-                            name: user.displayName,
-                            email: user.email
-                        })
-                            .then(() => {
-                                // Store the user's name and email in local storage
-                                localStorage.setItem("userName", user.displayName);
-                                localStorage.setItem("userEmail", user.email);
-                                // Redirect the user to the profile page
-                                window.location.href = 'profile.html';
-                            })
-                            .catch((error) => {
-                                Swal.fire('Error', 'Error saving user profile: ' + error.message, 'error');
-                            });
-                    }
-                })
-                .catch((error) => {
-                    if (error.code === 'unavailable') {
-                        // User is offline, use fallback data
-                        localStorage.setItem("userName", user.displayName);
-                        localStorage.setItem("userEmail", user.email);
-                        window.location.href = 'profile.html';
-                    } else {
-                        Swal.fire('Error', 'Error getting user profile: ' + error.message, 'error');
-                    }
-                });
-        }
-
-        // Add event listener to the open/close sidebar buttons
-        document.getElementById('openSidebarBtn').addEventListener('click', openNav);
-        document.getElementById('closeSidebarBtn').addEventListener('click', closeNav);
-
-        function openNav() {
-            document.getElementById("mySidebar").style.left = "0";
-            document.getElementById("main").style.marginLeft = "250px";
-        }
-
-        function closeNav() {
-            document.getElementById("mySidebar").style.left = "-250px";
-            document.getElementById("main").style.marginLeft = "0";
-        }
-    </script>
+          }
+        })
+        .catch((error) => {
+          if (error.code === 'unavailable') {
+            // User is offline, use fallback data
+            localStorage.setItem("userName", user.displayName);
+            localStorage.setItem("userEmail", user.email);
+            window.location.href = 'profile.html';
+          } else {
+            alert('Error getting user profile: ' + error.message);
+          }
+        });
+    }
+  </script>
 </head>
-
 <body>
-    <div id="mySidebar" class="sidebar">
-        <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
-        <a href="index.html">
-            <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
-        </a>
-        <a href="juzz.html">
-            <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read in Juzz
-        </a>
-        <a href="audio.html">
-            <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Listen to Quran
-        </a>
-        <a href="prayer.html">
-            <lord-icon src="https://cdn.lordicon.com/tftaqjwp.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Prayer Time
-        </a>
-        <a href="donate.html">
-            <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Donate with Love
-        </a>
-    </div>
-
-    <div id="main">
-        <button class="openbtn" id="openSidebarBtn">&#9776; Quran Pro</button>
-    </div>
-
-    <div class="login-page">
-        <div class="form">
-            <h1 class="heading">Welcome to Quran Pro</h1>
-            <p class="description">Your one-stop solution for reading, listening, and understanding the Quran.</p>
-            <button class="btn google-btn" id="google-login-button">
-                <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google Logo">
-                Sign in with Google
-            </button>
-            <button class="btn" id="apple-login-button">
-                <img src="https://img.icons8.com/ios-filled/50/000000/mac-os.png" alt="Apple Logo">
-                Sign in with Apple
-            </button>
-            <form id="email-login-form">
-                <div class="btn">
-                    <img src="https://img.icons8.com/color/48/000000/gmail-new.png" alt="Email Logo">
-                    <input type="email" id="email" name="email" placeholder="Sign in with Email" required>
-                </div>
-                <button type="submit" class="btn">Send Activation Link</button>
-            </form>
-            <p class="footer-text">By signing in, you agree to our <a href="termsandconditions.html">Terms of Service</a> and <a href="privacypolicy.html">Privacy Policy</a>.</p>
-        </div>
-    </div>
+  <h1>Login</h1>
+  <button id="google-login-button">Sign in with Google</button>
+  <button id="apple-login-button">Sign in with Apple</button>
+  <hr>
+  <h2>Or sign in with email</h2>
+  <form id="email-login-form">
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+    <br>
+    <button type="submit">Send Activation Link</button>
+  </form>
 </body>
-
 </html>
