@@ -638,7 +638,7 @@
             document.getElementById("mySidebar").style.left = "-250px";
         });
 
-        document.addEventListener('DOMContentLoaded', function () {
+       document.addEventListener('DOMContentLoaded', function () {
     const audioOverlay = document.getElementById('audio-overlay');
     const playPauseButton = document.getElementById('playPauseButton');
     const stopButton = document.getElementById('stopButton');
@@ -818,9 +818,207 @@
         }
     }
 
-    // ... (rest of the code remains the same)
+    playPauseButton.addEventListener('click', playAudio);
+    stopButton.addEventListener('click', stopAudio);
+    rewindButton.addEventListener('click', rewindAudio);
+    speedControl.addEventListener('change', (event) => {
+        if (currentAudio) {
+            currentAudio.playbackRate = parseFloat(event.target.value);
+        }
+    });
 
-    // Initialize with the first sheikh
+    progressContainer.addEventListener('click', function(e) {
+        const rect = this.getBoundingClientRect();
+        const clickPosition = (e.clientX - rect.left) / rect.width;
+        if (currentAudio) {
+            currentAudio.currentTime = clickPosition * currentAudio.duration;
+            updateProgress();
+        }
+    });
+
+    function renderSheikhList(sheikhs) {
+        sheikhList.innerHTML = '';
+        sheikhs.forEach((sheikh) => {
+            const sheikhItem = document.createElement('div');
+            sheikhItem.className = 'sheikh-item';
+            sheikhItem.innerHTML = `
+                <img src="${sheikh.imageUrl}" alt="${sheikh.name}">
+                <div class="sheikh-name">${sheikh.name}</div>
+                <div class="sheikh-name-arabic">${sheikh.arabicName}</div>
+            `;
+            sheikhItem.addEventListener('click', () => {
+                document.querySelectorAll('.sheikh-item').forEach(item => item.classList.remove('active'));
+                sheikhItem.classList.add('active');
+                loadSurahAudio(currentSurahId, sheikh, true);
+            });
+            sheikhList.appendChild(sheikhItem);
+        });
+    }
+
+    renderSheikhList(sheikhs);
+
+    // Dark mode functionality
+    const darkModeCheckbox = document.getElementById('darkModeCheckbox');
+
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+    }
+
+    // Check for saved dark mode preference
+    const savedDarkMode = localStorage.getItem('darkMode');
+    if (savedDarkMode === 'true') {
+        document.body.classList.add('dark-mode');
+        darkModeCheckbox.checked = true;
+    }
+
+    darkModeCheckbox.addEventListener('change', toggleDarkMode);
+
+    // Filter functionality
+    const filterButton = document.getElementById('filterButton');
+    const filterOptions = document.getElementById('filterOptions');
+    const filterOptionElements = document.querySelectorAll('.filter-option');
+
+    filterButton.addEventListener('click', () => {
+        filterOptions.style.display = filterOptions.style.display === 'block' ? 'none' : 'block';
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!filterButton.contains(event.target) && !filterOptions.contains(event.target)) {
+            filterOptions.style.display = 'none';
+        }
+    });
+
+    filterOptionElements.forEach(option => {
+        option.addEventListener('click', () => {
+            const filter = option.getAttribute('data-filter');
+            filterSheikhs(filter);
+            filterOptions.style.display = 'none';
+        });
+    });
+
+   function filterSheikhs(filter) {
+        let filteredSheikhs;
+        if (filter === 'most-rated') {
+            filteredSheikhs = [...sheikhs].sort((a, b) => b.rating - a.rating);
+        } else if (filter === 'most-popular') {
+            filteredSheikhs = [...sheikhs].sort((a, b) => b.popularity - a.popularity);
+        } else {
+            filteredSheikhs = sheikhs;
+        }
+
+        renderSheikhList(filteredSheikhs);
+    }
+
+    // Modern spin option
+    setTimeout(() => {
+        if (!document.querySelector('.sheikh-item.active')) {
+            Swal.fire({
+                title: 'Find a Reciter',
+                text: 'Not sure which reciter to choose? Let us pick one for you!',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Spin!',
+                cancelButtonText: 'Cancel',
+                allowOutsideClick: false,
+                background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+                customClass: {
+                    container: 'responsive-swal-container',
+                    popup: 'responsive-swal-popup',
+                    title: 'responsive-swal-title',
+                    content: 'responsive-swal-content',
+                    confirmButton: 'responsive-swal-confirm-button',
+                    cancelButton: 'responsive-swal-cancel-button'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let spinCount = 0;
+                    const maxSpins = 20;
+                    const spinInterval = 100;
+
+                    const spinAnimation = setInterval(() => {
+                        const randomSheikh = sheikhs[Math.floor(Math.random() * sheikhs.length)];
+                        Swal.update({
+                            title: 'Selecting a Reciter...',
+                            html: `
+                                <div class="spinner-container">
+                                    <img src="${randomSheikh.imageUrl}" alt="${randomSheikh.name}" class="spinner-image">
+                                    <div class="spinner-name">${randomSheikh.name}</div>
+                                    <div class="spinner-name-arabic">${randomSheikh.arabicName}</div>
+                                </div>
+                            `,
+                            showConfirmButton: false
+                        });
+
+                        spinCount++;
+                        if (spinCount >= maxSpins) {
+                            clearInterval(spinAnimation);
+                            const selectedSheikh = sheikhs[Math.floor(Math.random() * sheikhs.length)];
+                            setTimeout(() => {
+                                Swal.fire({
+                                    title: 'Reciter Selected!',
+                                    html: `
+                                        <div class="spinner-container">
+                                            <img src="${selectedSheikh.imageUrl}" alt="${selectedSheikh.name}" class="spinner-image" style="animation: none;">
+                                            <div class="spinner-name">${selectedSheikh.name}</div>
+                                            <div class="spinner-name-arabic">${selectedSheikh.arabicName}</div>
+                                        </div>
+                                    `,
+                                    icon: 'success',
+                                    confirmButtonText: 'Listen Now',
+                                    customClass: {
+                                        container: 'responsive-swal-container',
+                                        popup: 'responsive-swal-popup',
+                                        title: 'responsive-swal-title',
+                                        content: 'responsive-swal-content',
+                                        confirmButton: 'responsive-swal-confirm-button'
+                                    }
+                                }).then(() => {
+                                    loadSurahAudio(currentSurahId, selectedSheikh, true);
+                                });
+                            }, 500);
+                        }
+                    }, spinInterval);
+                }
+            });
+        }
+    }, 5000);
+
+    // Wake Lock API
+    if ('wakeLock' in navigator) {
+        let wakeLock = null;
+
+        const requestWakeLock = async () => {
+            try {
+                wakeLock = await navigator.wakeLock.request('screen');
+            } catch (err) {
+                console.error('Error requesting wake lock:', err);
+            }
+        };
+
+        document.addEventListener('visibilitychange', () => {
+            if (wakeLock !== null && document.visibilityState === 'visible') {
+                requestWakeLock();
+            }
+        });
+
+        requestWakeLock();
+    }
+
+    // Open sidebar function
+    function openNav() {
+        document.getElementById("mySidebar").style.left = "0";
+    }
+
+    // Close sidebar function
+    document.getElementById("closeSidebarBtn").addEventListener("click", function () {
+        document.getElementById("mySidebar").style.left = "-250px";
+    });
+
+    // Expose openNav function to global scope
+    window.openNav = openNav;
+
+    // Initialize with the first sheikh if surahId is provided
     if (surahId) {
         loadSurahAudio(surahId, sheikhs[0]);
     }
