@@ -6,7 +6,7 @@
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
     // Your web app's Firebase configuration
@@ -26,55 +26,87 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Add event listener to the login button
-    document.getElementById('login-button').addEventListener('click', () => {
+    // Add event listener to the Google sign-in button
+    document.getElementById('google-login-button').addEventListener('click', () => {
       const provider = new GoogleAuthProvider();
       signInWithPopup(auth, provider)
         .then((result) => {
-          // Get the user's profile information
-          const user = result.user;
-          const userDocRef = doc(db, "users", user.uid);
-          getDoc(userDocRef)
-            .then((userDoc) => {
-              if (userDoc.exists()) {
-                // Store the user's name and email in local storage
-                localStorage.setItem("userName", userDoc.data().name);
-                localStorage.setItem("userEmail", userDoc.data().email);
-                // Redirect the user to the profile page
-                window.location.href = 'profile.html';
-              } else {
-                // Create a new user document in Firestore
-                userDocRef.set({
-                  name: user.displayName,
-                  email: user.email
-                })
-                .then(() => {
-                  // Store the user's name and email in local storage
-                  localStorage.setItem("userName", user.displayName);
-                  localStorage.setItem("userEmail", user.email);
-                  // Redirect the user to the profile page
-                  window.location.href = 'profile.html';
-                })
-                .catch((error) => {
-                  // Handle the error
-                  alert('Error saving user profile: ' + error.message);
-                });
-              }
-            })
-            .catch((error) => {
-              // Handle the error
-              alert('Error getting user profile: ' + error.message);
-            });
+          handleUserProfile(result.user);
         })
         .catch((error) => {
-          // Handle the error
-          alert('Error signing in: ' + error.message);
+          alert('Error signing in with Google: ' + error.message);
         });
     });
+
+    // Add event listener to the email/password sign-in form
+    document.getElementById('email-login-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          handleUserProfile(userCredential.user);
+        })
+        .catch((error) => {
+          alert('Error signing in with email and password: ' + error.message);
+        });
+    });
+
+    function handleUserProfile(user) {
+      const userDocRef = doc(db, "users", user.uid);
+      getDoc(userDocRef)
+        .then((userDoc) => {
+          if (userDoc.exists()) {
+            // Store the user's name and email in local storage
+            localStorage.setItem("userName", userDoc.data().name);
+            localStorage.setItem("userEmail", userDoc.data().email);
+            // Redirect the user to the profile page
+            window.location.href = 'profile.html';
+          } else {
+            // Create a new user document in Firestore
+            userDocRef.set({
+              name: user.displayName,
+              email: user.email
+            })
+            .then(() => {
+              // Store the user's name and email in local storage
+              localStorage.setItem("userName", user.displayName);
+              localStorage.setItem("userEmail", user.email);
+              // Redirect the user to the profile page
+              window.location.href = 'profile.html';
+            })
+            .catch((error) => {
+              alert('Error saving user profile: ' + error.message);
+            });
+          }
+        })
+        .catch((error) => {
+          if (error.code === 'unavailable') {
+            // User is offline, use fallback data
+            localStorage.setItem("userName", user.displayName);
+            localStorage.setItem("userEmail", user.email);
+            window.location.href = 'profile.html';
+          } else {
+            alert('Error getting user profile: ' + error.message);
+          }
+        });
+    }
   </script>
 </head>
 <body>
   <h1>Login</h1>
-  <button id="login-button">Sign in with Google</button>
+  <button id="google-login-button">Sign in with Google</button>
+  <hr>
+  <h2>Or sign in with email and password</h2>
+  <form id="email-login-form">
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+    <br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    <br>
+    <button type="submit">Login</button>
+  </form>
 </body>
 </html>
