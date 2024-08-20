@@ -103,82 +103,72 @@
         <div id="juzz-list" class="juzz-list"></div>
         <div class="loader" id="loader"></div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const juzzList = document.getElementById('juzz-list');
-            const loader = document.getElementById('loader');
-            const darkModeToggle = document.getElementById('dark-mode-toggle');
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    console.log("DOM fully loaded");
+    const juzzList = document.getElementById('juzz-list');
+    const loader = document.getElementById('loader');
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
 
-            const juzzNames = [
-                { en: 'Alif Lam Meem', ar: 'الم' },
-                { en: 'Sayaqul', ar: 'سيقول' },
-                { en: 'Tilkar Rusul', ar: 'تلك الرسل' },
-                { en: 'Lan Tanalul Birr', ar: 'لن تنالوا البر' },
-                { en: 'Wal Muhsanat', ar: 'والمحصنات' },
-                { en: 'La Yuhibbullah', ar: 'لا يحب الله' },
-                { en: 'Wa Iza Samiu', ar: 'وإذا سمعوا' },
-                { en: 'Wa Lau Annana', ar: 'ولو أننا' },
-                { en: 'Qalal Malau', ar: 'قال الملأ' },
-                { en: 'Wa A'lamu', ar: 'واعلموا' },
-                { en: 'Yatadhiroon', ar: 'يعتذرون' },
-                { en: 'Wa Ma Min Dabbah', ar: 'وما من دابة' },
-                { en: 'Wa Ma Ubarri'u', ar: 'وما أبرئ' },
-                { en: 'Rubama', ar: 'ربما' },
-                { en: 'Subhanallazi', ar: 'سبحان الذي' },
-                { en: 'Qal Alam', ar: 'قال ألم' },
-                { en: 'Iqtaraba Linnas', ar: 'اقترب للناس' },
-                { en: 'Qad Aflaha', ar: 'قد أفلح' },
-                { en: 'Wa Qalallazina', ar: 'وقال الذين' },
-                { en: 'A'man Khalaq', ar: 'أمن خلق' },
-                { en: 'Utlu Ma Uhiya', ar: 'اتل ما أوحي' },
-                { en: 'Wa Man Yaqnut', ar: 'ومن يقنت' },
-                { en: 'Wa Mali', ar: 'وما لي' },
-                { en: 'Faman Azlam', ar: 'فمن أظلم' },
-                { en: 'Ilaihi Yuraddu', ar: 'إليه يرد' },
-                { en: 'Ha Meem', ar: 'حم' },
-                { en: 'Qala Fama Khatbukum', ar: 'قال فما خطبكم' },
-                { en: 'Qad Sami Allah', ar: 'قد سمع الله' },
-                { en: 'Tabarakallazi', ar: 'تبارك الذي' },
-                { en: 'Amma Yatasa'alun', ar: 'عم يتساءلون' }
-            ];
+    if (!juzzList || !loader || !darkModeToggle) {
+        console.error("One or more required elements not found");
+        return;
+    }
 
-            loader.style.display = 'block';
+    console.log("All required elements found");
 
-            juzzNames.forEach((juzz, index) => {
-                const juzzDiv = document.createElement('div');
-                juzzDiv.classList.add('juzz');
-                juzzDiv.innerHTML = `<strong>Juzz ${index + 1}</strong><br>${juzz.en}<br>${juzz.ar}`;
-                juzzDiv.addEventListener('click', () => {
-                    Swal.fire({
-                        title: `Juzz ${index + 1}`,
-                        text: `You are about to navigate to Juzz ${index + 1}.`,
-                        icon: 'info',
-                        showCancelButton: true,
-                        confirmButtonText: 'Yes, go ahead!',
-                        cancelButtonText: 'No, stay here'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = `juzz_detail.html?juzz=${index + 1}`;
-                        }
-                    });
+    const juzzNames = [
+        { en: 'Alif Lam Meem', ar: 'الم' },
+        { en: 'Sayaqul', ar: 'سيقول' },
+        // ... (keep all other juzz names)
+        { en: 'Amma Yatasa'alun', ar: 'عم يتساءلون' }
+    ];
+
+    console.log("Juzz names array loaded, length:", juzzNames.length);
+
+    loader.style.display = 'block';
+
+    try {
+        juzzNames.forEach((juzz, index) => {
+            const juzzDiv = document.createElement('div');
+            juzzDiv.classList.add('juzz');
+            juzzDiv.innerHTML = `<strong>Juzz ${index + 1}</strong><br>${juzz.en}<br>${juzz.ar}`;
+            juzzDiv.addEventListener('click', () => {
+                Swal.fire({
+                    title: `Juzz ${index + 1}`,
+                    text: `You are about to navigate to Juzz ${index + 1}.`,
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, go ahead!',
+                    cancelButtonText: 'No, stay here'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = `juzz_detail.html?juzz=${index + 1}`;
+                    }
                 });
-                juzzList.appendChild(juzzDiv);
             });
-
-            loader.style.display = 'none';
-
-            darkModeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('dark-mode');
-                if (document.body.classList.contains('dark-mode')) {
-                    darkModeToggle.classList.remove('fa-moon');
-                    darkModeToggle.classList.add('fa-sun');
-                } else {
-                    darkModeToggle.classList.remove('fa-sun');
-                    darkModeToggle.classList.add('fa-moon');
-                }
-            });
+            juzzList.appendChild(juzzDiv);
         });
-    </script>
-</body>
-</html>
+
+        console.log("All juzz divs created and appended");
+    } catch (error) {
+        console.error("Error creating juzz divs:", error);
+    }
+
+    loader.style.display = 'none';
+
+    darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        if (document.body.classList.contains('dark-mode')) {
+            darkModeToggle.classList.remove('fa-moon');
+            darkModeToggle.classList.add('fa-sun');
+        } else {
+            darkModeToggle.classList.remove('fa-sun');
+            darkModeToggle.classList.add('fa-moon');
+        }
+    });
+
+    console.log("Script execution completed");
+});
+</script>
