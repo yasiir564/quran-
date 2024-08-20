@@ -9,93 +9,160 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
      <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
     <style>
-  body {
+  :root {
+    --primary-color: #2575fc;
+    --secondary-color: #6a11cb;
+    --text-color: #333;
+    --bg-color: #f0f2f5;
+    --card-bg: #ffffff;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --overlay-bg: rgba(255, 255, 255, 0.9);
+}
+
+body {
     margin: 0;
     min-height: 100vh;
-    background: linear-gradient(to right, #ffffff, #abbaab);
-    font-family: 'Amiri', serif;
+    background: var(--bg-color);
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-color);
     overflow-x: hidden;
     transition: background 0.3s ease;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
-    position: relative;
+    padding: 20px 0;
+    border-bottom: 2px solid var(--primary-color);
+    margin-bottom: 30px;
 }
 
-.sidebar {
-    height: 100%;
-    width: 250px;
-    position: fixed;
-    z-index: 1001;
-    top: 0;
-    left: -250px;
-    background: linear-gradient(to top, #a8edea, #fed6e3);
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-}
-
-.sidebar a {
-    padding: 10px 15px;
-    text-decoration: none;
-    font-size: 18px;
-    color: #111;
-    display: block;
-    transition: 0.3s;
-}
-
-.sidebar a:hover {
-    color: #fff;
-    background-color: #2575fc;
-}
-
-.sidebar .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-}
-
-.openbtn {
-    font-size: 20px;
-    cursor: pointer;
-    background-color: #2575fc;
-    color: white;
-    padding: 10px 15px;
+.menu-toggle {
+    background: none;
     border: none;
-    position: fixed;
-    top: 10px;
-    left: 20px;
+    font-size: 24px;
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.menu-toggle:hover {
+    color: var(--secondary-color);
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.filter-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.filter-button:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.filter-options {
+    display: none;
+    position: absolute;
+    right: 20px;
+    top: 60px;
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
     z-index: 1000;
 }
 
-.openbtn:hover {
-    background-color: #0056b3;
+.filter-option {
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.filter-option:hover {
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .sheikh-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 20px;
-    padding: 20px;
-    box-sizing: border-box;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 30px;
+    padding: 20px 0;
 }
 
 .sheikh-item {
-    padding: 10px;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, background-color 0.3s;
-    border-radius: 15px;
-    text-align: center;
+    background-color: var(--card-bg);
+    border-radius: 20px;
     overflow: hidden;
-    background-color: #fff;
-    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+    box-shadow: var(--card-shadow);
+    cursor: pointer;
 }
 
 .sheikh-item:hover {
@@ -105,61 +172,22 @@ header {
 
 .sheikh-item img {
     width: 100%;
-    height: 150px;
-    border-radius: 15px;
+    height: 200px;
     object-fit: cover;
+    border-radius: 20px 20px 0 0;
+    transition: all 0.3s ease;
 }
 
-.sheikh-item.active {
-    border: 2px solid #3498db;
-    background-color: #e6f7ff;
+.sheikh-item:hover img {
+    transform: scale(1.05);
 }
 
 .sheikh-name {
+    padding: 15px;
     font-size: 1em;
-    color: #000;
-    margin-top: 10px;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.spinner-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-.spinner-image {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    animation: spin 5s linear infinite;
-}
-
-.spinner-name {
-    margin-top: 20px;
-    font-size: 1.2em;
-    font-weight: bold;
+    font-weight: 600;
     text-align: center;
-}
-
-.swal2-popup {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-}
-
-.swal2-title {
-    color: #34495e;
-}
-
-.swal2-html-container {
-    color: #2c3e50;
+    color: var(--text-color);
 }
 
 .audio-overlay {
@@ -167,7 +195,7 @@ header {
     bottom: 0;
     left: 0;
     width: 100%;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--overlay-bg);
     backdrop-filter: blur(10px);
     display: none;
     justify-content: center;
@@ -202,14 +230,15 @@ header {
 
 .surah-title {
     font-size: 1.2em;
-    color: #333;
+    color: var(--text-color);
     font-weight: bold;
     margin-bottom: 5px;
 }
 
 .reciter-name {
     font-size: 0.9em;
-    color: #666;
+    color: var(--text-color);
+    opacity: 0.8;
 }
 
 .audio-controls {
@@ -222,14 +251,14 @@ header {
     background: none;
     border: none;
     font-size: 1.5em;
-    color: #3498db;
+    color: var(--primary-color);
     cursor: pointer;
     margin: 0 10px;
     transition: color 0.3s ease;
 }
 
 .audio-controls button:hover {
-    color: #2980b9;
+    color: var(--secondary-color);
 }
 
 #playPauseButton {
@@ -239,16 +268,17 @@ header {
 .progress-container {
     flex-grow: 1;
     height: 10px;
-    background-color: #e0e0e0;
+    background-color: rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     margin: 0 10px;
     position: relative;
     cursor: pointer;
+    overflow: hidden;
 }
 
 #progress-bar {
     height: 100%;
-    background-color: #3498db;
+    background-color: var(--primary-color);
     border-radius: 5px;
     width: 0;
     transition: width 0.1s linear;
@@ -259,138 +289,59 @@ header {
     top: -25px;
     right: 0;
     font-size: 0.8em;
-    color: #666;
+    color: var(--text-color);
 }
 
 #speedControl {
     padding: 5px;
     border-radius: 5px;
-    border: 1px solid #3498db;
-    background-color: white;
-    color: #3498db;
+    border: 1px solid var(--primary-color);
+    background-color: var(--card-bg);
+    color: var(--text-color);
     font-size: 0.9em;
-}
-
-.switch {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 60px;
-    height: 34px;
-    z-index: 1000;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
     cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-    border-radius: 34px;
 }
 
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
-}
-
-input:checked + .slider {
-    background-color: #2196F3;
-}
-
-input:checked + .slider:before {
-    transform: translateX(26px);
-}
-         .filter-container {
-            position: fixed;
-            top: 70px;
-            right: 20px;
-            z-index: 1000;
-        }
-
-        .filter-button {
-            background-color: #2196F3;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
-        }
-
-        .filter-button:hover {
-            background-color: #1976D2;
-        }
-
-        .filter-options {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 40px;
-            background-color: white;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .filter-option {
-            padding: 10px 15px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .filter-option:hover {
-            background-color: #f0f0f0;
-        }
-
+/* Dark mode styles */
 body.dark-mode {
-    background: linear-gradient(to right, #2c3e50, #34495e);
-    color: #ecf0f1;
+    --text-color: #ecf0f1;
+    --bg-color: #2c3e50;
+    --card-bg: #34495e;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    --overlay-bg: rgba(52, 73, 94, 0.9);
 }
 
-body.dark-mode .sheikh-item {
-    background-color: #34495e;
-    color: #ecf0f1;
+body.dark-mode .filter-button {
+    background-color: var(--secondary-color);
 }
 
-body.dark-mode .audio-overlay {
-    background: rgba(52, 73, 94, 0.9);
-}
-
-body.dark-mode .surah-title,
-body.dark-mode .reciter-name {
-    color: #ecf0f1;
+body.dark-mode .filter-button:hover {
+    background-color: #8e44ad;
 }
 
 body.dark-mode .audio-controls button {
     color: #3498db;
 }
 
-body.dark-mode #speedControl {
-    background-color: #2c3e50;
-    color: #ecf0f1;
+body.dark-mode .audio-controls button:hover {
+    color: #2980b9;
 }
 
+body.dark-mode #speedControl {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border-color: #3498db;
+}
+
+/* Responsive styles */
 @media (max-width: 768px) {
     .sheikh-list {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 20px;
+    }
+
+    .sheikh-item img {
+        height: 150px;
     }
 
     .audio-player {
@@ -414,10 +365,112 @@ body.dark-mode #speedControl {
     #progress-time {
         top: -30px;
     }
+
+    .filter-button {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+
+    .header-controls {
+        gap: 10px;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.sheikh-item {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Additional modern effects */
+.sheikh-item {
+    backdrop-filter: blur(5px);
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+body.dark-mode .sheikh-item {
+    background-color: rgba(52, 73, 94, 0.7);
+}
+
+.audio-overlay {
+    transition: transform 0.3s ease-out;
+    transform: translateY(100%);
+}
+
+.audio-overlay.active {
+    transform: translateY(0);
 }
     </style>
 </head>
 <body>
+    <div class="container">
+        <header>
+            <button class="menu-toggle" onclick="openNav()">
+                <i class="fas fa-bars"></i> Quran Pro
+            </button>
+            <div class="header-controls">
+                <label class="switch" title="Toggle Dark Mode">
+                    <input type="checkbox" id="darkModeCheckbox">
+                    <span class="slider"></span>
+                </label>
+                <div class="filter-container">
+                    <button class="filter-button" id="filterButton">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                    <div class="filter-options" id="filterOptions">
+                        <div class="filter-option" data-filter="most-rated">
+                            <i class="fas fa-star"></i> Most Rated
+                        </div>
+                        <div class="filter-option" data-filter="most-popular">
+                            <i class="fas fa-fire"></i> Most Popular
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div id="reciter-selector" class="sheikh-list"></div>
+        </main>
+    </div>
+
+    <div class="audio-overlay" id="audio-overlay">
+        <div class="audio-player" id="audio-player">
+            <img id="reciter-image" src="" alt="Reciter">
+            <div class="player-info">
+                <div class="surah-title" id="surah-title">Surah: None</div>
+                <div class="reciter-name" id="reciter-name">Reciter: None</div>
+                <div class="audio-controls">
+                    <button id="rewindButton" title="Rewind 10 seconds">
+                        <i class="fas fa-backward"></i>
+                    </button>
+                    <button id="playPauseButton" title="Play/Pause">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button id="stopButton" title="Stop">
+                        <i class="fas fa-stop"></i>
+                    </button>
+                    <div class="progress-container">
+                        <div id="progress-bar"></div>
+                        <span id="progress-time">0:00 / 0:00</span>
+                    </div>
+                    <select id="speedControl" title="Playback Speed">
+                        <option value="0.5">0.5x</option>
+                        <option value="0.75">0.75x</option>
+                        <option value="1" selected>1x</option>
+                        <option value="1.25">1.25x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="2">2x</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="mySidebar" class="sidebar">
         <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
         <a href="index.html">
@@ -435,50 +488,6 @@ body.dark-mode #speedControl {
         <a href="donate.html">
             <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Donate with Love
         </a>
-    </div>
-
-    <div id="main">
-        <button class="openbtn" onclick="openNav()">&#9776; Quran Pro</button>
-    </div>
-    <header>
-       
-    </header>
-    
-    
-    <div id="reciter-selector" class="sheikh-list"></div>
-
-    <div class="audio-overlay" id="audio-overlay">
-        <div class="audio-player" id="audio-player">
-            <img id="reciter-image" src="" alt="Reciter">
-            <div class="player-info">
-                <div class="surah-title" id="surah-title">Surah: None</div>
-                <div class="reciter-name" id="reciter-name">Reciter: None</div>
-                <div class="audio-controls">
-                    <button id="rewindButton"><i class="fas fa-backward"></i></button>
-                    <button id="playPauseButton"><i class="fas fa-play"></i></button>
-                    <button id="stopButton"><i class="fas fa-stop"></i></button>
-                    <div class="progress-container">
-                        <div id="progress-bar"></div>
-                        <span id="progress-time">0:00</span>
-                    </div>
-                    <select id="speedControl">
-                        <option value="0.25">0.25x</option>
-                        <option value="0.5">0.5x</option>
-                        <option value="0.75">0.75x</option>
-                        <option value="1" selected>1x</option>
-                        <option value="1.25">1.25x</option>
-                        <option value="1.5">1.5x</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="filter-container">
-        <button class="filter-button" id="filterButton">Filter</button>
-        <div class="filter-options" id="filterOptions">
-            <div class="filter-option" data-filter="most-rated">Most Rated</div>
-            <div class="filter-option" data-filter="most-popular">Most Popular</div>
-        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
