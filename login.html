@@ -1,149 +1,285 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-  <title>Login</title>
-  <script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
-    import { getAuth, GoogleAuthProvider, OAuthProvider, signInWithPopup, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quran Pro Login Form</title>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="622570334543-apthdig9ouj9np7belblpttruqaj9le8.apps.googleusercontent.com">
+    <script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300|Lobster|Pacifico|Raleway" rel="stylesheet">
+    <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            animation: gradientAnimation 10s infinite;
+            font-family: 'Amiri', serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyCCHwRT-Nj3GfPZD-If2P7iMajPjAB9RJA",
-      authDomain: "quran-pro-c1df1.firebaseapp.com",
-      projectId: "quran-pro-c1df1",
-      storageBucket: "quran-pro-c1df1.appspot.com",
-      messagingSenderId: "782064856596",
-      appId: "1:782064856596:web:3c11c7a0186a2923bac101",
-      measurementId: "G-RFVGMM8VYQ"
-    };
+        .login-page {
+            width: 100%;
+            max-width: 360px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+        .form {
+            position: relative;
+            z-index: 1;
+            background: #2575fc;
+            max-width: 360px;
+            width: 90%;
+            padding: 45px;
+            text-align: center;
+            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+            border-radius: 15px;
+        }
 
-    // Check if the current URL contains a sign-in link for email verification
-    if (isSignInWithEmailLink(auth, window.location.href)) {
-      const email = localStorage.getItem('emailForSignIn');
-      if (email) {
-        signInWithEmailLink(auth, email, window.location.href)
-          .then((result) => {
-            localStorage.removeItem('emailForSignIn');
-            handleUserProfile(result.user);
-          })
-          .catch((error) => {
-            alert('Error verifying email: ' + error.message);
-          });
-      } else {
-        alert('No email found in local storage for sign-in.');
-      }
-    }
+        .form .heading {
+            font-family: 'Lobster', cursive;
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: #fff;
+        }
 
-    // Add event listener to the Google sign-in button
-    document.getElementById('google-login-button').addEventListener('click', () => {
-      const provider = new GoogleAuthProvider();
-      signInWithPopup(auth, provider)
-        .then((result) => {
-          handleUserProfile(result.user);
-        })
-        .catch((error) => {
-          alert('Error signing in with Google: ' + error.message);
+        .form .description {
+            font-family: 'Raleway', sans-serif;
+            font-size: 1em;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .form .btn {
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: .1em;
+            outline: 0;
+            background: #F0FFFF;
+            width: 100%;
+            border: 0;
+            border-radius: 30px;
+            margin: 0 0 15px;
+            padding: 15px;
+            color: #000000;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form .btn img {
+            margin-right: 10px;
+            height: 20px;
+        }
+
+        .form .btn:hover,
+        .form .btn:focus {
+            background: #F5FFFA;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .form .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2.5px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .footer-text {
+            font-size: 12px;
+            color: #fff;
+            margin-top: 20px;
+        }
+
+        .footer-text a {
+            color: #000000;
+            text-decoration: none;
+        }
+
+        .footer-text a:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+            }
+
+            50% {
+                background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
+            }
+
+            100% {
+                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .login-page {
+                height: 100%;
+                padding: 0;
+                margin: 0;
+            }
+
+            .form {
+                margin: 0;
+                padding: 20px;
+                box-shadow: none;
+            }
+        }
+    </style>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
+        import { getAuth, GoogleAuthProvider, OAuthProvider, signInWithPopup, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCHwRT-Nj3GfPZD-If2P7iMajPjAB9RJA",
+            authDomain: "quran-pro-c1df1.firebaseapp.com",
+            projectId: "quran-pro-c1df1",
+            storageBucket: "quran-pro-c1df1.appspot.com",
+            messagingSenderId: "782064856596",
+            appId: "1:782064856596:web:3c11c7a0186a2923bac101",
+            measurementId: "G-RFVGMM8VYQ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        if (isSignInWithEmailLink(auth, window.location.href)) {
+            const email = localStorage.getItem('emailForSignIn');
+            if (email) {
+                signInWithEmailLink(auth, email, window.location.href)
+                    .then((result) => {
+                        localStorage.removeItem('emailForSignIn');
+                        handleUserProfile(result.user);
+                    })
+                    .catch((error) => {
+                        alert('Error verifying email: ' + error.message);
+                    });
+            } else {
+                alert('No email found in local storage for sign-in.');
+            }
+        }
+
+        document.getElementById('google-login-button').addEventListener('click', () => {
+            const provider = new GoogleAuthProvider();
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    handleUserProfile(result.user);
+                })
+                .catch((error) => {
+                    alert('Error signing in with Google: ' + error.message);
+                });
         });
-    });
 
-    // Add event listener to the Apple sign-in button
-    document.getElementById('apple-login-button').addEventListener('click', () => {
-      const provider = new OAuthProvider('apple.com');
-      signInWithPopup(auth, provider)
-        .then((result) => {
-          handleUserProfile(result.user);
-        })
-        .catch((error) => {
-          alert('Error signing in with Apple: ' + error.message);
+        document.getElementById('apple-login-button').addEventListener('click', () => {
+            const provider = new OAuthProvider('apple.com');
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    handleUserProfile(result.user);
+                })
+                .catch((error) => {
+                    alert('Error signing in with Apple: ' + error.message);
+                });
         });
-    });
 
-    // Add event listener to the email sign-in form
-    document.getElementById('email-login-form').addEventListener('submit', (event) => {
-      event.preventDefault();
-      const email = document.getElementById('email').value;
-      sendSignInLinkToEmail(auth, email, {
-        url: window.location.href,
-        handleCodeInApp: true
-      })
-      .then(() => {
-        // Store the email in local storage
-        localStorage.setItem('emailForSignIn', email);
-        alert('Please check your email for the activation link.');
-      })
-      .catch((error) => {
-        alert('Error sending activation link: ' + error.message);
-      });
-    });
-
-    function handleUserProfile(user) {
-      const userDocRef = doc(db, "users", user.uid);
-      getDoc(userDocRef)
-        .then((userDoc) => {
-          if (userDoc.exists()) {
-            // Store the user's name, email, and profile picture in local storage
-            localStorage.setItem("userName", userDoc.data().name);
-            localStorage.setItem("userEmail", userDoc.data().email);
-            localStorage.setItem("userAvatar", userDoc.data().avatar || user.photoURL || null);
-          } else {
-            // Create a new user document in Firestore with profile picture
-            const avatar = user.photoURL || null;
-            setDoc(userDocRef, {
-              name: user.displayName,
-              email: user.email,
-              avatar: avatar
+        document.getElementById('email-login-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            sendSignInLinkToEmail(auth, email, {
+                url: window.location.href,
+                handleCodeInApp: true
             })
             .then(() => {
-              // Store the user's name, email, and profile picture in local storage
-              localStorage.setItem("userName", user.displayName);
-              localStorage.setItem("userEmail", user.email);
-              localStorage.setItem("userAvatar", avatar);
+                localStorage.setItem('emailForSignIn', email);
+                alert('Please check your email for the activation link.');
             })
             .catch((error) => {
-              alert('Error saving user profile: ' + error.message);
+                alert('Error sending activation link: ' + error.message);
             });
-          }
-          // Redirect to profile page after storing details
-          window.location.href = 'profile.html';
-        })
-        .catch((error) => {
-          if (error.code === 'unavailable') {
-            // User is offline, use fallback data
-            const name = user.displayName;
-            const email = user.email;
-            const avatar = user.photoURL || null;
-            localStorage.setItem("userName", name);
-            localStorage.setItem("userEmail", email);
-            localStorage.setItem("userAvatar", avatar);
-            window.location.href = 'profile.html';
-          } else {
-            alert('Error getting user profile: ' + error.message);
-          }
         });
-    }
-  </script>
-</head>
-<body>
-  <h1>Login</h1>
-  <button id="google-login-button">Sign in with Google</button>
-  <button id="apple-login-button">Sign in with Apple</button>
-  <hr>
-  <h2>Or sign in with email</h2>
-  <form id="email-login-form">
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required>
-    <br>
-    <button type="submit">Send Activation Link</button>
-  </form>
-</body>
-</html>
 
+        function handleUserProfile(user) {
+            const userDocRef = doc(db, "users", user.uid);
+            getDoc(userDocRef)
+                .then((userDoc) => {
+                    if (userDoc.exists()) {
+                        localStorage.setItem("userName", userDoc.data().name);
+                        localStorage.setItem("userEmail", userDoc.data().email);
+                        localStorage.setItem("userAvatar", userDoc.data().avatar || user.photoURL || null);
+                    } else {
+                        const avatar = user.photoURL || null;
+                        setDoc(userDocRef, {
+                            name: user.displayName,
+                            email: user.email,
+                            avatar: avatar
+                        })
+                        .then(() => {
+                            localStorage.setItem("userName", user.displayName);
+                            localStorage.setItem("userEmail", user.email);
+                            localStorage.setItem("userAvatar", avatar);
+                        })
+                        .catch((error) => {
+                            alert('Error saving user profile: ' + error.message);
+                        });
+                    }
+                    window.location.href = 'profile.html';
+                })
+                .catch((error) => {
+                    if (error.code === 'unavailable') {
+                        const name = user.displayName;
+                        const email = user.email;
+                        const avatar = user.photoURL || null;
+                        localStorage.setItem("userName", name);
+                        localStorage.setItem("userEmail", email);
+                        localStorage.setItem("userAvatar", avatar);
+                        window.location.href = 'profile.html';
+                    } else {
+                        alert('Error fetching user profile: ' + error.message);
+                    }
+                });
+        }
+    </script>
+</head>
+
+<body>
+    <div class="login-page">
+        <div class="form">
+            <h1 class="heading">Welcome to Quran Pro</h1>
+            <p class="description">Your one-stop solution for reading, listening, and understanding the Quran.</p>
+            <button class="btn google-btn" id="google-login-button">
+                <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google Logo">
+                Sign in with Google
+            </button>
+            <button class="btn" id="apple-login-button">
+                <img src="https://img.icons8.com/ios-filled/50/000000/mac-os.png" alt="Apple Logo">
+                Sign in with Apple
+            </button>
+            <form id="email-login-form" class="form">
+                <input type="email" id="email" placeholder="Enter your email" class="btn">
+                <button type="submit" class="btn">
+                    <img src="https://img.icons8.com/color/48/000000/gmail-new.png" alt="Email Logo">
+                    Sign in with Email
+                </button>
+            </form>
+            <p class="footer-text">By signing in, you agree to our <a href="termsandconditions.html">Terms of Service</a> and <a href="privacypolicy.html">Privacy Policy</a>.</p>
+        </div>
+    </div>
+</body>
+
+</html>
