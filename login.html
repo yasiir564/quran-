@@ -244,20 +244,23 @@
         });
 
         function handleUserProfile(user) {
-            const userRef = doc(db, 'users', user.uid);
+                       const userRef = doc(db, 'users', user.uid);
             getDoc(userRef)
                 .then((docSnap) => {
                     if (!docSnap.exists()) {
+                        // If the user doesn't exist in Firestore, create a new record
                         setDoc(userRef, {
                             name: user.displayName || user.email.split('@')[0],
                             email: user.email,
                             avatar: user.photoURL || null
                         });
                     }
+
+                    // Store user data in localStorage
                     localStorage.setItem("userName", user.displayName || user.email.split('@')[0]);
                     localStorage.setItem("userEmail", user.email);
-                    localStorage.setItem("userAvatar", user.photoURL || null);
-                    
+                    localStorage.setItem("userAvatar", user.photoURL || '');
+
                     // Redirect immediately to profile.html
                     window.location.href = 'profile.html';
                 })
@@ -295,3 +298,4 @@
 </body>
 
 </html>
+
