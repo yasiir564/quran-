@@ -169,10 +169,18 @@
                         handleUserProfile(result.user);
                     })
                     .catch((error) => {
-                        alert('Error verifying email: ' + error.message);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error verifying email: ' + error.message,
+                        });
                     });
             } else {
-                alert('No email found in local storage for sign-in.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No email found in local storage for sign-in.',
+                });
             }
         }
 
@@ -180,10 +188,19 @@
             const provider = new GoogleAuthProvider();
             signInWithPopup(auth, provider)
                 .then((result) => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Successfully signed in with Google!',
+                    });
                     handleUserProfile(result.user);
                 })
                 .catch((error) => {
-                    alert('Error signing in with Google: ' + error.message);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error signing in with Google: ' + error.message,
+                    });
                 });
         });
 
@@ -191,67 +208,78 @@
             const provider = new OAuthProvider('apple.com');
             signInWithPopup(auth, provider)
                 .then((result) => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Successfully signed in with Apple!',
+                    });
                     handleUserProfile(result.user);
                 })
                 .catch((error) => {
-                    alert('Error signing in with Apple: ' + error.message);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error signing in with Apple: ' + error.message,
+                    });
                 });
         });
 
-        document.getElementById('email-login-form').addEventListener('submit', (event) => {
-            event.preventDefault();
-            const email = document.getElementById('email').value;
-            sendSignInLinkToEmail(auth, email, {
-                url: window.location.href,
-                handleCodeInApp: true
-            })
-            .then(() => {
-                localStorage.setItem('emailForSignIn', email);
-                alert('Please check your email for the activation link.');
-            })
-            .catch((error) => {
-                alert('Error sending activation link: ' + error.message);
+        document.getElementById('email-login-button').addEventListener('click', () => {
+            Swal.fire({
+                title: 'Sign in with Email',
+                input: 'email',
+                inputLabel: 'Enter your email address',
+                inputPlaceholder: 'name@example.com',
+                showCancelButton: true,
+                confirmButtonText: 'Send Activation Link',
+                showLoaderOnConfirm: true,
+                preConfirm: (email) => {
+                    return sendSignInLinkToEmail(auth, email, {
+                        url: window.location.href,
+                        handleCodeInApp: true
+                    })
+                    .then(() => {
+                        localStorage.setItem('emailForSignIn', email);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Email Sent',
+                            text: 'Please check your email for the activation link.',
+                        });
+                    })
+                    .catch((error) => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error sending activation link: ' + error.message,
+                        });
+                    });
+                },
+                allowOutsideClick: () => !Swal.isLoading()
             });
         });
 
         function handleUserProfile(user) {
-            const userDocRef = doc(db, "users", user.uid);
-            getDoc(userDocRef)
-                .then((userDoc) => {
-                    if (userDoc.exists()) {
-                        localStorage.setItem("userName", userDoc.data().name);
-                        localStorage.setItem("userEmail", userDoc.data().email);
-                        localStorage.setItem("userAvatar", userDoc.data().avatar || user.photoURL || null);
-                    } else {
-                        const avatar = user.photoURL || null;
-                        setDoc(userDocRef, {
-                            name: user.displayName,
+            const userRef = doc(db, 'users', user.uid);
+            getDoc(userRef)
+                .then((docSnap) => {
+                    if (!docSnap.exists()) {
+                        setDoc(userRef, {
+                            name: user.displayName || user.email.split('@')[0],
                             email: user.email,
-                            avatar: avatar
-                        })
-                        .then(() => {
-                            localStorage.setItem("userName", user.displayName);
-                            localStorage.setItem("userEmail", user.email);
-                            localStorage.setItem("userAvatar", avatar);
-                        })
-                        .catch((error) => {
-                            alert('Error saving user profile: ' + error.message);
+                            avatar: user.photoURL || null
                         });
                     }
+                    localStorage.setItem("userName", user.displayName || user.email.split('@')[0]);
+                    localStorage.setItem("userEmail", user.email);
+                    localStorage.setItem("userAvatar", user.photoURL || null);
                     window.location.href = 'profile.html';
                 })
                 .catch((error) => {
-                    if (error.code === 'unavailable') {
-                        const name = user.displayName;
-                        const email = user.email;
-                        const avatar = user.photoURL || null;
-                        localStorage.setItem("userName", name);
-                        localStorage.setItem("userEmail", email);
-                        localStorage.setItem("userAvatar", avatar);
-                        window.location.href = 'profile.html';
-                    } else {
-                        alert('Error fetching user profile: ' + error.message);
-                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error fetching user profile: ' + error.message,
+                    });
                 });
         }
     </script>
@@ -270,13 +298,10 @@
                 <img src="https://img.icons8.com/ios-filled/50/000000/mac-os.png" alt="Apple Logo">
                 Sign in with Apple
             </button>
-            <form id="email-login-form" class="form">
-                <input type="email" id="email" placeholder="Enter your email" class="btn">
-                <button type="submit" class="btn">
-                    <img src="https://img.icons8.com/color/48/000000/gmail-new.png" alt="Email Logo">
-                    Sign in with Email
-                </button>
-            </form>
+            <button class="btn" id="email-login-button">
+                <img src="https://img.icons8.com/color/48/000000/gmail-new.png" alt="Email Logo">
+                Sign in with Email
+            </button>
             <p class="footer-text">By signing in, you agree to our <a href="termsandconditions.html">Terms of Service</a> and <a href="privacypolicy.html">Privacy Policy</a>.</p>
         </div>
     </div>
