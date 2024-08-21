@@ -21,28 +21,30 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            background: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+            background-size: 400% 400%;
+            transition: background 1s ease;
         }
 
         .login-page {
+            position: fixed;
             width: 100%;
             max-width: 360px;
-            margin: auto;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-direction: column;
+            z-index: 1;
         }
 
         .form {
-            position: relative;
-            z-index: 1;
             background: #2575fc;
-            max-width: 360px;
-            width: 90%;
+            width: 100%;
             padding: 45px;
             text-align: center;
             box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
             border-radius: 15px;
+            transition: opacity 0.5s ease;
         }
 
         .form .heading {
@@ -126,14 +128,7 @@
         }
 
         @media screen and (max-width: 768px) {
-            .login-page {
-                height: 100%;
-                padding: 0;
-                margin: 0;
-            }
-
             .form {
-                margin: 0;
                 padding: 20px;
                 box-shadow: none;
             }
@@ -239,7 +234,7 @@
                         url: window.location.href,
                         handleCodeInApp: true
                     })
-                    .then(() => {
+                                        .then(() => {
                         localStorage.setItem('emailForSignIn', email);
                         Swal.fire({
                             icon: 'success',
@@ -273,7 +268,12 @@
                     localStorage.setItem("userName", user.displayName || user.email.split('@')[0]);
                     localStorage.setItem("userEmail", user.email);
                     localStorage.setItem("userAvatar", user.photoURL || null);
-                    window.location.href = 'profile.html';
+                    
+                    // Smooth transition to profile.html
+                    document.querySelector('.form').style.opacity = '0';
+                    setTimeout(() => {
+                        window.location.href = 'profile.html';
+                    }, 500); // Wait for the opacity transition to finish
                 })
                 .catch((error) => {
                     Swal.fire({
@@ -309,3 +309,4 @@
 </body>
 
 </html>
+
