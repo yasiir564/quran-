@@ -44,7 +44,6 @@
             text-align: center;
             box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
             border-radius: 15px;
-            transition: opacity 0.5s ease;
         }
 
         .form .heading {
@@ -184,11 +183,6 @@
             const provider = new GoogleAuthProvider();
             signInWithPopup(auth, provider)
                 .then((result) => {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: 'Successfully signed in with Google!',
-                    });
                     handleUserProfile(result.user);
                 })
                 .catch((error) => {
@@ -204,11 +198,6 @@
             const provider = new OAuthProvider('apple.com');
             signInWithPopup(auth, provider)
                 .then((result) => {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: 'Successfully signed in with Apple!',
-                    });
                     handleUserProfile(result.user);
                 })
                 .catch((error) => {
@@ -234,7 +223,7 @@
                         url: window.location.href,
                         handleCodeInApp: true
                     })
-                                        .then(() => {
+                    .then(() => {
                         localStorage.setItem('emailForSignIn', email);
                         Swal.fire({
                             icon: 'success',
@@ -269,11 +258,8 @@
                     localStorage.setItem("userEmail", user.email);
                     localStorage.setItem("userAvatar", user.photoURL || null);
                     
-                    // Smooth transition to profile.html
-                    document.querySelector('.form').style.opacity = '0';
-                    setTimeout(() => {
-                        window.location.href = 'profile.html';
-                    }, 500); // Wait for the opacity transition to finish
+                    // Redirect immediately to profile.html
+                    window.location.href = 'profile.html';
                 })
                 .catch((error) => {
                     Swal.fire({
@@ -309,4 +295,3 @@
 </body>
 
 </html>
-
