@@ -6,12 +6,18 @@
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, sendSignInLinkToEmail } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
     // Your web app's Firebase configuration
     const firebaseConfig = {
-      // Your Firebase configuration details
+      apiKey: "AIzaSyCCHwRT-Nj3GfPZD-If2P7iMajPjAB9RJA",
+      authDomain: "quran-pro-c1df1.firebaseapp.com",
+      projectId: "quran-pro-c1df1",
+      storageBucket: "quran-pro-c1df1.appspot.com",
+      messagingSenderId: "782064856596",
+      appId: "1:782064856596:web:3c11c7a0186a2923bac101",
+      measurementId: "G-RFVGMM8VYQ"
     };
 
     // Initialize Firebase
@@ -20,54 +26,35 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Check if the user is signing in with the email link
-    if (isSignInWithEmailLink(auth, window.location.href)) {
-      let email = localStorage.getItem('emailForSignIn');
-      if (!email) {
-        email = window.prompt('Please provide your email for confirmation');
-      }
-      signInWithEmailLink(auth, email, window.location.href)
+    // Add event listener to the Google sign-in button
+    document.getElementById('google-login-button').addEventListener('click', () => {
+      const provider = new GoogleAuthProvider();
+      signInWithPopup(auth, provider)
         .then((result) => {
-          // Remove the email from local storage
-          localStorage.removeItem('emailForSignIn');
-          // Get the user's profile information
-          const user = result.user;
-          handleUserProfile(user);
+          handleUserProfile(result.user);
         })
         .catch((error) => {
-          alert('Error signing in with email link: ' + error.message);
+          alert('Error signing in with Google: ' + error.message);
         });
-    } else {
-      // Add event listener to the Google sign-in button
-      document.getElementById('google-login-button').addEventListener('click', () => {
-        const provider = new GoogleAuthProvider();
-        signInWithPopup(auth, provider)
-          .then((result) => {
-            handleUserProfile(result.user);
-          })
-          .catch((error) => {
-            alert('Error signing in with Google: ' + error.message);
-          });
-      });
+    });
 
-      // Add event listener to the email sign-in form
-      document.getElementById('email-login-form').addEventListener('submit', (event) => {
-        event.preventDefault();
-        const email = document.getElementById('email').value;
-        sendSignInLinkToEmail(auth, email, {
-          url: window.location.href,
-          handleCodeInApp: true
-        })
-        .then(() => {
-          // Store the email in local storage
-          localStorage.setItem('emailForSignIn', email);
-          alert('Please check your email for the activation link.');
-        })
-        .catch((error) => {
-          alert('Error sending activation link: ' + error.message);
-        });
+    // Add event listener to the email sign-in form
+    document.getElementById('email-login-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const email = document.getElementById('email').value;
+      sendSignInLinkToEmail(auth, email, {
+        url: window.location.href,
+        handleCodeInApp: true
+      })
+      .then(() => {
+        // Store the email in local storage
+        localStorage.setItem('emailForSignIn', email);
+        alert('Please check your email for the activation link.');
+      })
+      .catch((error) => {
+        alert('Error sending activation link: ' + error.message);
       });
-    }
+    });
 
     function handleUserProfile(user) {
       const userDocRef = doc(db, "users", user.uid);
