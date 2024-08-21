@@ -14,7 +14,7 @@
             padding: 20px;
         }
         .container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
             background-color: #ffffff;
             padding: 20px;
@@ -24,14 +24,7 @@
         h1 {
             color: #00796b;
         }
-        input[type="text"] {
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #00796b;
-            border-radius: 4px;
-            width: calc(100% - 22px);
-        }
-        button {
+        .btn {
             padding: 10px 20px;
             border: none;
             border-radius: 4px;
@@ -39,8 +32,9 @@
             color: #ffffff;
             cursor: pointer;
             font-size: 16px;
+            margin: 10px;
         }
-        button:hover {
+        .btn:hover {
             background-color: #004d40;
         }
         .playlist {
@@ -55,55 +49,127 @@
             position: absolute;
             right: 10px;
             top: 10px;
+            background-color: #00796b;
+            color: #ffffff;
         }
-        .playlist-list {
+        .playlist button:hover {
+            background-color: #004d40;
+        }
+        .playlist-info {
+            font-size: 14px;
+            color: #004d40;
+        }
+        .surahs-dropdown {
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            border: 1px solid #00796b;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            top: 50px;
+            left: 0;
+            width: 100%;
+            z-index: 1;
+        }
+        .surahs-dropdown ul {
             list-style-type: none;
             padding: 0;
             margin: 0;
         }
-        .playlist-list li {
-            margin: 10px 0;
+        .surahs-dropdown li {
+            padding: 10px;
+            border-bottom: 1px solid #00796b;
+            cursor: pointer;
+        }
+        .surahs-dropdown li:hover {
+            background-color: #e0f2f1;
+        }
+        .surahs-dropdown .reciter {
+            font-size: 12px;
+            color: #00796b;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Playlist Manager</h1>
-        <input type="text" id="playlistName" placeholder="Enter playlist name">
-        <button onclick="createPlaylist()">Create Playlist</button>
+        <button class="btn" onclick="showCreatePlaylistDialog()">Create Playlist</button>
 
         <ul class="playlist-list" id="playlistList"></ul>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function createPlaylist() {
-            const nameInput = document.getElementById('playlistName');
-            const playlistName = nameInput.value.trim();
+        let playlists = [];
 
-            if (playlistName === '') {
-                Swal.fire('Error', 'Playlist name cannot be empty!', 'error');
-                return;
+        function showCreatePlaylistDialog() {
+            if (playlists.length === 0) {
+                Swal.fire({
+                    title: 'Create New Playlist',
+                    input: 'text',
+                    inputLabel: 'Playlist Name',
+                    inputPlaceholder: 'Enter playlist name',
+                    showCancelButton: true,
+                    confirmButtonText: 'Create',
+                    cancelButtonText: 'Cancel',
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'You need to enter a playlist name!';
+                        }
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        createPlaylist(result.value);
+                    }
+                });
+            } else {
+                Swal.fire('Info', 'You can create playlists using the button below.', 'info');
             }
+        }
 
+        function createPlaylist(name) {
+            if (name) {
+                const playlist = {
+                    name: name,
+                    surahs: []
+                };
+                playlists.push(playlist);
+                renderPlaylists();
+            }
+        }
+
+        function renderPlaylists() {
             const playlistList = document.getElementById('playlistList');
-            const playlistItem = document.createElement('li');
-            playlistItem.className = 'playlist';
-            playlistItem.innerHTML = `
-                <span>${playlistName}</span>
-                <button onclick="playPlaylist('${playlistName}')">Play</button>
-                <button onclick="deletePlaylist(this)">Delete</button>
-            `;
-            playlistList.appendChild(playlistItem);
+            playlistList.innerHTML = '';
 
-            nameInput.value = '';
+            playlists.forEach((playlist, index) => {
+                const playlistItem = document.createElement('li');
+                playlistItem.className = 'playlist';
+                playlistItem.innerHTML = `
+                    <span>${playlist.name} - ${playlist.surahs.length} Surahs</span>
+                    <button onclick="playPlaylist(${index})">Play</button>
+                    <button onclick="deletePlaylist(${index})">Delete</button>
+                    <div class="surahs-dropdown" id="dropdown-${index}">
+                        <ul>
+                            ${playlist.surahs.map(surah => `
+                                <li>
+                                    ${surah.name}
+                                    <div class="reciter">Reciter: ${surah.reciter}</div>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+                playlistItem.querySelector('button').addEventListener('click', () => toggleSurahsDropdown(index));
+                playlistList.appendChild(playlistItem);
+            });
         }
 
-        function playPlaylist(name) {
-            Swal.fire('Playing Playlist', `Now playing: ${name}`, 'info');
+        function playPlaylist(index) {
+            Swal.fire('Playing Playlist', `Now playing: ${playlists[index].name}`, 'info');
         }
 
-        function deletePlaylist(button) {
+        function deletePlaylist(index) {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to recover this playlist!",
@@ -114,11 +180,28 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    button.parentElement.remove();
+                    playlists.splice(index, 1);
+                    renderPlaylists();
                     Swal.fire('Deleted!', 'Your playlist has been deleted.', 'success');
                 }
             });
         }
+
+        function toggleSurahsDropdown(index) {
+            const dropdown = document.getElementById(`dropdown-${index}`);
+            dropdown.style.display = dropdown.style.display === 'none' || !dropdown.style.display ? 'block' : 'none';
+        }
+
+        // Example data
+        playlists.push({
+            name: 'My Favorite Surahs',
+            surahs: [
+                { name: 'Surah Al-Fatihah', reciter: 'Reciter 1' },
+                { name: 'Surah Al-Baqarah', reciter: 'Reciter 2' }
+            ]
+        });
+        renderPlaylists();
     </script>
 </body>
 </html>
+
