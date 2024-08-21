@@ -912,6 +912,7 @@ footer .text-center {
  <script src="https://unpkg.com/idb@6.1.0/build/iife/index-min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', async function() {
+    // Fetch user data from localStorage
     const user = JSON.parse(localStorage.getItem('loggedInUser'));
 
     function resetPage() {
@@ -919,23 +920,28 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById("main").style.marginLeft = "0";
     }
 
+    // Function to display user profile picture and information
     function displayProfilePicture() {
-        const user = JSON.parse(localStorage.getItem('loggedInUser'));
-        const profilePicContainer = document.getElementById('profile-pic');
-
+        const defaultProfilePic = 'https://via.placeholder.com/150';
+        const profilePicIcon = document.getElementById('profile-pic');
+        
         if (user && user.profilePicUrl) {
-            profilePicContainer.src = user.profilePicUrl;
+            profilePicIcon.src = user.profilePicUrl;
         } else {
-            profilePicContainer.src = 'https://via.placeholder.com/150';
+            profilePicIcon.src = defaultProfilePic;
         }
-        profilePicContainer.style.display = 'block';
+        profilePicIcon.style.display = 'block';
     }
 
     if (user) {
-        document.getElementById('username').textContent = user.username;
-        document.getElementById('email').textContent = user.email || '';
+        // Display user information
+        document.getElementById('username').textContent = user.username || 'John Doe';
+        document.getElementById('email').textContent = user.email || 'johndoe@example.com';
 
+        // Display profile picture
         displayProfilePicture();
+
+        // Reset page layout
         resetPage();
     }
 
@@ -1058,7 +1064,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
         surahList.innerHTML = '';
         surahList.appendChild(fragment);
-
+        
         // Add "Show More" button if there are more Surahs to show
         if (end < surahs.length) {
             const showMoreButton = document.createElement('button');
@@ -1162,9 +1168,14 @@ document.addEventListener('DOMContentLoaded', async function() {
         checkScroll();
     });
 
-    window.addEventListener('load', checkScroll);
-
+    window.addEventListener('load', () => {
+        const hash = window.location.hash;
+        if (hash) {
+            document.querySelector(hash)?.scrollIntoView();
+        }
+    });
 });
 </script>
+
 </body>
 </html>
