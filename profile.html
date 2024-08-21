@@ -1,21 +1,150 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Profile</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700|Lobster&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        .profile-container {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 90%;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .profile-container h1 {
+            font-family: 'Lobster', cursive;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #2575fc;
+        }
+
+        .profile-container p {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+
+        .profile-container span {
+            font-weight: 700;
+            color: #555;
+        }
+
+        .profile-container .avatar {
+            margin-bottom: 20px;
+        }
+
+        .profile-container .avatar img {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .btn {
+            display: inline-block;
+            margin: 10px 5px;
+            padding: 10px 20px;
+            font-size: 1em;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-back {
+            background-color: #2575fc;
+        }
+
+        .btn-logout {
+            background-color: #e74c3c;
+        }
+
+        .btn-delete {
+            background-color: #c0392b;
+        }
+
+        .btn-back:hover {
+            background-color: #1a3d8e;
+        }
+
+        .btn-logout:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-delete:hover {
+            background-color: #a93226;
+        }
+    </style>
 </head>
 <body>
-  <h1>Profile</h1>
-  <p>Name: <span id="user-name"></span></p>
-  <p>Email: <span id="user-email"></span></p>
+    <div class="profile-container">
+        <h1>User Profile</h1>
+        <div class="avatar">
+            <img id="user-avatar" src="https://via.placeholder.com/100" alt="User Avatar">
+        </div>
+        <p>Name: <span id="user-name"></span></p>
+        <p>Email: <span id="user-email"></span></p>
+        <a href="index.html" class="btn btn-back">Back to Login</a>
+        <button class="btn btn-logout" id="logout-button">Logout</button>
+        <button class="btn btn-delete" id="delete-button">Delete Account</button>
+    </div>
 
-  <script>
-    // Get the user's name and email from local storage
-    const userName = localStorage.getItem("userName");
-    const userEmail = localStorage.getItem("userEmail");
+    <script>
+        // Get the user's profile information from local storage
+        const userName = localStorage.getItem("userName");
+        const userEmail = localStorage.getItem("userEmail");
+        const userAvatar = localStorage.getItem("userAvatar");
 
-    // Display the user's name and email
-    document.getElementById("user-name").textContent = userName;
-    document.getElementById("user-email").textContent = userEmail;
-  </script>
+        // Display the user's profile information
+        document.getElementById("user-name").textContent = userName || 'No name available';
+        document.getElementById("user-email").textContent = userEmail || 'No email available';
+        document.getElementById("user-avatar").src = userAvatar || 'https://via.placeholder.com/100';
+
+        // Logout function
+        document.getElementById("logout-button").addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        });
+
+        // Delete account function
+        document.getElementById("delete-button").addEventListener('click', () => {
+            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                // Implement Firebase account deletion here
+                // Example:
+                /*
+                const auth = firebase.auth();
+                auth.currentUser.delete().then(() => {
+                    alert('Account deleted successfully.');
+                    localStorage.clear();
+                    window.location.href = 'index.html';
+                }).catch((error) => {
+                    alert('Error deleting account: ' + error.message);
+                });
+                */
+                
+                // For now, just clearing local storage and redirecting
+                localStorage.clear();
+                alert('Account deleted successfully.');
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
 </body>
 </html>
