@@ -23,8 +23,8 @@
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-color);
+            font-family: 'Amiri', serif;
+            animation: gradientAnimation 10s infinite;
             color: var(--text-color);
             display: flex;
             justify-content: center;
@@ -141,6 +141,17 @@
                 border-bottom-left-radius: 0;
             }
         }
+        @keyframes gradientAnimation {
+    0% {
+        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+    }
+    50% {
+        background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
+    }
+    100% {
+        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+    }
+}
     </style>
 </head>
 <body>
