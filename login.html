@@ -6,7 +6,7 @@
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
-    import { getAuth, GoogleAuthProvider, OAuthProvider, signInWithPopup, sendSignInLinkToEmail } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, OAuthProvider, signInWithPopup, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
     // Your web app's Firebase configuration
@@ -25,6 +25,23 @@
     const analytics = getAnalytics(app);
     const auth = getAuth(app);
     const db = getFirestore(app);
+
+    // Check if the current URL contains a sign-in link for email verification
+    if (isSignInWithEmailLink(auth, window.location.href)) {
+      const email = localStorage.getItem('emailForSignIn');
+      if (email) {
+        signInWithEmailLink(auth, email, window.location.href)
+          .then((result) => {
+            localStorage.removeItem('emailForSignIn');
+            handleUserProfile(result.user);
+          })
+          .catch((error) => {
+            alert('Error verifying email: ' + error.message);
+          });
+      } else {
+        alert('No email found in local storage for sign-in.');
+      }
+    }
 
     // Add event listener to the Google sign-in button
     document.getElementById('google-login-button').addEventListener('click', () => {
@@ -73,80 +90,45 @@
       getDoc(userDocRef)
         .then((userDoc) => {
           if (userDoc.exists()) {
-            // Store the user's name and email in local storage
+            // Store the user's name, email, and profile picture in local storage
             localStorage.setItem("userName", userDoc.data().name);
             localStorage.setItem("userEmail", userDoc.data().email);
-            displayUserProfile(userDoc.data().name, userDoc.data().email, userDoc.data().avatar || null);
+            localStorage.setItem("userAvatar", userDoc.data().avatar || user.photoURL || null);
           } else {
-            // Create a new user document in Firestore with default avatar
-            const defaultAvatar = null;  // or use a default image URL
+            // Create a new user document in Firestore with profile picture
+            const avatar = user.photoURL || null;
             setDoc(userDocRef, {
               name: user.displayName,
               email: user.email,
-              avatar: defaultAvatar
+              avatar: avatar
             })
             .then(() => {
-              // Store the user's name and email in local storage
+              // Store the user's name, email, and profile picture in local storage
               localStorage.setItem("userName", user.displayName);
               localStorage.setItem("userEmail", user.email);
-              displayUserProfile(user.displayName, user.email, defaultAvatar);
+              localStorage.setItem("userAvatar", avatar);
             })
             .catch((error) => {
               alert('Error saving user profile: ' + error.message);
             });
           }
+          // Redirect to profile page after storing details
+          window.location.href = 'profile.html';
         })
         .catch((error) => {
           if (error.code === 'unavailable') {
             // User is offline, use fallback data
             const name = user.displayName;
             const email = user.email;
+            const avatar = user.photoURL || null;
             localStorage.setItem("userName", name);
             localStorage.setItem("userEmail", email);
-            displayUserProfile(name, email, null);
+            localStorage.setItem("userAvatar", avatar);
+            window.location.href = 'profile.html';
           } else {
             alert('Error getting user profile: ' + error.message);
           }
         });
-    }
-
-    function displayUserProfile(name, email, avatar) {
-      const profileContainer = document.createElement('div');
-      profileContainer.style.textAlign = 'center';
-      profileContainer.style.marginTop = '20px';
-
-      const avatarElement = document.createElement('div');
-      avatarElement.style.width = '100px';
-      avatarElement.style.height = '100px';
-      avatarElement.style.borderRadius = '50%';
-      avatarElement.style.backgroundColor = '#007bff';
-      avatarElement.style.display = 'flex';
-      avatarElement.style.alignItems = 'center';
-      avatarElement.style.justifyContent = 'center';
-      avatarElement.style.color = '#fff';
-      avatarElement.style.fontSize = '50px';
-      avatarElement.style.margin = '0 auto';
-
-      if (avatar) {
-        avatarElement.style.backgroundImage = `url(${avatar})`;
-        avatarElement.style.backgroundSize = 'cover';
-        avatarElement.style.backgroundPosition = 'center';
-      } else {
-        avatarElement.textContent = name.charAt(0).toUpperCase();
-      }
-
-      const nameElement = document.createElement('h2');
-      nameElement.textContent = name;
-
-      const emailElement = document.createElement('p');
-      emailElement.textContent = email;
-
-      profileContainer.appendChild(avatarElement);
-      profileContainer.appendChild(nameElement);
-      profileContainer.appendChild(emailElement);
-
-      document.body.innerHTML = ''; // Clear the existing content
-      document.body.appendChild(profileContainer);
     }
   </script>
 </head>
