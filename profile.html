@@ -73,7 +73,6 @@
 
         .profile-info p {
             font-size: 1.1rem;
-            color: var(--secondary-color);
             margin-bottom: 1rem;
         }
 
@@ -89,6 +88,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 2rem;
         }
 
         .profile-avatar img {
@@ -96,6 +96,7 @@
             height: 150px;
             object-fit: cover;
             border-radius: 50%;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
         .card-grid {
@@ -183,10 +184,15 @@
 
         .dark-mode-switch i {
             color: #fff;
+            transition: transform 0.3s;
         }
 
         .dark-mode-switch:hover {
             background-color: #4b5563;
+        }
+
+        .dark-mode .dark-mode-switch i {
+            transform: rotate(180deg);
         }
 
         @media (max-width: 768px) {
