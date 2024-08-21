@@ -137,7 +137,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
-        import { getAuth, GoogleAuthProvider, OAuthProvider, signInWithPopup, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, OAuthProvider, signInWithPopup, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -154,6 +154,14 @@
         const analytics = getAnalytics(app);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
+        // Check if the user is already signed in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // If user is already signed in, redirect to profile.html
+                handleUserProfile(user);
+            }
+        });
 
         if (isSignInWithEmailLink(auth, window.location.href)) {
             const email = localStorage.getItem('emailForSignIn');
@@ -238,53 +246,41 @@
                             text: 'Error sending activation link: ' + error.message,
                         });
                     });
-                },
-                allowOutsideClick: () => !Swal.isLoading()
+                }
             });
         });
 
-        function handleUserProfile(user) {
-    // Store basic user data in localStorage immediately
-    localStorage.setItem("userName", user.displayName || user.email.split('@')[0]);
-    localStorage.setItem("userEmail", user.email);
-    localStorage.setItem("userAvatar", user.photoURL || '');
+        async function handleUserProfile(user) {
+            try {
+                const userDocRef = doc(db, "users", user.uid);
+                const userDoc = await getDoc(userDocRef);
 
-    // Redirect to profile.html immediately
-    window.location.href = 'profile.html';
-
-    // After redirecting, try to fetch additional user profile data from Firestore
-    const userRef = doc(db, 'users', user.uid);
-    getDoc(userRef)
-        .then((docSnap) => {
-            if (!docSnap.exists()) {
-                // If the user doesn't exist in Firestore, create a new record
-                setDoc(userRef, {
-                    name: user.displayName || user.email.split('@')[0],
-                    email: user.email,
-                    avatar: user.photoURL || null
+                if (userDoc.exists()) {
+                    // User document exists
+                    const userData = userDoc.data();
+                    localStorage.setItem('name', userData.name);
+                    localStorage.setItem('email', userData.email);
+                    localStorage.setItem('profilePicture', userData.profilePicture || '');
+                } else {
+                    // User document does not exist, create a new one
+                    const userData = {
+                        name: user.displayName || "Anonymous",
+                        email: user.email,
+                        profilePicture: user.photoURL || ''
+                    };
+                    await setDoc(userDocRef, userData);
+                    localStorage.setItem('name', userData.name);
+                    localStorage.setItem('email', userData.email);
+                    localStorage.setItem('profilePicture', userData.profilePicture);
+                }
+                window.location.href = "profile.html";
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error fetching user profile',
+                    text: 'Error: ' + error.message,
                 });
             }
-        })
-        .catch((error) => {
-            console.error('Error fetching user profile:', error.message);
-        });
-}
-
-                    // Store user data in localStorage
-                    localStorage.setItem("userName", user.displayName || user.email.split('@')[0]);
-                    localStorage.setItem("userEmail", user.email);
-                    localStorage.setItem("userAvatar", user.photoURL || '');
-
-                    // Redirect immediately to profile.html
-                    window.location.href = 'profile.html';
-                })
-                .catch((error) => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Error fetching user profile: ' + error.message,
-                    });
-                });
         }
     </script>
 </head>
@@ -292,24 +288,14 @@
 <body>
     <div class="login-page">
         <div class="form">
-            <h1 class="heading">Welcome to Quran Pro</h1>
-            <p class="description">Your one-stop solution for reading, listening, and understanding the Quran.</p>
-            <button class="btn google-btn" id="google-login-button">
-                <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google Logo">
-                Sign in with Google
-            </button>
-            <button class="btn" id="apple-login-button">
-                <img src="https://img.icons8.com/ios-filled/50/000000/mac-os.png" alt="Apple Logo">
-                Sign in with Apple
-            </button>
-            <button class="btn" id="email-login-button">
-                <img src="https://img.icons8.com/color/48/000000/gmail-new.png" alt="Email Logo">
-                Sign in with Email
-            </button>
-            <p class="footer-text">By signing in, you agree to our <a href="termsandconditions.html">Terms of Service</a> and <a href="privacypolicy.html">Privacy Policy</a>.</p>
+            <div class="heading">Welcome to Quran Pro</div>
+            <div class="description">Please sign in to continue</div>
+            <button id="google-login-button" class="btn"><img src="https://img.icons8.com/color/48/000000/google-logo.png" /> Sign in with Google</button>
+            <button id="apple-login-button" class="btn"><img src="https://img.icons8.com/ios-filled/50/000000/mac-os.png" /> Sign in with Apple</button>
+            <button id="email-login-button" class="btn"><img src="https://img.icons8.com/ios-glyphs/30/000000/new-post.png" /> Sign in with Email</button>
         </div>
+        <div class="footer-text">By continuing, you agree to our <a href="#">Terms of Service</a> & <a href="#">Privacy Policy</a>.</div>
     </div>
 </body>
 
 </html>
-
