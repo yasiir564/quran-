@@ -923,10 +923,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('username').textContent = user.username;
         document.getElementById('email').textContent = user.email || '';
 
-        // Fetch the profile picture from the local storage
-        const userAvatar = localStorage.getItem("userAvatar") || "https://via.placeholder.com/150";
+        // Update the profile icon with the user's profile picture
         const profilePicIcon = document.getElementById('profile-pic');
-        profilePicIcon.src = userAvatar;
+        profilePicIcon.src = user.profilePicUrl || 'https://via.placeholder.com/150';
         profilePicIcon.style.display = 'block';
 
         resetPage();
@@ -1168,7 +1167,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 profilePicUrl: 'path/to/user-profile-picture.jpg'
             };
             localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
-            localStorage.setItem('userAvatar', loggedInUser.profilePicUrl);
             location.reload();
         } else {
             alert('Invalid login credentials');
