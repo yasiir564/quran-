@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.min.css">
     <style>
         :root {
-            --primary-color: #2575fc;
+            --primary-color: #3b82f6;
             --secondary-color: #6b7280;
             --text-color: #1f2937;
             --bg-color: #f3f4f6;
@@ -97,12 +97,6 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             padding: 1.5rem;
             text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
         .card h3 {
@@ -127,7 +121,7 @@
         }
 
         .btn:hover {
-            background-color: #1a3d8e;
+            background-color: #2563eb;
         }
 
         .btn-icon {
@@ -174,11 +168,6 @@
                 <a href="#" class="btn btn-icon"><i class="fas fa-plus"></i> Create Playlist</a>
             </div>
             <div class="card">
-                <h3><i class="fas fa-crown"></i> Go Pro</h3>
-                <p>Unlock premium features</p>
-                <a href="#" class="btn btn-icon"><i class="fas fa-crown"></i> Upgrade to Pro</a>
-            </div>
-            <div class="card">
                 <h3><i class="fas fa-bookmark"></i> Bookmarks & Favorites</h3>
                 <p>Quick access to your saved items</p>
                 <a href="#" class="btn btn-icon"><i class="fas fa-bookmark"></i> View Bookmarks</a>
@@ -187,6 +176,11 @@
                 <h3><i class="fas fa-cog"></i> Settings</h3>
                 <p>Customize your account preferences</p>
                 <a href="#" class="btn btn-icon"><i class="fas fa-cog"></i> Go to Settings</a>
+            </div>
+            <div class="card">
+                <h3><i class="fas fa-crown"></i> Go Pro</h3>
+                <p>Unlock premium features</p>
+                <a href="#" class="btn btn-icon"><i class="fas fa-crown"></i> Upgrade to Pro</a>
             </div>
         </div>
     </div>
@@ -210,8 +204,8 @@
                 text: 'You will be logged out of your account.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: var(--primary-color),
-                cancelButtonColor: var(--secondary-color),
+                confirmButtonColor: '#3b82f6',
+                cancelButtonColor: '#6b7280',
                 confirmButtonText: 'Yes, log me out!'
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -229,7 +223,7 @@
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#e74c3c',
-                cancelButtonColor: var(--secondary-color),
+                cancelButtonColor: '#6b7280',
                 confirmButtonText: 'Yes, delete my account'
             }).then((result) => {
                 if (result.isConfirmed) {
