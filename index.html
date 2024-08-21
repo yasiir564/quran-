@@ -809,6 +809,7 @@ footer .text-center {
             </lord-icon>
         </div>
     </a>
+          <img src="" id="profile-pic" alt="User Profile Picture" style="display: none; width: 40px; height: 40px; border-radius: 50%;">
         </div>
 
         <div id="mySidebar" class="sidebar">
@@ -1161,7 +1162,12 @@ document.addEventListener('DOMContentLoaded', async function() {
         const password = document.getElementById('password-input').value;
 
         if (username === 'admin' && password === 'password123') {
-            localStorage.setItem('loggedInUser', JSON.stringify({username: username, email: 'admin@example.com'}));
+            const loggedInUser = {
+                username: username,
+                email: 'admin@example.com',
+                imageUrl: 'path/to/user-profile-picture.jpg'
+            };
+            localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
             location.reload();
         } else {
             alert('Invalid login credentials');
@@ -1169,6 +1175,15 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     document.getElementById('login-button').addEventListener('click', loginUser);
+
+    // Update the profile icon with the user's profile picture
+    const profilePicIcon = document.getElementById('profile-pic');
+    if (user && user.imageUrl) {
+        profilePicIcon.src = user.imageUrl;
+        profilePicIcon.style.display = 'block';
+    } else {
+        profilePicIcon.style.display = 'none';
+    }
 });
 </script>
 </body>
