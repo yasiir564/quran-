@@ -14,6 +14,9 @@
             --text-color: #1f2937;
             --bg-color: #f3f4f6;
             --card-bg: #ffffff;
+            --dark-bg-color: #1f2937;
+            --dark-text-color: #f3f4f6;
+            --dark-card-bg: #2f3136;
         }
 
         * {
@@ -23,13 +26,19 @@
         }
 
         body {
-            font-family: 'Amiri', serif;
+            font-family: 'Poppins', sans-serif;
             animation: gradientAnimation 10s infinite;
             color: var(--text-color);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            background-color: var(--dark-bg-color);
+            color: var(--dark-text-color);
         }
 
         .container {
@@ -45,6 +54,11 @@
             background-color: var(--card-bg);
             border-radius: 1rem;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-mode .profile-container {
+            background-color: var(--dark-card-bg);
         }
 
         .profile-info {
@@ -97,6 +111,16 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             padding: 1.5rem;
             text-align: center;
+            transition: background-color 0.3s, color 0.3s, transform 0.3s;
+        }
+
+        body.dark-mode .card {
+            background-color: var(--dark-card-bg);
+            color: var(--dark-text-color);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
         }
 
         .card h3 {
@@ -131,6 +155,40 @@
             gap: 0.5rem;
         }
 
+        .logout-button,
+        .delete-button {
+            background-color: #e74c3c;
+            color: #fff;
+        }
+
+        .logout-button:hover,
+        .delete-button:hover {
+            background-color: #c0392b;
+        }
+
+        .dark-mode-switch {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: var(--secondary-color);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .dark-mode-switch i {
+            color: #fff;
+        }
+
+        .dark-mode-switch:hover {
+            background-color: #4b5563;
+        }
+
         @media (max-width: 768px) {
             .profile-container {
                 grid-template-columns: 1fr;
@@ -141,20 +199,25 @@
                 border-bottom-left-radius: 0;
             }
         }
+
         @keyframes gradientAnimation {
-    0% {
-        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-    }
-    50% {
-        background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
-    }
-    100% {
-        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-    }
-}
+            0% {
+                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+            }
+            50% {
+                background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
+            }
+            100% {
+                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="dark-mode-switch">
+        <i class="fas fa-moon"></i>
+    </div>
+
     <div class="container">
         <div class="profile-container">
             <div class="profile-avatar">
@@ -165,9 +228,8 @@
                 <p>Name: <span id="user-name">John Doe</span></p>
                 <p>Email: <span id="user-email">johndoe@example.com</span></p>
                 <div class="actions">
-                    <a href="index.html" class="btn btn-icon"><i class="fas fa-arrow-left"></i> Back to Login</a>
-                    <button class="btn btn-icon" id="logout-button"><i class="fas fa-sign-out-alt"></i> Logout</button>
-                    <button class="btn btn-icon" id="delete-button"><i class="fas fa-trash"></i> Delete Account</button>
+                    <button class="btn btn-icon logout-button" id="logout-button"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    <button class="btn btn-icon delete-button" id="delete-button"><i class="fas fa-trash"></i> Delete Account</button>
                 </div>
             </div>
         </div>
@@ -202,6 +264,18 @@
         const userName = localStorage.getItem("userName") || "John Doe";
         const userEmail = localStorage.getItem("userEmail") || "johndoe@example.com";
         const userAvatar = localStorage.getItem("userAvatar") || "https://via.placeholder.com/150";
+
+        // Check if the user is logged in
+        if (!userName || !userEmail) {
+            Swal.fire({
+                title: 'Please log in',
+                text: 'You need to be logged in to view this page.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = 'index.html';
+            });
+        }
 
         // Display the user's profile information
         document.getElementById("user-name").textContent = userName;
@@ -257,6 +331,12 @@
                     window.location.href = 'index.html';
                 }
             });
+        });
+
+        // Dark mode switch
+        const darkModeSwitch = document.querySelector('.dark-mode-switch');
+        darkModeSwitch.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
         });
     </script>
 </body>
