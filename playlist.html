@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlist Manager</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e0f7fa;
+            color: #00796b;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #00796b;
+        }
+        input[type="text"] {
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #00796b;
+            border-radius: 4px;
+            width: calc(100% - 22px);
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #00796b;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #004d40;
+        }
+        .playlist {
+            border: 1px solid #00796b;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #e0f2f1;
+            position: relative;
+        }
+        .playlist button {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+        }
+        .playlist-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .playlist-list li {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Playlist Manager</h1>
+        <input type="text" id="playlistName" placeholder="Enter playlist name">
+        <button onclick="createPlaylist()">Create Playlist</button>
+
+        <ul class="playlist-list" id="playlistList"></ul>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function createPlaylist() {
+            const nameInput = document.getElementById('playlistName');
+            const playlistName = nameInput.value.trim();
+
+            if (playlistName === '') {
+                Swal.fire('Error', 'Playlist name cannot be empty!', 'error');
+                return;
+            }
+
+            const playlistList = document.getElementById('playlistList');
+            const playlistItem = document.createElement('li');
+            playlistItem.className = 'playlist';
+            playlistItem.innerHTML = `
+                <span>${playlistName}</span>
+                <button onclick="playPlaylist('${playlistName}')">Play</button>
+                <button onclick="deletePlaylist(this)">Delete</button>
+            `;
+            playlistList.appendChild(playlistItem);
+
+            nameInput.value = '';
+        }
+
+        function playPlaylist(name) {
+            Swal.fire('Playing Playlist', `Now playing: ${name}`, 'info');
+        }
+
+        function deletePlaylist(button) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to recover this playlist!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#00796b',
+                cancelButtonColor: '#d32f2f',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    button.parentElement.remove();
+                    Swal.fire('Deleted!', 'Your playlist has been deleted.', 'success');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
