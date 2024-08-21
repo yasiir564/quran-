@@ -919,15 +919,23 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById("main").style.marginLeft = "0";
     }
 
+    function displayProfilePicture() {
+        const user = JSON.parse(localStorage.getItem('loggedInUser'));
+        const profilePicContainer = document.getElementById('profile-pic');
+
+        if (user && user.profilePicUrl) {
+            profilePicContainer.src = user.profilePicUrl;
+        } else {
+            profilePicContainer.src = 'https://via.placeholder.com/150';
+        }
+        profilePicContainer.style.display = 'block';
+    }
+
     if (user) {
         document.getElementById('username').textContent = user.username;
         document.getElementById('email').textContent = user.email || '';
 
-        // Update the profile icon with the user's profile picture
-        const profilePicIcon = document.getElementById('profile-pic');
-        profilePicIcon.src = user.profilePicUrl || 'https://via.placeholder.com/150';
-        profilePicIcon.style.display = 'block';
-
+        displayProfilePicture();
         resetPage();
     }
 
@@ -1050,7 +1058,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
         surahList.innerHTML = '';
         surahList.appendChild(fragment);
-        
+
         // Add "Show More" button if there are more Surahs to show
         if (end < surahs.length) {
             const showMoreButton = document.createElement('button');
@@ -1156,24 +1164,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     window.addEventListener('load', checkScroll);
 
-    function loginUser() {
-        const username = document.getElementById('username-input').value;
-        const password = document.getElementById('password-input').value;
-
-        if (username === 'admin' && password === 'password123') {
-            const loggedInUser = {
-                username: username,
-                email: 'admin@example.com',
-                profilePicUrl: 'path/to/user-profile-picture.jpg'
-            };
-            localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
-            location.reload();
-        } else {
-            alert('Invalid login credentials');
-        }
-    }
-
-    document.getElementById('login-button').addEventListener('click', loginUser);
 });
 </script>
 </body>
