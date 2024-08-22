@@ -813,8 +813,8 @@ footer .text-center {
             </lord-icon>
         </div>
     </a>
-    <a href="profile.html" title="User Profile" id="profile-link">
-    <div class="icon-container" id="profile-icon-container">
+<a href="profile.html" title="User Profile" id="profile-link">
+    <div class="icon-container">
         <lord-icon
             src="https://cdn.lordicon.com/rivoakkk.json"
             trigger="hover"
@@ -822,10 +822,9 @@ footer .text-center {
             style="width:40px;height:40px;"
             id="default-profile-icon">
         </lord-icon>
-        <img src="" id="user-profile-pic" alt="User Profile Picture" style="display: none; width: 40px; height: 40px; border-radius: 50%;">
+        <img src="" id="user-profile-pic" alt="User Profile Picture" style="display: none; width:40px; height:40px; border-radius: 50%;">
     </div>
 </a>
-
         <div id="mySidebar" class="sidebar">
             <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
             <a href="index.html">
@@ -928,14 +927,14 @@ footer .text-center {
 document.addEventListener('DOMContentLoaded', async function() {
     // Function to check if user is logged in and update profile icon
     function updateProfileIcon() {
-        const user = JSON.parse(localStorage.getItem('loggedInUser'));
+        const userAvatar = localStorage.getItem('userAvatar');
         const defaultProfileIcon = document.getElementById('default-profile-icon');
         const userProfilePic = document.getElementById('user-profile-pic');
         const profileLink = document.getElementById('profile-link');
 
-        if (user && user.profilePicUrl) {
+        if (userAvatar) {
             defaultProfileIcon.style.display = 'none';
-            userProfilePic.src = user.profilePicUrl;
+            userProfilePic.src = userAvatar;
             userProfilePic.style.display = 'block';
             profileLink.href = 'profile.html';
         } else {
@@ -1181,16 +1180,32 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Function to handle logout
     function handleLogout() {
-        localStorage.removeItem('loggedInUser');
+        // Clear user data from localStorage
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('userAvatar');
+        
+        // Update the profile icon
         updateProfileIcon();
-        // Additional logout logic...
+        
+        // Sign out from Firebase
+        auth.signOut().then(() => {
+            // Redirect to login page or home page
+            window.location.href = 'login.html';
+               }).catch((error) => {
+            console.error('Error signing out:', error);
+            // Optionally, you can use SweetAlert to display an error message
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Error signing out. Please try again!',
+            });
+        });
     }
 
-    // You would call handleLogout() when the user clicks a logout button
-    // For example:
-    // document.getElementById('logout-button').addEventListener('click', handleLogout);
+    // Example: Attach the handleLogout function to a logout button
+    document.getElementById('logout-button').addEventListener('click', handleLogout);
 });
-</script>
-
+ </script>
 </body>
 </html>
