@@ -20,26 +20,27 @@
 }
 </script>
 <style>
-  body {
-            animation: gradientAnimation 10s infinite;
-            font-family: 'Amiri', serif;
-            margin: 0;
-            padding: 0;
-            position: relative;
-        }
+ body {
+    animation: gradientAnimation 10s infinite;
+    font-family: 'Amiri', serif;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
 
-        .section {
-            padding: 50px;
-            margin: 20px;
-            background-color: white;
-            border: 1px solid #ccc;
-            position: relative;
-            z-index: 1; /* Ensures the element is above the blurred background */
-        }
+.section {
+    padding: 50px;
+    margin: 20px;
+    background-color: white;
+    border: 1px solid #ccc;
+    position: relative;
+    z-index: 1;
+}
 
-        .blur {
-            filter: blur(5px);
-        }
+.blur {
+    filter: blur(5px);
+}
+
 .container {
     max-width: 800px;
     margin: 0 auto;
@@ -55,48 +56,53 @@ header {
 }
 
 .header-hidden {
-    top: -100px; /* Adjust this value based on your header height */
+    top: -100px;
 }
 
 .header-visible {
     top: 0;
 }
 
-/* Ensure header-icons are positioned correctly */
 .header-icons {
-    position: fixed; /* Fixed position to keep icons at the top right */
+    position: fixed;
     top: 46px;
     right: 20px;
     display: flex;
     gap: 15px;
-    z-index: 1; /* High z-index to ensure it's on top */
-    margin-bottom: 10px; /* Added space below header icons */
+    z-index: 1000;
+    margin-bottom: 10px;
 }
 
 .header-icons a {
     color: #2575fc;
     text-decoration: none;
-    font-size: 1em; /* Adjust size if needed */
+    font-size: 1em;
 }
+
 .header-icons a .icon-container {
-    background-color: #2575fc; /* Blue background color */
-    border-radius: 7px; /* Round the corners */
-    display: flex; /* Center the icon within the container */
-    align-items: center; /* Vertically center the icon */
-    justify-content: center; /* Horizontally center the icon */
-    width: 40px; /* Match the size of the icon */
-    height: 40px; /* Match the size of the icon */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.header-icons a:not(:last-child) .icon-container {
+    background-color: #2575fc;
+    border-radius: 7px;
 }
 
 .header-icons a lord-icon {
     width: 40px;
     height: 40px;
 }
-    .blur-effect {
+
+.blur-effect {
     filter: blur(5px);
     transition: filter 0.3s ease;
 }
-    .icon-container {
+
+.icon-container {
     position: relative;
     width: 40px;
     height: 40px;
@@ -111,7 +117,6 @@ header {
     object-fit: cover;
 }
 
-/* Search Container */
 .search-container {
     margin: 10px 0;
     display: flex;
@@ -152,7 +157,6 @@ header {
     justify-content: center;
 }
 
-/* Dark Mode */
 #dark-mode-toggle {
     margin: 10px 0;
     cursor: pointer;
@@ -163,72 +167,73 @@ header {
 }
 
 .surah-list {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  padding: 20px 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 20px 0;
 }
 
 .surah {
-  background: white;
-  border: 1px solid #ddd;
-  padding: 15px;
-  margin: 10px;
-  cursor: pointer;
-  text-align: center;
-  border-radius: 5px;
-  transition: transform 0.3s, background-color 0.3s, color 0.3s;
-  color: black;
-  font-size: 1.2em;
-  position: relative;
+    background: white;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 10px;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 5px;
+    transition: transform 0.3s, background-color 0.3s, color 0.3s;
+    color: black;
+    font-size: 1.2em;
+    position: relative;
 }
 
 .surah:hover {
-  transform: scale(1.05);
-  background-color: #2575fc;
-  color: white;
+    transform: scale(1.05);
+    background-color: #2575fc;
+    color: white;
 }
 
 .surah span {
-  font-size: 0.8em;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: black;
-  border-radius: 10px;
-  padding: 5px;
-  clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
-  transition: transform 0.3s;
-  color: white; /* Surah numbers in white text */
+    font-size: 0.8em;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: black;
+    border-radius: 10px;
+    padding: 5px;
+    clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+    transition: transform 0.3s;
+    color: white;
 }
 
 .surah span:hover {
-  transform: rotate(360deg);
+    transform: rotate(360deg);
 }
 
 .surah .arabic-name {
-  font-size: 0.8em;
-  color: black;
-  margin-top: 5px;
+    font-size: 0.8em;
+    color: black;
+    margin-top: 5px;
 }
-    /* Responsive Design */
+
 @media (max-width: 1200px) {
-  .surah-list {
-    grid-template-columns: repeat(3, 1fr);
-  }
+    .surah-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 @media (max-width: 900px) {
-  .surah-list {
-    grid-template-columns: repeat(2, 1fr);
-  }
+    .surah-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 600px) {
-  .surah-list {
-    grid-template-columns: 1fr;
-  }
+    .surah-list {
+        grid-template-columns: 1fr;
+    }
 }
+
 @media (max-width: 768px) {
     .surah {
         flex: 1 1 calc(50% - 20px);
@@ -240,7 +245,8 @@ header {
         flex: 1 1 100%;
     }
 }
- #show-more-button, #show-less-button {
+
+#show-more-button, #show-less-button {
     display: block;
     margin: 20px auto;
     padding: 10px 20px;
@@ -390,19 +396,18 @@ body.dark-mode h1 {
     text-decoration: underline;
 }
 
-/* Sidebar Menu */
 .sidebar {
     height: 100%;
     width: 250px;
     position: fixed;
-    z-index: 1;
+    z-index: 999;
     top: 1;
     left: -250px;
     background: linear-gradient(to top, #a8edea, #fed6e3);
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
-    margin-bottom: 10px; /* Added space below sidebar */
+    margin-bottom: 10px;
 }
 
 .sidebar a {
@@ -447,14 +452,13 @@ body.dark-mode h1 {
     position: fixed;
     top: 50px;
     left: 10px;
-    z-index: 1000; /* High z-index to ensure it's on top */
+    z-index: 998;
 }
 
 .openbtn:hover {
     background-color: #0056b3;
 }
 
-/* Navigation */
 nav ul {
     display: none;
 }
@@ -463,8 +467,8 @@ nav ul {
     display: flex;
     justify-content: space-around;
     margin-top: 50px;
-    flex-wrap: wrap; /* Default wrapping for larger screens */
-    position: relative; /* Needed for the arrow indicator */
+    flex-wrap: wrap;
+    position: relative;
 }
 
 .card {
@@ -476,8 +480,8 @@ nav ul {
     text-align: center;
     color: white;
     position: relative;
-    width: 100px; /* Default size for desktop */
-    height: 100px; /* Default size for desktop */
+    width: 100px;
+    height: 100px;
     display: flex;
     align-items: flex-end;
     justify-content: center;
@@ -519,34 +523,31 @@ nav ul {
     z-index: 2;
 }
 
-/* Responsive Styles */
 @media (max-width: 768px) {
     .mobile-cards {
-        flex-wrap: nowrap; /* No wrapping for horizontal scroll */
-        overflow-x: scroll; /* Enable horizontal scroll */
-        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-        margin-top: 80px; /* Add space between cards and header */
-        padding-left: 10px; /* Add some padding to the left for better alignment */
+        flex-wrap: nowrap;
+        overflow-x: scroll;
+        -webkit-overflow-scrolling: touch;
+        margin-top: 80px;
+        padding-left: 10px;
     }
 
     .card {
-        flex: 0 0 auto; /* Cards do not shrink or grow, keeping their size */
-        margin: 10px 5px; /* Adjust margins for horizontal alignment */
-        width: 180px; /* Larger card size for mobile */
-        height: 180px; /* Larger card size for mobile */
+        flex: 0 0 auto;
+        margin: 10px 5px;
+        width: 180px;
+        height: 180px;
     }
 
-    /* Optional: Hide scrollbar for a cleaner look */
     .mobile-cards::-webkit-scrollbar {
-        display: none; /* For WebKit browsers */
+        display: none;
     }
 
     .mobile-cards {
-        -ms-overflow-style: none;  /* For Internet Explorer and Edge */
-        scrollbar-width: none;  /* For Firefox */
+        -ms-overflow-style: none;
+        scrollbar-width: none;
     }
 
-    /* Scroll Indicator Arrow */
     .scroll-arrow {
         display: block;
         position: absolute;
@@ -560,7 +561,6 @@ nav ul {
         cursor: pointer;
     }
 
-    /* Scroll Arrow Animation */
     @keyframes bounce {
         0%, 100% {
             transform: translateY(-50%) translateX(0);
@@ -578,7 +578,6 @@ nav ul {
     }
 }
 
-
 .announcement-bar {
     background: rgba(255, 255, 255, 0.8);
     color: #fff;
@@ -587,7 +586,7 @@ nav ul {
     font-size: 1em;
     position: relative;
     overflow: hidden;
-    margin-bottom: 20px; /* Added space below the announcement bar */
+    margin-bottom: 20px;
 }
 
 .announcement-bar:before {
@@ -623,12 +622,6 @@ nav ul {
     50% { opacity: 0; }
 }
 
-/* Audio Player */
-audio {
-    width: 100%;
-    margin: 10px 0;
-}
-
 .audio-container {
     position: fixed;
     bottom: 0;
@@ -655,10 +648,9 @@ audio {
 }
 
 audio {
-    width: calc(100% - 140px); /* Adjust width to fit the control buttons */
+    width: calc(100% - 140px);
 }
 
-/* Control buttons */
 .audio-container .control-buttons {
     display: flex;
     align-items: center;
@@ -676,56 +668,10 @@ audio {
     justify-content: center;
 }
 
-/* Announcement Bar */
-.announcement-bar {
-    background: linear-gradient(to right, #2575fc, #6a11cb);
-    color: #fff;
-    padding: 10px 20px;
-    text-align: center;
-    font-size: 1em;
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 20px;
-}
-
-.announcement-bar:before {
-    content: "";
-    position: absolute;
-    width: 200%;
-    height: 200%;
-    background:  linear-gradient(45deg, #ffafbd, #ffc3a0, #ffafbd, #ffc3a0);
-    top: -50%;
-    left: -50%;
-    animation: rotateAnnouncementBg 10s linear infinite;
-    z-index: 0;
-}
-
-.announcement-bar p {
-    position: relative;
-    z-index: 1;
-    margin: 0;
-}
-
-.announcement-bar span {
-    font-weight: bold;
-    animation: blink 2s infinite;
-}
-
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-
-@keyframes rotateAnnouncementBg {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Miscellaneous */
 .spacer {
-    height: 20px; /* Adjust height as needed */
+    height: 20px;
 }
-    /* Footer Styles */
+
 footer {
     background-color: #2575fc;
     color: #fff;
@@ -790,7 +736,6 @@ footer .text-center {
     text-align: center;
     margin-top: 20px;
 }
-
 
 </style>
 
