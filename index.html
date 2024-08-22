@@ -96,6 +96,20 @@ header {
     filter: blur(5px);
     transition: filter 0.3s ease;
 }
+    .icon-container {
+    position: relative;
+    width: 40px;
+    height: 40px;
+}
+
+#user-profile-pic {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
 /* Search Container */
 .search-container {
@@ -799,18 +813,18 @@ footer .text-center {
             </lord-icon>
         </div>
     </a>
-    <a href="profile.html" title="User Profile">
-        <div class="icon-container">
-            <lord-icon
-                src="https://cdn.lordicon.com/rivoakkk.json"
-                trigger="hover"
-                colors="primary:#ffc3a0"
-                style="width:40px;height:40px;">
-            </lord-icon>
-        </div>
-    </a>
-          <img src="" id="profile-pic" alt="User Profile Picture" style="display: none; width: 40px; height: 40px; border-radius: 50%;">
-        </div>
+    <a href="profile.html" title="User Profile" id="profile-link">
+    <div class="icon-container" id="profile-icon-container">
+        <lord-icon
+            src="https://cdn.lordicon.com/rivoakkk.json"
+            trigger="hover"
+            colors="primary:#ffc3a0"
+            style="width:40px;height:40px;"
+            id="default-profile-icon">
+        </lord-icon>
+        <img src="" id="user-profile-pic" alt="User Profile Picture" style="display: none; width: 40px; height: 40px; border-radius: 50%;">
+    </div>
+</a>
 
         <div id="mySidebar" class="sidebar">
             <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
@@ -912,37 +926,31 @@ footer .text-center {
  <script src="https://unpkg.com/idb@6.1.0/build/iife/index-min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', async function() {
-    // Fetch user data from localStorage
-    const user = JSON.parse(localStorage.getItem('loggedInUser'));
+    // Function to check if user is logged in and update profile icon
+    function updateProfileIcon() {
+        const user = JSON.parse(localStorage.getItem('loggedInUser'));
+        const defaultProfileIcon = document.getElementById('default-profile-icon');
+        const userProfilePic = document.getElementById('user-profile-pic');
+        const profileLink = document.getElementById('profile-link');
+
+        if (user && user.profilePicUrl) {
+            defaultProfileIcon.style.display = 'none';
+            userProfilePic.src = user.profilePicUrl;
+            userProfilePic.style.display = 'block';
+            profileLink.href = 'profile.html';
+        } else {
+            defaultProfileIcon.style.display = 'block';
+            userProfilePic.style.display = 'none';
+            profileLink.href = 'login.html';
+        }
+    }
+
+    // Call this function when the page loads
+    updateProfileIcon();
 
     function resetPage() {
         document.getElementById("mySidebar").style.left = "-250px";
         document.getElementById("main").style.marginLeft = "0";
-    }
-
-    // Function to display user profile picture and information
-    function displayProfilePicture() {
-        const defaultProfilePic = 'https://via.placeholder.com/150';
-        const profilePicIcon = document.getElementById('profile-pic');
-        
-        if (user && user.profilePicUrl) {
-            profilePicIcon.src = user.profilePicUrl;
-        } else {
-            profilePicIcon.src = defaultProfilePic;
-        }
-        profilePicIcon.style.display = 'block';
-    }
-
-    if (user) {
-        // Display user information
-        document.getElementById('username').textContent = user.username || 'John Doe';
-        document.getElementById('email').textContent = user.email || 'johndoe@example.com';
-
-        // Display profile picture
-        displayProfilePicture();
-
-        // Reset page layout
-        resetPage();
     }
 
     function openNav() {
@@ -1065,7 +1073,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         surahList.innerHTML = '';
         surahList.appendChild(fragment);
         
-        // Add "Show More" button if there are more Surahs to show
         if (end < surahs.length) {
             const showMoreButton = document.createElement('button');
             showMoreButton.id = 'show-more-button';
@@ -1076,7 +1083,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             surahList.appendChild(showMoreButton);
         }
 
-        // Add "Show Less" button if currently showing more than 15 Surahs
         if (start > 0) {
             const showLessButton = document.createElement('button');
             showLessButton.id = 'show-less-button';
@@ -1129,7 +1135,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     function applyScrollEffects() {
         const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-        // Handle header visibility
         if (currentScrollTop > lastScrollTop) {
             header.classList.remove('header-visible');
             header.classList.add('header-hidden');
@@ -1142,7 +1147,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
 
-        // Reset header visibility after scroll
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
             header.classList.remove('header-hidden');
@@ -1174,6 +1178,17 @@ document.addEventListener('DOMContentLoaded', async function() {
             document.querySelector(hash)?.scrollIntoView();
         }
     });
+
+    // Function to handle logout
+    function handleLogout() {
+        localStorage.removeItem('loggedInUser');
+        updateProfileIcon();
+        // Additional logout logic...
+    }
+
+    // You would call handleLogout() when the user clicks a logout button
+    // For example:
+    // document.getElementById('logout-button').addEventListener('click', handleLogout);
 });
 </script>
 
