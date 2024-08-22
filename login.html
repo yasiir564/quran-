@@ -254,6 +254,19 @@
         .dark-mode-switch label:active:after {
             width: 45px;
         }
+        /* New styles to prevent form movement */
+        body.swal2-shown > [aria-hidden="true"] {
+            transition: 0.1s filter;
+            filter: blur(10px);
+        }
+
+        .swal2-popup {
+            font-size: 0.8rem !important;
+        }
+
+        .swal2-container {
+            position: fixed !important;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 </head>
