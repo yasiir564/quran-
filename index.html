@@ -64,13 +64,12 @@ header {
 
 /* Ensure header-icons are positioned correctly */
 .header-icons {
-    position: fixed; /* Fixed position to keep icons at the top right */
-    top: 46px;
+    position: fixed;
+    top: 10px;
     right: 20px;
     display: flex;
     gap: 15px;
-    z-index: 1; /* High z-index to ensure it's on top */
-    margin-bottom: 10px; /* Added space below header icons */
+    z-index: 1002; /* Increased z-index to be above everything */
 }
 
 .header-icons a {
@@ -403,7 +402,9 @@ body.dark-mode h1 {
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
-    margin-bottom: 10px; /* Added space below sidebar */
+    margin-bottom: 10px;
+    width: calc(250px - 80px); 
+    z-index: 1001; 
 }
 
 .sidebar a {
@@ -955,7 +956,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     function openNav() {
         document.getElementById("mySidebar").style.left = "0";
-        document.getElementById("main").style.marginLeft = "250px";
+        document.getElementById("main").style.marginLeft = "170px";
     }
 
     function closeNav() {
@@ -1153,6 +1154,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             header.classList.add('header-visible');
             sidebar.classList.remove('blur-effect');
         }, 200);
+
+        // No adjustments to header icons position here
     }
 
     function checkScroll() {
@@ -1193,7 +1196,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         auth.signOut().then(() => {
             // Redirect to login page or home page
             window.location.href = 'login.html';
-               }).catch((error) => {
+        }).catch((error) => {
             console.error('Error signing out:', error);
             // Optionally, you can use SweetAlert to display an error message
             Swal.fire({
