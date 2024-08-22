@@ -64,12 +64,13 @@ header {
 
 /* Ensure header-icons are positioned correctly */
 .header-icons {
-    position: fixed;
-    top: 10px;
+    position: fixed; /* Fixed position to keep icons at the top right */
+    top: 46px;
     right: 20px;
     display: flex;
     gap: 15px;
-    z-index: 1002; /* Increased z-index to be above everything */
+    z-index: 1; /* High z-index to ensure it's on top */
+    margin-bottom: 10px; /* Added space below header icons */
 }
 
 .header-icons a {
@@ -96,13 +97,9 @@ header {
     transition: filter 0.3s ease;
 }
      .icon-container {
+    position: relative;
     width: 40px;
     height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #2575fc;
-    border-radius: 50%;
 }
    
 
@@ -406,9 +403,7 @@ body.dark-mode h1 {
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
-    margin-bottom: 10px;
-    width: calc(250px - 80px); 
-    z-index: 1001; 
+    margin-bottom: 10px; /* Added space below sidebar */
 }
 
 .sidebar a {
@@ -960,7 +955,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     function openNav() {
         document.getElementById("mySidebar").style.left = "0";
-        document.getElementById("main").style.marginLeft = "170px";
+        document.getElementById("main").style.marginLeft = "250px";
     }
 
     function closeNav() {
@@ -1158,8 +1153,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             header.classList.add('header-visible');
             sidebar.classList.remove('blur-effect');
         }, 200);
-
-        // No adjustments to header icons position here
     }
 
     function checkScroll() {
@@ -1200,7 +1193,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         auth.signOut().then(() => {
             // Redirect to login page or home page
             window.location.href = 'login.html';
-        }).catch((error) => {
+               }).catch((error) => {
             console.error('Error signing out:', error);
             // Optionally, you can use SweetAlert to display an error message
             Swal.fire({
