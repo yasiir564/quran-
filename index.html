@@ -393,18 +393,20 @@ body.dark-mode h1 {
 
 /* Sidebar Menu */
 .sidebar {
-            height: 100%;
-            width: 250px;
-            position: fixed;
-            z-index: 1000;
-            top: 1;
-            left: -250px;
-            background: linear-gradient(to top, #a8edea, #fed6e3);
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-        }
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1;
+    top: 1;
+    left: -250px;
+    background: linear-gradient(to top, #a8edea, #fed6e3);
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    margin-bottom: 10px; /* Added space below sidebar */
+}
+
+
 
         .sidebar.open {
             left: 0;
