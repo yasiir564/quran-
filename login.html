@@ -267,6 +267,23 @@
         .swal2-container {
             position: fixed !important;
         }
+        html.swal2-shown,
+body.swal2-shown {
+    overflow: hidden !important;
+    height: auto !important;
+}
+
+.swal2-container {
+    overflow-y: hidden !important;
+}
+
+.swal2-popup {
+    font-size: 0.8rem !important;
+}
+
+body.swal2-height-auto {
+    height: 100vh !important;
+}
     </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 </head>
@@ -424,6 +441,8 @@
                         icon: 'success',
                         title: 'Email Sent',
                         text: 'Please check your email for the activation link.',
+                         heightAuto: false,
+                scrollbarPadding: false
                     });
                 }
             }).catch((error) => {
