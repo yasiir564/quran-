@@ -27,7 +27,7 @@
         }
 
         body {
-            font-family: 'Amiri', serif;
+            font-family: 'Poppins', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             line-height: 1.6;
@@ -44,57 +44,6 @@
             margin: 0 auto;
             padding: 2rem;
         }
-         .sidebar {
-        height: 100%;
-        width: 250px;
-        position: fixed;
-        z-index: 1001;
-        top: 0;
-        left: -250px;
-        background: linear-gradient(to top, #a8edea, #fed6e3);
-        overflow-x: hidden;
-        transition: 0.5s;
-        padding-top: 60px;
-    }
-
-    .sidebar a {
-        padding: 10px 15px;
-        text-decoration: none;
-        font-size: 18px;
-        color: #111;
-        display: block;
-        transition: 0.3s;
-    }
-
-    .sidebar a:hover {
-        color: #fff;
-        background-color: #2575fc;
-    }
-
-    .sidebar .closebtn {
-        position: absolute;
-        top: 0;
-        right: 25px;
-        font-size: 36px;
-        margin-left: 50px;
-    }
-
-    .openbtn {
-        font-size: 20px;
-        cursor: pointer;
-        background-color: #2575fc;
-        color: white;
-        padding: 10px 15px;
-        border: none;
-        position: fixed;
-        top: 30px;
-        left: 10px;
-        z-index: 1000;
-    }
-
-    .openbtn:hover {
-        background-color: #0056b3;
-    }
 
         .profile-header {
             display: flex;
@@ -195,22 +144,18 @@
         }
 
         .dark-mode-switch {
-        position: fixed;
-        top: 46px;
-        right: 20px;
-        display: flex;
-        gap: 15px;
-        z-index: 1;
-        margin-bottom: 10px;
-    }
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+        }
 
         .switch {
-        position: fixed;
-        display: inline-block;
-        width: 60px;
-        height: 34px;
-    }
-
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
 
         .switch input {
             opacity: 0;
@@ -297,6 +242,58 @@
             font-size: 18px;
             color: var(--secondary-color);
         }
+         .sidebar {
+        height: 100%;
+        width: 250px;
+        position: fixed;
+        z-index: 1001;
+        top: 0;
+        left: -250px;
+        background: linear-gradient(to top, #a8edea, #fed6e3);
+        overflow-x: hidden;
+        transition: 0.5s;
+        padding-top: 60px;
+    }
+
+    .sidebar a {
+        padding: 10px 15px;
+        text-decoration: none;
+        font-size: 18px;
+        color: #111;
+        display: block;
+        transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+        color: #fff;
+        background-color: #2575fc;
+    }
+
+    .sidebar .closebtn {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 36px;
+        margin-left: 50px;
+    }
+
+    .openbtn {
+        font-size: 20px;
+        cursor: pointer;
+        background-color: #2575fc;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        position: fixed;
+        top: 30px;
+        left: 10px;
+        z-index: 1000;
+    }
+
+    .openbtn:hover {
+        background-color: #0056b3;
+    }
+
 
         @media (max-width: 768px) {
             .profile-header {
