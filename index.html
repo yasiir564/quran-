@@ -1135,22 +1135,16 @@ document.addEventListener('DOMContentLoaded', async function() {
         const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
         if (currentScrollTop > lastScrollTop) {
-            header.classList.remove('header-visible');
-            header.classList.add('header-hidden');
-            sidebar.classList.add('blur-effect');
+            header.style.transform = "translateY(-100%)";
         } else {
-            header.classList.remove('header-hidden');
-            header.classList.add('header-visible');
-            sidebar.classList.remove('blur-effect');
+            header.style.transform = "translateY(0)";
         }
 
         lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
 
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
-            header.classList.remove('header-hidden');
-            header.classList.add('header-visible');
-            sidebar.classList.remove('blur-effect');
+            header.style.transform = "translateY(0)";
         }, 200);
     }
 
@@ -1192,7 +1186,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         auth.signOut().then(() => {
             // Redirect to login page or home page
             window.location.href = 'login.html';
-               }).catch((error) => {
+        }).catch((error) => {
             console.error('Error signing out:', error);
             // Optionally, you can use SweetAlert to display an error message
             Swal.fire({
@@ -1203,7 +1197,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
-    // Example: Attach the handleLogout function to a logout button
+    // Attach the handleLogout function to a logout button
     document.getElementById('logout-button').addEventListener('click', handleLogout);
 });
  </script>
