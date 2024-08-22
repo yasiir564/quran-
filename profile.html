@@ -242,58 +242,60 @@
             font-size: 18px;
             color: var(--secondary-color);
         }
-         .sidebar {
-        height: 100%;
-        width: 250px;
-        position: fixed;
-        z-index: 1001;
-        top: 0;
-        left: -250px;
-        background: linear-gradient(to top, #a8edea, #fed6e3);
-        overflow-x: hidden;
-        transition: 0.5s;
-        padding-top: 60px;
-    }
 
-    .sidebar a {
-        padding: 10px 15px;
-        text-decoration: none;
-        font-size: 18px;
-        color: #111;
-        display: block;
-        transition: 0.3s;
-    }
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1001;
+            top: 0;
+            left: -250px;
+            background: linear-gradient(to top, #a8edea, #fed6e3);
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
 
-    .sidebar a:hover {
-        color: #fff;
-        background-color: #2575fc;
-    }
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #111;
+            display: block;
+            transition: 0.3s;
+        }
 
-    .sidebar .closebtn {
-        position: absolute;
-        top: 0;
-        right: 25px;
-        font-size: 36px;
-        margin-left: 50px;
-    }
+        .sidebar a:hover {
+            color: #fff;
+            background-color: #2575fc;
+        }
 
-    .openbtn {
-        font-size: 20px;
-        cursor: pointer;
-        background-color: #2575fc;
-        color: white;
-        padding: 10px 15px;
-        border: none;
-        position: fixed;
-        top: 30px;
-        left: 10px;
-        z-index: 1000;
-    }
+        .sidebar .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
 
-    .openbtn:hover {
-        background-color: #0056b3;
-    }
-         @keyframes gradientAnimation {
+        .openbtn {
+            font-size: 20px;
+            cursor: pointer;
+            background-color: #2575fc;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            position: fixed;
+            top: 30px;
+            left: 10px;
+            z-index: 1000;
+        }
+
+        .openbtn:hover {
+            background-color: #0056b3;
+        }
+
+        @keyframes gradientAnimation {
             0% {
                 background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
             }
@@ -306,8 +308,6 @@
                 background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
             }
         }
-
-
 
         @media (max-width: 768px) {
             .profile-header {
@@ -333,7 +333,9 @@
             <input type="checkbox" id="darkModeToggle">
             <span class="slider"></span>
         </label>
-        <div id="mySidebar" class="sidebar">
+    </div>
+    
+    <div id="mySidebar" class="sidebar">
         <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
         <a href="index.html">
             <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
@@ -352,11 +354,8 @@
         </a>
     </div>
 
-    <div id="main">
-        <button class="openbtn" onclick="openNav()">&#9776; Quran Pro</button>
-    </div>
+    <button class="openbtn" id="openSidebarBtn">&#9776; Quran Pro</button>
 
-    </div>
     <div class="container">
         <div class="profile-header">
             <img id="user-avatar" class="profile-avatar" src="https://via.placeholder.com/150" alt="User Avatar">
@@ -404,7 +403,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.min.js"></script>
     <script>
-        
         // Check if the user is logged in
         const userName = localStorage.getItem("userName");
         const userEmail = localStorage.getItem("userEmail");
@@ -435,7 +433,7 @@
             localStorage.setItem('darkMode', isDarkMode);
             showNotification(
                 isDarkMode ? 'Dark Mode Enabled' : 'Light Mode Enabled',
-                isDarkMode ? 'Enjoy a more comfortable viewing experience.' : 'Welcome back to the light side!',
+               isDarkMode ? 'Enjoy a more comfortable viewing experience.' : 'Welcome back to the light side!',
                 isDarkMode ? 'fas fa-moon' : 'fas fa-sun'
             );
         });
@@ -446,23 +444,21 @@
             body.classList.add('dark-mode');
             darkModeToggle.checked = true;
         }
-         // Sidebar functionality
-    function openNav() {
-        document.getElementById("mySidebar").style.left = "0";
-        document.getElementById("main").style.marginLeft = "250px";
-    }
 
-    function closeNav() {
-        document.getElementById("mySidebar").style.left = "-250px";
-        document.getElementById("main").style.marginLeft = "0";
-    }
+        // Sidebar functionality
+        function openNav() {
+            document.getElementById("mySidebar").style.left = "0";
+        }
 
-    // Event listener for close button
-    document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
+        function closeNav() {
+            document.getElementById("mySidebar").style.left = "-250px";
+        }
 
-    // Event listener for open button
-    document.querySelector(".openbtn").addEventListener("click", openNav);
+        // Event listener for close button
+        document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
 
+        // Event listener for open button
+        document.getElementById("openSidebarBtn").addEventListener("click", openNav);
 
         // Sweet Notification function
         function showNotification(title, message, icon) {
