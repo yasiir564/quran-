@@ -12,15 +12,15 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
     <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "url": "https://quranproo.com",
-  "logo": "tinywow_Quran pro_62044384.png"
-}
-</script>
-<style>
-body {
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": "https://quranproo.com",
+      "logo": "tinywow_Quran pro_62044384.png"
+    }
+    </script>
+    <style>
+        body {
             animation: gradientAnimation 10s infinite;
             font-family: 'Amiri', serif;
             margin: 0;
@@ -34,864 +34,783 @@ body {
             background-color: white;
             border: 1px solid #ccc;
             position: relative;
-            z-index: 1; /* Ensures the element is above the blurred background */
+            z-index: 1;
         }
 
         .blur {
             filter: blur(5px);
         }
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    text-align: center;
-}
 
-header {
-    transition: top 0.3s;
-    position: fixed;
-    width: 100%;
-    z-index: 100;
-}
-
-.header-hidden {
-    top: -100px; /* Adjust this value based on your header height */
-}
-
-.header-visible {
-    top: 0;
-}
-
-/* Ensure header-icons are positioned correctly */
-.header-icons {
-    position: fixed; /* Fixed position to keep icons at the top right */
-    top: 46px;
-    right: 20px;
-    display: flex;
-    gap: 15px;
-    z-index: 1; /* High z-index to ensure it's on top */
-    margin-bottom: 10px; /* Added space below header icons */
-}
-
-.header-icons a {
-    color: #2575fc;
-    text-decoration: none;
-    font-size: 1em; /* Adjust size if needed */
-}
-.header-icons a .icon-container {
-    background-color: #2575fc; /* Blue background color */
-    border-radius: 7px; /* Round the corners */
-    display: flex; /* Center the icon within the container */
-    align-items: center; /* Vertically center the icon */
-    justify-content: center; /* Horizontally center the icon */
-    width: 40px; /* Match the size of the icon */
-    height: 40px; /* Match the size of the icon */
-}
-
-.header-icons a lord-icon {
-    width: 40px;
-    height: 40px;
-}
-    .blur-effect {
-    filter: blur(5px);
-    transition: filter 0.3s ease;
-}
-     .icon-container {
-    position: relative;
-    width: 40px;
-    height: 40px;
-}
-   
-
-#user-profile-pic {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* Search Container */
-.search-container {
-    margin: 10px 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-.search-container input {
-    padding: 10px;
-    font-size: 1em;
-    width: 70%;
-    border: 2px solid #ddd;
-    border-radius: 25px;
-    outline: none;
-    padding-left: 20px;
-    transition: all 0.3s;
-}
-
-.search-container input:focus {
-    border-color: #2575fc;
-}
-
-.search-container button {
-    padding: 10px;
-    font-size: 1em;
-    border: none;
-    cursor: pointer;
-    border-radius: 50%;
-    background-color: #2575fc;
-    color: #fff;
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Dark Mode */
-#dark-mode-toggle {
-    margin: 10px 0;
-    cursor: pointer;
-    color: #fff;
-    font-size: 1.5em;
-    background: none;
-    border: none;
-}
-
-.surah-list {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  padding: 20px 0;
-}
-
-.surah {
-  background: white;
-  border: 1px solid #ddd;
-  padding: 15px;
-  margin: 10px;
-  cursor: pointer;
-  text-align: center;
-  border-radius: 5px;
-  transition: transform 0.3s, background-color 0.3s, color 0.3s;
-  color: black;
-  font-size: 1.2em;
-  position: relative;
-}
-
-.surah:hover {
-  transform: scale(1.05);
-  background-color: #2575fc;
-  color: white;
-}
-
-.surah span {
-  font-size: 0.8em;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: black;
-  border-radius: 10px;
-  padding: 5px;
-  clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
-  transition: transform 0.3s;
-  color: white; /* Surah numbers in white text */
-}
-
-.surah span:hover {
-  transform: rotate(360deg);
-}
-
-.surah .arabic-name {
-  font-size: 0.8em;
-  color: black;
-  margin-top: 5px;
-}
-    /* Responsive Design */
-@media (max-width: 1200px) {
-  .surah-list {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 900px) {
-  .surah-list {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 600px) {
-  .surah-list {
-    grid-template-columns: 1fr;
-  }
-}
-@media (max-width: 768px) {
-    .surah {
-        flex: 1 1 calc(50% - 20px);
-    }
-}
-
-@media (max-width: 480px) {
-    .surah {
-        flex: 1 1 100%;
-    }
-}
- #show-more-button, #show-less-button {
-    display: block;
-    margin: 20px auto;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-}
-
-#show-more-button:hover, #show-less-button:hover {
-    background-color: #0056b3;
-}
-
-@media (max-width: 768px) {
-    #show-more-button, #show-less-button {
-        font-size: 14px;
-        padding: 8px 16px;
-    }
-}
-
-@media (max-width: 480px) {
-    #show-more-button, #show-less-button {
-        font-size: 12px;
-        padding: 6px 12px;
-    }
-}
-
-.loader {
-    border: 16px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 16px solid #3498db;
-    width: 120px;
-    height: 120px;
-    animation: spin 2s linear infinite;
-    margin: 50px auto;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-@keyframes gradientAnimation {
-    0% {
-        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-    }
-    50% {
-        background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
-    }
-    100% {
-        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-    }
-}
-
-body.dark-mode {
-    background: linear-gradient(to right, #0f0f0f, #434343);
-    color: #ddd;
-}
-
-body.dark-mode .surah {
-    background-color: #333;
-    color: #ddd;
-}
-
-body.dark-mode .surah:hover {
-    background-color: #444;
-}
-
-body.dark-mode h1 {
-    color: #ddd;
-}
-
-.typing-animation {
-    display: inline-block;
-    overflow: hidden;
-    white-space: nowrap;
-    border-right: 3px solid;
-    animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
-}
-
-@keyframes typing {
-    from { width: 0 }
-    to { width: 100% }
-}
-
-@keyframes blink-caret {
-    from, to { border-color: transparent }
-    50% { border-color: black; }
-}
-
-#calendar {
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 20px;
-    border-radius: 10px;
-    color: #333;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 20px 0;
-    font-size: 1.2em;
-    position: relative;
-    overflow: hidden;
-}
-
-#calendar:before, #calendar:after {
-    content: '';
-    position: absolute;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, #ffafbd, #ffc3a0, #ffafbd, #ffc3a0);
-    top: -50%;
-    left: -50%;
-    animation: rotateBg 10s linear infinite;
-    z-index: 0;
-}
-
-@keyframes rotateBg {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-#calendar p {
-    position: relative;
-    z-index: 1;
-    margin: 0;
-}
-
-.text-links {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.text-links a {
-    font-size: 1.2em;
-    color: #2575fc;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.text-links a:hover {
-    color: #0056b3;
-    text-decoration: underline;
-}
-
-/* Sidebar Menu */
-.sidebar {
-    height: 100%;
-    width: 250px;
-    position: fixed;
-    z-index: 1;
-    top: 1;
-    left: -250px;
-    background: linear-gradient(to top, #a8edea, #fed6e3);
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-    margin-bottom: 10px; /* Added space below sidebar */
-}
-
-.sidebar a {
-    padding: 10px 15px;
-    text-decoration: none;
-    font-size: 18px;
-    color: #111;
-    display: block;
-    transition: 0.3s;
-}
-
-.sidebar a:hover {
-    color: #fff;
-    background-color: #2575fc;
-}
-
-.sidebar .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-}
-
-#main {
-    transition: margin-left .5s;
-    padding: 16px;
-}
-
-@media screen and (max-height: 450px) {
-    .sidebar {padding-top: 15px;}
-    .sidebar a {font-size: 18px;}
-}
-
-.openbtn {
-    font-size: 20px;
-    cursor: pointer;
-    background-color: #2575fc;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    position: fixed;
-    top: 50px;
-    left: 10px;
-    z-index: 1000; /* High z-index to ensure it's on top */
-}
-
-.openbtn:hover {
-    background-color: #0056b3;
-}
-
-/* Navigation */
-nav ul {
-    display: none;
-}
-
-.mobile-cards {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 50px;
-    flex-wrap: wrap; /* Default wrapping for larger screens */
-    position: relative; /* Needed for the arrow indicator */
-}
-
-.card {
-    padding: 20px;
-    margin: 10px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
-    text-align: center;
-    color: white;
-    position: relative;
-    width: 100px; /* Default size for desktop */
-    height: 100px; /* Default size for desktop */
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    overflow: hidden;
-    background-size: cover;
-    background-position: center;
-}
-
-.card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 2px solid transparent;
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.5);
-    z-index: 1;
-}
-
-.card:hover::before {
-    border-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.5);
-}
-
-.card:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.card p {
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 5px;
-    border-radius: 5px;
-    margin: 0;
-    position: relative;
-    z-index: 2;
-}
-
-/* Responsive Styles */
-@media (max-width: 768px) {
-    .mobile-cards {
-        flex-wrap: nowrap; /* No wrapping for horizontal scroll */
-        overflow-x: scroll; /* Enable horizontal scroll */
-        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-        margin-top: 80px; /* Add space between cards and header */
-        padding-left: 10px; /* Add some padding to the left for better alignment */
-    }
-
-    .card {
-        flex: 0 0 auto; /* Cards do not shrink or grow, keeping their size */
-        margin: 10px 5px; /* Adjust margins for horizontal alignment */
-        width: 180px; /* Larger card size for mobile */
-        height: 180px; /* Larger card size for mobile */
-    }
-
-    /* Optional: Hide scrollbar for a cleaner look */
-    .mobile-cards::-webkit-scrollbar {
-        display: none; /* For WebKit browsers */
-    }
-
-    .mobile-cards {
-        -ms-overflow-style: none;  /* For Internet Explorer and Edge */
-        scrollbar-width: none;  /* For Firefox */
-    }
-
-    /* Scroll Indicator Arrow */
-    .scroll-arrow {
-        display: block;
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 2em;
-        color: #2575fc;
-        z-index: 10;
-        animation: bounce 1.5s infinite;
-        cursor: pointer;
-    }
-
-    /* Scroll Arrow Animation */
-    @keyframes bounce {
-        0%, 100% {
-            transform: translateY(-50%) translateX(0);
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
         }
-        50% {
-            transform: translateY(-50%) translateX(5px);
+
+        header {
+            transition: top 0.3s;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
         }
-    }
-}
 
-@media (max-width: 480px) {
-    .card {
-        width: 160px;
-        height: 160px;
-    }
-}
+        .header-hidden {
+            top: -100px;
+        }
 
+        .header-visible {
+            top: 0;
+        }
 
-.announcement-bar {
-    background: rgba(255, 255, 255, 0.8);
-    color: #fff;
-    padding: 10px 20px;
-    text-align: center;
-    font-size: 1em;
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 20px; /* Added space below the announcement bar */
-}
+        .header-icons {
+            position: fixed;
+            top: 46px;
+            right: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 1;
+            margin-bottom: 10px;
+        }
 
-.announcement-bar:before {
-    content: "";
-    position: absolute;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, #2575fc, #6a11cb, #2575fc, #6a11cb);
-    top: -50%;
-    left: -50%;
-    animation: rotateAnnouncementBg 10s linear infinite;
-    z-index: 0;
-}
+        .header-icons a {
+            color: #2575fc;
+            text-decoration: none;
+            font-size: 1em;
+        }
 
-@keyframes rotateAnnouncementBg {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+        .header-icons a .icon-container {
+            background-color: #2575fc;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
 
-.announcement-bar p {
-    position: relative;
-    z-index: 1;
-    margin: 0;
-}
+        .header-icons a lord-icon {
+            width: 40px;
+            height: 40px;
+        }
 
-.announcement-bar span {
-    font-weight: bold;
-    animation: blink 2s infinite;
-}
+        .blur-effect {
+            filter: blur(5px);
+            transition: filter 0.3s ease;
+        }
 
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
+        .icon-container {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
 
-/* Audio Player */
-audio {
-    width: 100%;
-    margin: 10px 0;
-}
+        #user-profile-pic {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-.audio-container {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: #2575fc;
-    padding: 10px;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 100;
-}
+        .search-container {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
 
-.audio-container button {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 1.5em;
-    cursor: pointer;
-    margin: 0 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        .search-container input {
+            padding: 10px;
+            font-size: 1em;
+            width: 70%;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            padding-left: 20px;
+            transition: all 0.3s;
+        }
 
-audio {
-    width: calc(100% - 140px); /* Adjust width to fit the control buttons */
-}
+        .search-container input:focus {
+            border-color: #2575fc;
+        }
 
-/* Control buttons */
-.audio-container .control-buttons {
-    display: flex;
-    align-items: center;
-}
+        .search-container button {
+            padding: 10px;
+            font-size: 1em;
+            border: none;
+            cursor: pointer;
+            border-radius: 50%;
+            background-color: #2575fc;
+            color: #fff;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.audio-container .control-buttons button {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 1.5em;
-    cursor: pointer;
-    margin: 0 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        #dark-mode-toggle {
+            margin: 10px 0;
+            cursor: pointer;
+            color: #fff;
+            font-size: 1.5em;
+            background: none;
+            border: none;
+        }
 
-/* Announcement Bar */
-.announcement-bar {
-    background: linear-gradient(to right, #2575fc, #6a11cb);
-    color: #fff;
-    padding: 10px 20px;
-    text-align: center;
-    font-size: 1em;
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 20px;
-}
+        .surah-list {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            padding: 20px 0;
+        }
 
-.announcement-bar:before {
-    content: "";
-    position: absolute;
-    width: 200%;
-    height: 200%;
-    background:  linear-gradient(45deg, #ffafbd, #ffc3a0, #ffafbd, #ffc3a0);
-    top: -50%;
-    left: -50%;
-    animation: rotateAnnouncementBg 10s linear infinite;
-    z-index: 0;
-}
+        .surah {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 5px;
+            transition: transform 0.3s, background-color 0.3s, color 0.3s;
+            color: black;
+            font-size: 1.2em;
+            position: relative;
+        }
 
-.announcement-bar p {
-    position: relative;
-    z-index: 1;
-    margin: 0;
-}
+        .surah:hover {
+            transform: scale(1.05);
+            background-color: #2575fc;
+            color: white;
+        }
 
-.announcement-bar span {
-    font-weight: bold;
-    animation: blink 2s infinite;
-}
+        .surah span {
+            font-size: 0.8em;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: black;
+            border-radius: 10px;
+            padding: 5px;
+            clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+            transition: transform 0.3s;
+            color: white;
+        }
 
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
+        .surah span:hover {
+            transform: rotate(360deg);
+        }
 
-@keyframes rotateAnnouncementBg {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+        .surah .arabic-name {
+            font-size: 0.8em;
+            color: black;
+            margin-top: 5px;
+        }
 
-/* Miscellaneous */
-.spacer {
-    height: 20px; /* Adjust height as needed */
-}
-    /* Footer Styles */
-footer {
-    background-color: #2575fc;
-    color: #fff;
-    padding: 20px 0;
-}
+        @media (max-width: 1200px) {
+            .surah-list {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
 
-footer .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
+        @media (max-width: 900px) {
+            .surah-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
 
-footer h3 {
-    font-size: 1.5em;
-    margin-bottom: 10px;
-}
+        @media (max-width: 600px) {
+            .surah-list {
+                grid-template-columns: 1fr;
+            }
+        }
 
-footer p, footer ul {
-    margin: 0;
-    padding: 0;
-}
+        #show-more-button, #show-less-button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
 
-footer ul {
-    list-style: none;
-    padding: 0;
-}
+        #show-more-button:hover, #show-less-button:hover {
+            background-color: #0056b3;
+        }
 
-footer ul li {
-    margin-bottom: 10px;
-}
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            margin: 50px auto;
+        }
 
-footer ul li a {
-    color: #fff;
-    text-decoration: none;
-    transition: color 0.3s;
-}
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-footer ul li a:hover {
-    color: #f0f0f0;
-    text-decoration: underline;
-}
+        @keyframes gradientAnimation {
+            0% {
+                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+            }
+            50% {
+                background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
+            }
+            100% {
+                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+            }
+        }
 
-footer .donate-btn {
-    display: inline-block;
-    background-color: #ff5722;
-    color: #fff;
-    padding: 15px 30px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background-color 0.3s;
-}
+        body.dark-mode {
+            background: linear-gradient(to right, #0f0f0f, #434343);
+            color: #ddd;
+        }
 
-footer .donate-btn:hover {
-    background-color: #e64a19;
-}
+        body.dark-mode .surah {
+            background-color: #333;
+            color: #ddd;
+        }
 
-footer .text-center {
-    text-align: center;
-    margin-top: 20px;
-}
+        body.dark-mode .surah:hover {
+            background-color: #444;
+        }
 
+        body.dark-mode h1 {
+            color: #ddd;
+        }
 
-</style>
+        .typing-animation {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid;
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
 
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
 
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: black; }
+        }
+
+        #calendar {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            font-size: 1.2em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #calendar:before, #calendar:after {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, #ffafbd, #ffc3a0, #ffafbd, #ffc3a0);
+            top: -50%;
+            left: -50%;
+            animation: rotateBg 10s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes rotateBg {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #calendar p {
+            position: relative;
+            z-index: 1;
+            margin: 0;
+        }
+
+        .text-links {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .text-links a {
+            font-size: 1.2em;
+            color: #2575fc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .text-links a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: -250px;
+            background: linear-gradient(to top, #a8edea, #fed6e3);
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #111;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            color: #fff;
+            background-color: #2575fc;
+        }
+
+        .sidebar .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        #main {
+            transition: margin-left .5s;
+            padding: 16px;
+        }
+
+        .openbtn {
+            font-size: 20px;
+            cursor: pointer;
+            background-color: #2575fc;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            position: fixed;
+            top: 50px;
+            left: 10px;
+            z-index: 1000;
+        }
+
+        .openbtn:hover {
+            background-color: #0056b3;
+        }
+
+        .mobile-cards {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 50px;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .card {
+            padding: 20px;
+            margin: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+            color: white;
+            position: relative;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.5);
+            z-index: 1;
+        }
+
+        .card:hover::before {
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.5);
+        }
+
+        .card:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .card p {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 5px;
+            border-radius: 5px;
+            margin: 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-cards {
+                flex-wrap: nowrap;
+                overflow-x: scroll;
+                -webkit-overflow-scrolling: touch;
+                margin-top: 80px;
+                padding-left: 10px;
+            }
+
+            .card {
+                flex: 0 0 auto;
+                margin: 10px 5px;
+                width: 180px;
+                height: 180px;
+            }
+
+            .mobile-cards::-webkit-scrollbar {
+                display: none;
+            }
+
+            .mobile-cards {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+
+            .scroll-arrow {
+                display: block;
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 2em;
+                color: #2575fc;
+                z-index: 10;
+                animation: bounce 1.5s infinite;
+                cursor: pointer;
+            }
+
+            @keyframes bounce {
+                0%, 100% {
+                    transform: translateY(-50%) translateX(0);
+                }
+                50% {
+                    transform: translateY(-50%) translateX(5px);
+                }
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                width: 160px;
+                height: 160px;
+            }
+        }
+
+        .announcement-bar {
+            background: rgba(255, 255, 255, 0.8);
+            color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 1em;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .announcement-bar:before {
+            content: "";
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, #2575fc, #6a11cb, #2575fc, #6a11cb);
+            top: -50%;
+            left: -50%;
+            animation: rotateAnnouncementBg 10s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes rotateAnnouncementBg {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .announcement-bar p {
+            position: relative;
+            z-index: 1;
+            margin: 0;
+        }
+
+        .announcement-bar span {
+            font-weight: bold;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .audio-container {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #2575fc;
+            padding: 10px;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .audio-container button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5em;
+            cursor: pointer;
+            margin: 0 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        audio {
+            width: calc(100% - 140px);
+        }
+
+        .audio-container .control-buttons {
+            display: flex;
+            align-items: center;
+        }
+
+        .audio-container .control-buttons button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5em;
+            cursor: pointer;
+            margin: 0 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .spacer {
+            height: 20px;
+        }
+
+        footer {
+            background-color: #2575fc;
+            color: #fff;
+            padding: 20px 0;
+        }
+
+        footer .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        footer h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        footer p, footer ul {
+            margin: 0;
+            padding: 0;
+        }
+
+        footer ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        footer ul li {
+            margin-bottom: 10px;
+        }
+
+        footer ul li a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        footer ul li a:hover {
+            color: #f0f0f0;
+            text-decoration: underline;
+        }
+
+        footer .donate-btn {
+            display: inline-block;
+            background-color: #ff5722;
+            color: #fff;
+            padding: 15px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        footer .donate-btn:hover {
+            background-color: #e64a19;
+        }
+
+        footer .text-center {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
     <header>
         <div class="announcement-bar">
             <p>Welcome to Quran Pro created by Yassin!</p>
         </div>
-      <div class="header-icons">
-    <!-- Login Icon -->
-    <a href="login.html" title="Login">
-        <div class="icon-container">
-            <lord-icon
-                src="https://cdn.lordicon.com/dxjqoygy.json"
-                trigger="hover"
-                colors="primary:#ffc3a0"
-                style="width:40px;height:40px;">
-            </lord-icon>
-        </div>
-    </a>
-<a href="profile.html" title="User Profile" id="profile-link">
-    <div class="icon-container">
-        <lord-icon
-            src="https://cdn.lordicon.com/rivoakkk.json"
-            trigger="hover"
-            colors="primary:#ffc3a0"
-            style="width:40px;height:40px;"
-            id="default-profile-icon">
-        </lord-icon>
-        <img src="" id="user-profile-pic" alt="User Profile Picture" style="display: none; width:40px; height:40px; border-radius: 50%;">
-    </div>
-</a>
-        <div id="mySidebar" class="sidebar">
-            <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
-            <a href="index.html">
-                <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
+        <div class="header-icons">
+            <a href="login.html" title="Login">
+                <div class="icon-container">
+                    <lord-icon
+                        src="https://cdn.lordicon.com/dxjqoygy.json"
+                        trigger="hover"
+                        colors="primary:#ffc3a0"
+                        style="width:40px;height:40px;">
+                    </lord-icon>
+                </div>
             </a>
-            <a href="juzz.html">
-                <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read in Juzz
+            <a href="profile.html" title="User Profile" id="profile-link">
+                <div class="icon-container">
+                    <lord-icon
+                        src="https://cdn.lordicon.com/rivoakkk.json"
+                        trigger="hover"
+                        colors="primary:#ffc3a0"
+                        style="width:40px;height:40px;"
+                        id="default-profile-icon">
+                    </lord-icon>
+                    <img src="" id="user-profile-pic" alt="User Profile Picture" style="display: none; width:40px; height:40px; border-radius: 50%;">
+                </div>
             </a>
-            <a href="audio.html">
-                <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Listen to Quran
-            </a>
-            <a href="prayer.html">
-                <lord-icon src="https://cdn.lordicon.com/tftaqjwp.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> prayer Time
-          
-            <a href="donate.html">
-                <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Donate with love
-            </a>
-        </div>
-
-        <div id="main">
-            <button class="openbtn" onclick="openNav()">&#9776; Quran Pro</button>
         </div>
     </header>
-     
 
-    <div class="container">
-        <div class="mobile-cards">
-            <a href="index.html" class="card" style="background-image: url('Untitled Project (37).jpg');">
-                <p>Read Quran</p>
-            </a>
-            <a href="juzz.html" class="card" style="background-image: url('Untitled Project (34).jpg');">
-                <p>Read  Juzz</p>
-            </a>
-            <a href="audio.html" class="card" style="background-image: url('Untitled Project (36).jpg');">
-                <p>Quran Audio</p>
-            </a>
-            <a href="tasbih.html" class="card" style="background-image: url('Untitled Project (33).jpg');">
-                <p> Count Tasbih</p>
-            </a>
-        </div>
-        <div id="calendar"></div>
-        <div class="text-links">
-            <a href="surah-yaseen.html">Surah Yaseen</a>
-            <a href="ayat-al-kursi.html">Ayat Al-Kursi</a>
-            <a href="surah-al-kahf.html">Surah Al-Kahf</a>
-        </div>
-        <div class="search-container">
-            <input type="text" id="search-input" placeholder="Search for a Surah...">
-            <button id="search-button"><i class="fas fa-search"></i></button>
-        </div>
-        <button id="dark-mode-toggle"><i class="fas fa-adjust"></i></button>
-       <div id="surah-list" class="surah-list"></div>
-        <div class="loader" id="loader"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
+        <a href="index.html">
+            <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
+        </a>
+        <a href="juzz.html">
+            <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read in Juzz
+        </a>
+        <a href="audio.html">
+            <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Listen to Quran
+        </a>
+        <a href="prayer.html">
+            <lord-icon src="https://cdn.lordicon.com/tftaqjwp.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> prayer Time
+        </a>
+        <a href="donate.html">
+            <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Donate with love
+        </a>
     </div>
-   
+
+    <div id="main">
+        <button class="openbtn" id="openSidebarBtn">&#9776; Quran Pro</button>
+        
+        <div class="container">
+            <div class="mobile-cards">
+                <a href="index.html" class="card" style="background-image: url('Untitled Project (37).jpg');">
+                    <p>Read Quran</p>
+                </a>
+                <a href="juzz.html" class="card" style="background-image: url('Untitled Project (34).jpg');">
+                    <p>Read  Juzz</p>
+                </a>
+                <a href="audio.html" class="card" style="background-image: url('Untitled Project (36).jpg');">
+                    <p>Quran Audio</p>
+                </a>
+                <a href="tasbih.html" class="card" style="background-image: url('Untitled Project (33).jpg');">
+                    <p> Count Tasbih</p>
+                </a>
+            </div>
+            <div id="calendar"></div>
+            <div class="text-links">
+                <a href="surah-yaseen.html">Surah Yaseen</a>
+                <a href="ayat-al-kursi.html">Ayat Al-Kursi</a>
+                <a href="surah-al-kahf.html">Surah Al-Kahf</a>
+            </div>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search for a Surah...">
+                <button id="search-button"><i class="fas fa-search"></i></button>
+            </div>
+            <button id="dark-mode-toggle"><i class="fas fa-adjust"></i></button>
+            <div id="surah-list" class="surah-list"></div>
+            <div class="loader" id="loader"></div>
+        </div>
+    </div>
 
     <footer>
         <div class="container">
             <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
-                <!-- About Us Section -->
                 <div style="flex: 1; min-width: 200px; margin: 10px;">
                     <h3>About Quran Pro</h3>
                     <p>Welcome to Quran Pro, your all-in-one Islamic app. Read and listen to the Quran with ease. Use our Tasbih tool to keep track of your dhikr. View worldwide prayer times to never miss a prayer. Our AI chatbot is here to assist you with any questions. Join us in enhancing your spiritual journey.</p>
                 </div>
-
-                <!-- Useful Links Section -->
                 <div style="flex: 1; min-width: 200px; margin: 10px;">
                     <h3>Useful Links</h3>
                     <ul style="list-style-type: none; padding: 0;">
@@ -899,22 +818,16 @@ footer .text-center {
                         <li><a href="juzz.html">Read in Juzz</a></li>
                         <li><a href="audio.html">Listen to Quran</a></li>
                         <li><a href="sitemap.xml">Site map</a></li>
-
-                       
                     </ul>
                 </div>
-
-                <!-- Privacy Policy & Terms Section -->
                 <div style="flex: 1; min-width: 200px; margin: 10px;">
                     <h3>Legal</h3>
                     <ul style="list-style-type: none; padding: 0;">
                         <li><a href="privacypolicy.html">Privacy Policy</a></li>
                         <li><a href="termsandconditions.html">Terms & Conditions</a></li>
-                         <li><a href="contact.html">Contact us</a></li>
+                        <li><a href="contact.html">Contact us</a></li>
                     </ul>
                 </div>
-
-                <!-- Donate Button Section -->
                 <div style="flex: 1; min-width: 200px; margin: 10px; text-align: center;">
                     <h3>Support Us</h3>
                     <p>Your support helps us to keep providing and improving our services. Consider making a donation to help us grow.</p>
@@ -923,101 +836,95 @@ footer .text-center {
             <p class="text-center">&copy; 2024 Quran Pro. All rights reserved.</p>
         </div>
     </footer>
- <script src="https://unpkg.com/idb@6.1.0/build/iife/index-min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', async function() {
-    // Function to check if user is logged in and update profile icon
-    function updateProfileIcon() {
-        const userAvatar = localStorage.getItem('userAvatar');
-        const defaultProfileIcon = document.getElementById('default-profile-icon');
-        const userProfilePic = document.getElementById('user-profile-pic');
-        const profileLink = document.getElementById('profile-link');
 
-        if (userAvatar) {
-            defaultProfileIcon.style.display = 'none';
-            userProfilePic.src = userAvatar;
-            userProfilePic.style.display = 'block';
-            profileLink.href = 'profile.html';
-        } else {
-            defaultProfileIcon.style.display = 'block';
-            userProfilePic.style.display = 'none';
-            profileLink.href = 'login.html';
-        }
-    }
+    <script src="https://unpkg.com/idb@6.1.0/build/iife/index-min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            function updateProfileIcon() {
+                const userAvatar = localStorage.getItem('userAvatar');
+                const defaultProfileIcon = document.getElementById('default-profile-icon');
+                const userProfilePic = document.getElementById('user-profile-pic');
+                const profileLink = document.getElementById('profile-link');
 
-    // Call this function when the page loads
-    updateProfileIcon();
-
-    function resetPage() {
-        document.getElementById("mySidebar").style.left = "-250px";
-        document.getElementById("main").style.marginLeft = "0";
-    }
-
-    function openNav() {
-        document.getElementById("mySidebar").style.left = "0";
-        document.getElementById("main").style.marginLeft = "250px";
-    }
-
-    function closeNav() {
-        document.getElementById("mySidebar").style.left = "-250px";
-        document.getElementById("main").style.marginLeft = "0";
-    }
-
-    function toggleDarkMode() {
-        document.body.classList.toggle('dark-mode');
-    }
-
-    function performSearch() {
-        const query = document.querySelector('#search-input').value.toLowerCase();
-        const surahElements = document.querySelectorAll('.surah');
-
-        surahElements.forEach(surahElement => {
-            const surahName = surahElement.innerText.toLowerCase();
-            if (surahName.includes(query)) {
-                surahElement.style.display = 'block';
-            } else {
-                surahElement.style.display = 'none';
+                if (userAvatar) {
+                    defaultProfileIcon.style.display = 'none';
+                    userProfilePic.src = userAvatar;
+                    userProfilePic.style.display = 'block';
+                    profileLink.href = 'profile.html';
+                } else {
+                    defaultProfileIcon.style.display = 'block';
+                    userProfilePic.style.display = 'none';
+                    profileLink.href = 'login.html';
+                }
             }
-        });
-    }
 
-    document.querySelector('.search-container button').addEventListener('click', performSearch);
+            updateProfileIcon();
 
-    document.querySelector('#search-input').addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-            performSearch();
-        }
-    });
+            function openNav() {
+                document.getElementById("mySidebar").classList.add("open");
+                document.getElementById("sidebarOverlay").classList.add("active");
+            }
 
-    document.querySelector('.openbtn').addEventListener('click', openNav);
+            function closeNav() {
+                document.getElementById("mySidebar").classList.remove("open");
+                document.getElementById("sidebarOverlay").classList.remove("active");
+            }
 
-    document.getElementById('closeSidebarBtn').addEventListener('click', closeNav);
+            function toggleDarkMode() {
+                document.body.classList.toggle('dark-mode');
+            }
 
-    function showLoader() {
-        document.getElementById('loader').style.display = 'block';
-    }
+            function performSearch() {
+                const query = document.querySelector('#search-input').value.toLowerCase();
+                const surahElements = document.querySelectorAll('.surah');
 
-    function hideLoader() {
-        document.getElementById('loader').style.display = 'none';
-    }
+                surahElements.forEach(surahElement => {
+                    const surahName = surahElement.innerText.toLowerCase();
+                    if (surahName.includes(query)) {
+                        surahElement.style.display = 'block';
+                    } else {
+                        surahElement.style.display = 'none';
+                    }
+                });
+            }
 
-    function loadContent() {
-        showLoader();
-        setTimeout(hideLoader, 2000);
-    }
+            document.querySelector('.search-container button').addEventListener('click', performSearch);
 
-    window.onload = loadContent;
-
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/service-worker.js')
-            .then(function(registration) {
-                console.log('Service Worker registered with scope:', registration.scope);
-            }).catch(function(error) {
-                console.log('Service Worker registration failed:', error);
+            document.querySelector('#search-input').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    performSearch();
+                }
             });
-    }
 
-    async function getSurahData() {
+            document.getElementById('openSidebarBtn').addEventListener('click', openNav);
+            document.getElementById('closeSidebarBtn').addEventListener('click', closeNav);
+            document.getElementById('sidebarOverlay').addEventListener('click', closeNav);
+
+            function showLoader() {
+                document.getElementById('loader').style.display = 'block';
+            }
+
+            function hideLoader() {
+                document.getElementById('loader').style.display = 'none';
+            }
+
+            function loadContent() {
+                showLoader();
+                setTimeout(hideLoader, 2000);
+            }
+
+            window.onload = loadContent;
+
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(function(registration) {
+                        console.log('Service Worker registered with scope:', registration.scope);
+                    }).catch(function(error) {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            }
+
+              async function getSurahData() {
         const db = await idb.openDB('quran-reader-db', 1, {
             upgrade(db) {
                 db.createObjectStore('surahs', { keyPath: 'number' });
