@@ -6,6 +6,8 @@
     <title>Donate - Quran Pro</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
     <style>
         :root {
             --primary-color: #3498db;
@@ -44,6 +46,8 @@
         header {
             margin-bottom: 2rem;
             position: relative;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary-color);
         }
 
         h1 {
@@ -84,20 +88,6 @@
             font-style: italic;
         }
 
-        .close-button {
-            cursor: pointer;
-            color: #e74c3c;
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            font-size: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .close-button:hover {
-            color: #c0392b;
-        }
-
         body.dark-mode {
             background: var(--background-dark);
             color: var(--text-dark);
@@ -107,18 +97,51 @@
             color: var(--text-dark);
         }
 
-        .dark-mode-toggle {
+        .switch {
             position: absolute;
             top: 1rem;
-            left: 1rem;
-            cursor: pointer;
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            transition: all 0.3s ease;
+            right: 1rem;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
         }
 
-        body.dark-mode .dark-mode-toggle {
-            color: var(--text-dark);
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
         }
 
         .modal {
@@ -231,8 +254,9 @@
                 border-radius: 0;
             }
 
-            .close-button, .dark-mode-toggle {
-                font-size: 1.25rem;
+            .switch {
+                top: 0.5rem;
+                right: 0.5rem;
             }
         }
     </style>
@@ -241,8 +265,10 @@
     <div class="container">
         <header>
             <h1>Support Quran Pro</h1>
-            <i id="dark-mode-toggle" class="fas fa-moon dark-mode-toggle"></i>
-            <span class="close-button" onclick="window.location.href='index.html'">&times;</span>
+            <label class="switch">
+                <input type="checkbox" id="dark-mode-toggle">
+                <span class="slider"></span>
+            </label>
         </header>
         <div class="ayah">
             <p>"The example of those who spend their wealth in the way of Allah is like a grain of corn that sprouts seven ears; in every ear there are a hundred grains. Allah multiplies (His reward) for whom He wills. Allah is Munificent, All-Knowing." <br> - Surah Al-Baqarah (2:261)</p>
@@ -264,7 +290,7 @@
                 <li>Enter Till Number: 
                     <div class="copy-text">
                         <input type="text" class="text" value="4088996" readonly>
-                        <button><i class="fa fa-clone"></i></button>
+                        <button id="copyButton"><i class="fa fa-clone"></i></button>
                     </div>
                 </li>
                 <li>Enter the amount you wish to donate</li>
@@ -283,12 +309,10 @@
             const donateButton = document.getElementById('donateButton');
             const modal = document.getElementById('donateModal');
             const closeModal = document.getElementsByClassName('close')[0];
-            const copyButton = document.querySelector('.copy-text button');
+            const copyButton = document.getElementById('copyButton');
 
-            darkModeToggle.addEventListener('click', () => {
+            darkModeToggle.addEventListener('change', () => {
                 document.body.classList.toggle('dark-mode');
-                darkModeToggle.classList.toggle('fa-moon');
-                darkModeToggle.classList.toggle('fa-sun');
             });
 
             donateButton.addEventListener('click', () => {
@@ -313,6 +337,22 @@
                 const copyText = document.querySelector('.copy-text input');
                 copyText.select();
                 document.execCommand('copy');
+                
+                Swal.fire({
+                    title: 'Copied!',
+                    text: 'Till number copied to clipboard',
+                    icon: 'success',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+
                 copyButton.innerHTML = '<i class="fa fa-check"></i>';
                 setTimeout(() => {
                     copyButton.innerHTML = '<i class="fa fa-clone"></i>';
