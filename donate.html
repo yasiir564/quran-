@@ -4,141 +4,154 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Donate - Quran Pro</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             margin: 0;
-            height: 100vh;
-            background: #abbaab;
-            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
-            background: linear-gradient(to right, #ffffff, #abbaab);
-            font-family: 'Amiri', serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Poppins', sans-serif;
             color: #333;
-            transition: background 0.3s, color 0.3s;
+            transition: all 0.3s ease;
         }
 
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px 20px;
             text-align: center;
             position: relative;
         }
 
         header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
             position: relative;
         }
 
         h1 {
             font-size: 2.5em;
-            color: #fff;
+            color: #2c3e50;
+            margin-bottom: 20px;
         }
 
         .donate-button {
-            display: block;
-            width: 200px;
-            margin: 20px auto;
-            padding: 10px;
+            display: inline-block;
+            padding: 12px 24px;
             text-align: center;
             color: #fff;
-            background: #28a745;
+            background: #3498db;
             text-decoration: none;
             font-size: 18px;
-            border-radius: 5px;
-            transition: background 0.3s;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
         }
 
         .donate-button:hover {
-            background: #218838;
+            background: #2980b9;
+            transform: translateY(-2px);
         }
 
         .donate-button.clicked {
-            background: #007bff;
+            background: #2ecc71;
         }
 
         .ayah {
             font-size: 18px;
-            color: #555;
+            color: #34495e;
             text-align: center;
-            margin: 20px 0;
+            margin: 40px 0;
+            font-style: italic;
         }
 
         .close-button {
             cursor: pointer;
-            color: #ff0000;
+            color: #e74c3c;
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 20px;
+            right: 20px;
             font-size: 1.5em;
+            transition: all 0.3s ease;
+        }
+
+        .close-button:hover {
+            color: #c0392b;
         }
 
         body.dark-mode {
-            background: linear-gradient(to right, #0f0f0f, #434343);
-            color: #ddd;
-        }
-
-        body.dark-mode .donate-button {
-            background: #333;
-            color: #ddd;
-        }
-
-        body.dark-mode .donate-button:hover {
-            background: #444;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: #ecf0f1;
         }
 
         body.dark-mode h1 {
-            color: #ddd;
+            color: #ecf0f1;
+        }
+
+        body.dark-mode .ayah {
+            color: #bdc3c7;
         }
 
         .dark-mode-toggle {
-            margin: 10px 0;
+            position: absolute;
+            top: 20px;
+            left: 20px;
             cursor: pointer;
             font-size: 1.5em;
-            color: #fff;
+            color: #34495e;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .dark-mode-toggle {
+            color: #ecf0f1;
         }
 
         .modal {
             display: none;
             position: fixed;
-            z-index: 1;
+            z-index: 1000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
             overflow: auto;
             background-color: rgba(0,0,0,0.4);
+            backdrop-filter: blur(5px);
         }
 
         .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 90%;
             max-width: 500px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
         }
 
         .close {
             color: #aaa;
-            float: right;
+            position: absolute;
+            top: 20px;
+            right: 20px;
             font-size: 28px;
             font-weight: bold;
+            transition: all 0.3s ease;
         }
 
         .close:hover,
         .close:focus {
-            color: #000;
+            color: #2c3e50;
             text-decoration: none;
             cursor: pointer;
         }
 
         .mpesa-image {
-            max-width: 100%;
+            max-width: 150px;
             height: auto;
             margin-bottom: 20px;
         }
@@ -146,16 +159,59 @@
         .whatsapp-link {
             display: inline-block;
             margin-top: 20px;
-            padding: 10px 20px;
+            padding: 12px 24px;
             background-color: #25D366;
             color: white;
             text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-weight: 600;
         }
 
         .whatsapp-link:hover {
             background-color: #128C7E;
+            transform: translateY(-2px);
+        }
+
+        .copy-text {
+            position: relative;
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .copy-text input {
+            padding: 10px;
+            font-size: 18px;
+            color: #555;
+            border: none;
+            outline: none;
+            background: transparent;
+        }
+
+        .copy-text button {
+            padding: 10px;
+            background: #5784f5;
+            color: #fff;
+            border: none;
+            outline: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-text button:hover {
+            background: #4a67b7;
+        }
+
+        @media (max-width: 600px) {
+            .modal-content {
+                margin: 0;
+                width: 100%;
+                height: 100%;
+                border-radius: 0;
+            }
         }
     </style>
 </head>
@@ -164,7 +220,7 @@
         <header>
             <h1>Support Quran Pro</h1>
             <i id="dark-mode-toggle" class="fas fa-moon dark-mode-toggle"></i>
-            <span class="close-button" onclick="window.location.href='index.html'">×</span>
+            <span class="close-button" onclick="window.location.href='index.html'">&times;</span>
         </header>
         <div class="ayah">
             <p>"The example of those who spend their wealth in the way of Allah is like a grain of corn that sprouts seven ears; in every ear there are a hundred grains. Allah multiplies (His reward) for whom He wills. Allah is Munificent, All-Knowing." <br> - Surah Al-Baqarah (2:261)</p>
@@ -183,7 +239,12 @@
                 <li>Go to M-Pesa on your phone</li>
                 <li>Select "Lipa na M-Pesa"</li>
                 <li>Choose "Buy Goods and Services"</li>
-                <li>Enter Till Number: <strong>4088996</strong></li>
+                <li>Enter Till Number: 
+                    <div class="copy-text">
+                        <input type="text" class="text" value="4088996" readonly>
+                        <button><i class="fa fa-clone"></i></button>
+                    </div>
+                </li>
                 <li>Enter the amount you wish to donate</li>
                 <li>Enter your M-Pesa PIN to confirm</li>
             </ol>
@@ -200,31 +261,40 @@
             const donateButton = document.getElementById('donateButton');
             const modal = document.getElementById('donateModal');
             const closeModal = document.getElementsByClassName('close')[0];
+            const copyButton = document.querySelector('.copy-text button');
 
             darkModeToggle.addEventListener('click', () => {
                 document.body.classList.toggle('dark-mode');
-                if (document.body.classList.contains('dark-mode')) {
-                    darkModeToggle.classList.remove('fa-moon');
-                    darkModeToggle.classList.add('fa-sun');
-                } else {
-                    darkModeToggle.classList.remove('fa-sun');
-                    darkModeToggle.classList.add('fa-moon');
-                }
+                darkModeToggle.classList.toggle('fa-moon');
+                darkModeToggle.classList.toggle('fa-sun');
             });
 
             donateButton.addEventListener('click', () => {
                 donateButton.classList.add('clicked');
                 modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
             });
 
             closeModal.addEventListener('click', () => {
                 modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
             });
 
             window.addEventListener('click', (event) => {
                 if (event.target == modal) {
                     modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
                 }
+            });
+
+            copyButton.addEventListener('click', () => {
+                const copyText = document.querySelector('.copy-text input');
+                copyText.select();
+                document.execCommand('copy');
+                copyButton.innerHTML = '<i class="fa fa-check"></i>';
+                setTimeout(() => {
+                    copyButton.innerHTML = '<i class="fa fa-clone"></i>';
+                }, 2000);
             });
         });
     </script>
