@@ -208,58 +208,58 @@
             background-color: #128C7E;
             transform: translateY(-2px);
         }
-          .sidebar {
-        height: 100%;
-        width: 250px;
-        position: fixed;
-        z-index: 1001;
-        top: 0;
-        left: -250px;
-        background: linear-gradient(to top, #a8edea, #fed6e3);
-        overflow-x: hidden;
-        transition: 0.5s;
-        padding-top: 60px;
-    }
 
-    .sidebar a {
-        padding: 10px 15px;
-        text-decoration: none;
-        font-size: 18px;
-        color: #111;
-        display: block;
-        transition: 0.3s;
-    }
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1001;
+            top: 0;
+            left: -250px;
+            background: linear-gradient(to top, #a8edea, #fed6e3);
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
 
-    .sidebar a:hover {
-        color: #fff;
-        background-color: #2575fc;
-    }
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #111;
+            display: block;
+            transition: 0.3s;
+        }
 
-    .sidebar .closebtn {
-        position: absolute;
-        top: 0;
-        right: 25px;
-        font-size: 36px;
-        margin-left: 50px;
-    }
+        .sidebar a:hover {
+            color: #fff;
+            background-color: #2575fc;
+        }
 
-    .openbtn {
-        font-size: 20px;
-        cursor: pointer;
-        background-color: #2575fc;
-        color: white;
-        padding: 10px 15px;
-        border: none;
-        position: fixed;
-        top: 30px;
-        left: 10px;
-        z-index: 1000;
-    }
+        .sidebar .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
 
-    .openbtn:hover {
-        background-color: #0056b3;
-    }
+        .openbtn {
+            font-size: 20px;
+            cursor: pointer;
+            background-color: #2575fc;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            position: fixed;
+            top: 30px;
+            left: 10px;
+            z-index: 1000;
+        }
 
+        .openbtn:hover {
+            background-color: #0056b3;
+        }
 
         .copy-text {
             position: relative;
@@ -295,6 +295,25 @@
             background: #2980b9;
         }
 
+        .donation-info {
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .donation-info h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .donation-info ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .donation-info li {
+            margin-bottom: 0.5rem;
+        }
+
         @media (max-width: 600px) {
             .container {
                 padding: 1rem;
@@ -323,33 +342,61 @@
                 <span class="slider"></span>
             </label>
             <div id="mySidebar" class="sidebar">
-        <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
-        <a href="index.html">
-            <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
-        </a>
-        <a href="juzz.html">
-            <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read in Juzz
-        </a>
-        <a href="audio.html">
-            <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Listen to Quran
-        </a>
-        <a href="prayer.html">
-            <lord-icon src="https://cdn.lordicon.com/tftaqjwp.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Prayer Time
-        </a>
-        <a href="donate.html">
-            <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Donate with Love
-        </a>
-    </div>
+                <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
+                <a href="index.html">
+                    <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
+                </a>
+                <a href="juzz.html">
+                    <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read in Juzz
+                </a>
+                <a href="audio.html">
+                    <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Listen to Quran
+                </a>
+                <a href="prayer.html">
+                    <lord-icon src="https://cdn.lordicon.com/tftaqjwp.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Prayer Time
+                </a>
+                <a href="donate.html">
+                    <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Donate with Love
+                </a>
+            </div>
 
-    <div id="main">
-        <button class="openbtn" onclick="openNav()">&#9776; Quran Pro</button>
-    </div>
+            <div id="main">
+                <button class="openbtn" onclick="openNav()">&#9776; Quran Pro</button>
+            </div>
         </header>
         <div class="ayah">
             <p>"The example of those who spend their wealth in the way of Allah is like a grain of corn that sprouts seven ears; in every ear there are a hundred grains. Allah multiplies (His reward) for whom He wills. Allah is Munificent, All-Knowing." <br> - Surah Al-Baqarah (2:261)</p>
         </div>
         <button id="donateButton" class="donate-button">Donate Now</button>
         <p>Thank you for your generosity and support. May Allah bless you and your family abundantly.</p>
+
+        <div class="donation-info">
+            <h2>How Your Donation Helps</h2>
+            <ul>
+                <li>Maintaining and improving the Quran Pro app</li>
+                <li>Developing new features to enhance user experience</li>
+                <li>Supporting our team of developers and Islamic scholars</li>
+                <li>Funding research for better Quranic resources</li>
+                <li>Providing free access to Quranic content for those who can't afford it</li>
+            </ul>
+
+            <h2>Impact of Your Donation</h2>
+            <p>Your contribution, no matter how small, helps us reach more Muslims worldwide, providing them with easy access to the Holy Quran and related resources. By supporting Quran Pro, you're participating in spreading the message of Islam and helping others connect with their faith.</p>
+
+            <h2>Who Can Donate?</h2>
+            <p>Anyone who wishes to support the cause of spreading Quranic knowledge can donate. Whether you're a regular user of Quran Pro or simply someone who believes in our mission, your contribution is welcome and appreciated.</p>
+
+            <h2>How Much Can You Donate?</h2>
+            <p>There's no minimum or maximum limit to donations. You can contribute any amount you're comfortable with, from as little as $1 to as much as you'd like. Remember, every contribution, regardless of its size, is valuable and helps us in our mission.</p>
+
+            <h2>Other Ways to Support</h2>
+            <ul>
+                <li>Share Quran Pro with your friends and family</li>
+                <li>Provide feedback to help us improve</li>
+                <li>Volunteer your skills if you're a developer, designer, or translator</li>
+                <li>Pray for our success and the acceptance of our efforts</li>
+            </ul>
+        </div>
     </div>
 
     <div id="donateModal" class="modal">
@@ -370,7 +417,7 @@
                 </li>
                 <li>Enter the amount you wish to donate</li>
                 <li>Enter your M-Pesa PIN to confirm</li>
-            </ol>
+                </ol>
             <p>For any questions or assistance, please contact us:</p>
             <a href="https://wa.me/254726057525" class="whatsapp-link" target="_blank">
                 <i class="fab fa-whatsapp"></i> Chat with us on WhatsApp
@@ -389,21 +436,19 @@
             darkModeToggle.addEventListener('change', () => {
                 document.body.classList.toggle('dark-mode');
             });
-             function openNav() {
-        document.getElementById("mySidebar").style.left = "0";
-        document.getElementById("main").style.marginLeft = "250px";
-    }
 
-    function closeNav() {
-        document.getElementById("mySidebar").style.left = "-250px";
-        document.getElementById("main").style.marginLeft = "0";
-    }
+            function openNav() {
+                document.getElementById("mySidebar").style.left = "0";
+                document.getElementById("main").style.marginLeft = "250px";
+            }
 
-    
-    document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
+            function closeNav() {
+                document.getElementById("mySidebar").style.left = "-250px";
+                document.getElementById("main").style.marginLeft = "0";
+            }
 
-   
-    document.querySelector(".openbtn").addEventListener("click", openNav);
+            document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
+            document.querySelector(".openbtn").addEventListener("click", openNav);
 
             donateButton.addEventListener('click', () => {
                 donateButton.classList.add('clicked');
