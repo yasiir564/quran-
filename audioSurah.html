@@ -724,7 +724,12 @@
 const addToPlaylistButton = document.getElementById('addToPlaylistButton');
 const playlistDropdown = document.getElementById('playlistDropdown');
 
-addToPlaylistButton.addEventListener('click', handleAddToPlaylist);
+// Ensure the button exists before adding an event listener
+if (addToPlaylistButton) {
+    addToPlaylistButton.addEventListener('click', handleAddToPlaylist);
+} else {
+    console.error('Add to Playlist button not found!');
+}
 
 function isUserLoggedIn() {
     const userName = localStorage.getItem("userName");
@@ -734,10 +739,12 @@ function isUserLoggedIn() {
 
 function getUserPlaylists() {
     const savedPlaylists = localStorage.getItem('userPlaylists');
+    console.log('Retrieved playlists:', savedPlaylists);
     return savedPlaylists ? JSON.parse(savedPlaylists) : [];
 }
 
 function handleAddToPlaylist() {
+    console.log('Add to Playlist button clicked.');
     if (!isUserLoggedIn()) {
         Swal.fire({
             title: 'Login Required',
@@ -755,7 +762,8 @@ function handleAddToPlaylist() {
     }
 
     const playlists = getUserPlaylists();
-    
+    console.log('User playlists:', playlists);
+
     let playlistOptions = playlists.map(playlist => 
         `<button class="swal2-confirm swal2-styled" onclick="addToSelectedPlaylist('${playlist.name}')">${playlist.name}</button>`
     ).join('');
@@ -777,10 +785,12 @@ function handleAddToPlaylist() {
 }
 
 function redirectToCreateNewPlaylist() {
+    console.log('Redirecting to playlist.html');
     window.location.href = 'playlist.html';
 }
 
 function addToSelectedPlaylist(playlistName) {
+    console.log('Adding to playlist:', playlistName);
     const playlists = getUserPlaylists();
     const playlist = playlists.find(p => p.name === playlistName);
 
@@ -792,6 +802,11 @@ function addToSelectedPlaylist(playlistName) {
         });
         return;
     }
+
+    // Assume currentSheikh, currentSurahId, and surahTitle are defined elsewhere
+    console.log('Current Sheikh:', currentSheikh);
+    console.log('Current Surah ID:', currentSurahId);
+    console.log('Surah Title:', surahTitle);
 
     if (!currentSheikh || !currentSurahId || !surahTitle) {
         Swal.fire({
@@ -844,6 +859,7 @@ function addToSelectedPlaylist(playlistName) {
 
 function updateAddToPlaylistButtonVisibility() {
     const playlists = getUserPlaylists();
+    console.log('Updating Add to Playlist button visibility.');
     addToPlaylistButton.style.display = playlists.length > 0 ? 'block' : 'none';
 }
 
