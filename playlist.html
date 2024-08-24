@@ -234,6 +234,10 @@
             color: #666;
         }
 
+        .swal2-select {
+            margin-bottom: 10px;
+        }
+
         /* Responsive styles */
         @media (max-width: 768px) {
             .container {
@@ -308,6 +312,18 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        const surahs = [
+            { id: 1, name: "Al-Fatihah", audioUrl: "https://example.com/al-fatihah.mp3" },
+            { id: 2, name: "Al-Baqarah", audioUrl: "https://example.com/al-baqarah.mp3" },
+            { id: 3, name: "Ali 'Imran", audioUrl: "https://example.com/ali-imran.mp3" }
+        ];
+
+        const sheikhsData = [
+            { id: 1, name: "Mishary Rashid Alafasy", imageUrl: "https://example.com/mishary.jpg" },
+            { id: 2, name: "Abdul Rahman Al-Sudais", imageUrl: "https://example.com/sudais.jpg" },
+            { id: 3, name: "Saud Al-Shuraim", imageUrl: "https://example.com/shuraim.jpg" }
+        ];
+
         let playlists = [];
         let audio = new Audio();
         let currentPlaylistIndex = 0;
@@ -326,7 +342,6 @@
                 inputValidator: (value) => {
                     if (!value) {
                         return 'You need to enter a playlist name!';
-                   
                     }
                 }
             }).then((result) => {
@@ -362,6 +377,9 @@
                             <button class="playlist-action" onclick="playPlaylist(${index})">
                                 <i class="fas fa-play"></i>
                             </button>
+                            <button class="playlist-action" onclick="addSurahToPlaylist(${index})">
+                                <i class="fas fa-plus"></i>
+                            </button>
                             <button class="playlist-action" onclick="deletePlaylist(${index})">
                                 <i class="fas fa-trash"></i>
                             </button>
@@ -385,6 +403,44 @@
                     </ul>
                 `;
                 playlistContainer.appendChild(playlistElement);
+            });
+        }
+
+        function addSurahToPlaylist(playlistIndex) {
+            Swal.fire({
+                title: 'Add Surah to Playlist',
+                html: `
+                    <select id="surahSelect" class="swal2-select">
+                        ${surahs.map(surah => `<option value="${surah.id}">${surah.name}</option>`).join('')}
+                    </select>
+                    <select id="sheikhSelect" class="swal2-select">
+                        ${sheikhsData.map(sheikh => `<option value="${sheikh.id}">${sheikh.name}</option>`).join('')}
+                    </select>
+                `,
+                focusConfirm: false,
+                preConfirm: () => {
+                    const surahId = document.getElementById('surahSelect').value;
+                    const sheikhId = document.getElementById('sheikhSelect').value;
+                    return { surahId, sheikhId };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const { surahId, sheikhId } = result.value;
+                    const surah = surahs.find(s => s.id === parseInt(surahId));
+                    const sheikh = sheikhsData.find(s => s.id === parseInt(sheikhId));
+                    
+                    playlists[playlistIndex].items.push({
+                        surahName: surah.name,
+                        audioUrl: surah.audioUrl,
+                        sheikh: {
+                            name: sheikh.name,
+                            imageUrl: sheikh.imageUrl
+                        }
+                    });
+                    
+                    savePlaylistsToLocalStorage();
+                    renderPlaylists();
+                }
             });
         }
 
