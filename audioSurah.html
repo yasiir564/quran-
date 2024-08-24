@@ -818,7 +818,7 @@ window.redirectToCreateNewPlaylist = function() {
     window.location.href = 'playlist.html';
 }
 
-// Add the selected item to the chosen playlist
+// Add the selected item to the chosen playlist and store the audio file
 window.addToSelectedPlaylist = function(playlistName) {
     console.log('Adding to playlist:', playlistName);
     const playlists = getUserPlaylists();
@@ -833,12 +833,13 @@ window.addToSelectedPlaylist = function(playlistName) {
         return;
     }
 
-    // Assume currentSheikh, currentSurahId, and surahTitle are defined elsewhere
+    // Assume currentSheikh, currentSurahId, surahTitle, and audioFileUrl are defined elsewhere
     console.log('Current Sheikh:', currentSheikh);
     console.log('Current Surah ID:', currentSurahId);
     console.log('Surah Title:', surahTitle);
+    console.log('Audio File URL:', audioFileUrl);
 
-    if (!currentSheikh || !currentSurahId || !surahTitle) {
+    if (!currentSheikh || !currentSurahId || !surahTitle || !audioFileUrl) {
         Swal.fire({
             title: 'Error',
             text: 'Unable to add to playlist. Please try again.',
@@ -855,7 +856,8 @@ window.addToSelectedPlaylist = function(playlistName) {
             arabicName: currentSheikh.arabicName,
             imageUrl: currentSheikh.imageUrl
         },
-        surahName: surahTitle.textContent
+        surahName: surahTitle.textContent,
+        audioFileUrl: audioFileUrl // Store the audio file URL
     };
 
     if (!playlist.items) {
@@ -866,6 +868,9 @@ window.addToSelectedPlaylist = function(playlistName) {
         playlist.items.push(playlistItem);
         const updatedPlaylists = playlists.map(p => p.name === playlist.name ? playlist : p);
         localStorage.setItem('userPlaylists', JSON.stringify(updatedPlaylists));
+
+        // Store the audio file in local storage
+        localStorage.setItem(`audio_${playlistItem.surahId}_${playlistItem.sheikh.id}`, playlistItem.audioFileUrl);
 
         Swal.fire({
             title: 'Added to Playlist',
@@ -893,6 +898,7 @@ function updateAddToPlaylistButtonVisibility() {
     console.log('Updating Add to Playlist button visibility.');
     addToPlaylistButton.style.display = playlists.length > 0 ? 'block' : 'none';
 }
+
     function stopAudio() {
         if (currentAudio) {
             currentAudio.pause();
