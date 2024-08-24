@@ -730,119 +730,134 @@
         sheikh.rating = Math.random() * 5; // Random rating between 0 and 5
         sheikh.popularity = Math.floor(Math.random() * 1000000); // Random popularity between 0 and 1,000,000
     });
-              const addToPlaylistButton = document.getElementById('addToPlaylistButton');
-            const playlistDropdown = document.getElementById('playlistDropdown');
+const addToPlaylistButton = document.getElementById('addToPlaylistButton');
+const playlistDropdown = document.getElementById('playlistDropdown');
 
-            addToPlaylistButton.addEventListener('click', handleAddToPlaylist);
+addToPlaylistButton.addEventListener('click', handleAddToPlaylist);
 
-          function isUserLoggedIn() {
+function isUserLoggedIn() {
     const userName = localStorage.getItem("userName");
     const userEmail = localStorage.getItem("userEmail");
     return userName && userEmail;
 }
 
-            function getUserPlaylists() {
-                // Replace this with your actual playlist retrieval logic
-                return JSON.parse(localStorage.getItem('userPlaylists')) || [];
+function getUserPlaylists() {
+    const savedPlaylists = localStorage.getItem('userPlaylists');
+    return savedPlaylists ? JSON.parse(savedPlaylists) : [];
+}
+
+function handleAddToPlaylist() {
+    if (!isUserLoggedIn()) {
+        Swal.fire({
+            title: 'Login Required',
+            text: 'You need to log in to add items to a playlist.',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Log in',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'login.html';
             }
+        });
+        return;
+    }
 
-            function handleAddToPlaylist() {
-                if (!isUserLoggedIn()) {
-                    Swal.fire({
-                        title: 'Login Required',
-                        text: 'You need to log in to add items to a playlist.',
-                        icon: 'info',
-                        showCancelButton: true,
-                        confirmButtonText: 'Log in',
-                        cancelButtonText: 'Cancel'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = 'login.html';
-                        }
-                    });
-                    return;
-                }
-
-                const playlists = getUserPlaylists();
-                if (playlists.length === 0) {
-                    Swal.fire({
-                        title: 'No Playlists',
-                        text: 'You haven\'t created any playlists yet.',
-                        icon: 'info',
-                        showCancelButton: true,
-                        confirmButtonText: 'Create Playlist',
-                        cancelButtonText: 'Cancel'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = 'playlist.html';
-                        }
-                    });
-                    return;
-                }
-
-                showPlaylistDropdown(playlists);
+    const playlists = getUserPlaylists();
+    if (playlists.length === 0) {
+        Swal.fire({
+            title: 'No Playlists',
+            text: 'You haven\'t created any playlists yet.',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Create Playlist',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'playlist.html';
             }
+        });
+        return;
+    }
 
-            function showPlaylistDropdown(playlists) {
-                playlistDropdown.innerHTML = '';
-                playlists.forEach(playlist => {
-                    const item = document.createElement('div');
-                    item.className = 'playlist-dropdown-item';
-                    item.textContent = playlist.name;
-                    item.addEventListener('click', () => addToSelectedPlaylist(playlist));
-                    playlistDropdown.appendChild(item);
-                });
-                playlistDropdown.style.display = 'block';
+    showPlaylistDropdown(playlists);
+}
 
-                // Close dropdown when clicking outside
-                document.addEventListener('click', closeDropdown);
-            }
+function showPlaylistDropdown(playlists) {
+    playlistDropdown.innerHTML = '';
+    playlists.forEach(playlist => {
+        const item = document.createElement('div');
+        item.className = 'playlist-dropdown-item';
+        item.textContent = playlist.name;
+        item.addEventListener('click', () => addToSelectedPlaylist(playlist));
+        playlistDropdown.appendChild(item);
+    });
+    playlistDropdown.style.display = 'block';
 
-            function closeDropdown(e) {
-                if (!playlistDropdown.contains(e.target) && e.target !== addToPlaylistButton) {
-                    playlistDropdown.style.display = 'none';
-                    document.removeEventListener('click', closeDropdown);
-                }
-            }
+    // Close dropdown when clicking outside
+    document.addEventListener('click', closeDropdown);
+}
 
-            function addToSelectedPlaylist(playlist) {
-                if (currentSheikh && currentSurahId) {
-                    const playlistItem = {
-                        surahId: currentSurahId,
-                        sheikh: {
-                            id: currentSheikh.id,
-                            name: currentSheikh.name,
-                            arabicName: currentSheikh.arabicName,
-                            imageUrl: currentSheikh.imageUrl
-                        },
-                        surahName: surahTitle.textContent
-                    };
+function closeDropdown(e) {
+    if (!playlistDropdown.contains(e.target) && e.target !== addToPlaylistButton) {
+        playlistDropdown.style.display = 'none';
+        document.removeEventListener('click', closeDropdown);
+    }
+}
 
-                    if (!playlist.items.some(item => item.surahId === playlistItem.surahId && item.sheikh.id === playlistItem.sheikh.id)) {
-                        playlist.items.push(playlistItem);
-                        localStorage.setItem('userPlaylists', JSON.stringify(getUserPlaylists()));
+function addToSelectedPlaylist(playlist) {
+    if (!currentSheikh || !currentSurahId || !surahTitle) {
+        Swal.fire({
+            title: 'Error',
+            text: 'Unable to add to playlist. Please try again.',
+            icon: 'error',
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false
+        });
+        return;
+    }
 
-                        Swal.fire({
-                            title: 'Added to Playlist',
-                            text: `${playlistItem.surahName} by ${playlistItem.sheikh.name} has been added to "${playlist.name}".`,
-                            icon: 'success',
-                            timer: 2000,
-                            timerProgressBar: true,
-                            showConfirmButton: false
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Already in Playlist',
-                            text: 'This surah by this reciter is already in the selected playlist.',
-                            icon: 'info',
-                            timer: 2000,
-                            timerProgressBar: true,
-                            showConfirmButton: false
-                        });
-                    }
-                }
-                playlistDropdown.style.display = 'none';
-            }
+    const playlistItem = {
+        surahId: currentSurahId,
+        sheikh: {
+            id: currentSheikh.id,
+            name: currentSheikh.name,
+            arabicName: currentSheikh.arabicName,
+            imageUrl: currentSheikh.imageUrl
+        },
+        surahName: surahTitle.textContent
+    };
+
+    if (!playlist.items) {
+        playlist.items = [];
+    }
+
+    if (!playlist.items.some(item => item.surahId === playlistItem.surahId && item.sheikh.id === playlistItem.sheikh.id)) {
+        playlist.items.push(playlistItem);
+        const updatedPlaylists = getUserPlaylists().map(p => p.name === playlist.name ? playlist : p);
+        localStorage.setItem('userPlaylists', JSON.stringify(updatedPlaylists));
+
+        Swal.fire({
+            title: 'Added to Playlist',
+            text: `${playlistItem.surahName} by ${playlistItem.sheikh.name} has been added to "${playlist.name}".`,
+            icon: 'success',
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false
+        });
+    } else {
+        Swal.fire({
+            title: 'Already in Playlist',
+            text: 'This surah by this reciter is already in the selected playlist.',
+            icon: 'info',
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false
+        });
+    }
+    playlistDropdown.style.display = 'none';
+}
     function stopAudio() {
         if (currentAudio) {
             currentAudio.pause();
