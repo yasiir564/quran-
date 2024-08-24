@@ -833,12 +833,13 @@ window.addToSelectedPlaylist = function(playlistName) {
         return;
     }
 
-    // Assume currentSheikh, currentSurahId, and surahTitle are defined elsewhere
+    // Assume currentSheikh, currentSurahId, surahTitle, and audioUrl are defined elsewhere
     console.log('Current Sheikh:', currentSheikh);
     console.log('Current Surah ID:', currentSurahId);
     console.log('Surah Title:', surahTitle);
+    console.log('Audio URL:', audioUrl); // Make sure this variable is defined and contains the correct audio URL
 
-    if (!currentSheikh || !currentSurahId || !surahTitle) {
+    if (!currentSheikh || !currentSurahId || !surahTitle || !audioUrl) {
         Swal.fire({
             title: 'Error',
             text: 'Unable to add to playlist. Please try again.',
@@ -855,7 +856,8 @@ window.addToSelectedPlaylist = function(playlistName) {
             arabicName: currentSheikh.arabicName,
             imageUrl: currentSheikh.imageUrl
         },
-        surahName: surahTitle.textContent
+        surahName: surahTitle.textContent,
+        audioUrl: audioUrl // Add this line to include the audio URL
     };
 
     if (!playlist.items) {
