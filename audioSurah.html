@@ -793,15 +793,15 @@ function handleAddToPlaylist() {
     console.log('User playlists:', playlists);
 
     let playlistOptions = playlists.map(playlist => 
-        <button class="swal2-confirm swal2-styled" onclick="addToSelectedPlaylist('${playlist.name}')">${playlist.name}</button>
+        `<button class="swal2-confirm swal2-styled" onclick="addToSelectedPlaylist('${playlist.name}')">${playlist.name}</button>`
     ).join('');
 
     Swal.fire({
         title: 'Add to Playlist',
-        html: 
+        html: `
             ${playlistOptions}
             <button class="swal2-confirm swal2-styled" onclick="redirectToCreateNewPlaylist()">Create New Playlist</button>
-        ,
+        `,
         showConfirmButton: false,
         showCancelButton: true,
         cancelButtonText: 'Cancel',
@@ -869,7 +869,7 @@ window.addToSelectedPlaylist = function(playlistName) {
 
         Swal.fire({
             title: 'Added to Playlist',
-            text: ${playlistItem.surahName} by ${playlistItem.sheikh.name} has been added to "${playlist.name}".,
+            text: `${playlistItem.surahName} by ${playlistItem.sheikh.name} has been added to "${playlist.name}".`,
             icon: 'success',
             timer: 2000,
             timerProgressBar: true,
@@ -893,7 +893,6 @@ function updateAddToPlaylistButtonVisibility() {
     console.log('Updating Add to Playlist button visibility.');
     addToPlaylistButton.style.display = playlists.length > 0 ? 'block' : 'none';
 }
-
     function stopAudio() {
         if (currentAudio) {
             currentAudio.pause();
