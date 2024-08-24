@@ -727,129 +727,154 @@ const playlistDropdown = document.getElementById('playlistDropdown');
 addToPlaylistButton.addEventListener('click', handleAddToPlaylist);
 
 function isUserLoggedIn() {
-        const userName = localStorage.getItem("userName");
-        const userEmail = localStorage.getItem("userEmail");
-        return userName && userEmail;
-    }
+    const userName = localStorage.getItem("userName");
+    const userEmail = localStorage.getItem("userEmail");
+    return userName && userEmail;
+}
 
-    function getUserPlaylists() {
-        const savedPlaylists = localStorage.getItem('userPlaylists');
-        return savedPlaylists ? JSON.parse(savedPlaylists) : [];
-    }
+function getUserPlaylists() {
+    const savedPlaylists = localStorage.getItem('userPlaylists');
+    return savedPlaylists ? JSON.parse(savedPlaylists) : [];
+}
 
-    function handleAddToPlaylist() {
-        if (!isUserLoggedIn()) {
-            Swal.fire({
-                title: 'Login Required',
-                text: 'You need to log in to add items to a playlist.',
-                icon: 'info',
-                showCancelButton: true,
-                confirmButtonText: 'Log in',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = 'login.html';
-                }
-            });
-            return;
-        }
-
-        const playlists = getUserPlaylists();
-        
-        let playlistOptions = playlists.map(playlist => 
-            `<button class="swal2-confirm swal2-styled" onclick="addToSelectedPlaylist('${playlist.name}')">${playlist.name}</button>`
-        ).join('');
-
+function handleAddToPlaylist() {
+    if (!isUserLoggedIn()) {
         Swal.fire({
-            title: 'Add to Playlist',
-            html: `
-                ${playlistOptions}
-                <button class="swal2-confirm swal2-styled" onclick="createNewPlaylist()">Create New Playlist</button>
-            `,
-            showConfirmButton: false,
+            title: 'Login Required',
+            text: 'You need to log in to add items to a playlist.',
+            icon: 'info',
             showCancelButton: true,
-            cancelButtonText: 'Cancel',
-            customClass: {
-                container: 'add-to-playlist-container',
-                popup: 'add-to-playlist-popup'
+            confirmButtonText: 'Log in',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'login.html';
             }
         });
+        return;
     }
 
-    function createNewPlaylist() {
-        window.location.href = 'playlist.html';
+    const playlists = getUserPlaylists();
+    
+    let playlistOptions = playlists.map(playlist => 
+        `<button class="swal2-confirm swal2-styled" onclick="addToSelectedPlaylist('${playlist.name}')">${playlist.name}</button>`
+    ).join('');
+
+    Swal.fire({
+        title: 'Add to Playlist',
+        html: `
+            ${playlistOptions}
+            <button class="swal2-confirm swal2-styled" onclick="createNewPlaylist()">Create New Playlist</button>
+        `,
+        showConfirmButton: false,
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+        customClass: {
+            container: 'add-to-playlist-container',
+            popup: 'add-to-playlist-popup'
+        }
+    });
+}
+
+function createNewPlaylist() {
+    Swal.fire({
+        title: 'Create New Playlist',
+        input: 'text',
+        inputLabel: 'Playlist Name',
+        inputPlaceholder: 'Enter playlist name',
+        showCancelButton: true,
+        confirmButtonText: 'Create',
+        cancelButtonText: 'Cancel',
+        inputValidator: (value) => {
+            if (!value) {
+                return 'You need to enter a playlist name!';
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const newPlaylistName = result.value;
+            const playlists = getUserPlaylists();
+            
+            if (playlists.some(p => p.name === newPlaylistName)) {
+                Swal.fire('Error', 'A playlist with this name already exists.', 'error');
+                return;
+            }
+
+            const newPlaylist = { name: newPlaylistName, items: [] };
+            playlists.push(newPlaylist);
+            localStorage.setItem('userPlaylists', JSON.stringify(playlists));
+            
+            addToSelectedPlaylist(newPlaylistName);
+        }
+    });
+}
+
+function addToSelectedPlaylist(playlistName) {
+    const playlists = getUserPlaylists();
+    const playlist = playlists.find(p => p.name === playlistName);
+
+    if (!playlist) {
+        Swal.fire({
+            title: 'Error',
+            text: 'Playlist not found.',
+            icon: 'error'
+        });
+        return;
     }
 
-    function addToSelectedPlaylist(playlistName) {
-        const playlists = getUserPlaylists();
-        const playlist = playlists.find(p => p.name === playlistName);
-
-        if (!playlist) {
-            Swal.fire({
-                title: 'Error',
-                text: 'Playlist not found.',
-                icon: 'error'
-            });
-            return;
-        }
-
-        if (!currentSheikh || !currentSurahId || !surahTitle) {
-            Swal.fire({
-                title: 'Error',
-                text: 'Unable to add to playlist. Please try again.',
-                icon: 'error'
-            });
-            return;
-        }
-
-        const playlistItem = {
-            surahId: currentSurahId,
-            sheikh: {
-                id: currentSheikh.id,
-                name: currentSheikh.name,
-                arabicName: currentSheikh.arabicName,
-                imageUrl: currentSheikh.imageUrl
-            },
-            surahName: surahTitle.textContent
-        };
-
-        if (!playlist.items) {
-            playlist.items = [];
-        }
-
-        if (!playlist.items.some(item => item.surahId === playlistItem.surahId && item.sheikh.id === playlistItem.sheikh.id)) {
-            playlist.items.push(playlistItem);
-            const updatedPlaylists = playlists.map(p => p.name === playlist.name ? playlist : p);
-            localStorage.setItem('userPlaylists', JSON.stringify(updatedPlaylists));
-
-            Swal.fire({
-                title: 'Added to Playlist',
-                text: `${playlistItem.surahName} by ${playlistItem.sheikh.name} has been added to "${playlist.name}".`,
-                icon: 'success',
-                timer: 2000,
-                timerProgressBar: true,
-                showConfirmButton: false
-            });
-        } else {
-            Swal.fire({
-                title: 'Already in Playlist',
-                text: 'This surah by this reciter is already in the selected playlist.',
-                icon: 'info',
-                timer: 2000,
-                timerProgressBar: true,
-                showConfirmButton: false
-            });
-        }
+    if (!currentSheikh || !currentSurahId || !surahTitle) {
+        Swal.fire({
+            title: 'Error',
+            text: 'Unable to add to playlist. Please try again.',
+            icon: 'error'
+        });
+        return;
     }
 
-    function updateAddToPlaylistButtonVisibility() {
-        const playlists = getUserPlaylists();
-        if (playlists.length > 0) {
-            addToPlaylistButton.style.display = 'block';
-        } else {
-            addToPlaylistButton.style.display = 'none';
-        }
+    const playlistItem = {
+        surahId: currentSurahId,
+        sheikh: {
+            id: currentSheikh.id,
+            name: currentSheikh.name,
+            arabicName: currentSheikh.arabicName,
+            imageUrl: currentSheikh.imageUrl
+        },
+        surahName: surahTitle.textContent
+    };
+
+    if (!playlist.items.some(item => item.surahId === playlistItem.surahId && item.sheikh.id === playlistItem.sheikh.id)) {
+        playlist.items.push(playlistItem);
+        const updatedPlaylists = playlists.map(p => p.name === playlist.name ? playlist : p);
+        localStorage.setItem('userPlaylists', JSON.stringify(updatedPlaylists));
+
+        Swal.fire({
+            title: 'Added to Playlist',
+            html: `
+                <p>${playlistItem.surahName} by ${playlistItem.sheikh.name} has been added to "${playlist.name}".</p>
+                <p>Reciter: ${playlistItem.sheikh.name}</p>
+                <p>Surah: ${playlistItem.surahName}</p>
+            `,
+            icon: 'success',
+            timer: 3000,
+            timerProgressBar: true,
+            showConfirmButton: false
+        });
+    } else {
+        Swal.fire({
+            title: 'Already in Playlist',
+            text: 'This surah by this reciter is already in the selected playlist.',
+            icon: 'info',
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false
+        });
     }
+}
+
+function updateAddToPlaylistButtonVisibility() {
+    const playlists = getUserPlaylists();
+    addToPlaylistButton.style.display = playlists.length > 0 ? 'block' : 'none';
+}
     function stopAudio() {
         if (currentAudio) {
             currentAudio.pause();
