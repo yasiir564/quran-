@@ -749,16 +749,7 @@
         sheikh.rating = Math.random() * 5; // Random rating between 0 and 5
         sheikh.popularity = Math.floor(Math.random() * 1000000); // Random popularity between 0 and 1,000,000
     });
-// Global variables
-let audioUrl;
-let currentSheikh;
-let currentSurahId;
-let surahTitle;
-
-// DOM Elements
 const addToPlaylistButton = document.getElementById('addToPlaylistButton');
-
-// Event Listeners
 if (addToPlaylistButton) {
     addToPlaylistButton.addEventListener('click', handleAddToPlaylist);
 } else {
@@ -802,7 +793,7 @@ function handleAddToPlaylist() {
     console.log('User playlists:', playlists);
 
     let playlistOptions = playlists.map(playlist => 
-        `<button class="swal2-confirm swal2-styled" onclick="addToSelectedPlaylist('${playlist.name}', '${audioUrl}')">${playlist.name}</button>`
+        `<button class="swal2-confirm swal2-styled" onclick="addToSelectedPlaylist('${playlist.name}')">${playlist.name}</button>`
     ).join('');
 
     Swal.fire({
@@ -828,9 +819,8 @@ window.redirectToCreateNewPlaylist = function() {
 }
 
 // Add the selected item to the chosen playlist
-window.addToSelectedPlaylist = function(playlistName, audioUrl) {
+window.addToSelectedPlaylist = function(playlistName) {
     console.log('Adding to playlist:', playlistName);
-    console.log('Audio URL:', audioUrl);
     const playlists = getUserPlaylists();
     const playlist = playlists.find(p => p.name === playlistName);
 
@@ -843,11 +833,12 @@ window.addToSelectedPlaylist = function(playlistName, audioUrl) {
         return;
     }
 
+    // Assume currentSheikh, currentSurahId, and surahTitle are defined elsewhere
     console.log('Current Sheikh:', currentSheikh);
     console.log('Current Surah ID:', currentSurahId);
     console.log('Surah Title:', surahTitle);
 
-    if (!currentSheikh || !currentSurahId || !surahTitle || !audioUrl) {
+    if (!currentSheikh || !currentSurahId || !surahTitle) {
         Swal.fire({
             title: 'Error',
             text: 'Unable to add to playlist. Please try again.',
@@ -864,8 +855,7 @@ window.addToSelectedPlaylist = function(playlistName, audioUrl) {
             arabicName: currentSheikh.arabicName,
             imageUrl: currentSheikh.imageUrl
         },
-        surahName: surahTitle.textContent,
-        audioUrl: audioUrl
+        surahName: surahTitle.textContent
     };
 
     if (!playlist.items) {
@@ -903,35 +893,6 @@ function updateAddToPlaylistButtonVisibility() {
     console.log('Updating Add to Playlist button visibility.');
     addToPlaylistButton.style.display = playlists.length > 0 ? 'block' : 'none';
 }
-
-// Function to set the current audio information
-function setCurrentAudio(sheikh, surahId, title, url) {
-    currentSheikh = sheikh;
-    currentSurahId = surahId;
-    surahTitle = { textContent: title };
-    audioUrl = url;
-    console.log('Current audio set:', { sheikh, surahId, title, url });
-}
-
-// Call this function when the page loads or when an audio is selected
-function initializeAudio() {
-    // This is just an example. Replace with your actual logic to get the initial audio info.
-    const initialSheikh = {
-        id: '1',
-        name: 'Sheikh Name',
-        arabicName: 'الشيخ اسم',
-        imageUrl: 'path/to/image.jpg'
-    };
-    const initialSurahId = '1';
-    const initialTitle = 'Surah Al-Fatihah';
-    const initialAudioUrl = 'path/to/audio.mp3';
-
-    setCurrentAudio(initialSheikh, initialSurahId, initialTitle, initialAudioUrl);
-    updateAddToPlaylistButtonVisibility();
-}
-
-// Call the initialization function when the page loads
-document.addEventListener('DOMContentLoaded', initializeAudio);
     function stopAudio() {
         if (currentAudio) {
             currentAudio.pause();
