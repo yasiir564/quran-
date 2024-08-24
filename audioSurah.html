@@ -858,6 +858,27 @@ function addToSelectedPlaylist(playlist) {
     }
     playlistDropdown.style.display = 'none';
 }
+
+// Function to update the visibility of the Add to Playlist button
+function updateAddToPlaylistButtonVisibility() {
+    const playlists = getUserPlaylists();
+    if (playlists.length > 0) {
+        addToPlaylistButton.style.display = 'block';
+    } else {
+        addToPlaylistButton.style.display = 'none';
+    }
+}
+
+// Call this function when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    updateAddToPlaylistButtonVisibility();
+});
+
+// You might want to call this function after certain actions that could change the playlists
+// For example, after creating a new playlist or deleting an existing one
+function onPlaylistsChanged() {
+    updateAddToPlaylistButtonVisibility();
+}
     function stopAudio() {
         if (currentAudio) {
             currentAudio.pause();
