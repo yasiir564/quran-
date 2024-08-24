@@ -735,10 +735,11 @@
 
             addToPlaylistButton.addEventListener('click', handleAddToPlaylist);
 
-            function isUserLoggedIn() {
-                // Replace this with your actual login check logic
-                return localStorage.getItem('userLoggedIn') === 'true';
-            }
+          function isUserLoggedIn() {
+    const userName = localStorage.getItem("userName");
+    const userEmail = localStorage.getItem("userEmail");
+    return userName && userEmail;
+}
 
             function getUserPlaylists() {
                 // Replace this with your actual playlist retrieval logic
