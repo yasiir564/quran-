@@ -542,6 +542,19 @@
                 font-size: 1em;
             }
         }
+        .add-to-playlist-button {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1.5em;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .add-to-playlist-button:hover {
+            color: var(--secondary-color);
+        }
     </style>
 </head>
 <body>
@@ -604,6 +617,9 @@
                         <option value="1.5">1.5x</option>
                         <option value="2">2x</option>
                     </select>
+                     <button id="addToPlaylistButton" class="add-to-playlist-button" title="Add to Playlist">
+                <i class="fas fa-plus"></i>
+            </button>
                 </div>
             </div>
         </div>
@@ -694,6 +710,49 @@
         sheikh.rating = Math.random() * 5; // Random rating between 0 and 5
         sheikh.popularity = Math.floor(Math.random() * 1000000); // Random popularity between 0 and 1,000,000
     });
+             const addToPlaylistButton = document.getElementById('addToPlaylistButton');
+
+            addToPlaylistButton.addEventListener('click', addCurrentToPlaylist);
+
+            function addCurrentToPlaylist() {
+                if (currentSheikh && currentSurahId) {
+                    const playlistItem = {
+                        surahId: currentSurahId,
+                        sheikh: {
+                            id: currentSheikh.id,
+                            name: currentSheikh.name,
+                            arabicName: currentSheikh.arabicName,
+                            imageUrl: currentSheikh.imageUrl
+                        },
+                        surahName: surahTitle.textContent
+                    };
+
+                    let playlist = JSON.parse(localStorage.getItem('quranPlaylist')) || [];
+
+                    if (!playlist.some(item => item.surahId === playlistItem.surahId && item.sheikh.id === playlistItem.sheikh.id)) {
+                        playlist.push(playlistItem);
+                        localStorage.setItem('quranPlaylist', JSON.stringify(playlist));
+
+                        Swal.fire({
+                            title: 'Added to Playlist',
+                            text: `${playlistItem.surahName} by ${playlistItem.sheikh.name} has been added to your playlist.`,
+                            icon: 'success',
+                            timer: 2000,
+                            timerProgressBar: true,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Already in Playlist',
+                            text: 'This surah by this reciter is already in your playlist.',
+                            icon: 'info',
+                            timer: 2000,
+                            timerProgressBar: true,
+                            showConfirmButton: false
+                        });
+                    }
+                }
+            }
 
     function stopAudio() {
         if (currentAudio) {
