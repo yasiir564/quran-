@@ -24,6 +24,8 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
+            position: relative;
+            padding-bottom: 100px; /* Space for the audio player */
         }
 
         .container {
@@ -144,6 +146,94 @@
             color: #666;
         }
 
+        /* Audio Player Styles */
+        .audio-player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--card-bg);
+            box-shadow: var(--card-shadow);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 20px;
+            border-top: 2px solid var(--primary-color);
+        }
+
+        .audio-player.active {
+            display: flex;
+        }
+
+        .audio-player-info {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .audio-player-info img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+
+        .audio-player-details {
+            flex: 1;
+        }
+
+        .audio-player-details h4,
+        .audio-player-details p {
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .audio-controls button {
+            background: transparent;
+            border: none;
+            color: var(--primary-color);
+            font-size: 20px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .audio-controls button:hover {
+            color: var(--secondary-color);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 5px;
+            background: #ddd;
+            border-radius: 5px;
+            margin-top: 10px;
+            position: relative;
+        }
+
+        .progress-bar {
+            width: 0;
+            height: 100%;
+            background: var(--primary-color);
+            border-radius: 5px;
+        }
+
+        .audio-timer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 12px;
+            color: #666;
+        }
+
         /* Responsive styles */
         @media (max-width: 768px) {
             .container {
@@ -175,6 +265,15 @@
             .surah-reciter {
                 font-size: 10px;
             }
+
+            .audio-player-info img {
+                width: 40px;
+                height: 40px;
+            }
+
+            .audio-controls button {
+                font-size: 18px;
+            }
         }
     </style>
 </head>
@@ -187,9 +286,33 @@
         <div id="playlistContainer"></div>
     </div>
 
+    <div class="audio-player" id="audioPlayer">
+        <div class="audio-player-info">
+            <img id="playerSheikhImage" src="" alt="Sheikh Image">
+            <div class="audio-player-details">
+                <h4 id="playerSurahName">Surah Name</h4>
+                <p id="playerSheikhName">Sheikh Name</p>
+            </div>
+            <button id="togglePlayPause" onclick="togglePlayPause()">
+                <i class="fas fa-play"></i>
+            </button>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="audio-timer">
+            <span id="currentTime">0:00</span>
+            <span id="totalTime">0:00</span>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         let playlists = [];
+        let audio = new Audio();
+        let currentPlaylistIndex = 0;
+        let currentSurahIndex = 0;
+        let isPlaying = false;
 
         function showCreatePlaylistDialog() {
             Swal.fire({
@@ -203,6 +326,7 @@
                 inputValidator: (value) => {
                     if (!value) {
                         return 'You need to enter a playlist name!';
+                   
                     }
                 }
             }).then((result) => {
@@ -267,16 +391,9 @@
         function playPlaylist(index) {
             const playlist = playlists[index];
             if (playlist.items.length > 0) {
-                // Implement the logic to play the playlist
-                // For now, we'll just show an alert
-                Swal.fire({
-                    title: 'Playing Playlist',
-                    text: `Now playing: ${playlist.name}`,
-                    icon: 'success',
-                    timer: 2000,
-                    timerProgressBar: true,
-                    showConfirmButton: false
-                });
+                currentPlaylistIndex = index;
+                currentSurahIndex = 0;
+                playSurah();
             } else {
                 Swal.fire({
                     title: 'Empty Playlist',
@@ -284,6 +401,82 @@
                     icon: 'info'
                 });
             }
+        }
+
+        function playSurah() {
+            const playlist = playlists[currentPlaylistIndex];
+            const surah = playlist.items[currentSurahIndex];
+
+            // Update audio source and play
+            audio.src = surah.audioUrl;
+            audio.play();
+            isPlaying = true;
+
+            // Update audio player UI
+            document.getElementById('playerSheikhImage').src = surah.sheikh.imageUrl;
+            document.getElementById('playerSurahName').textContent = surah.surahName;
+            document.getElementById('playerSheikhName').textContent = surah.sheikh.name;
+            document.getElementById('audioPlayer').classList.add('active');
+
+            document.getElementById('togglePlayPause').innerHTML = '<i class="fas fa-pause"></i>';
+
+            // Update the timer and progress bar
+            audio.ontimeupdate = updateProgress;
+            audio.onended = nextSurah;
+
+            // Display total duration when metadata is loaded
+            audio.onloadedmetadata = () => {
+                document.getElementById('totalTime').textContent = formatTime(audio.duration);
+            };
+        }
+
+        function updateProgress() {
+            const progressBar = document.getElementById('progressBar');
+            const currentTime = document.getElementById('currentTime');
+
+            // Update the progress bar and timer
+            const progress = (audio.currentTime / audio.duration) * 100;
+            progressBar.style.width = `${progress}%`;
+            currentTime.textContent = formatTime(audio.currentTime);
+        }
+
+        function nextSurah() {
+            const playlist = playlists[currentPlaylistIndex];
+
+            if (currentSurahIndex < playlist.items.length - 1) {
+                currentSurahIndex++;
+                playSurah();
+            } else {
+                audio.pause();
+                isPlaying = false;
+                document.getElementById('togglePlayPause').innerHTML = '<i class="fas fa-play"></i>';
+                Swal.fire({
+                    title: 'Playlist Finished',
+                    text: `You have completed the playlist: ${playlist.name}`,
+                    icon: 'success',
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+            }
+        }
+
+        function togglePlayPause() {
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+                document.getElementById('togglePlayPause').innerHTML = '<i class="fas fa-play"></i>';
+            } else {
+                audio.play();
+                isPlaying = true;
+                document.getElementById('togglePlayPause').innerHTML = '<i class="fas fa-pause"></i>';
+            }
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
         }
 
         function deletePlaylist(index) {
