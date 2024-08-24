@@ -559,11 +559,39 @@
    .add-to-playlist-container .swal2-popup {
     width: 80%;
     max-width: 400px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    background-color: #f8f9fa;
 }
 
 .add-to-playlist-popup .swal2-styled {
-    margin: 5px;
-    width: calc(100% - 10px);
+    margin: 8px;
+    width: calc(100% - 16px);
+    border-radius: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.add-to-playlist-popup .swal2-styled:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.add-to-playlist-popup .swal2-title {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.add-to-playlist-popup .swal2-content {
+    color: #555;
+    font-size: 1rem;
+}
+
+.add-to-playlist-popup .swal2-actions {
+    margin-top: 20px;
 }
     </style>
 </head>
