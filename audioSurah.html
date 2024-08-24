@@ -764,7 +764,7 @@ function handleAddToPlaylist() {
         title: 'Add to Playlist',
         html: `
             ${playlistOptions}
-            <button class="swal2-confirm swal2-styled" onclick="createNewPlaylist()">Create New Playlist</button>
+            <button class="swal2-confirm swal2-styled" onclick="redirectToCreateNewPlaylist()">Create New Playlist</button>
         `,
         showConfirmButton: false,
         showCancelButton: true,
@@ -776,37 +776,8 @@ function handleAddToPlaylist() {
     });
 }
 
-function createNewPlaylist() {
-    Swal.fire({
-        title: 'Create New Playlist',
-        input: 'text',
-        inputLabel: 'Playlist Name',
-        inputPlaceholder: 'Enter playlist name',
-        showCancelButton: true,
-        confirmButtonText: 'Create',
-        cancelButtonText: 'Cancel',
-        inputValidator: (value) => {
-            if (!value) {
-                return 'You need to enter a playlist name!';
-            }
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            const newPlaylistName = result.value;
-            const playlists = getUserPlaylists();
-            
-            if (playlists.some(p => p.name === newPlaylistName)) {
-                Swal.fire('Error', 'A playlist with this name already exists.', 'error');
-                return;
-            }
-
-            const newPlaylist = { name: newPlaylistName, items: [] };
-            playlists.push(newPlaylist);
-            localStorage.setItem('userPlaylists', JSON.stringify(playlists));
-            
-            addToSelectedPlaylist(newPlaylistName);
-        }
-    });
+function redirectToCreateNewPlaylist() {
+    window.location.href = 'playlist.html';
 }
 
 function addToSelectedPlaylist(playlistName) {
@@ -842,6 +813,10 @@ function addToSelectedPlaylist(playlistName) {
         surahName: surahTitle.textContent
     };
 
+    if (!playlist.items) {
+        playlist.items = [];
+    }
+
     if (!playlist.items.some(item => item.surahId === playlistItem.surahId && item.sheikh.id === playlistItem.sheikh.id)) {
         playlist.items.push(playlistItem);
         const updatedPlaylists = playlists.map(p => p.name === playlist.name ? playlist : p);
@@ -849,13 +824,9 @@ function addToSelectedPlaylist(playlistName) {
 
         Swal.fire({
             title: 'Added to Playlist',
-            html: `
-                <p>${playlistItem.surahName} by ${playlistItem.sheikh.name} has been added to "${playlist.name}".</p>
-                <p>Reciter: ${playlistItem.sheikh.name}</p>
-                <p>Surah: ${playlistItem.surahName}</p>
-            `,
+            text: `${playlistItem.surahName} by ${playlistItem.sheikh.name} has been added to "${playlist.name}".`,
             icon: 'success',
-            timer: 3000,
+            timer: 2000,
             timerProgressBar: true,
             showConfirmButton: false
         });
@@ -875,6 +846,7 @@ function updateAddToPlaylistButtonVisibility() {
     const playlists = getUserPlaylists();
     addToPlaylistButton.style.display = playlists.length > 0 ? 'block' : 'none';
 }
+
     function stopAudio() {
         if (currentAudio) {
             currentAudio.pause();
