@@ -302,136 +302,156 @@
         let isPlaying = false;
 
         function loadPlaylistsFromAudioSurah() {
-            fetch('audiosurah.html')
-                .then(response => response.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const audioElements = doc.querySelectorAll('audio');
-                    
-                    playlists = [{
-                        name: "Quran Playlist",
-                        items: Array.from(audioElements).map(audio => ({
-                            surahName: audio.getAttribute('data-surah'),
-                            audioUrl: audio.getAttribute('src'),
-                            sheikh: {
-                                name: audio.getAttribute('data-sheikh'),
-                                imageUrl: audio.getAttribute('data-sheikh-image') || 'default-sheikh-image.jpg'
-                            }
-                        }))
-                    }];
+            // Attempt to load playlists from localStorage first
+            const storedPlaylists = localStorage.getItem('playlists');
+            if (storedPlaylists) {
+                playlists = JSON.parse(storedPlaylists);
+                renderPlaylists();
+            } else {
+                // Fallback to fetching from audiosurah.html
+                fetch('audiosurah.html')
+                    .then(response => response.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const audioElements = doc.querySelectorAll('audio');
+                        
+                        playlists = [{
+                            name: "Quran Playlist",
+                            items: Array.from(audioElements).map(audio => ({
+                                surahName: audio.getAttribute('data-surah'),
+                                audioUrl: audio.getAttribute('src'),
+                                sheikh: {
+                                    name: audio.getAttribute('data-sheikh'),
+                                    imageUrl: audio.getAttribute('data-sheikh-image') || 'default-sheikh-image.jpg'
+                                }
+                            }))
+                        }];
 
-                    renderPlaylists();
-                })
-                .catch(error => console.error('Error loading audiosurah.html:', error));
+                        // Save to localStorage
+                        localStorage.setItem('playlists', JSON.stringify(playlists));
+
+                        renderPlaylists();
+                    })
+                    .catch(error => console.error('Error loading audiosurah.html:', error));
+            }
         }
 
         function renderPlaylists() {
-            const playlistContainer = document.getElementById('playlistContainer');
-            playlistContainer.innerHTML = '';
+            const container = document.getElementById('playlistContainer');
+            container.innerHTML = '';
 
             playlists.forEach((playlist, index) => {
-                const playlistElement = document.createElement('div');
-                playlistElement.className = 'playlist';
-                playlistElement.innerHTML = `
-                    <div class="playlist-header">
-                        <span class="playlist-title">${playlist.name}</span>
-                        <div class="playlist-actions">
-                            <button class="playlist-action" onclick="playPlaylist(${index})">
-                                <i class="fas fa-play"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <ul class="surah-list">
-                        ${playlist.items.map((item, itemIndex) => `
-                            <li class="surah-item">
-                                <div class="surah-info">
-                                    <img src="${item.sheikh.imageUrl}" alt="${item.sheikh.name}" class="surah-image">
-                                    <div class="surah-details">
-                                        <span class="surah-name">${item.surahName}</span>
-                                        <span class="surah-reciter">${item.sheikh.name}</span>
-                                    </div>
-                                </div>
-                            </li>
-                        `).join('')}
-                    </ul>
-                `;
-                playlistContainer.appendChild(playlistElement);
+                const playlistDiv = document.createElement('div');
+                playlistDiv.className = 'playlist';
+
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'playlist-header';
+
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'playlist-title';
+                titleDiv.textContent = playlist.name;
+
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'playlist-actions';
+
+                const playButton = document.createElement('button');
+                playButton.className = 'playlist-action';
+                playButton.innerHTML = '<i class="fas fa-play"></i>';
+                playButton.onclick = () => playPlaylist(index);
+
+                actionsDiv.appendChild(playButton);
+                headerDiv.appendChild(titleDiv);
+                headerDiv.appendChild(actionsDiv);
+
+                const surahList = document.createElement('ul');
+                surahList.className = 'surah-list';
+
+                playlist.items.forEach((surah, surahIndex) => {
+                    const surahItem = document.createElement('li');
+                    surahItem.className = 'surah-item';
+
+                    const surahInfo = document.createElement('div');
+                    surahInfo.className = 'surah-info';
+
+                    const surahImage = document.createElement('img');
+                    surahImage.className = 'surah-image';
+                    surahImage.src = surah.sheikh.imageUrl;
+
+                    const surahDetails = document.createElement('div');
+                    surahDetails.className = 'surah-details';
+
+                    const surahName = document.createElement('div');
+                    surahName.className = 'surah-name';
+                    surahName.textContent = surah.surahName;
+
+                    const surahReciter = document.createElement('div');
+                    surahReciter.className = 'surah-reciter';
+                    surahReciter.textContent = surah.sheikh.name;
+
+                    surahDetails.appendChild(surahName);
+                    surahDetails.appendChild(surahReciter);
+                    surahInfo.appendChild(surahImage);
+                    surahInfo.appendChild(surahDetails);
+
+                    surahItem.appendChild(surahInfo);
+                    surahList.appendChild(surahItem);
+                });
+
+                playlistDiv.appendChild(headerDiv);
+                playlistDiv.appendChild(surahList);
+                container.appendChild(playlistDiv);
             });
         }
 
         function playPlaylist(index) {
-            const playlist = playlists[index];
-            if (playlist.items.length > 0) {
-                currentPlaylistIndex = index;
-                currentSurahIndex = 0;
-                playSurah();
-            } else {
-                Swal.fire({
-                    title: 'Empty Playlist',
-                    text: 'This playlist is empty.',
-                    icon: 'info'
-                });
-            }
+            currentPlaylistIndex = index;
+            currentSurahIndex = 0;
+            playSurah();
         }
 
         function playSurah() {
             const playlist = playlists[currentPlaylistIndex];
             const surah = playlist.items[currentSurahIndex];
-
             audio.src = surah.audioUrl;
-            audio.play();
-            isPlaying = true;
-
-            document.getElementById('playerSheikhImage').src = surah.sheikh.imageUrl;
             document.getElementById('playerSurahName').textContent = surah.surahName;
             document.getElementById('playerSheikhName').textContent = surah.sheikh.name;
+            document.getElementById('playerSheikhImage').src = surah.sheikh.imageUrl;
+            audio.play();
+            isPlaying = true;
             document.getElementById('audioPlayer').classList.add('active');
             document.getElementById('togglePlayPause').innerHTML = '<i class="fas fa-pause"></i>';
-
-            audio.ontimeupdate = updateProgress;
-            audio.onended = nextSurah;
-
-            audio.onloadedmetadata = () => {
-                document.getElementById('totalTime').textContent = formatTime(audio.duration);
-            };
+            updateProgress();
         }
 
         function updateProgress() {
-            const progressBar = document.getElementById('progressBar');
-            const currentTime = document.getElementById('currentTime');
+            audio.ontimeupdate = () => {
+                const progressPercent = (audio.currentTime / audio.duration) * 100;
+                document.getElementById('progressBar').style.width = `${progressPercent}%`;
+                document.getElementById('currentTime').textContent = formatTime(audio.currentTime);
+                document.getElementById('totalTime').textContent = formatTime(audio.duration);
+            };
 
-            const progress = (audio.currentTime / audio.duration) * 100;
-            progressBar.style.width = `${progress}%`;
-            currentTime.textContent = formatTime(audio.currentTime);
+            audio.onended = () => {
+                nextSurah();
+            };
         }
 
         function nextSurah() {
+            currentSurahIndex++;
             const playlist = playlists[currentPlaylistIndex];
-
-            if (currentSurahIndex < playlist.items.length - 1) {
-                currentSurahIndex++;
-                playSurah();
-            } else {
-                audio.pause();
-                isPlaying = false;
-                document.getElementById('togglePlayPause').innerHTML = '<i class="fas fa-play"></i>';
-                Swal.fire({
-                    title: 'Playlist Finished',
-                    text: `You have completed the playlist: ${playlist.name}`,
-                    icon: 'success',
-                    timer: 2000,
-                    timerProgressBar: true,
-                    showConfirmButton: false
-                });
+            if (currentSurahIndex >= playlist.items.length) {
+                currentSurahIndex = 0; // Loop to the first surah
             }
+            playSurah();
         }
 
         function previousSurah() {
-            if (currentSurahIndex > 0) {
-                currentSurahIndex--;
-                playSurah();
+            currentSurahIndex--;
+            if (currentSurahIndex < 0) {
+                currentSurahIndex = playlists[currentPlaylistIndex].items.length - 1; // Loop to the last surah
             }
+            playSurah();
         }
 
         function togglePlayPause() {
@@ -447,19 +467,19 @@
         }
 
         function formatTime(seconds) {
-            const minutes = Math.floor(seconds / 60);
+            const mins = Math.floor(seconds / 60);
             const secs = Math.floor(seconds % 60);
-            return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
         }
 
-        // Add event listener for progress bar clicks
         document.getElementById('progressContainer').addEventListener('click', function(e) {
-            const progressContainer = this;
-            const clickPosition = (e.pageX - this.offsetLeft) / this.offsetWidth;
-            audio.currentTime = clickPosition * audio.duration;
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audio.duration;
+            audio.currentTime = (clickX / width) * duration;
         });
 
-        // Load playlists from audiosurah.html on page load
+        // Load playlists from localStorage or audiosurah.html on page load
         loadPlaylistsFromAudioSurah();
     </script>
 </body>
