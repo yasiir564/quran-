@@ -556,24 +556,24 @@
             color: var(--secondary-color);
         }
 
-        .playlist-dropdown {
-            position: absolute;
-            background-color: var(--card-bg);
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: none;
-            z-index: 1000;
-        }
+    #playlistDropdown {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
 
-        .playlist-dropdown-item {
-            padding: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+.playlist-dropdown-item {
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+}
 
-        .playlist-dropdown-item:hover {
-            background-color: rgba(0,0,0,0.05);
-        }
+.playlist-dropdown-item:hover {
+    background-color: #f1f1f1;
+}
     </style>
 </head>
 <body>
@@ -639,7 +639,7 @@
                    <button id="addToPlaylistButton" class="add-to-playlist-button" title="Add to Playlist">
                 <i class="fas fa-music"></i>
             </button>
-            <div id="playlistDropdown" class="playlist-dropdown"></div>
+           <div id="playlistDropdown" style="display: none;"></div>
                 </div>
             </div>
         </div>
