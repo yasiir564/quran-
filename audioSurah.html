@@ -793,15 +793,15 @@ function handleAddToPlaylist() {
     console.log('User playlists:', playlists);
 
     let playlistOptions = playlists.map(playlist => 
-        `<button class="swal2-confirm swal2-styled" onclick="addToSelectedPlaylist('${playlist.name}')">${playlist.name}</button>`
+        <button class="swal2-confirm swal2-styled" onclick="addToSelectedPlaylist('${playlist.name}')">${playlist.name}</button>
     ).join('');
 
     Swal.fire({
         title: 'Add to Playlist',
-        html: `
+        html: 
             ${playlistOptions}
             <button class="swal2-confirm swal2-styled" onclick="redirectToCreateNewPlaylist()">Create New Playlist</button>
-        `,
+        ,
         showConfirmButton: false,
         showCancelButton: true,
         cancelButtonText: 'Cancel',
@@ -818,7 +818,7 @@ window.redirectToCreateNewPlaylist = function() {
     window.location.href = 'playlist.html';
 }
 
-// Add the selected item to the chosen playlist and store the audio file
+// Add the selected item to the chosen playlist
 window.addToSelectedPlaylist = function(playlistName) {
     console.log('Adding to playlist:', playlistName);
     const playlists = getUserPlaylists();
@@ -833,13 +833,12 @@ window.addToSelectedPlaylist = function(playlistName) {
         return;
     }
 
-    // Assume currentSheikh, currentSurahId, surahTitle, and audioFileUrl are defined elsewhere
+    // Assume currentSheikh, currentSurahId, and surahTitle are defined elsewhere
     console.log('Current Sheikh:', currentSheikh);
     console.log('Current Surah ID:', currentSurahId);
     console.log('Surah Title:', surahTitle);
-    console.log('Audio File URL:', audioFileUrl);
 
-    if (!currentSheikh || !currentSurahId || !surahTitle || !audioFileUrl) {
+    if (!currentSheikh || !currentSurahId || !surahTitle) {
         Swal.fire({
             title: 'Error',
             text: 'Unable to add to playlist. Please try again.',
@@ -856,8 +855,7 @@ window.addToSelectedPlaylist = function(playlistName) {
             arabicName: currentSheikh.arabicName,
             imageUrl: currentSheikh.imageUrl
         },
-        surahName: surahTitle.textContent,
-        audioFileUrl: audioFileUrl // Store the audio file URL
+        surahName: surahTitle.textContent
     };
 
     if (!playlist.items) {
@@ -869,12 +867,9 @@ window.addToSelectedPlaylist = function(playlistName) {
         const updatedPlaylists = playlists.map(p => p.name === playlist.name ? playlist : p);
         localStorage.setItem('userPlaylists', JSON.stringify(updatedPlaylists));
 
-        // Store the audio file in local storage
-        localStorage.setItem(`audio_${playlistItem.surahId}_${playlistItem.sheikh.id}`, playlistItem.audioFileUrl);
-
         Swal.fire({
             title: 'Added to Playlist',
-            text: `${playlistItem.surahName} by ${playlistItem.sheikh.name} has been added to "${playlist.name}".`,
+            text: ${playlistItem.surahName} by ${playlistItem.sheikh.name} has been added to "${playlist.name}".,
             icon: 'success',
             timer: 2000,
             timerProgressBar: true,
