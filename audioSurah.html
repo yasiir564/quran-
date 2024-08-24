@@ -722,27 +722,27 @@
         sheikh.popularity = Math.floor(Math.random() * 1000000); // Random popularity between 0 and 1,000,000
     });
 const addToPlaylistButton = document.getElementById('addToPlaylistButton');
-const playlistDropdown = document.getElementById('playlistDropdown');
-
-// Ensure the button exists before adding an event listener
 if (addToPlaylistButton) {
     addToPlaylistButton.addEventListener('click', handleAddToPlaylist);
 } else {
     console.error('Add to Playlist button not found!');
 }
 
+// Check if the user is logged in
 function isUserLoggedIn() {
     const userName = localStorage.getItem("userName");
     const userEmail = localStorage.getItem("userEmail");
     return userName && userEmail;
 }
 
+// Retrieve the user's playlists from local storage
 function getUserPlaylists() {
     const savedPlaylists = localStorage.getItem('userPlaylists');
     console.log('Retrieved playlists:', savedPlaylists);
     return savedPlaylists ? JSON.parse(savedPlaylists) : [];
 }
 
+// Handle adding to playlist
 function handleAddToPlaylist() {
     console.log('Add to Playlist button clicked.');
     if (!isUserLoggedIn()) {
@@ -784,12 +784,14 @@ function handleAddToPlaylist() {
     });
 }
 
-function redirectToCreateNewPlaylist() {
+// Redirect to create a new playlist
+window.redirectToCreateNewPlaylist = function() {
     console.log('Redirecting to playlist.html');
     window.location.href = 'playlist.html';
 }
 
-function addToSelectedPlaylist(playlistName) {
+// Add the selected item to the chosen playlist
+window.addToSelectedPlaylist = function(playlistName) {
     console.log('Adding to playlist:', playlistName);
     const playlists = getUserPlaylists();
     const playlist = playlists.find(p => p.name === playlistName);
@@ -857,12 +859,12 @@ function addToSelectedPlaylist(playlistName) {
     }
 }
 
+// Update the visibility of the Add to Playlist button
 function updateAddToPlaylistButtonVisibility() {
     const playlists = getUserPlaylists();
     console.log('Updating Add to Playlist button visibility.');
     addToPlaylistButton.style.display = playlists.length > 0 ? 'block' : 'none';
 }
-
     function stopAudio() {
         if (currentAudio) {
             currentAudio.pause();
