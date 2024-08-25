@@ -143,7 +143,6 @@
             color: #999;
         }
 
-        /* Modern Audio Player Styles */
         .audio-player {
             position: fixed;
             bottom: 0;
@@ -245,6 +244,57 @@
             color: #999;
         }
 
+        .create-playlist-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 24px;
+            font-size: 18px;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .create-playlist-btn:hover {
+            background-color: #1ed760;
+            transform: translateY(-2px);
+        }
+
+        .surah-play-btn {
+            background-color: transparent;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .surah-play-btn:hover {
+            color: #1ed760;
+        }
+
+        .player-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .player-option {
+            background-color: transparent;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .player-option:hover,
+        .player-option.active {
+            color: var(--primary-color);
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -290,6 +340,7 @@
 <body>
     <div class="container">
         <h1>Quran Pro Playlist Manager</h1>
+        <button class="create-playlist-btn" onclick="createNewPlaylist()">Create New Playlist</button>
         <div id="playlistContainer"></div>
     </div>
 
@@ -313,134 +364,164 @@
             <span id="currentTime">0:00</span>
             <span id="totalTime">0:00</span>
         </div>
+        <div class="player-options">
+            <button class="player-option" id="autoplayBtn" onclick="toggleAutoplay()">
+                <i class="fas fa-sync-alt"></i> Autoplay
+            </button>
+            <button class="player-option" id="shuffleBtn" onclick="toggleShuffle()">
+                <i class="fas fa-random"></i> Shuffle
+            </button>
+        </div>
     </div>
 
-   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    let playlists = [];
-    let audio = new Audio();
-    let currentPlaylistIndex = 0;
-    let currentSurahIndex = 0;
-    let isPlaying = false;
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        let playlists = [];
+        let audio = new Audio();
+        let currentPlaylistIndex = 0;
+        let currentSurahIndex = 0;
+        let isPlaying = false;
+        let isAutoplay = false;
+        let isShuffle = false;
 
-    function renderPlaylists() {
-        const playlistContainer = document.getElementById('playlistContainer');
-        playlistContainer.innerHTML = '';
+        function renderPlaylists() {
+            const playlistContainer = document.getElementById('playlistContainer');
+            playlistContainer.innerHTML = '';
 
-        playlists.forEach((playlist, index) => {
-            const playlistElement = document.createElement('div');
-            playlistElement.className = 'playlist';
-            playlistElement.innerHTML = `
-                <div class="playlist-header">
-                    <span class="playlist-title">${playlist.name}</span>
-                    <div class="playlist-actions">
-                        <button class="playlist-action" onclick="playPlaylist(${index})">
-                            <i class="fas fa-play"></i>
-                        </button>
-                        <button class="playlist-action" onclick="deletePlaylist(${index})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-                <ul class="surah-list">
-                    ${playlist.items.map((item, itemIndex) => `
-                        <li class="surah-item">
-                            <div class="surah-info">
-                                <img src="${item.sheikh.imageUrl}" alt="${item.sheikh.name}" class="surah-image">
-                                <div class="surah-details">
-                                    <span class="surah-name">${item.surahName}</span>
-                                    <span class="surah-reciter">${item.sheikh.name}</span>
-                                </div>
-                            </div>
-                            <button class="playlist-action" onclick="removeFromPlaylist(${index}, ${itemIndex})">
-                                <i class="fas fa-times"></i>
+            playlists.forEach((playlist, index) => {
+                const playlistElement = document.createElement('div');
+                playlistElement.className = 'playlist';
+                playlistElement.innerHTML = `
+                    <div class="playlist-header">
+                        <span class="playlist-title">${playlist.name}</span>
+                        <div class="playlist-actions">
+                            <button class="playlist-action" onclick="playPlaylist(${index})">
+                                <i class="fas fa-play"></i>
                             </button>
-                        </li>
-                    `).join('')}
-                </ul>
-            `;
-            playlistContainer.appendChild(playlistElement);
-        });
-    }
+                            <button class="playlist-action" onclick="deletePlaylist(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <ul class="surah-list">
+                        ${playlist.items.map((item, itemIndex) => `
+                            <li class="surah-item">
+                                <div class="surah-info">
+                                    <img src="${item.sheikh.imageUrl}" alt="${item.sheikh.name}" class="surah-image">
+                                    <div class="surah-details">
+                                        <span class="surah-name">${item.surahName}</span>
+                                        <span class="surah-reciter">${item.sheikh.name}</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button class="surah-play-btn" onclick="playSurahFromPlaylist(${index}, ${itemIndex})">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                    <button class="playlist-action" onclick="removeFromPlaylist(${index}, ${itemIndex})">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+                playlistContainer.appendChild(playlistElement);
+            });
+        }
 
-    function playPlaylist(index) {
-        const playlist = playlists[index];
-        if (playlist.items.length > 0) {
-            currentPlaylistIndex = index;
-            currentSurahIndex = 0;
+        function createNewPlaylist() {
+            Swal.fire({
+                title: 'Create New Playlist',
+                input: 'text',
+                inputLabel: 'Playlist Name',
+                inputPlaceholder: 'Enter playlist name',
+                showCancelButton: true,
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'You need to enter a playlist name!';
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const newPlaylist = {
+                        name: result.value,
+                        items: []
+                    };
+                    playlists.push(newPlaylist);
+                    savePlaylistsToLocalStorage();
+                    renderPlaylists();
+                    Swal.fire('Created!', 'Your playlist has been created.', 'success');
+                }
+            });
+        }
+
+        function playSurahFromPlaylist(playlistIndex, surahIndex) {
+            currentPlaylistIndex = playlistIndex;
+            currentSurahIndex = surahIndex;
             playSurah();
-        } else {
-            Swal.fire({
-                title: 'Empty Playlist',
-                text: 'This playlist is empty. Add some surahs first!',
-                icon: 'info'
-            });
-        }
-    }
-
-    function playSurah() {
-        const playlist = playlists[currentPlaylistIndex];
-        const surah = playlist.items[currentSurahIndex];
-
-        if (!surah.audioUrl) {
-            console.error(`Audio URL missing for ${surah.surahName} by ${surah.sheikh.name}`);
-            Swal.fire({
-                title: 'Error',
-                text: 'Audio file not found for this surah.',
-                icon: 'error'
-            });
-            return;
         }
 
-        audio.src = surah.audioUrl;
-        audio.play();
-        isPlaying = true;
+        function toggleAutoplay() {
+            isAutoplay = !isAutoplay;
+            document.getElementById('autoplayBtn').classList.toggle('active', isAutoplay);
+        }
 
-        document.getElementById('playerSheikhImage').src = surah.sheikh.imageUrl;
-        document.getElementById('playerSurahName').textContent = surah.surahName;
-        document.getElementById('playerSheikhName').textContent = surah.sheikh.name;
-        document.getElementById('audioPlayer').classList.add('active');
-        document.getElementById('togglePlayPause').innerHTML = '<i class="fas fa-pause"></i>';
+        function toggleShuffle() {
+            isShuffle = !isShuffle;
+            document.getElementById('shuffleBtn').classList.toggle('active', isShuffle);
+        }
 
-        audio.ontimeupdate = updateProgress;
-        audio.onended = nextSurah;
+        function playSurah() {
+            const playlist = playlists[currentPlaylistIndex];
+            const surah = playlist.items[currentSurahIndex];
 
-        audio.onloadedmetadata = () => {
-            document.getElementById('totalTime').textContent = formatTime(audio.duration);
-        };
-    }
+            if (!surah.audioUrl) {
+                console.error(`Audio URL missing for ${surah.surahName} by ${surah.sheikh.name}`);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Audio file not found for this surah.',
+                    icon: 'error'
+                });
+                return;
+            }
 
-    function updateProgress() {
-        const progressBar = document.getElementById('progressBar');
-        const currentTime = document.getElementById('currentTime');
+            audio.src = surah.audioUrl;
+            audio.play();
+            isPlaying = true;
 
-        const progress = (audio.currentTime / audio.duration) * 100;
-        progressBar.style.width = `${progress}%`;
-        currentTime.textContent = formatTime(audio.currentTime);
-    }
+            document.getElementById('playerSheikhImage').src = surah.sheikh.imageUrl;
+            document.getElementById('playerSurahName').textContent = surah.surahName;
+            document.getElementById('playerSheikhName').textContent = surah.sheikh.name;
+            document.getElementById('audioPlayer').classList.add('active');
+            document.getElementById('togglePlayPause').innerHTML = '<i class="fas fa-pause"></i>';
 
-    function nextSurah() {
-        const playlist = playlists[currentPlaylistIndex];
+            audio.ontimeupdate = updateProgress;
+            audio.onended = () => {
+                if (isAutoplay) {
+                    nextSurah();
+                } else {
+                    isPlaying = false;
+                    document.getElementById('togglePlayPause').innerHTML = '<i class="fas fa-play"></i>';
+                }
+            };
 
-        if (currentSurahIndex < playlist.items.length - 1) {
-            currentSurahIndex++;
+            audio.onloadedmetadata = () => {
+                document.getElementById('totalTime').textContent = formatTime(audio.duration);
+            };
+        }
+
+        function nextSurah() {
+            const playlist = playlists[currentPlaylistIndex];
+
+            if (isShuffle) {
+                currentSurahIndex = Math.floor(Math.random() * playlist.items.length);
+            } else {
+                currentSurahIndex = (currentSurahIndex + 1) % playlist.items.length;
+            }
+
             playSurah();
-        } else {
-            audio.pause();
-            isPlaying = false;
-            document.getElementById('togglePlayPause').innerHTML = '<i class="fas fa-play"></i>';
-            Swal.fire({
-                title: 'Playlist Finished',
-                text: `You have completed the playlist: ${playlist.name}`,
-                icon: 'success',
-                timer: 2000,
-                timerProgressBar: true,
-                showConfirmButton: false
-            });
         }
-    }
-
-    function previousSurah() {
+        function previousSurah() {
         if (currentSurahIndex > 0) {
             currentSurahIndex--;
             playSurah();
