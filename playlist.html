@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quran Pro Playlist Manager</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
         :root {
-            --primary-color: #1DB954;
-            --secondary-color: #191414;
-            --text-color: #FFFFFF;
-            --bg-color: #121212;
-            --card-bg: #282828;
+            --primary-color: #4a90e2;
+            --secondary-color: #f5f5f5;
+            --text-color: #333;
+            --bg-color: #ffffff;
+            --card-bg: #ffffff;
             --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Poppins', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
@@ -28,7 +28,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -36,22 +36,25 @@
         h1 {
             text-align: center;
             margin-bottom: 30px;
+            color: var(--primary-color);
+            font-weight: 600;
         }
 
         .btn {
             background-color: var(--primary-color);
-            color: var(--text-color);
+            color: var(--bg-color);
             border: none;
             padding: 12px 20px;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 16px;
+            font-weight: 600;
             margin: 10px 0;
         }
 
         .btn:hover {
-            background-color: #1ed760;
+            background-color: #3a7ac5;
             transform: translateY(-2px);
         }
 
@@ -78,7 +81,8 @@
 
         .playlist-title {
             font-size: 18px;
-            font-weight: bold;
+            font-weight: 600;
+            color: var(--primary-color);
         }
 
         .playlist-actions {
@@ -96,7 +100,7 @@
         }
 
         .playlist-action:hover {
-            color: #1ed760;
+            color: #3a7ac5;
         }
 
         .surah-list {
@@ -110,7 +114,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 10px 0;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid var(--secondary-color);
         }
 
         .surah-item:last-child {
@@ -127,6 +131,7 @@
             height: 40px;
             border-radius: 50%;
             margin-right: 10px;
+            object-fit: cover;
         }
 
         .surah-details {
@@ -135,12 +140,12 @@
         }
 
         .surah-name {
-            font-weight: bold;
+            font-weight: 600;
         }
 
         .surah-reciter {
             font-size: 12px;
-            color: #999;
+            color: #666;
         }
 
         .audio-player {
@@ -148,13 +153,13 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            background: rgba(24, 24, 24, 0.98);
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(10px);
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 20px;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
             transform: translateY(100%);
         }
@@ -175,6 +180,7 @@
             height: 60px;
             border-radius: 5px;
             margin-right: 15px;
+            object-fit: cover;
         }
 
         .audio-player-details {
@@ -190,11 +196,12 @@
         .audio-player-details h4 {
             font-size: 18px;
             margin-bottom: 5px;
+            color: var(--primary-color);
         }
 
         .audio-player-details p {
             font-size: 14px;
-            color: #999;
+            color: #666;
         }
 
         .audio-controls {
@@ -208,20 +215,20 @@
         .audio-controls button {
             background: transparent;
             border: none;
-            color: var(--text-color);
+            color: var(--primary-color);
             font-size: 24px;
             cursor: pointer;
             transition: color 0.3s ease;
         }
 
         .audio-controls button:hover {
-            color: var(--primary-color);
+            color: #3a7ac5;
         }
 
         .progress-container {
             width: 100%;
             height: 5px;
-            background: #333;
+            background: var(--secondary-color);
             border-radius: 5px;
             overflow: hidden;
             cursor: pointer;
@@ -241,7 +248,7 @@
             width: 100%;
             margin-top: 5px;
             font-size: 12px;
-            color: #999;
+            color: #666;
         }
 
         .create-playlist-btn {
@@ -250,15 +257,16 @@
             padding: 12px 24px;
             font-size: 18px;
             background-color: var(--primary-color);
-            color: var(--text-color);
+            color: var(--bg-color);
             border: none;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
+            font-weight: 600;
         }
 
         .create-playlist-btn:hover {
-            background-color: #1ed760;
+            background-color: #3a7ac5;
             transform: translateY(-2px);
         }
 
@@ -272,7 +280,7 @@
         }
 
         .surah-play-btn:hover {
-            color: #1ed760;
+            color: #3a7ac5;
         }
 
         .player-options {
