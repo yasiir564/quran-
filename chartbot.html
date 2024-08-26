@@ -47,15 +47,21 @@
 <div class="container">
     <h1>Quranic Word Analysis</h1>
     <input type="text" id="wordInput" placeholder="Enter a word to analyze">
-    <button onclick="analyzeWord()">Analyze</button>
+    <button id="analyzeButton">Analyze</button>
 
     <div class="results" id="results"></div>
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const analyzeButton = document.getElementById('analyzeButton');
+        analyzeButton.addEventListener('click', analyzeWord);
+    });
+
     async function analyzeWord() {
-        const word = document.getElementById('wordInput').value;
+        const wordInput = document.getElementById('wordInput');
         const resultsDiv = document.getElementById('results');
+        const word = wordInput.value.trim();
 
         // Clear previous results
         resultsDiv.innerHTML = '';
@@ -66,29 +72,29 @@
         }
 
         try {
-            const response = await fetch('https://x13.x10hosting.com:2222/HTM_FILE_MANAGER_EDIT?path=/.php/quranic_word_analysis.php', {
+            const response = await fetch('https://x13.x10hosting.com:2222/HTM_FILE_MANAGER_EDIT?path=/.php/quranic_word_analysis.php/analyze', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ word: word }),
+                mode: 'cors' // Explicitly set to 'cors' to handle CORS issues
             });
 
-            const data = await response.json();
-
-            if (response.ok) {
-                // Display the analysis results
-                resultsDiv.innerHTML = `<h2>Analysis Results for "${word}":</h2><pre>${JSON.stringify(data, null, 2)}</pre>`;
-            } else {
-                resultsDiv.innerHTML = `<p style="color: red;">Error: ${data.message}</p>`;
+            if (!response.ok) {
+                // Handle HTTP errors
+                const errorText = await response.text();
+                throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
             }
+
+            const data = await response.json();
+            resultsDiv.innerHTML = `<h2>Analysis Results for "${word}":</h2><pre>${JSON.stringify(data, null, 2)}</pre>`;
         } catch (error) {
-            console.error('Error:', error);
-            resultsDiv.innerHTML = '<p style="color: red;">An error occurred while analyzing the word.</p>';
+            console.error('Fetch error:', error);
+            resultsDiv.innerHTML = `<p style="color: red;">An error occurred: ${error.message}</p>`;
         }
     }
 </script>
 
 </body>
 </html>
-
