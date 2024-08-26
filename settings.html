@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
         body {
-            background-color: #f0f2f5;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            animation: gradientAnimation 10s infinite;
+            font-family: 'Amiri', serif;
         }
         .settings-container {
             max-width: 1000px;
@@ -50,6 +50,19 @@
         .btn {
             border-radius: 8px;
             padding: 0.5rem 1.5rem;
+        }
+         @keyframes gradientAnimation {
+            0% {
+                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+            }
+
+            50% {
+                background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
+            }
+
+            100% {
+                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+            }
         }
     </style>
 </head>
