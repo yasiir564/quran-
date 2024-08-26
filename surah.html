@@ -458,6 +458,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function escapeHtml(unsafe) {
+        return unsafe
+             .replace(/&/g, "&amp;")
+             .replace(/</g, "&lt;")
+             .replace(/>/g, "&gt;")
+             .replace(/"/g, "&quot;")
+             .replace(/'/g, "&#039;");
+    }
+
     function loadSurah(surahNumber) {
         surahContent.style.display = 'none';
         loader.style.display = 'block';
@@ -483,18 +492,18 @@ document.addEventListener('DOMContentLoaded', function () {
             surahContent.style.display = 'block';
 
             surahContent.innerHTML = `
-                <h2>${surahData.data.englishName} (${surahData.data.name})</h2>
-                <p>${surahData.data.englishNameTranslation}</p>
+                <h2>${escapeHtml(surahData.data.englishName)} (${escapeHtml(surahData.data.name)})</h2>
+                <p>${escapeHtml(surahData.data.englishNameTranslation)}</p>
                 ${surahData.data.ayahs.map((ayah, index) => `
                     <div class="ayah" id="ayah-${index}">
-                        ${ayah.text}<span class="separator">۞</span>
-                        <i class="fas fa-bookmark bookmark-icon" id="bookmark-${ayah.numberInSurah}" onclick="toggleBookmark(${surahNumber}, ${ayah.numberInSurah}, '${ayah.text.replace(/'/g, "\\'")}', '${translationData.data.ayahs[index].text.replace(/'/g, "\\'")}')"></i>
+                        ${escapeHtml(ayah.text)}<span class="separator">۞</span>
+                        <i class="fas fa-bookmark bookmark-icon" id="bookmark-${ayah.numberInSurah}" onclick="toggleBookmark(${surahNumber}, ${ayah.numberInSurah}, ${JSON.stringify(ayah.text)}, ${JSON.stringify(translationData.data.ayahs[index].text)})"></i>
                     </div>
                     <div class="translation" id="translation-${index}">
-                        ${translationData.data.ayahs[index].text}
+                        ${escapeHtml(translationData.data.ayahs[index].text)}
                     </div>
                     <audio class="audio" id="audio-${index}" controls>
-                        <source src="${audioData.data.ayahs[index].audio}" type="audio/mpeg">
+                        <source src="${escapeHtml(audioData.data.ayahs[index].audio)}" type="audio/mpeg">
                         Your browser does not support the audio element.
                     </audio>`).join('')}
             `;
