@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quran Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
@@ -14,8 +15,8 @@
         }
 
         body {
-            font-family: 'Amiri', serif;
-            animation: gradientAnimation 10s infinite;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f9;
             margin: 0;
             padding: 0;
             display: flex;
@@ -25,35 +26,26 @@
             color: var(--text-color);
         }
 
-        .container {
+        .product-card {
             background-color: white;
             border-radius: 15px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            padding: 3rem;
-            max-width: 900px;
+            padding: 2rem;
+            max-width: 400px;
             width: 90%;
+            text-align: center;
+        }
+
+        .product-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
         }
 
         h1 {
             color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 2rem;
-            font-size: 2.5rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .feature-card {
-            background-color: var(--secondary-color);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-top: 2rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+            font-size: 2rem;
         }
 
         .coming-soon {
@@ -66,37 +58,21 @@
             margin-bottom: 1rem;
             text-transform: uppercase;
             letter-spacing: 1px;
+            font-size: 0.8rem;
         }
 
-        h2 {
-            color: var(--primary-color);
-            margin-top: 0;
-            font-size: 1.8rem;
+        .description {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
         }
 
-        ul {
-            padding-left: 1.5rem;
-            list-style-type: none;
+        .features {
+            text-align: left;
+            margin-bottom: 1.5rem;
         }
 
-        li {
-            margin-bottom: 1rem;
-            position: relative;
-            padding-left: 1.5rem;
-        }
-
-        li::before {
-            content: '•';
-            color: var(--primary-color);
-            font-size: 1.5rem;
-            position: absolute;
-            left: 0;
-            top: -0.2rem;
-        }
-
-        .highlight {
-            font-weight: 600;
-            color: var(--primary-color);
+        .features li {
+            margin-bottom: 0.5rem;
         }
 
         .price-tag {
@@ -107,7 +83,6 @@
             font-size: 1.2rem;
             font-weight: 600;
             display: inline-block;
-            margin-top: 1.5rem;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -115,48 +90,37 @@
             transform: scale(1.05);
             box-shadow: 0 5px 15px rgba(30, 144, 255, 0.3);
         }
-          @keyframes gradientAnimation {
-            0% {
-                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-            }
-
-            50% {
-                background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
-            }
-
-            100% {
-                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="product-card">
+        <i class="fas fa-book-quran product-icon"></i>
+        <span class="coming-soon">Coming Soon</span>
         <h1>Quran Pro</h1>
-        <div class="feature-card">
-            <span class="coming-soon">Coming Soon</span>
-            <h2>Quranic Word Analysis Using AI</h2>
-            <p>Unlock the power of AI to dive deeper into the Quran. Our advanced AI-driven word analysis tool allows you to:</p>
-            <ul>
-                <li><span class="highlight">Understand the Roots:</span> Explore the root words and their meanings in different contexts.</li>
-                <li><span class="highlight">Cross-Reference:</span> See how specific words are used across the Quran, providing a comprehensive understanding of their significance.</li>
-                <li><span class="highlight">Get Insights:</span> Receive AI-generated insights into the linguistic, historical, and theological aspects of Quranic words.</li>
-                <li><span class="highlight">Interactive Learning:</span> Engage with the Quran like never before with interactive word-by-word breakdowns and interpretations.</li>
-            </ul>
-            <div class="price-tag">Only $30 per month</div>
+        <p class="description">
+            Discover the power of AI-driven Quranic word analysis. Deepen your understanding of the Quran with our advanced tool.
+        </p>
+        <ul class="features">
+            <li>Explore root words and meanings</li>
+            <li>Cross-reference usage across the Quran</li>
+            <li>Get AI-generated linguistic insights</li>
+            <li>Interactive word-by-word learning</li>
+        </ul>
+        <div class="price-tag">
+            <i class="fas fa-shopping-cart"></i> Only $30 per month
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const featureCard = document.querySelector('.feature-card');
-            featureCard.style.opacity = '0';
-            featureCard.style.transform = 'translateY(20px)';
-            featureCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            const productCard = document.querySelector('.product-card');
+            productCard.style.opacity = '0';
+            productCard.style.transform = 'translateY(20px)';
+            productCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
 
             setTimeout(() => {
-                featureCard.style.opacity = '1';
-                featureCard.style.transform = 'translateY(0)';
+                productCard.style.opacity = '1';
+                productCard.style.transform = 'translateY(0)';
             }, 300);
         });
     </script>
