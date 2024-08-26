@@ -398,8 +398,9 @@ document.addEventListener('DOMContentLoaded', function () {
     requestWakeLock();
 
     function isUserLoggedIn() {
-        const userDetails = JSON.parse(localStorage.getItem('userDetails'));
-        return userDetails && userDetails.isLoggedIn;
+        const userName = localStorage.getItem("userName");
+        const userEmail = localStorage.getItem("userEmail");
+        return userName && userEmail;
     }
 
     function toggleBookmark(surahNumber, ayahNumber, ayahText, translationText) {
