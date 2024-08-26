@@ -337,7 +337,6 @@
             </div>
             <i id="dark-mode-toggle" class="fas fa-moon"></i>
             <span class="close-button" onclick="window.location.href='index.html'">×</span>
-            <button id="view-bookmarks"><i class="fas fa-bookmark"></i> View Bookmarks</button>
         </header>
         <div id="bookmarks-modal" class="modal">
     <div class="modal-content">
@@ -402,8 +401,24 @@
         const key = `${surahNumber}:${ayahNumber}`;
         if (bookmarks[key]) {
             delete bookmarks[key];
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'Bookmark removed',
+                showConfirmButton: false,
+                timer: 1500
+            });
         } else {
             bookmarks[key] = { surahNumber, ayahNumber, ayahText, translationText };
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'Bookmark added',
+                showConfirmButton: false,
+                timer: 1500
+            });
         }
         localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
         updateBookmarkIcon(surahNumber, ayahNumber);
@@ -415,27 +430,6 @@
         if (icon) {
             icon.classList.toggle('active', bookmarks[key] !== undefined);
         }
-    }
-
-    function displayBookmarks() {
-        const bookmarksList = document.getElementById('bookmarks-list');
-        bookmarksList.innerHTML = '';
-        Object.values(bookmarks).forEach(bookmark => {
-            const bookmarkElement = document.createElement('div');
-            bookmarkElement.innerHTML = `
-                <h3>Surah ${bookmark.surahNumber}, Ayah ${bookmark.ayahNumber}</h3>
-                <p>${bookmark.ayahText}</p>
-                <p>${bookmark.translationText}</p>
-                <button onclick="removeBookmark('${bookmark.surahNumber}:${bookmark.ayahNumber}')">Remove</button>
-            `;
-            bookmarksList.appendChild(bookmarkElement);
-        });
-    }
-
-    function removeBookmark(key) {
-        delete bookmarks[key];
-        localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-        displayBookmarks();
     }
 
     function loadSurah(surahNumber) {
@@ -571,26 +565,6 @@
             darkModeToggle.classList.add('fa-moon');
         }
     });
-
-    // Add event listener for the view bookmarks button
-    document.getElementById('view-bookmarks').addEventListener('click', () => {
-        displayBookmarks();
-        document.getElementById('bookmarks-modal').style.display = 'block';
-    });
-
-    // Close the modal when clicking on the close button or outside the modal
-    document.querySelector('.close').addEventListener('click', () => {
-        document.getElementById('bookmarks-modal').style.display = 'none';
-    });
-
-    window.addEventListener('click', (event) => {
-        if (event.target === document.getElementById('bookmarks-modal')) {
-            document.getElementById('bookmarks-modal').style.display = 'none';
-        }
-    });
-
-    // Make removeBookmark function globally accessible
-    window.removeBookmark = removeBookmark;
 });
     </script>
 </body>
