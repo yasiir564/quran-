@@ -143,7 +143,7 @@
     </div>
 
     <div class="container settings-container">
-        <h1 class="text-center mb-5">User Settings</h1>
+        <h1 class="text-center mb-5" id="greeting"></h1>
         <div class="row">
             <div class="col-md-3">
                 <div class="text-center mb-4">
@@ -274,6 +274,29 @@
             document.getElementById("audioQuality").value = localStorage.getItem("audioQuality") || "medium";
         }
 
+        function updateGreeting() {
+            const userName = localStorage.getItem("userName") || "User";
+            const now = new Date();
+            const hour = now.getHours();
+            let greeting;
+
+            if (hour >= 5 && hour < 12) {
+                greeting = "Good morning";
+            } else if (hour >= 12 && hour < 18) {
+                greeting = "Good afternoon";
+            } else {
+                greeting = "Good evening";
+            }
+
+            document.getElementById("greeting").textContent = `${greeting}, ${userName}`;
+        }
+
+        // Call the function when the page loads
+        updateGreeting();
+
+        // Update the greeting every minute
+        setInterval(updateGreeting, 60000);
+
         // Function to show notifications
         function showNotification(message, icon = 'success') {
             const Toast = Swal.mixin({
@@ -294,7 +317,7 @@
             })
         }
 
-        // Profile form submission
+// Profile form submission
         document.getElementById("profileForm").addEventListener("submit", function(e) {
             e.preventDefault();
             const newUsername = document.getElementById("username").value;
@@ -311,6 +334,7 @@
             document.getElementById("user-email").textContent = newEmail;
 
             showNotification("Profile updated successfully");
+            updateGreeting();
         });
 
         // Profile picture update
@@ -376,22 +400,22 @@
                 window.location.href = 'login.html';
             }, 3000);
         });
+
         function openNav() {
-        document.getElementById("mySidebar").style.left = "0";
-        document.getElementById("main").style.marginLeft = "250px";
-    }
+            document.getElementById("mySidebar").style.left = "0";
+            document.getElementById("main").style.marginLeft = "250px";
+        }
 
-    function closeNav() {
-        document.getElementById("mySidebar").style.left = "-250px";
-        document.getElementById("main").style.marginLeft = "0";
-    }
+        function closeNav() {
+            document.getElementById("mySidebar").style.left = "-250px";
+            document.getElementById("main").style.marginLeft = "0";
+        }
 
-    // Event listener for close button
-    document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
+        // Event listener for close button
+        document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
 
-    // Event listener for open button
-    document.querySelector(".openbtn").addEventListener("click", openNav);
-
+        // Event listener for open button
+        document.querySelector(".openbtn").addEventListener("click", openNav);
     </script>
 </body>
 </html>
