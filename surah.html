@@ -362,6 +362,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('search-input');
     const searchButton = document.getElementById('search-button');
     const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const repeatSurahButton = document.getElementById('repeat-surah');
+    const nextSurahButton = document.getElementById('next-surah');
+    const previousSurahButton = document.getElementById('previous-surah');
     let autoNextSurahTimeout;
     let wakeLock = null;
 
@@ -369,11 +372,13 @@ document.addEventListener('DOMContentLoaded', function () {
     let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || {};
 
     async function requestWakeLock() {
-        try {
-            wakeLock = await navigator.wakeLock.request('screen');
-            console.log('Wake lock is active');
-        } catch (err) {
-            console.error(`${err.name}, ${err.message}`);
+        if ('wakeLock' in navigator) {
+            try {
+                wakeLock = await navigator.wakeLock.request('screen');
+                console.log('Wake lock is active');
+            } catch (err) {
+                console.error(`${err.name}, ${err.message}`);
+            }
         }
     }
 
@@ -494,6 +499,7 @@ document.addEventListener('DOMContentLoaded', function () {
             surahContent.innerHTML = `
                 <h2>${escapeHtml(surahData.data.englishName)} (${escapeHtml(surahData.data.name)})</h2>
                 <p>${escapeHtml(surahData.data.englishNameTranslation)}</p>
+                <button id="play-all">Play All</button>
                 ${surahData.data.ayahs.map((ayah, index) => `
                     <div class="ayah" id="ayah-${index}">
                         ${escapeHtml(ayah.text)}<span class="separator">۞</span>
@@ -515,6 +521,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const audios = document.querySelectorAll('.audio');
             const ayahs = document.querySelectorAll('.ayah');
+            const playAllButton = document.getElementById('play-all');
 
             audios.forEach((audio, index) => {
                 audio.addEventListener('play', () => {
@@ -540,14 +547,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             });
 
-            audios[0].play();
+            playAllButton.addEventListener('click', () => {
+                audios[0].play();
+            });
 
             Swal.fire({
                 toast: true,
                 position: 'top-end',
                 icon: 'info',
                 title: 'Surah Loaded',
-                text: `Now playing: ${surahData.data.englishName}`,
+                text: `${surahData.data.englishName} is ready to play`,
                 showConfirmButton: false,
                 timer: 3000,
                 timerProgressBar: true
@@ -566,7 +575,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function scrollToAyah(index) {
         const ayahElement = document.getElementById(`ayah-${index}`);
-        ayahElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (ayahElement) {
+            ayahElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     }
 
     function autoNextSurah() {
@@ -601,75 +612,81 @@ document.addEventListener('DOMContentLoaded', function () {
 
     loadSurah(surahNumber);
 
-    document.getElementById('repeat-surah').addEventListener('click', () => {
-        clearTimeout(autoNextSurahTimeout);
-        Swal.fire({
-            title: 'Repeating Surah',
-            text: 'Reloading the current Surah...',
-            timer: 1500,
-            timerProgressBar: true,
-            showConfirmButton: false,
-            willClose: () => {
-                loadSurah(surahNumber);
+    if (repeatSurahButton) {
+        repeatSurahButton.addEventListener('click', () => {
+            clearTimeout(autoNextSurahTimeout);
+            Swal.fire({
+                title: 'Repeating Surah',
+                text: 'Reloading the current Surah...',
+                timer: 1500,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                willClose: () => {
+                    loadSurah(surahNumber);
+                }
+            });
+        });
+    }
+
+    if (nextSurahButton) {
+        nextSurahButton.addEventListener('click', () => {
+            clearTimeout(autoNextSurahTimeout);
+            const nextSurahNumber = parseInt(surahNumber) + 1;
+            if (nextSurahNumber <= 114) {
+                Swal.fire({
+                    title: 'Moving to Next Surah',
+                    text: `Loading Surah ${nextSurahNumber}...`,
+                    timer: 1500,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    willClose: () => {
+                        window.location.href = `surah.html?surah=${nextSurahNumber}`;
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: 'End of Quran',
+                    text: 'You have reached the end of the Quran.',
+                    icon: 'info',
+                    confirmButtonText: 'Start Over',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'surah.html?surah=1';
+                    }
+                });
             }
         });
-    });
+    }
 
-    document.getElementById('next-surah').addEventListener('click', () => {
-        clearTimeout(autoNextSurahTimeout);
-        const nextSurahNumber = parseInt(surahNumber) + 1;
-        if (nextSurahNumber <= 114) {
-            Swal.fire({
-                title: 'Moving to Next Surah',
-                text: `Loading Surah ${nextSurahNumber}...`,
-                timer: 1500,
-                timerProgressBar: true,
-                showConfirmButton: false,
-                willClose: () => {
-                    window.location.href = `surah.html?surah=${nextSurahNumber}`;
-                }
-            });
-        } else {
-            Swal.fire({
-                title: 'End of Quran',
-                text: 'You have reached the end of the Quran.',
-                icon: 'info',
-                confirmButtonText: 'Start Over',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = 'surah.html?surah=1';
-                }
-            });
-        }
-    });
-
-    document.getElementById('previous-surah').addEventListener('click', () => {
-        clearTimeout(autoNextSurahTimeout);
-        const prevSurahNumber = parseInt(surahNumber) - 1;
-        if (prevSurahNumber >= 1) {
-            Swal.fire({
-                title: 'Moving to Previous Surah',
-                text: `Loading Surah ${prevSurahNumber}...`,
-                timer: 1500,
-                timerProgressBar: true,
-                showConfirmButton: false,
-                willClose: () => {
-                    window.location.href = `surah.html?surah=${prevSurahNumber}`;
-                }
-            });
-        } else {
-            Swal.fire({
-                title: 'Start of Quran',
-                text: 'You have reached the beginning of the Quran.',
-                icon: 'info',
-                confirmButtonText: 'Go to the End',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = 'surah.html?surah=114';
-                }
-            });
-        }
-    });
+    if (previousSurahButton) {
+        previousSurahButton.addEventListener('click', () => {
+            clearTimeout(autoNextSurahTimeout);
+            const prevSurahNumber = parseInt(surahNumber) - 1;
+            if (prevSurahNumber >= 1) {
+                Swal.fire({
+                    title: 'Moving to Previous Surah',
+                    text: `Loading Surah ${prevSurahNumber}...`,
+                    timer: 1500,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    willClose: () => {
+                        window.location.href = `surah.html?surah=${prevSurahNumber}`;
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: 'Start of Quran',
+                    text: 'You have reached the beginning of the Quran.',
+                    icon: 'info',
+                    confirmButtonText: 'Go to the End',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'surah.html?surah=114';
+                    }
+                });
+            }
+        });
+    }
 
     // Dark mode toggle functionality
     const currentTheme = localStorage.getItem('theme') || 'light';
@@ -677,31 +694,35 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.classList.add('dark-mode');
     }
 
-    darkModeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        const theme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-        localStorage.setItem('theme', theme);
-    });
+    if (darkModeToggle) {
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const theme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+            localStorage.setItem('theme', theme);
+        });
+    }
 
     // Search functionality
-    searchButton.addEventListener('click', () => {
-        const searchTerm = searchInput.value.trim().toLowerCase();
-        if (searchTerm) {
-            const ayahs = document.querySelectorAll('.ayah, .translation');
-            ayahs.forEach(ayah => {
-                if (ayah.textContent.toLowerCase().includes(searchTerm)) {
+    if (searchButton && searchInput) {
+        searchButton.addEventListener('click', () => {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            if (searchTerm) {
+                const ayahs = document.querySelectorAll('.ayah, .translation');
+                ayahs.forEach(ayah => {
+                    if (ayah.textContent.toLowerCase().includes(searchTerm)) {
+                        ayah.style.display = '';
+                    } else {
+                        ayah.style.display = 'none';
+                    }
+                });
+            } else {
+                const ayahs = document.querySelectorAll('.ayah, .translation');
+                ayahs.forEach(ayah => {
                     ayah.style.display = '';
-                } else {
-                    ayah.style.display = 'none';
-                }
-            });
-        } else {
-            const ayahs = document.querySelectorAll('.ayah, .translation');
-            ayahs.forEach(ayah => {
-                ayah.style.display = '';
-            });
-        }
-    });
+                });
+            }
+        });
+    }
 });
     </script>
 </body>
