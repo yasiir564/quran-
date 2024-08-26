@@ -397,7 +397,28 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     requestWakeLock();
 
+    function isUserLoggedIn() {
+        const userDetails = JSON.parse(localStorage.getItem('userDetails'));
+        return userDetails && userDetails.isLoggedIn;
+    }
+
     function toggleBookmark(surahNumber, ayahNumber, ayahText, translationText) {
+        if (!isUserLoggedIn()) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Login Required',
+                text: 'You need to be logged in to bookmark ayahs.',
+                confirmButtonText: 'Login',
+                showCancelButton: true,
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'login.html';
+                }
+            });
+            return;
+        }
+
         const key = `${surahNumber}:${ayahNumber}`;
         if (bookmarks[key]) {
             delete bookmarks[key];
@@ -612,58 +633,62 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    searchButton.addEventListener('click', () => {
-        const searchTerm = searchInput.value.toLowerCase();
-        const translations = surahContent.querySelectorAll('.translation');
-        let found = false;
-        translations.forEach((translation, index) => {
-            if (translation.innerText.toLowerCase().includes(searchTerm)) {
-                translation.style.display = 'block';
-                if (!found) {
-                    scrollToAyah(index);
-                    found = true;
-                }
-            } else {
-                translation.style.display = 'none';
-            }
-        });
-        if (!found) {
+    document.getElementById('previous-surah').addEventListener('click', () => {
+        clearTimeout(autoNextSurahTimeout);
+        const prevSurahNumber = parseInt(surahNumber) - 1;
+        if (prevSurahNumber >= 1) {
             Swal.fire({
-                icon: 'info',
-                title: 'No Results',
-                text: 'No matches found for your search term.',
-                timer: 2000,
+                title: 'Moving to Previous Surah',
+                text: `Loading Surah ${prevSurahNumber}...`,
+                timer: 1500,
                 timerProgressBar: true,
-                showConfirmButton: false
+                showConfirmButton: false,
+                willClose: () => {
+                    window.location.href = `surah.html?surah=${prevSurahNumber}`;
+                }
+            });
+        } else {
+            Swal.fire({
+                title: 'Start of Quran',
+                text: 'You have reached the beginning of the Quran.',
+                icon: 'info',
+                confirmButtonText: 'Go to the End',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'surah.html?surah=114';
+                }
             });
         }
     });
 
+    // Dark mode toggle functionality
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+    }
+
     darkModeToggle.addEventListener('click', () => {
         document.body.classList.toggle('dark-mode');
-        if (document.body.classList.contains('dark-mode')) {
-            darkModeToggle.classList.remove('fa-moon');
-            darkModeToggle.classList.add('fa-sun');
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: 'Dark Mode Enabled',
-                showConfirmButton: false,
-                timer: 1500,
-                timerProgressBar: true
+        const theme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+        localStorage.setItem('theme', theme);
+    });
+
+    // Search functionality
+    searchButton.addEventListener('click', () => {
+        const searchTerm = searchInput.value.trim().toLowerCase();
+        if (searchTerm) {
+            const ayahs = document.querySelectorAll('.ayah, .translation');
+            ayahs.forEach(ayah => {
+                if (ayah.textContent.toLowerCase().includes(searchTerm)) {
+                    ayah.style.display = '';
+                } else {
+                    ayah.style.display = 'none';
+                }
             });
         } else {
-            darkModeToggle.classList.remove('fa-sun');
-            darkModeToggle.classList.add('fa-moon');
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: 'Light Mode Enabled',
-                showConfirmButton: false,
-                timer: 1500,
-                timerProgressBar: true
+            const ayahs = document.querySelectorAll('.ayah, .translation');
+            ayahs.forEach(ayah => {
+                ayah.style.display = '';
             });
         }
     });
