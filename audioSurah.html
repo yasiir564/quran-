@@ -984,7 +984,9 @@ window.addToSelectedPlaylist = function(playlistName) {
                 });
             }
 
-                currentSurahId = surahId;
+    currentSurahId = surahId;
+    // Remove the call to updateAddToPlaylistButtonVisibility
+    // updateAddToPlaylistButtonVisibility();
 } catch (error) {
     console.error('Error loading audio:', error);
     Swal.fire({
@@ -994,6 +996,7 @@ window.addToSelectedPlaylist = function(playlistName) {
         confirmButtonText: 'Okay'
     });
 }
+
 
 
     playPauseButton.addEventListener('click', playAudio);
