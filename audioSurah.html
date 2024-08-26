@@ -984,18 +984,17 @@ window.addToSelectedPlaylist = function(playlistName) {
                 });
             }
 
-            currentSurahId = surahId;
-            updateAddToPlaylistButtonVisibility();
-        } catch (error) {
-            console.error('Error loading audio:', error);
-            Swal.fire({
-                title: 'Error',
-                text: 'Failed to load audio. Please try again later.',
-                icon: 'error',
-                confirmButtonText: 'Okay'
-            });
-        }
-    }
+                currentSurahId = surahId;
+} catch (error) {
+    console.error('Error loading audio:', error);
+    Swal.fire({
+        title: 'Error',
+        text: 'Failed to load audio. Please try again later.',
+        icon: 'error',
+        confirmButtonText: 'Okay'
+    });
+}
+
 
     playPauseButton.addEventListener('click', playAudio);
     stopButton.addEventListener('click', stopAudio);
