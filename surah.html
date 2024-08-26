@@ -338,13 +338,7 @@
             <i id="dark-mode-toggle" class="fas fa-moon"></i>
             <span class="close-button" onclick="window.location.href='index.html'">×</span>
         </header>
-        <div id="bookmarks-modal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Bookmarked Ayahs</h2>
-        <div id="bookmarks-list"></div>
-    </div>
-</div>
+        <i class="fas fa-bookmark bookmark-icon" id="bookmark-${ayah.numberInSurah}" onclick="toggleBookmark(${surahNumber}, ${ayah.numberInSurah}, '${ayah.text.replace(/'/g, "\\'")}', '${translationData.data.ayahs[index].text.replace(/'/g, "\\'")}')""></i>
         <div id="surah-content"></div>
         <div class="loader" id="loader"></div>
         <div class="buttons">
@@ -367,6 +361,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const previousSurahButton = document.getElementById('previous-surah');
     let autoNextSurahTimeout;
     let wakeLock = null;
+    
 
     // Bookmark functionality
     let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || {};
