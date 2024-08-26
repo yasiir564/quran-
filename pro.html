@@ -14,8 +14,8 @@
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--secondary-color);
+            font-family: 'Amiri', serif;
+            animation: gradientAnimation 10s infinite;
             margin: 0;
             padding: 0;
             display: flex;
@@ -114,6 +114,19 @@
         .price-tag:hover {
             transform: scale(1.05);
             box-shadow: 0 5px 15px rgba(30, 144, 255, 0.3);
+        }
+          @keyframes gradientAnimation {
+            0% {
+                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+            }
+
+            50% {
+                background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
+            }
+
+            100% {
+                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+            }
         }
     </style>
 </head>
