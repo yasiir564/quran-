@@ -743,9 +743,12 @@
         sheikh.popularity = Math.floor(Math.random() * 1000000); // Random popularity between 0 and 1,000,000
     });
 
-    function updateAddToPlaylistButtonVisibility() {
-if (addToPlaylistButton) {
+  if (addToPlaylistButton) {
+    addToPlaylistButton.addEventListener('click', handleAddToPlaylist);
+    // Always display the Add to Playlist button
     addToPlaylistButton.style.display = 'block';
+} else {
+    console.error('Add to Playlist button not found!');
 }
 
     function isUserLoggedIn() {
