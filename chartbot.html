@@ -203,43 +203,6 @@
     </div>
 
     <script>
-        const chatbot = document.querySelector('.custom-chatbot');
-
-        // Function to toggle chat visibility
-        function toggleChat() {
-            chatbot.classList.toggle('show');
-        }
-
-        // Function to send message
-        function sendMessage(event) {
-            event.preventDefault();
-            const messageInput = document.getElementById('message');
-            const message = messageInput.value.trim();
-            if (message) {
-                addMessage('user', message);
-                // Here you would typically send the message to your backend
-                // and get a response. For now, we'll just echo the message.
-                setTimeout(() => addMessage('ai', `You said: ${message}`), 1000);
-                messageInput.value = '';
-            }
-        }
-
-        // Function to add message to chat
-        function addMessage(sender, text) {
-            const chatMessages = document.getElementById('chatMessages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `chat__messages__${sender}`;
-            messageDiv.innerHTML = `<p>${text}</p>`;
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        // Open chat automatically when page loads
-        window.onload = function() {
-            setTimeout(() => {
-                chatbot.classList.add('show');
-            }, 1000);
-        };
       const apiUrl = 'https://denmara.com/wp-json/myapi/v1/chat-bot/';
 const botConfigurationUrl = 'https://denmara.com/wp-json/myapi/v1/chat-bot-config';
 const copyButtons = document.querySelectorAll('.lwh-open-cbot .copy-button');
