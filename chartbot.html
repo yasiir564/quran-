@@ -9,6 +9,13 @@
     <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
     <script defer src="./script.js"></script>
     <style>
+         body {
+            animation: gradientAnimation 10s infinite;
+            font-family: 'Amiri', serif;
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
         .lwh-open-cbot, .lwh-open-cbot :root {
     --chatbot-width: 350px;
     --chatbot-font-family: 'Amiri', serif;
@@ -19,7 +26,7 @@
     --chatbot-height:60vh;
     --chatbot-border-color: #E4E3E3;
     --chatbot-primary-color: #2575fc;;
-    --chatbot-secondary-color: #2c2b8e;
+    --chatbot-secondary-color: #2575fc;
     --chatbot-hover-color: #1e8ece;
     --chatbot-bg-color: #F1F1F1;
     --chatbot-scrollbar-track-color: #f3f3f3;
@@ -60,7 +67,7 @@
 }
 
 .lwh-open-cbot .chat {
-    background-color: black;
+    background-color: white;
     position: relative;
     z-index: 9999;
     border: 1.5px solid var(--chatbot-border-color);
@@ -439,6 +446,17 @@
 @keyframes blink {
     50% {
         fill: transparent;
+    }
+}
+        @keyframes gradientAnimation {
+    0% {
+        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+    }
+    50% {
+        background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
+    }
+    100% {
+        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
     }
 }
 
