@@ -681,7 +681,7 @@
         </div>
     </div>
     <script>
-       const apiUrl = 'https://denmara.com/wp-json/myapi/v1/chat-bot/';
+      const apiUrl = 'https://denmara.com/wp-json/myapi/v1/chat-bot/';
 const botConfigurationUrl = 'https://denmara.com/wp-json/myapi/v1/chat-bot-config';
 const copyButtons = document.querySelectorAll('.lwh-open-cbot .copy-button');
 const button = document.querySelector('.lwh-open-cbot #submit-btn');
@@ -894,7 +894,7 @@ async function lwhOpenCbotfetchData() {
             body: JSON.stringify({
                 "last_prompt": content[content.length - 1].message,
                 "conversation_history": content.map(item => ({
-                    "role": item.role,
+                    "role": item.role === 'user' ? 'user' : 'model',
                     "content": item.message
                 }))
             })
@@ -996,7 +996,6 @@ function lwhOpenCbotshowPopup(val, color) {
         popup.style.opacity = 0;
     }, 3000);
 }
-
 
 function lwhOpenCbothandleStartupBtnClick(event){
     const startupBtnContainer = event.target.parentNode;
