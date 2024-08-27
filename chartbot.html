@@ -9,23 +9,50 @@
     <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
     <script defer src="./script.js"></script>
     <style>
-         body {
-            animation: gradientAnimation 10s infinite;
-            font-family: 'Amiri', serif;
-            margin: 0;
-            padding: 0;
-            position: relative;
-        }
-        .lwh-open-cbot, .lwh-open-cbot :root {
-    --chatbot-width: 350px;
+        body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(-45deg, #a8edea, #fed6e3);
+    background-size: 400% 400%;
+    animation: gradientAnimation 15s ease infinite;
+    font-family: 'Amiri', serif;
+}
+
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.chatbot-container {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 400px;
+    width: 100%;
+}
+
+.lwh-open-cbot, .lwh-open-cbot :root {
+    --chatbot-width: 100%;
     --chatbot-font-family: 'Amiri', serif;
     --chatbot-image-position-bottom: 5%;
     --chatbot-image-position-right: 3%;
     --chatbot-position-bottom: 6%;
     --chatbot-position-right: 10%;
-    --chatbot-height:60vh;
+    --chatbot-height: 60vh;
     --chatbot-border-color: #E4E3E3;
-    --chatbot-primary-color: #2575fc;;
+    --chatbot-primary-color: #2575fc;
     --chatbot-secondary-color: #2575fc;
     --chatbot-hover-color: #1e8ece;
     --chatbot-bg-color: #F1F1F1;
@@ -50,13 +77,10 @@
     box-shadow: none;
 }
 
-
 .lwh-open-cbot .custom-chatbot {
-    width: var(--chatbot-width);
+    width: 100%;
     font-family: var(--chatbot-font-family);
-    position: fixed;
-    bottom: var(--chatbot-position-bottom);
-    right: var(--chatbot-position-right);
+    position: relative;
     overflow: hidden;
     z-index: 9998;
 }
@@ -70,11 +94,12 @@
     background-color: white;
     position: relative;
     z-index: 9999;
-    border: 1.5px solid var(--chatbot-border-color);
+    border: none;
     border-radius: 12px;
     opacity: 0;
     transform: translateY(100%);
     transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out, display 0s linear 0.5s;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .lwh-open-cbot .chat.show {
@@ -192,7 +217,6 @@
 }
 
 .lwh-open-cbot .chat__status span {
-    background-color: #68D391;
     background-color: #acacac;
     width: 8px;
     height: 8px;
@@ -440,8 +464,8 @@
     }
     to {
         opacity: 0;
-    }
-}
+     }
+  }
 
 @keyframes blink {
     50% {
@@ -618,6 +642,8 @@
 
 
 <body>
+    <div class="chatbot-container">
+        <div class="lwh-open-cbot">
     <div class="chatbot-container lwh-open-cbot">
         <div class="custom-chatbot__image" onclick="lwhOpenCbotToggleChat()">
             <dotlottie-player src="https://lottie.host/feefeb87-8206-4b50-8696-bda4747b4fdf/uUJIo0ICb6.json"
