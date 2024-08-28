@@ -18,10 +18,10 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Amiri', serif;
             line-height: 1.6;
             color: var(--text-color);
-            background-color: var(--bg-color);
+            animation: gradientAnimation 10s infinite;
             margin: 0;
             padding: 0;
             transition: background-color 0.3s ease, color 0.3s ease;
@@ -176,6 +176,17 @@
                 grid-template-columns: 1fr;
             }
         }
+        @keyframes gradientAnimation {
+    0% {
+        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+    }
+    50% {
+        background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
+    }
+    100% {
+        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+    }
+}
     </style>
 </head>
 <body>
