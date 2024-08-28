@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Favorite Quran Bookmarks</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .bookmark-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .bookmark-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+            width: 300px;
+            transition: transform 0.3s ease;
+        }
+        .bookmark-card:hover {
+            transform: translateY(-5px);
+        }
+        .ayah-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+            text-align: right;
+            direction: rtl;
+        }
+        .translation-text {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+        .surah-info {
+            font-size: 12px;
+            color: #3498db;
+        }
+        .remove-bookmark {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .remove-bookmark:hover {
+            background-color: #c0392b;
+        }
+        .no-bookmarks {
+            text-align: center;
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-top: 50px;
+        }
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #2c3e50;
+        }
+        .dark-mode {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+        }
+        .dark-mode .bookmark-card {
+            background-color: #34495e;
+            color: #ecf0f1;
+        }
+        .dark-mode .translation-text {
+            color: #bdc3c7;
+        }
+        .dark-mode .surah-info {
+            color: #3498db;
+        }
+        .dark-mode .dark-mode-toggle {
+            color: #ecf0f1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your Favorite Quran Bookmarks</h1>
+        <button class="dark-mode-toggle" id="dark-mode-toggle">
+            <i class="fas fa-moon"></i>
+        </button>
+        <div id="bookmark-container" class="bookmark-container">
+            <!-- Bookmarks will be dynamically added here -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const bookmarkContainer = document.getElementById('bookmark-container');
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || {};
+
+            function displayBookmarks() {
+                bookmarkContainer.innerHTML = '';
+                if (Object.keys(bookmarks).length === 0) {
+                    bookmarkContainer.innerHTML = '<p class="no-bookmarks">You have no bookmarks yet. Start adding some from the Surah pages!</p>';
+                    return;
+                }
+
+                for (const key in bookmarks) {
+                    const bookmark = bookmarks[key];
+                    const bookmarkCard = document.createElement('div');
+                    bookmarkCard.className = 'bookmark-card';
+                    bookmarkCard.innerHTML = `
+                        <div class="ayah-text">${bookmark.ayahText}</div>
+                        <div class="translation-text">${bookmark.translationText}</div>
+                        <div class="surah-info">Surah ${bookmark.surahNumber}, Ayah ${bookmark.ayahNumber}</div>
+                        <button class="remove-bookmark" data-key="${key}">Remove Bookmark</button>
+                    `;
+                    bookmarkContainer.appendChild(bookmarkCard);
+                }
+            }
+
+            function removeBookmark(key) {
+                delete bookmarks[key];
+                localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+                displayBookmarks();
+            }
+
+            bookmarkContainer.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-bookmark')) {
+                    const key = e.target.getAttribute('data-key');
+                    removeBookmark(key);
+                }
+            });
+
+            darkModeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                const isDarkMode = document.body.classList.contains('dark-mode');
+                localStorage.setItem('darkMode', isDarkMode);
+                darkModeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            });
+
+            // Check for dark mode preference
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+
+            displayBookmarks();
+        });
+    </script>
+</body>
+</html>
