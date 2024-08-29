@@ -28,14 +28,16 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            animation: gradientAnimation 10s infinite;
+            background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
             color: var(--text-color);
             line-height: 1.6;
             transition: background-color 0.3s, color 0.3s;
+            min-height: 100vh;
+            padding-top: 60px; /* Add space for the fixed header */
         }
 
         body.dark-mode {
-            background-color: var(--dark-bg-color);
+            background-image: linear-gradient(to top, #09203f 0%, #537895 100%);
             color: var(--dark-text-color);
         }
 
@@ -124,6 +126,7 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            cursor: pointer;
         }
 
         .card:hover {
@@ -159,11 +162,27 @@
             flex-grow: 1;
         }
 
-        .dark-mode-switch {
+        .fixed-header {
             position: fixed;
-            top: 10px; 
-            right: 1rem;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 1rem;
+        }
+
+        .dark-mode .fixed-header {
+            background-color: rgba(31, 41, 55, 0.9);
+        }
+
+        .dark-mode-switch {
+            display: flex;
+            align-items: center;
         }
 
         .switch {
@@ -171,6 +190,7 @@
             display: inline-block;
             width: 60px;
             height: 34px;
+            margin-left: 1rem;
         }
 
         .switch input {
@@ -211,54 +231,6 @@
             transform: translateX(26px);
         }
 
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: var(--card-bg);
-            color: var(--text-color);
-            padding: 15px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            min-width: 300px;
-            max-width: 400px;
-            transform: translateY(150%);
-            transition: transform 0.3s ease-out;
-            z-index: 1000;
-        }
-
-        .notification.show {
-            transform: translateY(0);
-        }
-
-        .notification-icon {
-            font-size: 24px;
-            margin-right: 15px;
-        }
-
-        .notification-content {
-            flex-grow: 1;
-        }
-
-        .notification-title {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .notification-message {
-            font-size: 0.9rem;
-            color: var(--secondary-color);
-        }
-
-        .notification-close {
-            cursor: pointer;
-            font-size: 18px;
-            color: var(--secondary-color);
-        }
-
         .separator {
             border: 0;
             height: 1px;
@@ -279,6 +251,10 @@
             padding-top: 60px;
         }
 
+        .dark-mode .sidebar {
+            background: linear-gradient(to top, #09203f, #537895);
+        }
+
         .sidebar a {
             padding: 10px 15px;
             text-decoration: none;
@@ -286,6 +262,10 @@
             color: #111;
             display: block;
             transition: 0.3s;
+        }
+
+        .dark-mode .sidebar a {
+            color: #fff;
         }
 
         .sidebar a:hover {
@@ -308,26 +288,10 @@
             color: white;
             padding: 10px 15px;
             border: none;
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            z-index: 1000;
         }
 
         .openbtn:hover {
             background-color: #0056b3;
-        }
-
-        @keyframes gradientAnimation {
-            0% {
-                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-            }
-            50% {
-                background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
-            }
-            100% {
-                background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-            }
         }
 
         @media (max-width: 768px) {
@@ -345,15 +309,28 @@
                 flex-direction: column;
                 align-items: stretch;
             }
+
+            .fixed-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .dark-mode-switch {
+                margin-top: 0.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="dark-mode-switch">
-        <label class="switch">
-            <input type="checkbox" id="darkModeToggle">
-            <span class="slider"></span>
-        </label>
+    <div class="fixed-header">
+        <button class="openbtn" id="openSidebarBtn">&#9776; Quran Pro</button>
+        <div class="dark-mode-switch">
+            <span>Dark Mode</span>
+            <label class="switch">
+                <input type="checkbox" id="darkModeToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
     </div>
     
     <div id="mySidebar" class="sidebar">
@@ -375,8 +352,6 @@
         </a>
     </div>
 
-    <button class="openbtn" id="openSidebarBtn">&#9776; Quran Pro</button>
-
     <div class="container">
         <div class="profile-header">
             <img id="user-avatar" class="profile-avatar" src="" alt="User Avatar">
@@ -392,55 +367,43 @@
         <hr class="separator">
 
         <div class="card-grid">
-            <div class="card">
+            <div class="card" onclick="window.location.href='playlist.html'">
                 <div class="card-icon">
                     <i class="fas fa-plus-circle"></i>
                 </div>
                 <div class="card-content">
                     <h3>Add to Playlist</h3>
                     <p>Add your favorite Quran recitations to playlists</p>
-                    <a href="add-to-playlist.html" class="btn btn-primary">Add Recitation</a>
                 </div>
             </div>
-            <div class="card">
+            <div class="card" onclick="window.location.href='bookmarks.html'">
                 <div class="card-icon">
                     <i class="fas fa-bookmark"></i>
                 </div>
                 <div class="card-content">
                     <h3>Bookmarks & Favorites</h3>
                     <p>Quick access to your saved verses and surahs</p>
-                    <a href="bookmarks.html" class="btn btn-primary">View Bookmarks</a>
                 </div>
             </div>
-            <div class="card">
+            <div class="card" onclick="window.location.href='settings.html'">
                 <div class="card-icon">
                     <i class="fas fa-cog"></i>
                 </div>
                 <div class="card-content">
                     <h3>Settings</h3>
                     <p>Customize your Quran Pro experience</p>
-                    <a href="settings.html" class="btn btn-primary">Go to Settings</a>
                 </div>
             </div>
-            <div class="card">
+            <div class="card" onclick="window.location.href='chartbot.html'">
                 <div class="card-icon">
                     <i class="fas fa-crown"></i>
                 </div>
                 <div class="card-content">
                     <h3>Chat with AI</h3>
                     <p>Ask our Gemini-powered AI anything</p>
-                    <a href="chatbot.html" class="btn btn-primary">Ask a Question</a>
                 </div>
             </div>
         </div>
-    </div>
-    <div id="notification" class="notification">
-        <div class="notification-icon"></div>
-        <div class="notification-content">
-            <div class="notification-title"></div>
-            <div class="notification-message"></div>
-        </div>
-        <div class="notification-close">&times;</div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.min.js"></script>
