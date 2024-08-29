@@ -27,7 +27,7 @@
         }
 
         body {
-            font-family: 'Amiri', serif;
+            font-family: 'Poppins', sans-serif;
             animation: gradientAnimation 10s infinite;
             color: var(--text-color);
             line-height: 1.6;
@@ -39,11 +39,12 @@
             color: var(--dark-text-color);
         }
 
-       .container {
+        .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 1rem 2rem; /* Reduced top padding */
+            padding: 1rem 2rem;
         }
+
         .profile-header {
             display: flex;
             align-items: center;
@@ -110,16 +111,19 @@
 
         .card-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
         }
 
         .card {
             background-color: var(--card-bg);
             border-radius: 1rem;
-            padding: 1.5rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .card:hover {
@@ -127,19 +131,32 @@
             box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
         }
 
+        .card-icon {
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 2rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
         .card h3 {
             font-size: 1.25rem;
             font-weight: 600;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            margin-bottom: 0.5rem;
         }
 
         .card p {
             font-size: 0.9rem;
             color: var(--secondary-color);
             margin-bottom: 1.5rem;
+            flex-grow: 1;
         }
 
         .dark-mode-switch {
@@ -241,6 +258,7 @@
             font-size: 18px;
             color: var(--secondary-color);
         }
+
         .separator {
             border: 0;
             height: 1px;
@@ -304,11 +322,9 @@
             0% {
                 background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
             }
-
             50% {
                 background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
             }
-
             100% {
                 background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
             }
@@ -363,38 +379,58 @@
 
     <div class="container">
         <div class="profile-header">
-            <img id="user-avatar" class="profile-avatar" src="https://via.placeholder.com/150" alt="User Avatar">
+            <img id="user-avatar" class="profile-avatar" src="" alt="User Avatar">
             <div class="profile-info">
-                <h1 id="user-name">John Doe</h1>
-                <p id="user-email">johndoe@example.com</p>
+                <h1 id="user-name"></h1>
+                <p id="user-email"></p>
             </div>
             <div class="actions">
                 <button class="btn btn-primary" id="logout-button"><i class="fas fa-sign-out-alt"></i> Logout</button>
                 <button class="btn btn-danger" id="delete-button"><i class="fas fa-trash"></i> Delete Account</button>
             </div>
         </div>
-         <hr class="separator">
+        <hr class="separator">
 
         <div class="card-grid">
             <div class="card">
-                <h3><i class="fas fa-music"></i> Create Playlist</h3>
-                <p>Organize your favorite Quran recitations</p>
-                <a href="playlist.html" class="btn btn-primary"><i class="fas fa-plus"></i> Create Playlist</a>
+                <div class="card-icon">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Add to Playlist</h3>
+                    <p>Add your favorite Quran recitations to playlists</p>
+                    <a href="add-to-playlist.html" class="btn btn-primary">Add Recitation</a>
+                </div>
             </div>
             <div class="card">
-                <h3><i class="fas fa-bookmark"></i> Bookmarks & Favorites</h3>
-                <p>Quick access to your saved verses and surahs</p>
-                <a href="bookmarks.html" class="btn btn-primary"><i class="fas fa-bookmark"></i> View Bookmarks</a>
+                <div class="card-icon">
+                    <i class="fas fa-bookmark"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Bookmarks & Favorites</h3>
+                    <p>Quick access to your saved verses and surahs</p>
+                    <a href="bookmarks.html" class="btn btn-primary">View Bookmarks</a>
+                </div>
             </div>
             <div class="card">
-                <h3><i class="fas fa-cog"></i> Settings</h3>
-                <p>Customize your Quran Pro experience</p>
-                <a href="settings.html" class="btn btn-primary"><i class="fas fa-cog"></i> Go to Settings</a>
+                <div class="card-icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Settings</h3>
+                    <p>Customize your Quran Pro experience</p>
+                    <a href="settings.html" class="btn btn-primary">Go to Settings</a>
+                </div>
             </div>
             <div class="card">
-                <h3><i class="fas fa-crown"></i> Chart with AI </h3>
-                <p>Ask our gemini powered ai anything</p>
-                <a href="chartbot.html" class="btn btn-primary"><i class="fas fa-crown"></i> Ask anything?</a>
+                <div class="card-icon">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Chat with AI</h3>
+                    <p>Ask our Gemini-powered AI anything</p>
+                    <a href="chatbot.html" class="btn btn-primary">Ask a Question</a>
+                </div>
             </div>
         </div>
     </div>
