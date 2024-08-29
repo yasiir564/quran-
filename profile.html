@@ -292,6 +292,53 @@
         .openbtn:hover {
             background-color: #0056b3;
         }
+          .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 300px;
+            max-width: 400px;
+            transform: translateY(150%);
+            transition: transform 0.3s ease-out;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+        }
+
+        .notification-icon {
+            font-size: 24px;
+            margin-right: 15px;
+        }
+
+        .notification-content {
+            flex-grow: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .notification-message {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+
+        .notification-close {
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--secondary-color);
+        }
 
         @media (max-width: 768px) {
             .profile-header {
@@ -324,11 +371,20 @@
     <div class="fixed-header">
         <button class="openbtn" id="openSidebarBtn">&#9776; Quran Pro</button>
         <div class="dark-mode-switch">
-            <label class="switch dark-mode-toggle">
-        <input type="checkbox" id="dark-mode-toggle">
-        <span class="slider"></span>
-    </label>
+            <span>Dark Mode</span>
+            <label class="switch">
+                <input type="checkbox" id="darkModeToggle">
+                <span class="slider"></span>
+            </label>
         </div>
+    </div>
+     <div id="notification" class="notification">
+        <div class="notification-icon"></div>
+        <div class="notification-content">
+            <div class="notification-title"></div>
+            <div class="notification-message"></div>
+        </div>
+        <div class="notification-close">&times;</div>
     </div>
     
     <div id="mySidebar" class="sidebar">
