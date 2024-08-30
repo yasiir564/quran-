@@ -341,12 +341,15 @@ body.dark-mode h1 {
     border-radius: 10px;
     color: #333;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 20px 0;
+    margin: 20px auto;
     font-size: 1.2em;
     position: relative;
     overflow: hidden;
+    max-width: 300px;
+    width: 100%;
 }
 
 #calendar:before, #calendar:after {
@@ -369,26 +372,57 @@ body.dark-mode h1 {
 #calendar p {
     position: relative;
     z-index: 1;
-    margin: 0;
+    margin: 5px 0;
+    text-align: center;
 }
-
 .text-links {
     margin-top: 20px;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 20px;
+    gap: 10px;
 }
 
 .text-links a {
-    font-size: 1.2em;
+    font-size: 1em;
     color: #2575fc;
     text-decoration: none;
     transition: color 0.3s;
+    padding: 5px 10px;
+    border: 1px solid #2575fc;
+    border-radius: 5px;
 }
 
 .text-links a:hover {
-    color: #0056b3;
-    text-decoration: underline;
+    color: #fff;
+    background-color: #2575fc;
+}
+        @media (max-width: 768px) {
+    #calendar {
+        font-size: 1em;
+        padding: 15px;
+    }
+
+    .text-links {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .text-links a {
+        width: 80%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    #calendar {
+        font-size: 0.9em;
+        padding: 10px;
+    }
+
+    .text-links a {
+        width: 100%;
+    }
 }
 
 .sidebar {
