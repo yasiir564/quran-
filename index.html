@@ -20,7 +20,7 @@
     }
     </script>
     <style>
-        body {
+body {
             animation: gradientAnimation 10s infinite;
             font-family: 'Amiri', serif;
             margin: 0;
@@ -370,15 +370,13 @@ body.dark-mode h1 {
     position: relative;
     z-index: 1;
     margin: 0;
-    text-align: center;
 }
+
 .text-links {
     margin-top: 20px;
     display: flex;
-    flex-direction: row; /* Display from left to right by default */
     justify-content: center;
     gap: 20px;
-    flex-wrap: wrap; /* Allows items to wrap on smaller screens */
 }
 
 .text-links a {
@@ -393,120 +391,43 @@ body.dark-mode h1 {
     text-decoration: underline;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .text-links {
-        gap: 10px; /* Reduce the gap between links on smaller screens */
-    }
-
-    .text-links a {
-        font-size: 1em; /* Adjust font size for better readability on smaller screens */
-    }
+/* Sidebar Menu */
+.sidebar {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1;
+    top: 1;
+    left: -250px;
+    background: linear-gradient(to top, #a8edea, #fed6e3);
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    margin-bottom: 10px; /* Added space below sidebar */
 }
 
-@media (max-width: 480px) {
-    .text-links {
-        flex-direction: row; /* Maintain left-to-right layout on mobile devices */
-        gap: 15px; /* Adjust gap for better spacing */
-    }
-
-    .text-links a {
-        font-size: 0.9em; /* Further reduce the font size for very small screens */
-    }
+.sidebar a {
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #111;
+    display: block;
+    transition: 0.3s;
 }
 
+.sidebar a:hover {
+    color: #fff;
+    background-color: #2575fc;
+}
 
-     @media (max-width: 768px) {
-    #calendar {
-        font-size: 1em;
-        padding: 15px;
-    }
+.sidebar .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
 
-    
-@media (max-width: 480px) {
-    #calendar {
-        font-size: 0.9em;
-        padding: 10px;
-    }
-
-    .sidebar {
-            height: 100%;
-            width: 250px;
-            position: fixed;
-            z-index: 1000;
-            top: 0;
-            left: -250px;
-            background: linear-gradient(to top, #a8edea, #fed6e3);
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 85px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-        }
-
-
-
-        .sidebar.open {
-            left: 0;
-        }
-
-        .sidebar a {
-            padding: 10px 15px;
-            text-decoration: none;
-            font-size: 18px;
-            color: #111;
-            display: block;
-            transition: 0.3s;
-        }
-
-        .sidebar a:hover {
-            color: #fff;
-            background-color: #2575fc;
-        }
-
-        .sidebar .closebtn {
-            position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-        }
-
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 999;
-        }
-
-        .sidebar-overlay.active {
-            display: block;
-        }
-
-        #main {
-            transition: margin-left .5s;
-            padding: 16px;
-        }
-
-        .openbtn {
-            font-size: 20px;
-            cursor: pointer;
-            background-color: #2575fc;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            position: fixed;
-            top: 40px;
-            left: 10px;
-            z-index: 1000;
-        }
-
-        .openbtn:hover {
-            background-color: #0056b3;
-        }
 #main {
     transition: margin-left .5s;
     padding: 16px;
