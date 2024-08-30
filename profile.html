@@ -473,127 +473,138 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.min.js"></script>
     <script>
         // Check if the user is logged in
-        const userName = localStorage.getItem("userName");
-        const userEmail = localStorage.getItem("userEmail");
+const userName = localStorage.getItem("userName");
+const userEmail = localStorage.getItem("userEmail");
 
-        if (!userName || !userEmail) {
+if (!userName || !userEmail) {
+    Swal.fire({
+        title: 'Please log in',
+        text: 'You need to be logged in to view this page.',
+        icon: 'error',
+        confirmButtonText: 'OK'
+    }).then(() => {
+        window.location.href = 'login.html';
+    });
+} else {
+    // Display the user's profile information
+    document.getElementById("user-name").textContent = userName;
+    document.getElementById("user-email").textContent = userEmail;
+    document.getElementById("user-avatar").src = localStorage.getItem("userAvatar") || "https://via.placeholder.com/150";
+}
+
+// Dark mode toggle
+const darkModeToggle = document.getElementById('darkModeToggle');
+const body = document.body;
+
+darkModeToggle.addEventListener('change', () => {
+    body.classList.toggle('dark-mode');
+    const isDarkMode = body.classList.contains('dark-mode');
+    localStorage.setItem('darkMode', isDarkMode);
+    showNotification(
+        isDarkMode ? 'Dark Mode Enabled' : 'Light Mode Enabled',
+        isDarkMode ? 'Enjoy a more comfortable viewing experience.' : 'Welcome back to the light side!',
+        isDarkMode ? 'fas fa-moon' : 'fas fa-sun'
+    );
+});
+
+// Check for saved dark mode preference
+const savedDarkMode = localStorage.getItem('darkMode');
+if (savedDarkMode === 'true') {
+    body.classList.add('dark-mode');
+    darkModeToggle.checked = true;
+}
+
+// Sidebar functionality
+function openNav() {
+    document.getElementById("mySidebar").style.left = "0";
+}
+
+function closeNav() {
+    document.getElementById("mySidebar").style.left = "-250px";
+}
+
+// Event listener for close button
+document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
+
+// Event listener for open button
+document.querySelector(".openbtn").addEventListener("click", openNav);
+
+// Notification function
+function showNotification(title, message, icon) {
+    const notification = document.getElementById('notification');
+    const notificationTitle = notification.querySelector('.notification-title');
+    const notificationMessage = notification.querySelector('.notification-message');
+    const notificationIcon = notification.querySelector('.notification-icon');
+    const notificationClose = notification.querySelector('.notification-close');
+
+    notificationTitle.textContent = title;
+    notificationMessage.textContent = message;
+    notificationIcon.innerHTML = `<i class="${icon}"></i>`;
+
+    notification.classList.add('show');
+
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 5000);
+
+    notificationClose.addEventListener('click', () => {
+        notification.classList.remove('show');
+    });
+}
+
+// Logout function
+document.getElementById("logout-button").addEventListener('click', () => {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'You will be logged out of your account.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3b82f6',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Yes, log me out!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            localStorage.clear();
             Swal.fire({
-                title: 'Please log in',
-                text: 'You need to be logged in to view this page.',
-                icon: 'error',
-                confirmButtonText: 'OK'
+                title: 'Logged Out',
+                text: 'You have been successfully logged out.',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
             }).then(() => {
-                window.location.href = 'login.html';
-            });
-        } else {
-            // Display the user's profile information
-            document.getElementById("user-name").textContent = userName;
-            document.getElementById("user-email").textContent = userEmail;
-            document.getElementById("user-avatar").src = localStorage.getItem("userAvatar") || "https://via.placeholder.com/150";
-        }
-
-        // Dark mode toggle
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        const body = document.body;
-
-        darkModeToggle.addEventListener('change', () => {
-            body.classList.toggle('dark-mode');
-            const isDarkMode = body.classList.contains('dark-mode');
-            localStorage.setItem('darkMode', isDarkMode);
-            showNotification(
-                isDarkMode ? 'Dark Mode Enabled' : 'Light Mode Enabled',
-               isDarkMode ? 'Enjoy a more comfortable viewing experience.' : 'Welcome back to the light side!',
-                isDarkMode ? 'fas fa-moon' : 'fas fa-sun'
-            );
-        });
-
-        // Check for saved dark mode preference
-        const savedDarkMode = localStorage.getItem('darkMode');
-        if (savedDarkMode === 'true') {
-            body.classList.add('dark-mode');
-            darkModeToggle.checked = true;
-        }
-
-        // Sidebar functionality
-        function openNav() {
-            document.getElementById("mySidebar").style.left = "0";
-        }
-
-        function closeNav() {
-            document.getElementById("mySidebar").style.left = "-250px";
-        }
-
-        // Event listener for close button
-        document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
-
-        // Event listener for open button
-        document.getElementById("openSidebarBtn").addEventListener("click", openNav);
-
-        // Sweet Notification function
-        function showNotification(title, message, icon) {
-            const notification = document.getElementById('notification');
-            const notificationTitle = notification.querySelector('.notification-title');
-            const notificationMessage = notification.querySelector('.notification-message');
-            const notificationIcon = notification.querySelector('.notification-icon');
-            const notificationClose = notification.querySelector('.notification-close');
-
-            notificationTitle.textContent = title;
-            notificationMessage.textContent = message;
-            notificationIcon.innerHTML = `<i class="${icon}"></i>`;
-
-            notification.classList.add('show');
-
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 5000);
-
-            notificationClose.addEventListener('click', () => {
-                notification.classList.remove('show');
+                window.location.href = 'index.html';
             });
         }
+    });
+});
 
-        // Logout function
-        document.getElementById("logout-button").addEventListener('click', () => {
+// Delete account function
+document.getElementById("delete-button").addEventListener('click', () => {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'This action cannot be undone. Your account will be permanently deleted.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Yes, delete my account'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Implement actual account deletion here
+            // For now, we'll just clear localStorage
+            localStorage.clear();
             Swal.fire({
-                title: 'Are you sure?',
-                text: 'You will be logged out of your account.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3b82f6',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Yes, log me out!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    localStorage.clear();
-                    showNotification('Logged Out', 'You have been successfully logged out.', 'fas fa-sign-out-alt');
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 2000);
-                }
+                title: 'Account Deleted',
+                text: 'Your account has been successfully deleted.',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            }).then(() => {
+                window.location.href = 'index.html';
             });
-        });
-
-        // Delete account function
-        document.getElementById("delete-button").addEventListener('click', () => {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'This action cannot be undone. Your account will be permanently deleted.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Yes, delete my account'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Implement actual account deletion here
-                    localStorage.clear();
-                    showNotification('Account Deleted', 'Your account has been successfully deleted.', 'fas fa-user-times');
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 2000);
-                }
-            });
-        });
+        }
+    });
+});
     </script>
 </body>
 </html>
