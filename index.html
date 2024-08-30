@@ -63,30 +63,36 @@ header {
 }
 
 /* Ensure header-icons are positioned correctly */
-.header-icons {
-    position: fixed; /* Fixed position to keep icons at the top right */
-    top: 46px;
-    right: 20px;
-    display: flex;
-    gap: 15px;
-    z-index: 1; /* High z-index to ensure it's on top */
-    margin-bottom: 10px; /* Added space below header icons */
-}
+ .header-icons {
+            position: fixed;
+            top: 46px;
+            right: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 1;
+            margin-bottom: 10px;
+        }
 
 .header-icons a {
-    color: #2575fc;
-    text-decoration: none;
-    font-size: 1em; /* Adjust size if needed */
-}
-.header-icons a .icon-container {
-    background-color: #2575fc; /* Blue background color */
-    border-radius: 7px; /* Round the corners */
-    display: flex; /* Center the icon within the container */
-    align-items: center; /* Vertically center the icon */
-    justify-content: center; /* Horizontally center the icon */
-    width: 40px; /* Match the size of the icon */
-    height: 40px; /* Match the size of the icon */
-}
+            color: #2575fc;
+            text-decoration: none;
+            font-size: 1em;
+        }
+ .header-icons a .icon-container,
+        .header-icons a #user-profile-pic {
+            background-color: #2575fc;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            overflow: hidden;
+        }
+        .header-icons a #user-profile-pic {
+            object-fit: cover;
+        }
+
 
 .header-icons a lord-icon {
     width: 40px;
@@ -271,6 +277,39 @@ header {
         padding: 6px 12px;
     }
 }
+         @media (max-width: 768px) {
+            .header-icons {
+                top: 10px;
+                right: 10px;
+            }
+
+            .openbtn {
+                top: 10px;
+                left: 10px;
+            }
+
+            .mobile-cards {
+                margin-top: 60px;
+            }
+
+            .card {
+                width: 140px;
+                height: 140px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-icons a .icon-container,
+            .header-icons a #user-profile-pic {
+                width: 32px;
+                height: 32px;
+            }
+
+            .card {
+                width: 120px;
+                height: 120px;
+            }
+        }
 
 .loader {
     border: 16px solid #f3f3f3;
@@ -841,8 +880,8 @@ footer .text-center {
         <div class="announcement-bar">
             <p>Welcome to Quran Pro created by Yassin!</p>
         </div>
-        <div class="header-icons">
-            <a href="login.html" title="Login">
+       <div class="header-icons">
+            <a href="login.html" title="Login" id="login-link">
                 <div class="icon-container">
                     <lord-icon
                         src="https://cdn.lordicon.com/dxjqoygy.json"
@@ -853,15 +892,14 @@ footer .text-center {
                 </div>
             </a>
             <a href="profile.html" title="User Profile" id="profile-link">
-                <div class="icon-container">
+                <img src="" id="user-profile-pic" alt="User Profile Picture" style="display: none;">
+                <div class="icon-container" id="default-profile-icon">
                     <lord-icon
                         src="https://cdn.lordicon.com/rivoakkk.json"
                         trigger="hover"
                         colors="primary:#ffc3a0"
-                        style="width:40px;height:40px;"
-                        id="default-profile-icon">
+                        style="width:40px;height:40px;">
                     </lord-icon>
-                    <img src="" id="user-profile-pic" alt="User Profile Picture" style="display: none; width:40px; height:40px; border-radius: 50%;">
                 </div>
             </a>
         </div>
@@ -962,16 +1000,19 @@ footer .text-center {
                 const defaultProfileIcon = document.getElementById('default-profile-icon');
                 const userProfilePic = document.getElementById('user-profile-pic');
                 const profileLink = document.getElementById('profile-link');
+                const loginLink = document.getElementById('login-link');
 
                 if (userAvatar) {
                     defaultProfileIcon.style.display = 'none';
                     userProfilePic.src = userAvatar;
                     userProfilePic.style.display = 'block';
                     profileLink.href = 'profile.html';
+                    loginLink.style.display = 'none';
                 } else {
                     defaultProfileIcon.style.display = 'block';
                     userProfilePic.style.display = 'none';
                     profileLink.href = 'login.html';
+                    loginLink.style.display = 'block';
                 }
             }
 
