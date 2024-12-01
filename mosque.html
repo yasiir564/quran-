@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuranPro Mosque Finder</title>
+    <style>
+        /* Reset and Modern Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f7f9fc;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background: #007bff;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        #map {
+            height: 70vh;
+            width: 100%;
+            margin: 1rem auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-locate {
+            display: flex;
+            justify-content: center;
+            margin: 1rem auto;
+        }
+
+        button {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background: #f1f1f1;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            button {
+                width: 80%;
+                font-size: 0.9rem;
+            }
+
+            #map {
+                height: 60vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>QuranPro Mosque Finder</h1>
+    </header>
+
+    <div id="map"></div>
+
+    <div class="btn-locate">
+        <button onclick="findMosques()">Find Nearby Mosques</button>
+    </div>
+
+    <footer>
+        &copy; 2024 QuranPro | <a href="#">Privacy Policy</a> | <a href="#">Contact Us</a>
+    </footer>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDz8qN4VfQZ6AdeBhOa5y8HpN1sFlhHtl0&libraries=places"></script>
+    <script>
+        // Initialize the map
+        let map;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 0, lng: 0 }, // Default center
+                zoom: 14,
+            });
+        }
+
+        // Locate user and find nearby mosques
+        function findMosques() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        };
+                        map.setCenter(userLocation);
+
+                        // Add user marker
+                        new google.maps.Marker({
+                            position: userLocation,
+                            map: map,
+                            title: "You are here",
+                            icon: {
+                                url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+                            },
+                        });
+
+                        // Search for mosques
+                        const service = new google.maps.places.PlacesService(map);
+                        service.nearbySearch(
+                            {
+                                location: userLocation,
+                                radius: 5000, // 5km radius
+                                type: ["mosque"],
+                            },
+                            (results, status) => {
+                                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                                    results.forEach((place) => {
+                                        new google.maps.Marker({
+                                            position: place.geometry.location,
+                                            map: map,
+                                            title: place.name,
+                                            icon: {
+                                                url: "https://maps.google.com/mapfiles/ms/icons/green-dot.png",
+                                            },
+                                        });
+                                    });
+                                } else {
+                                    alert("No mosques found nearby.");
+                                }
+                            }
+                        );
+                    },
+                    () => {
+                        alert("Could not get your location. Please enable location services.");
+                    }
+                );
+            } else {
+                alert("Geolocation is not supported by your browser.");
+            }
+        }
+
+        // Load the map
+        window.onload = initMap;
+    </script>
+</body>
+</html>
