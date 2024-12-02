@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dua Recommendation Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f3f4f6;
+      color: #333;
+    }
+    header {
+      background: #0284c7;
+      color: #fff;
+      text-align: center;
+      padding: 1em 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    input[type="text"], button {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin: 5px 0;
+    }
+    button {
+      background: #0284c7;
+      color: #fff;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0369a1;
+    }
+    .dua-list {
+      margin-top: 20px;
+    }
+    .dua {
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    .dua:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Dua Recommendation Page</h1>
+    <p>Find the perfect dua for your situation</p>
+  </header>
+  <div class="container">
+    <h2>Enter your situation:</h2>
+    <input type="text" id="userInput" placeholder="E.g., I’m stressed, I’m traveling">
+    <button onclick="fetchRecommendedDua()">Get Recommended Dua</button>
+    <div id="recommendation"></div>
+
+    <h2>All Duas:</h2>
+    <div class="dua-list" id="duaList"></div>
+  </div>
+
+  <script>
+    const baseAPI = "https://dua-dhikr-api.vercel.app";
+    const geminiAPI = "https://api.gemini.com/recommendation"; // Replace with the actual API endpoint.
+
+    // Fetch all duas
+    async function fetchDuas() {
+      const response = await fetch(`${baseAPI}/categories`);
+      const data = await response.json();
+      displayDuas(data);
+    }
+
+    // Display duas
+    function displayDuas(duas) {
+      const duaList = document.getElementById('duaList');
+      duaList.innerHTML = "";
+      duas.forEach(dua => {
+        const duaDiv = document.createElement('div');
+        duaDiv.classList.add('dua');
+        duaDiv.innerHTML = `
+          <h3>${dua.title}</h3>
+          <p>${dua.text}</p>
+        `;
+        duaList.appendChild(duaDiv);
+      });
+    }
+
+    // Fetch recommended dua based on user input
+    async function fetchRecommendedDua() {
+      const userInput = document.getElementById('userInput').value;
+      if (!userInput) {
+        alert("Please enter your situation.");
+        return;
+      }
+
+      const response = await fetch(AIzaSyCHMj_UZZZ5q4L-U-Xjp_dwhLyZpY1rvKw, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query: userInput }),
+      });
+
+      const result = await response.json();
+      const recommendationDiv = document.getElementById('recommendation');
+      recommendationDiv.innerHTML = `
+        <h3>Recommended Dua:</h3>
+        <p>${result.dua}</p>
+      `;
+    }
+
+    // Initialize page
+    fetchDuas();
+  </script>
+</body>
+</html>
