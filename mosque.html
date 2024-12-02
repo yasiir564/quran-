@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QuranPro Mosque Locator</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <style>
         body {
             background: linear-gradient(135deg, #e6f2ff, #b3d9ff);
@@ -22,7 +21,7 @@
             padding: 20px;
         }
 
-        .mosque-card {
+        .mosque-card, .suggestion-card {
             background: white;
             border-radius: 15px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
@@ -31,11 +30,11 @@
             transition: transform 0.3s ease;
         }
 
-        .mosque-card:hover {
+        .mosque-card:hover, .suggestion-card:hover {
             transform: scale(1.02);
         }
 
-        .mosque-card-header {
+        .mosque-card-header, .suggestion-card-header {
             background: linear-gradient(to right, #007bff, #0056b3);
             color: white;
             padding: 15px;
@@ -49,7 +48,7 @@
             margin-right: 15px;
         }
 
-        .mosque-card-body {
+        .mosque-card-body, .suggestion-card-body {
             padding: 15px;
         }
 
@@ -79,6 +78,14 @@
             box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
         }
 
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -93,14 +100,39 @@
             <button id="findMosquesBtn" class="btn btn-find mt-3">Find Nearby Mosques</button>
         </div>
 
+        <div id="map"></div>
         <div id="locationInfo"></div>
         <div id="mosquesContainer"></div>
+        <div id="suggestionsContainer"></div>
     </div>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDz8qN4VfQZ6AdeBhOa5y8HpN1sFlhHtl0&libraries=places"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     <script>
-        document.getElementById('findMosquesBtn').addEventListener('click', findMosques);
+        let map, userMarker;
+
+        function initMap(location) {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: location,
+                zoom: 13,
+                styles: [
+                    {
+                        featureType: 'poi.place_of_worship',
+                        elementType: 'labels',
+                        stylers: [{ visibility: 'on' }]
+                    }
+                ]
+            });
+
+            // Add user marker
+            userMarker = new google.maps.Marker({
+                position: location,
+                map: map,
+                title: "Your Location",
+                icon: {
+                    url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+                }
+            });
+        }
 
         function calculateDistance(lat1, lon1, lat2, lon2) {
             const R = 6371; // Radius of the Earth in kilometers
@@ -114,22 +146,59 @@
             return R * c; // Distance in kilometers
         }
 
+        function generateSuggestions(userLocation) {
+            const suggestions = [
+                {
+                    title: "Expand Search Radius",
+                    description: "Try searching for mosques within a 10-15 km radius instead of 5 km.",
+                    icon: "🔍"
+                },
+                {
+                    title: "Check Nearby Cities",
+                    description: "Look for mosques in neighboring towns or districts.",
+                    icon: "🏙️"
+                },
+                {
+                    title: "Community Recommendations",
+                    description: "Ask local community members or religious leaders about nearby mosques.",
+                    icon: "👥"
+                },
+                {
+                    title: "Online Islamic Centers",
+                    description: "Consider virtual congregations or online Islamic resources if local options are limited.",
+                    icon: "💻"
+                }
+            ];
+
+            const suggestionsContainer = document.getElementById('suggestionsContainer');
+            suggestionsContainer.innerHTML = '<h3 class="text-center mt-4">Suggestions</h3>';
+
+            suggestions.forEach(suggestion => {
+                const suggestionCard = document.createElement('div');
+                suggestionCard.className = 'card suggestion-card';
+                suggestionCard.innerHTML = `
+                    <div class="suggestion-card-header">
+                        <h5 class="mb-0">${suggestion.icon} ${suggestion.title}</h5>
+                    </div>
+                    <div class="suggestion-card-body">
+                        <p class="card-text">${suggestion.description}</p>
+                    </div>
+                `;
+                suggestionsContainer.appendChild(suggestionCard);
+            });
+        }
+
         function findMosques() {
             if (navigator.geolocation) {
-                Swal.fire({
-                    title: 'Locating...',
-                    text: 'Finding your location and nearby mosques',
-                    icon: 'info',
-                    showConfirmButton: false,
-                    allowOutsideClick: false
-                });
-
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         const userLocation = {
                             lat: position.coords.latitude,
                             lng: position.coords.longitude
                         };
+
+                        // Initialize map
+                        initMap(userLocation);
 
                         // Display user location card
                         document.getElementById('locationInfo').innerHTML = `
@@ -145,7 +214,7 @@
                         `;
 
                         // Search for mosques
-                        const service = new google.maps.places.PlacesService(document.createElement('div'));
+                        const service = new google.maps.places.PlacesService(map);
                         service.nearbySearch(
                             {
                                 location: userLocation,
@@ -153,12 +222,10 @@
                                 type: ["mosque"]
                             },
                             (results, status) => {
-                                Swal.close();
-                                
-                                if (status === google.maps.places.PlacesServiceStatus.OK) {
-                                    const mosquesContainer = document.getElementById('mosquesContainer');
-                                    mosquesContainer.innerHTML = ''; // Clear previous results
+                                const mosquesContainer = document.getElementById('mosquesContainer');
+                                mosquesContainer.innerHTML = ''; // Clear previous results
 
+                                if (status === google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
                                     const sortedMosques = results.map(place => ({
                                         ...place,
                                         distance: calculateDistance(
@@ -167,7 +234,10 @@
                                             place.geometry.location.lat(), 
                                             place.geometry.location.lng()
                                         )
-                                    }).sort((a, b) => a.distance - b.distance));
+                                    })).sort((a, b) => a.distance - b.distance);
+
+                                    // Add title for mosques
+                                    mosquesContainer.innerHTML = '<h3 class="text-center mt-4">Nearby Mosques</h3>';
 
                                     sortedMosques.forEach((place, index) => {
                                         const mosqueCard = document.createElement('div');
@@ -189,41 +259,50 @@
                                             </div>
                                         `;
                                         mosquesContainer.appendChild(mosqueCard);
-                                    });
 
-                                    Swal.fire({
-                                        title: `Found ${results.length} Mosques`,
-                                        text: 'Mosques are sorted by distance',
-                                        icon: 'success',
-                                        timer: 2000,
-                                        showConfirmButton: false
+                                        // Add markers to the map
+                                        new google.maps.Marker({
+                                            position: place.geometry.location,
+                                            map: map,
+                                            title: place.name,
+                                            icon: {
+                                                url: "https://cdn-icons-png.flaticon.com/128/3014/3014001.png",
+                                                scaledSize: new google.maps.Size(40, 40)
+                                            }
+                                        });
                                     });
                                 } else {
-                                    Swal.fire({
-                                        title: 'Oops...',
-                                        text: 'No mosques found nearby',
-                                        icon: 'warning'
-                                    });
+                                    // No mosques found
+                                    mosquesContainer.innerHTML = `
+                                        <div class="alert alert-warning text-center" role="alert">
+                                            No mosques found within 5 km
+                                        </div>
+                                    `;
+                                    generateSuggestions(userLocation);
                                 }
                             }
                         );
                     },
-                    () => {
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'Could not get your location. Please enable location services.',
-                            icon: 'error'
-                        });
+                    (error) => {
+                        console.error('Error getting location:', error);
+                        document.getElementById('locationInfo').innerHTML = `
+                            <div class="alert alert-danger text-center" role="alert">
+                                Could not retrieve location. Please check your location settings.
+                            </div>
+                        `;
                     }
                 );
             } else {
-                Swal.fire({
-                    title: 'Unsupported',
-                    text: 'Geolocation is not supported by your browser',
-                    icon: 'error'
-                });
+                document.getElementById('locationInfo').innerHTML = `
+                    <div class="alert alert-danger text-center" role="alert">
+                        Geolocation is not supported by your browser.
+                    </div>
+                `;
             }
         }
+
+        // Add event listener
+        document.getElementById('findMosquesBtn').addEventListener('click', findMosques);
     </script>
 </body>
 </html>
