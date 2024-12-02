@@ -3,306 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuranPro Mosque Locator</title>
+    <title>QuranPro AI Mosque Finder</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             background: linear-gradient(135deg, #e6f2ff, #b3d9ff);
             font-family: 'Arial', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            color: #333;
         }
-
-        .container {
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
-        }
-
-        .mosque-card, .suggestion-card {
-            background: white;
+        .mosque-card {
+            margin-bottom: 15px;
             border-radius: 15px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            margin-bottom: 15px;
-            overflow: hidden;
             transition: transform 0.3s ease;
         }
-
-        .mosque-card:hover, .suggestion-card:hover {
+        .mosque-card:hover {
             transform: scale(1.02);
         }
-
-        .mosque-card-header, .suggestion-card-header {
-            background: linear-gradient(to right, #007bff, #0056b3);
-            color: white;
-            padding: 15px;
-            display: flex;
-            align-items: center;
+        .ai-suggestion-card {
+            background-color: #f0f8ff;
+            border-left: 5px solid #007bff;
         }
-
-        .mosque-icon {
-            width: 50px;
-            height: 50px;
-            margin-right: 15px;
-        }
-
-        .mosque-card-body, .suggestion-card-body {
-            padding: 15px;
-        }
-
         .distance-badge {
             background-color: #28a745;
             color: white;
             padding: 5px 10px;
             border-radius: 20px;
         }
-
-        .user-location-card {
-            background: linear-gradient(to right, #28a745, #218838);
-            color: white;
-        }
-
-        .btn-find {
-            background: linear-gradient(to right, #007bff, #0056b3);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-find:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
-        }
-
-        #map {
-            height: 400px;
-            width: 100%;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="container py-4">
+    <div class="container py-5">
+        <h1 class="text-center mb-4">AI Mosque Locator</h1>
         <div class="text-center mb-4">
-            <h1 class="display-6">QuranPro Mosque Locator</h1>
-            <button id="findMosquesBtn" class="btn btn-find mt-3">Find Nearby Mosques</button>
+            <button id="findMosquesBtn" class="btn btn-primary">Find Nearby Mosques</button>
         </div>
-
-        <div id="map"></div>
-        <div id="locationInfo"></div>
+        
+        <div id="locationInfo" class="mb-4"></div>
         <div id="mosquesContainer"></div>
-        <div id="suggestionsContainer"></div>
+        <div id="aiSuggestionsContainer"></div>
     </div>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDz8qN4VfQZ6AdeBhOa5y8HpN1sFlhHtl0&libraries=places"></script>
     <script>
-        let map, userMarker;
-
-        function initMap(location) {
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: location,
-                zoom: 13,
-                styles: [
+        // Simulated Gemini AI Suggestions Service
+        class GeminiAISuggestionService {
+            async generateLocationBasedSuggestions(location) {
+                // Simulated AI suggestions based on location
+                const suggestions = [
                     {
-                        featureType: 'poi.place_of_worship',
-                        elementType: 'labels',
-                        stylers: [{ visibility: 'on' }]
+                        title: "Local Islamic Community Center",
+                        description: `Nearest community center for prayers and Islamic activities near ${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}`,
+                        confidence: 0.85
+                    },
+                    {
+                        title: "Friday Prayer Recommendations",
+                        description: `Best congregational mosque locations for Jumu'ah prayers in this area`,
+                        confidence: 0.75
+                    },
+                    {
+                        title: "Cultural Context",
+                        description: `Local Islamic cultural insights and mosque community information`,
+                        confidence: 0.65
                     }
-                ]
-            });
-
-            // Add user marker
-            userMarker = new google.maps.Marker({
-                position: location,
-                map: map,
-                title: "Your Location",
-                icon: {
-                    url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-                }
-            });
+                ];
+                return suggestions;
+            }
         }
 
-        function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Radius of the Earth in kilometers
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = 
-                Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-                Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c; // Distance in kilometers
-        }
+        class MosqueFinder {
+            constructor() {
+                this.geminiService = new GeminiAISuggestionService();
+                this.map = null;
+                this.userLocation = null;
+            }
 
-        function generateSuggestions(userLocation) {
-            const suggestions = [
-                {
-                    title: "Expand Search Radius",
-                    description: "Try searching for mosques within a 10-15 km radius instead of 5 km.",
-                    icon: "🔍"
-                },
-                {
-                    title: "Check Nearby Cities",
-                    description: "Look for mosques in neighboring towns or districts.",
-                    icon: "🏙️"
-                },
-                {
-                    title: "Community Recommendations",
-                    description: "Ask local community members or religious leaders about nearby mosques.",
-                    icon: "👥"
-                },
-                {
-                    title: "Online Islamic Centers",
-                    description: "Consider virtual congregations or online Islamic resources if local options are limited.",
-                    icon: "💻"
-                }
-            ];
+            calculateDistance(lat1, lon1, lat2, lon2) {
+                const R = 6371; // Radius of the Earth in kilometers
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = 
+                    Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                    Math.sin(dLon/2) * Math.sin(dLon/2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                return R * c; // Distance in kilometers
+            }
 
-            const suggestionsContainer = document.getElementById('suggestionsContainer');
-            suggestionsContainer.innerHTML = '<h3 class="text-center mt-4">Suggestions</h3>';
+            async findNearestMosques() {
+                return new Promise((resolve, reject) => {
+                    if (!navigator.geolocation) {
+                        reject('Geolocation not supported');
+                        return;
+                    }
 
-            suggestions.forEach(suggestion => {
-                const suggestionCard = document.createElement('div');
-                suggestionCard.className = 'card suggestion-card';
-                suggestionCard.innerHTML = `
-                    <div class="suggestion-card-header">
-                        <h5 class="mb-0">${suggestion.icon} ${suggestion.title}</h5>
-                    </div>
-                    <div class="suggestion-card-body">
-                        <p class="card-text">${suggestion.description}</p>
-                    </div>
-                `;
-                suggestionsContainer.appendChild(suggestionCard);
-            });
-        }
-
-        function findMosques() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const userLocation = {
+                    navigator.geolocation.getCurrentPosition(async (position) => {
+                        this.userLocation = {
                             lat: position.coords.latitude,
                             lng: position.coords.longitude
                         };
 
-                        // Initialize map
-                        initMap(userLocation);
-
-                        // Display user location card
+                        // Display location info
                         document.getElementById('locationInfo').innerHTML = `
-                            <div class="card user-location-card mb-3">
-                                <div class="card-body">
-                                    <h5 class="card-title">Your Location</h5>
-                                    <p class="card-text">
-                                        Latitude: ${userLocation.lat.toFixed(4)}
-                                        | Longitude: ${userLocation.lng.toFixed(4)}
-                                    </p>
-                                </div>
+                            <div class="alert alert-info">
+                                Your Location: ${this.userLocation.lat.toFixed(4)}, ${this.userLocation.lng.toFixed(4)}
                             </div>
                         `;
 
-                        // Search for mosques
-                        const service = new google.maps.places.PlacesService(map);
+                        // Initialize map
+                        this.initMap();
+
+                        // Find nearby mosques
+                        const service = new google.maps.places.PlacesService(this.map);
                         service.nearbySearch(
                             {
-                                location: userLocation,
-                                radius: 5000,
+                                location: this.userLocation,
+                                radius: 10000, // 10 km radius
                                 type: ["mosque"]
                             },
-                            (results, status) => {
-                                const mosquesContainer = document.getElementById('mosquesContainer');
-                                mosquesContainer.innerHTML = ''; // Clear previous results
-
-                                if (status === google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
-                                    const sortedMosques = results.map(place => ({
-                                        ...place,
-                                        distance: calculateDistance(
-                                            userLocation.lat, 
-                                            userLocation.lng, 
-                                            place.geometry.location.lat(), 
-                                            place.geometry.location.lng()
+                            async (results, status) => {
+                                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                                    // Sort mosques by distance
+                                    const sortedMosques = results.map(mosque => ({
+                                        ...mosque,
+                                        distance: this.calculateDistance(
+                                            this.userLocation.lat, 
+                                            this.userLocation.lng, 
+                                            mosque.geometry.location.lat(), 
+                                            mosque.geometry.location.lng()
                                         )
                                     })).sort((a, b) => a.distance - b.distance);
 
-                                    // Add title for mosques
-                                    mosquesContainer.innerHTML = '<h3 class="text-center mt-4">Nearby Mosques</h3>';
+                                    // Get AI suggestions
+                                    const aiSuggestions = await this.geminiService.generateLocationBasedSuggestions(this.userLocation);
 
-                                    sortedMosques.forEach((place, index) => {
-                                        const mosqueCard = document.createElement('div');
-                                        mosqueCard.className = 'card mosque-card';
-                                        mosqueCard.innerHTML = `
-                                            <div class="mosque-card-header">
-                                                <img src="https://cdn-icons-png.flaticon.com/128/3014/3014001.png" 
-                                                     alt="Mosque Icon" 
-                                                     class="mosque-icon">
-                                                <h5 class="mb-0">${place.name}</h5>
-                                            </div>
-                                            <div class="mosque-card-body">
-                                                <p class="card-text">
-                                                    <span class="distance-badge">
-                                                        ${place.distance.toFixed(2)} km away
-                                                    </span>
-                                                    ${place.vicinity ? `<br><small class="text-muted">Address: ${place.vicinity}</small>` : ''}
-                                                </p>
-                                            </div>
-                                        `;
-                                        mosquesContainer.appendChild(mosqueCard);
-
-                                        // Add markers to the map
-                                        new google.maps.Marker({
-                                            position: place.geometry.location,
-                                            map: map,
-                                            title: place.name,
-                                            icon: {
-                                                url: "https://cdn-icons-png.flaticon.com/128/3014/3014001.png",
-                                                scaledSize: new google.maps.Size(40, 40)
-                                            }
-                                        });
-                                    });
+                                    resolve({ mosques: sortedMosques, suggestions: aiSuggestions });
                                 } else {
-                                    // No mosques found
-                                    mosquesContainer.innerHTML = `
-                                        <div class="alert alert-warning text-center" role="alert">
-                                            No mosques found within 5 km
-                                        </div>
-                                    `;
-                                    generateSuggestions(userLocation);
+                                    reject('No mosques found');
                                 }
                             }
                         );
-                    },
-                    (error) => {
-                        console.error('Error getting location:', error);
-                        document.getElementById('locationInfo').innerHTML = `
-                            <div class="alert alert-danger text-center" role="alert">
-                                Could not retrieve location. Please check your location settings.
-                            </div>
-                        `;
-                    }
-                );
-            } else {
-                document.getElementById('locationInfo').innerHTML = `
-                    <div class="alert alert-danger text-center" role="alert">
-                        Geolocation is not supported by your browser.
-                    </div>
-                `;
+                    }, (error) => {
+                        reject('Error getting location: ' + error.message);
+                    });
+                });
+            }
+
+            initMap() {
+                this.map = new google.maps.Map(document.createElement('div'), {
+                    center: this.userLocation,
+                    zoom: 13
+                });
+            }
+
+            renderResults(data) {
+                const mosquesContainer = document.getElementById('mosquesContainer');
+                const aiSuggestionsContainer = document.getElementById('aiSuggestionsContainer');
+
+                // Render Mosques
+                mosquesContainer.innerHTML = '<h3>Nearest Mosques</h3>';
+                data.mosques.slice(0, 5).forEach(mosque => {
+                    const mosqueCard = document.createElement('div');
+                    mosqueCard.className = 'card mosque-card';
+                    mosqueCard.innerHTML = `
+                        <div class="card-body">
+                            <h5 class="card-title">${mosque.name}</h5>
+                            <p class="card-text">
+                                <span class="distance-badge">${mosque.distance.toFixed(2)} km</span>
+                                <br>${mosque.vicinity || 'Location details not available'}
+                            </p>
+                        </div>
+                    `;
+                    mosquesContainer.appendChild(mosqueCard);
+                });
+
+                // Render AI Suggestions
+                aiSuggestionsContainer.innerHTML = '<h3>AI Powered Suggestions</h3>';
+                data.suggestions.forEach(suggestion => {
+                    const suggestionCard = document.createElement('div');
+                    suggestionCard.className = 'card ai-suggestion-card mb-3';
+                    suggestionCard.innerHTML = `
+                        <div class="card-body">
+                            <h5 class="card-title">🤖 ${suggestion.title}</h5>
+                            <p class="card-text">${suggestion.description}</p>
+                            <small class="text-muted">AI Confidence: ${(suggestion.confidence * 100).toFixed(0)}%</small>
+                        </div>
+                    `;
+                    aiSuggestionsContainer.appendChild(suggestionCard);
+                });
+            }
+
+            async init() {
+                try {
+                    const data = await this.findNearestMosques();
+                    this.renderResults(data);
+                } catch (error) {
+                    console.error(error);
+                    document.getElementById('mosquesContainer').innerHTML = `
+                        <div class="alert alert-danger">${error}</div>
+                    `;
+                }
             }
         }
 
-        // Add event listener
-        document.getElementById('findMosquesBtn').addEventListener('click', findMosques);
+        // Initialize Mosque Finder
+        document.getElementById('findMosquesBtn').addEventListener('click', () => {
+            const finder = new MosqueFinder();
+            finder.init();
+        });
     </script>
 </body>
 </html>
