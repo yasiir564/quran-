@@ -193,7 +193,6 @@
 
     <script type="module">
         // Configuration
-        const GOOGLE_PLACES_API_KEY = 'AIzaSyDz8qN4VfQZ6AdeBhOa5y8HpN1sFlhHtl0';
         const GEMINI_API_KEY = 'AIzaSyBBhXs0Wd66ceLEHW6qsUjja78BSMAD9G4';
 
         // Import the functions we need from the modules
@@ -208,127 +207,7 @@
         // Initialize Gemini AI
         const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
-        // Generate AI Insights
-        async function generateMosqueInsights(mosque) {
-            try {
-                const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-                
-                const prompt = `Provide a detailed, culturally sensitive analysis of this mosque based on its available information. 
-                Mosque Name: ${mosque.name}
-                Address: ${mosque.formatted_address}
-                Rating: ${mosque.rating}
-                Number of Ratings: ${mosque.user_ratings_total}
-
-                Please create a brief, informative summary that includes:
-                1. The mosque's significance in the local community
-                2. Any notable architectural or historical features
-                3. A welcoming description that respects Islamic cultural nuances`;
-
-                const result = await model.generateContent(prompt);
-                const response = await result.response;
-                return response.text();
-            } catch (error) {
-                console.error('Gemini AI Analysis Error:', error);
-                return 'Unable to generate AI insights at this time.';
-            }
-        }
-
-        // Render mosque cards
-        function renderMosqueCards(mosques) {
-            if (!mosques || mosques.length === 0) {
-                mosqueList.innerHTML = `
-                    <div class="error">
-                        <h3>No mosques found 🕌</h3>
-                        <p>Try a different city or area</p>
-                    </div>
-                `;
-                return;
-            }
-
-            mosqueList.innerHTML = mosques.map(mosque => `
-                <div class="mosque-card">
-                    <div>
-                        <h3>${mosque.name}</h3>
-                        <p>${mosque.vicinity || 'Address not available'}</p>
-                        <div>
-                            <span>★ ${mosque.rating || 'N/A'}</span>
-                            <span>• ${mosque.user_ratings_total || 0} ratings</span>
-                        </div>
-                    </div>
-                    <button class="details-btn" onclick="showMosqueDetails('${mosque.place_id}')">
-                        Details
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        // Fetch mosque details
-        async function showMosqueDetails(placeId) {
-            try {
-                // Show loading alert
-                Swal.fire({
-                    title: 'Loading Details',
-                    html: 'Fetching mosque information...',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-
-                // Fetch Place Details
-                const detailsResponse = await fetch(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${GOOGLE_PLACES_API_KEY}`);
-                const detailsData = await detailsResponse.json();
-                const mosque = detailsData.result;
-
-                if (!mosque) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Could not fetch mosque details.'
-                    });
-                    return;
-                }
-
-                // Generate AI Insights
-                const aiInsights = await generateMosqueInsights(mosque);
-
-                // Close loading alert
-                Swal.close();
-
-                mosqueDetails.innerHTML = `
-                    <h2>${mosque.name}</h2>
-                    <div>
-                        <p><strong>Address:</strong> ${mosque.formatted_address || 'Not available'}</p>
-                        <p><strong>Phone:</strong> ${mosque.formatted_phone_number || 'Not available'}</p>
-                        <p><strong>Rating:</strong> ${mosque.rating || 'N/A'} (${mosque.user_ratings_total || 0} ratings)</p>
-                        
-                        ${mosque.opening_hours ? `
-                            <div>
-                                <h3>Opening Hours</h3>
-                                ${mosque.opening_hours.weekday_text ? 
-                                    mosque.opening_hours.weekday_text.map(day => `<p>${day}</p>`).join('') : 
-                                    '<p>Hours not available</p>'}
-                            </div>
-                        ` : ''}
-                        
-                        ${mosque.website ? `<p><strong>Website:</strong> <a href="${mosque.website}" target="_blank">Visit Website</a></p>` : ''}
-                        
-                        <div class="ai-insights">
-                            <h3>✨ AI Insights</h3>
-                            <p>${aiInsights}</p>
-                        </div>
-                    </div>
-                `;
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: `Error fetching details: ${error.message}`
-                });
-            }
-        }
-
-        // Search mosques
+        // Generate mosque list for a city
         async function searchMosques() {
             const searchTerm = searchInput.value.trim();
             if (!searchTerm) {
@@ -354,27 +233,136 @@
             mosqueDetails.innerHTML = '<p>Select a mosque to view details</p>';
 
             try {
-                // Fetch mosques
-                const response = await fetch(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=mosques+in+${searchTerm}&key=${GOOGLE_PLACES_API_KEY}`);
-                const data = await response.json();
+                const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+                
+                const prompt = `Please provide a list of 10 notable mosques in ${searchTerm}. 
+                For each mosque, include:
+                - Name of the mosque
+                - Neighborhood/area
+                - A very brief description
+                
+                Format the response as a JSON array with these fields:
+                [
+                    {
+                        "name": "Mosque Name",
+                        "area": "Neighborhood",
+                        "description": "Brief description"
+                    },
+                    ...
+                ]
+                
+                Ensure the mosques are real and accurately represent the city's Islamic community.`;
+
+                const result = await model.generateContent(prompt);
+                const response = await result.response;
+                const mosqText = response.text();
+
+                // Extract JSON from the response (remove any markdown or text around it)
+                const jsonMatch = mosqText.match(/```json\n([\s\S]*?)\n```/);
+                const mosqData = jsonMatch ? JSON.parse(jsonMatch[1]) : JSON.parse(mosqText);
 
                 // Close loading alert
                 Swal.close();
 
-                if (data.status === 'OK') {
-                    renderMosqueCards(data.results);
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Search Error',
-                        text: `Unable to find mosques: ${data.status}`
-                    });
-                }
+                // Render mosque cards
+                renderMosqueCards(mosqData);
             } catch (error) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
                     text: `Error searching mosques: ${error.message}`
+                });
+            }
+        }
+
+        // Render mosque cards
+        function renderMosqueCards(mosques) {
+            if (!mosques || mosques.length === 0) {
+                mosqueList.innerHTML = `
+                    <div class="error">
+                        <h3>No mosques found 🕌</h3>
+                        <p>Try a different city or area</p>
+                    </div>
+                `;
+                return;
+            }
+
+            mosqueList.innerHTML = mosques.map((mosque, index) => `
+                <div class="mosque-card">
+                    <div>
+                        <h3>${mosque.name}</h3>
+                        <p>${mosque.area || 'Location not specified'}</p>
+                    </div>
+                    <button class="details-btn" onclick="showMosqueDetails(${index})">
+                        Details
+                    </button>
+                </div>
+            `).join('');
+
+            // Store mosques data for later retrieval
+            window.currentMosques = mosques;
+        }
+
+        // Show mosque details
+        async function showMosqueDetails(index) {
+            try {
+                // Show loading alert
+                Swal.fire({
+                    title: 'Loading Details',
+                    html: 'Fetching mosque information...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                const mosque = window.currentMosques[index];
+
+                // Generate detailed insights
+                const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+                
+                const prompt = `Provide a comprehensive, culturally sensitive analysis of this mosque:
+                Mosque Name: ${mosque.name}
+                City: ${searchInput.value.trim()}
+                Area: ${mosque.area}
+
+                Please create a detailed summary that includes:
+                1. Historical significance of the mosque
+                2. Architectural details and unique features
+                3. Community role and importance
+                4. Any notable events or cultural significance
+                5. Welcoming description that respects Islamic cultural nuances`;
+
+                const result = await model.generateContent(prompt);
+                const response = await result.response;
+                const aiInsights = response.text();
+
+                // Close loading alert
+                Swal.close();
+
+                mosqueDetails.innerHTML = `
+                    <h2>${mosque.name}</h2>
+                    <div>
+                        <p><strong>Location:</strong> ${mosque.area}, ${searchInput.value.trim()}</p>
+                        
+                        <div class="ai-insights">
+                            <h3>✨ AI Insights</h3>
+                            <p>${aiInsights}</p>
+                        </div>
+
+                        ${mosque.description ? `
+                            <div>
+                                <h3>Initial Description</h3>
+                                <p>${mosque.description}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: `Error fetching details: ${error.message}`
                 });
             }
         }
@@ -385,7 +373,7 @@
             if (event.key === 'Enter') searchMosques();
         });
 
-        // Expose functions to global scope for onclick
+        // Expose functions to global scope
         window.showMosqueDetails = showMosqueDetails;
     </script>
     <script src="https://esm.run/@google/generative-ai"></script>
