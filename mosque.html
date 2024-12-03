@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mosque Finder AI Tool</title>
+    <title>Mosque Finder AI Tool with Mapbox</title>
+    
+    <!-- Mapbox GL JS -->
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+    
     <!-- SweetAlert2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    
     <style>
         * {
             margin: 0;
@@ -21,7 +26,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -43,11 +48,11 @@
         .search-container {
             display: flex;
             margin-bottom: 30px;
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto 30px;
         }
 
-        #searchInput {
+        #searchInput, #userLocationInput {
             flex-grow: 1;
             padding: 12px;
             font-size: 16px;
@@ -56,13 +61,7 @@
             transition: all 0.3s ease;
         }
 
-        #searchInput:focus {
-            outline: none;
-            border-color: #2980b9;
-            box-shadow: 0 0 5px rgba(52,152,219,0.5);
-        }
-
-        #searchBtn {
+        #searchBtn, #locateBtn {
             padding: 12px 20px;
             background-color: #3498db;
             color: white;
@@ -73,14 +72,20 @@
             font-weight: bold;
         }
 
-        #searchBtn:hover {
+        #searchBtn:hover, #locateBtn:hover {
             background-color: #2980b9;
             transform: scale(1.05);
         }
 
-        .mosques-container {
+        .main-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .mosques-container {
+            display: grid;
+            grid-template-columns: 1fr;
             gap: 20px;
             animation: slideUp 0.5s ease-out;
         }
@@ -111,6 +116,20 @@
             box-shadow: 0 6px 12px rgba(0,0,0,0.1);
         }
 
+        #map {
+            height: 500px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .direction-card {
+            background-color: #e6f2ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 4px solid #3498db;
+        }
+
         .mosque-details {
             background-color: white;
             border-radius: 12px;
@@ -119,93 +138,137 @@
             animation: fadeIn 0.5s ease-out;
         }
 
-        .ai-insights {
-            background-color: #e6f2ff;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 15px;
-            border-left: 4px solid #3498db;
-        }
-
-        .details-btn {
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .details-btn:hover {
-            background-color: #27ae60;
-            transform: scale(1.05);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(50px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (max-width: 768px) {
-            .mosques-container {
+        @media (max-width: 1024px) {
+            .main-content, .search-container {
                 grid-template-columns: 1fr;
             }
-        }
-
-        .loading, .error {
-            text-align: center;
-            margin-top: 20px;
-            color: #666;
-            animation: fadeIn 0.5s ease-in-out;
+            #map {
+                height: 300px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🕌 Mosque Finder AI Tool</h1>
+            <h1>🕌 Mosque Finder with Directions</h1>
         </div>
 
         <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Enter city or area">
+            <input type="text" id="searchInput" placeholder="Enter city">
+            <input type="text" id="userLocationInput" placeholder="Your current location">
+            <button id="locateBtn">🌍 Locate</button>
             <button id="searchBtn">Search</button>
         </div>
 
-        <div class="mosques-container">
-            <div class="mosque-list" id="mosqueList">
-                <!-- Mosque cards will be dynamically inserted here -->
+        <div class="main-content">
+            <div class="mosques-container">
+                <div id="map"></div>
+                <div class="mosque-list" id="mosqueList">
+                    <!-- Mosque cards will be dynamically inserted here -->
+                </div>
             </div>
 
             <div class="mosque-details" id="mosqueDetails">
-                <p>Select a mosque to view details</p>
+                <p>Select a mosque to view details and directions</p>
             </div>
         </div>
     </div>
 
-    <!-- SweetAlert2 JS -->
+    <!-- External Libraries -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js'></script>
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css' type='text/css' />
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
     <script type="module">
         // Configuration
+        const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoieWFzc2lyMzQiLCJhIjoiY200OGdlMWowMGV0cDJrc2NrM2hmZnQ4OSJ9.FF0kZxunc9DT4N3oQx2kA';
         const GEMINI_API_KEY = 'AIzaSyBBhXs0Wd66ceLEHW6qsUjja78BSMAD9G4';
 
-        // Import the functions we need from the modules
+        // Import the functions we need
         import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
         // DOM Elements
         const searchInput = document.getElementById('searchInput');
+        const userLocationInput = document.getElementById('userLocationInput');
+        const locateBtn = document.getElementById('locateBtn');
         const searchBtn = document.getElementById('searchBtn');
         const mosqueList = document.getElementById('mosqueList');
         const mosqueDetails = document.getElementById('mosqueDetails');
 
+        // Initialize Mapbox
+        mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [0, 0],
+            zoom: 2
+        });
+
+        // Add geocoder control
+        const geocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl,
+            marker: false,
+            placeholder: 'Search for places'
+        });
+
         // Initialize Gemini AI
         const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+
+        // Geolocation function
+        function getUserLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const { latitude, longitude } = position.coords;
+                    userLocationInput.value = `${latitude}, ${longitude}`;
+                    
+                    // Center map on user location
+                    map.setCenter([longitude, latitude]);
+                    map.setZoom(10);
+
+                    // Add a marker for user location
+                    new mapboxgl.Marker({ color: 'blue' })
+                        .setLngLat([longitude, latitude])
+                        .addTo(map);
+                }, (error) => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Geolocation Error',
+                        text: error.message
+                    });
+                });
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Geolocation Not Supported',
+                    text: 'Your browser does not support geolocation'
+                });
+            }
+        }
+
+        // Find route between two points
+        async function findRoute(startCoords, endCoords) {
+            const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${startCoords};${endCoords}?access_token=${MAPBOX_ACCESS_TOKEN}`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.routes && data.routes.length > 0) {
+                    const route = data.routes[0];
+                    const distance = (route.distance / 1000).toFixed(2); // Convert to kilometers
+                    const duration = (route.duration / 60).toFixed(0); // Convert to minutes
+
+                    return { distance, duration };
+                }
+            } catch (error) {
+                console.error('Route finding error:', error);
+                return null;
+            }
+        }
 
         // Generate mosque list for a city
         async function searchMosques() {
@@ -219,7 +282,7 @@
                 return;
             }
 
-            // Show loading alert
+            // Show loading
             Swal.fire({
                 title: 'Searching Mosques',
                 html: 'Finding mosques in your area...',
@@ -229,43 +292,57 @@
                 }
             });
 
-            mosqueList.innerHTML = '<p class="loading">Loading mosques...</p>';
-            mosqueDetails.innerHTML = '<p>Select a mosque to view details</p>';
-
             try {
+                // Geocode the city to get coordinates
+                const geocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(searchTerm)}.json?access_token=${MAPBOX_ACCESS_TOKEN}`;
+                const geocodingResponse = await fetch(geocodingUrl);
+                const geocodingData = await geocodingResponse.json();
+                
+                if (!geocodingData.features || geocodingData.features.length === 0) {
+                    throw new Error('Could not find coordinates for the city');
+                }
+
+                const [longitude, latitude] = geocodingData.features[0].center;
+                
+                // Reset map
+                map.setCenter([longitude, latitude]);
+                map.setZoom(12);
+
+                // Generate mosque list using Gemini
                 const model = genAI.getGenerativeModel({ model: "gemini-pro" });
                 
-                const prompt = `Please provide a list of 10 notable mosques in ${searchTerm}. 
+                const prompt = `List 10 notable mosques in ${searchTerm} with their precise locations. 
                 For each mosque, include:
-                - Name of the mosque
-                - Neighborhood/area
-                - A very brief description
+                - Name
+                - Precise Address
+                - Latitude
+                - Longitude
                 
-                Format the response as a JSON array with these fields:
+                Format as JSON:
                 [
                     {
                         "name": "Mosque Name",
-                        "area": "Neighborhood",
-                        "description": "Brief description"
+                        "address": "Full Address",
+                        "latitude": 0.0000,
+                        "longitude": 0.0000
                     },
                     ...
-                ]
-                
-                Ensure the mosques are real and accurately represent the city's Islamic community.`;
+                ]`;
 
                 const result = await model.generateContent(prompt);
                 const response = await result.response;
                 const mosqText = response.text();
 
-                // Extract JSON from the response (remove any markdown or text around it)
+                // Extract JSON from the response
                 const jsonMatch = mosqText.match(/```json\n([\s\S]*?)\n```/);
                 const mosqData = jsonMatch ? JSON.parse(jsonMatch[1]) : JSON.parse(mosqText);
 
                 // Close loading alert
                 Swal.close();
 
-                // Render mosque cards
-                renderMosqueCards(mosqData);
+                // Render mosque list and map markers
+                renderMosqueList(mosqData);
+                addMosqueMarkers(mosqData);
             } catch (error) {
                 Swal.fire({
                     icon: 'error',
@@ -275,107 +352,110 @@
             }
         }
 
-        // Render mosque cards
-        function renderMosqueCards(mosques) {
-            if (!mosques || mosques.length === 0) {
-                mosqueList.innerHTML = `
-                    <div class="error">
-                        <h3>No mosques found 🕌</h3>
-                        <p>Try a different city or area</p>
-                    </div>
-                `;
-                return;
-            }
-
+        // Render mosque list
+        function renderMosqueList(mosques) {
             mosqueList.innerHTML = mosques.map((mosque, index) => `
-                <div class="mosque-card">
+                <div class="mosque-card" data-index="${index}">
                     <div>
                         <h3>${mosque.name}</h3>
-                        <p>${mosque.area || 'Location not specified'}</p>
+                        <p>${mosque.address}</p>
                     </div>
-                    <button class="details-btn" onclick="showMosqueDetails(${index})">
-                        Details
-                    </button>
+                    <button onclick="showMosqueDetails(${index})">Details</button>
                 </div>
             `).join('');
 
-            // Store mosques data for later retrieval
+            // Store mosques data
             window.currentMosques = mosques;
         }
 
-        // Show mosque details
+        // Add mosque markers to map
+        function addMosqueMarkers(mosques) {
+            // Clear existing markers
+            map.getStyle().layers.forEach((layer) => {
+                if (layer.type === 'symbol') {
+                    map.removeLayer(layer.id);
+                }
+            });
+
+            mosques.forEach((mosque, index) => {
+                const marker = new mapboxgl.Marker({ color: 'green' })
+                    .setLngLat([mosque.longitude, mosque.latitude])
+                    .setPopup(
+                        new mapboxgl.Popup({ offset: 25 })
+                            .setHTML(`<h3>${mosque.name}</h3><p>${mosque.address}</p>`)
+                    )
+                    .addTo(map);
+            });
+        }
+
+        // Show mosque details and directions
         async function showMosqueDetails(index) {
+            const mosque = window.currentMosques[index];
+            const userLocation = userLocationInput.value.trim();
+
+            // Generate detailed insights
             try {
-                // Show loading alert
-                Swal.fire({
-                    title: 'Loading Details',
-                    html: 'Fetching mosque information...',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-
-                const mosque = window.currentMosques[index];
-
-                // Generate detailed insights
                 const model = genAI.getGenerativeModel({ model: "gemini-pro" });
                 
-                const prompt = `Provide a comprehensive, culturally sensitive analysis of this mosque:
-                Mosque Name: ${mosque.name}
-                City: ${searchInput.value.trim()}
-                Area: ${mosque.area}
-
-                Please create a detailed summary that includes:
-                1. Historical significance of the mosque
-                2. Architectural details and unique features
-                3. Community role and importance
-                4. Any notable events or cultural significance
-                5. Welcoming description that respects Islamic cultural nuances`;
+                const prompt = `Provide a comprehensive analysis of ${mosque.name} in ${searchInput.value.trim()}:
+                1. Historical significance
+                2. Architectural details
+                3. Community role
+                4. Cultural importance`;
 
                 const result = await model.generateContent(prompt);
-                const response = await result.response;
-                const aiInsights = response.text();
+                const aiInsights = await result.response.text();
 
-                // Close loading alert
-                Swal.close();
+                // Find route if user location is available
+                let routeInfo = null;
+                if (userLocation) {
+                    const [startLon, startLat] = userLocation.split(',').map(coord => parseFloat(coord.trim()));const startCoords = `${startLon},${startLat}`;
+                    const endCoords = `${mosque.longitude},${mosque.latitude}`;
+                    routeInfo = await findRoute(startCoords, endCoords);
+                }
 
+                // Render mosque details
                 mosqueDetails.innerHTML = `
                     <h2>${mosque.name}</h2>
-                    <div>
-                        <p><strong>Location:</strong> ${mosque.area}, ${searchInput.value.trim()}</p>
-                        
-                        <div class="ai-insights">
-                            <h3>✨ AI Insights</h3>
-                            <p>${aiInsights}</p>
-                        </div>
+                    <p><strong>Address:</strong> ${mosque.address}</p>
+                    <p><strong>Coordinates:</strong> ${mosque.latitude}, ${mosque.longitude}</p>
 
-                        ${mosque.description ? `
-                            <div>
-                                <h3>Initial Description</h3>
-                                <p>${mosque.description}</p>
-                            </div>
-                        ` : ''}
-                    </div>
+                    ${routeInfo ? `
+                    <div class="direction-card">
+                        <h3>Route Information</h3>
+                        <p><strong>Distance:</strong> ${routeInfo.distance} km</p>
+                        <p><strong>Estimated Travel Time:</strong> ${routeInfo.duration} minutes</p>
+                    </div>` : ''}
+
+                    <h3>AI Insights</h3>
+                    <p>${aiInsights}</p>
                 `;
             } catch (error) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: `Error fetching details: ${error.message}`
+                    text: `Error fetching mosque details: ${error.message}`
                 });
             }
         }
 
-        // Event listeners
+        // Event Listeners
+        locateBtn.addEventListener('click', getUserLocation);
         searchBtn.addEventListener('click', searchMosques);
-        searchInput.addEventListener('keyup', (event) => {
-            if (event.key === 'Enter') searchMosques();
+        
+        // Allow Enter key press for search
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchMosques();
+            }
         });
 
-        // Expose functions to global scope
+        // Expose function to global scope for inline event handling
         window.showMosqueDetails = showMosqueDetails;
+
+        // Initialize map controls
+        map.addControl(new mapboxgl.NavigationControl());
+        map.addControl(geocoder);
     </script>
-    <script src="https://esm.run/@google/generative-ai"></script>
 </body>
 </html>
