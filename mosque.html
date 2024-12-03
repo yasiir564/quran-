@@ -194,7 +194,7 @@
     <script type="module">
         // Configuration
         const GOOGLE_PLACES_API_KEY = 'AIzaSyDz8qN4VfQZ6AdeBhOa5y8HpN1sFlhHtl0';
-        const GEMINI_API_KEY = 'AIzaSyCHMj_UZZZ5q4L-U-Xjp_dwhLyZpY1rvKw';
+        const GEMINI_API_KEY = 'AIzaSyBBhXs0Wd66ceLEHW6qsUjja78BSMAD9G4';
 
         // Import the functions we need from the modules
         import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
@@ -275,10 +275,9 @@
                     }
                 });
 
-                // Fetch Place Details using CORS Anywhere Alternative
-                const detailsResponse = await fetch(`https://cors-proxy.htmldriven.com/?url=${encodeURIComponent(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${GOOGLE_PLACES_API_KEY}`)}`);
-                const responseText = await detailsResponse.text();
-                const detailsData = JSON.parse(responseText);
+                // Fetch Place Details
+                const detailsResponse = await fetch(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${GOOGLE_PLACES_API_KEY}`);
+                const detailsData = await detailsResponse.json();
                 const mosque = detailsData.result;
 
                 if (!mosque) {
@@ -355,10 +354,9 @@
             mosqueDetails.innerHTML = '<p>Select a mosque to view details</p>';
 
             try {
-                // Use a CORS proxy alternative
-                const response = await fetch(`https://cors-proxy.htmldriven.com/?url=${encodeURIComponent(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=mosques+in+${searchTerm}&key=${GOOGLE_PLACES_API_KEY}`)}`);
-                const responseText = await response.text();
-                const data = JSON.parse(responseText);
+                // Fetch mosques
+                const response = await fetch(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=mosques+in+${searchTerm}&key=${GOOGLE_PLACES_API_KEY}`);
+                const data = await response.json();
 
                 // Close loading alert
                 Swal.close();
