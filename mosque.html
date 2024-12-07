@@ -4,18 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced Mosque Finder</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Raleway:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Leaflet Maps -->
     <link href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" rel="stylesheet">
+    
+    <!-- SweetAlert2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    
     <style>
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
             --background-color: #f4f7f6;
+            --text-color: #333;
         }
 
         body {
+            font-family: 'Poppins', sans-serif;
             background-color: var(--background-color);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
         }
 
         .mosque-finder-container {
@@ -26,52 +40,50 @@
 
         #mainMap {
             height: 500px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
 
         .search-section {
             background-color: white;
-            border-radius: 10px;
+            border-radius: 15px;
             padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
         }
 
-        .advanced-filters {
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
-        }
-
-        .mosque-list-container {
-            max-height: 70vh;
-            overflow-y: auto;
+        .search-section:hover {
+            transform: translateY(-5px);
         }
 
         .mosque-card {
+            cursor: pointer;
             transition: all 0.3s ease;
-            margin-bottom: 15px;
+            border-radius: 10px;
+            overflow: hidden;
         }
 
         .mosque-card:hover {
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             transform: scale(1.02);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-        .details-panel {
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
         .ai-insights {
-            background-color: #e6f2ff;
-            border-left: 4px solid var(--secondary-color);
-            padding: 15px;
-            margin-top: 15px;
+            background: linear-gradient(135deg, #e6f2ff 0%, #d1e8ff 100%);
+            border-left: 5px solid var(--secondary-color);
+            border-radius: 10px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            #mainMap {
+                height: 300px;
+            }
+
+            .mosque-list-container {
+                max-height: 400px;
+                overflow-y: auto;
+            }
         }
     </style>
 </head>
@@ -79,23 +91,25 @@
     <div class="mosque-finder-container">
         <div class="row">
             <div class="col-12 text-center mb-4">
-                <h1 class="display-4">🕌 Advanced Mosque Finder</h1>
+                <h1 class="display-4 fw-bold">🕌 Advanced Mosque Finder</h1>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-lg-4">
-                <div class="search-section">
-                    <h3>Search & Filters</h3>
+        <div class="row g-4">
+            <div class="col-lg-4 order-2 order-lg-1">
+                <div class="search-section h-100">
+                    <h3 class="mb-3">Search & Filters</h3>
                     <div class="input-group mb-3">
                         <input type="text" id="cityInput" class="form-control" placeholder="Enter city or location">
-                        <button id="searchButton" class="btn btn-primary">Search</button>
+                        <button id="searchButton" class="btn btn-primary">
+                            <i class="bi bi-search"></i> Search
+                        </button>
                     </div>
 
                     <div class="advanced-filters">
                         <h5>Advanced Filters</h5>
-                        <div class="row">
-                            <div class="col-md-6 mb-2">
+                        <div class="row g-2">
+                            <div class="col-md-6">
                                 <select id="denominationFilter" class="form-select">
                                     <option value="">All Denominations</option>
                                     <option value="sunni">Sunni</option>
@@ -103,7 +117,7 @@
                                     <option value="sufi">Sufi</option>
                                 </select>
                             </div>
-                            <div class="col-md-6 mb-2">
+                            <div class="col-md-6">
                                 <select id="facilityFilter" class="form-select">
                                     <option value="">Facilities</option>
                                     <option value="women">Women's Section</option>
@@ -112,7 +126,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-check mt-2">
+                        <div class="form-check mt-3">
                             <input class="form-check-input" type="checkbox" id="fridayPrayerCheck">
                             <label class="form-check-label" for="fridayPrayerCheck">
                                 Friday Prayer Available
@@ -126,20 +140,22 @@
                 </div>
             </div>
 
-            <div class="col-lg-8">
-                <div class="row">
-                    <div class="col-12 mb-3">
-                        <div id="mainMap"></div>
+            <div class="col-lg-8 order-1 order-lg-2">
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div id="mainMap" class="shadow-sm"></div>
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row g-3">
                     <div class="col-md-6 mosque-list-container">
                         <div id="mosqueList" class="row g-3"></div>
                     </div>
                     <div class="col-md-6">
-                        <div id="mosqueDetails" class="details-panel">
-                            <p class="text-muted text-center">Select a mosque to view details</p>
+                        <div id="mosqueDetails" class="card shadow-sm">
+                            <div class="card-body text-center text-muted">
+                                Select a mosque to view details
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -147,18 +163,13 @@
         </div>
     </div>
 
+    <!-- External Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    
-    <script>
-        // App Configuration
-        const CONFIG = {
-            OPENAI_API_KEY: 'sk-proj-...',  // Replace with actual key
-            OSM_NOMINATIM_URL: 'https://nominatim.openstreetmap.org/search',
-            OVERPASS_API_URL: 'https://overpass-api.de/api/interpreter'
-        };
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 
+    <script>
         class MosqueFinder {
             constructor() {
                 this.map = null;
@@ -186,12 +197,24 @@
             async searchMosques() {
                 const city = document.getElementById('cityInput').value.trim();
                 if (!city) {
-                    alert('Please enter a city or location');
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Oops...',
+                        text: 'Please enter a city or location!'
+                    });
                     return;
                 }
 
                 try {
-                    const nominatimResponse = await axios.get(CONFIG.OSM_NOMINATIM_URL, {
+                    Swal.fire({
+                        title: 'Searching...',
+                        text: 'Finding mosques in the area',
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    const nominatimResponse = await axios.get(`https://nominatim.openstreetmap.org/search`, {
                         params: {
                             q: city,
                             format: 'json',
@@ -200,7 +223,11 @@
                     });
 
                     if (nominatimResponse.data.length === 0) {
-                        alert('Location not found');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Not Found',
+                            text: 'Location not found. Please try a different location.'
+                        });
                         return;
                     }
 
@@ -219,16 +246,22 @@
                         out skel qt;
                     `;
 
-                    const overpassResponse = await axios.post(CONFIG.OVERPASS_API_URL, overpassQuery);
+                    const overpassResponse = await axios.post(`https://overpass-api.de/api/interpreter`, overpassQuery);
                     this.processMosques(overpassResponse.data);
+
+                    Swal.close();
                 } catch (error) {
                     console.error('Search error:', error);
-                    alert('Error searching for mosques');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Search Error',
+                        text: 'Unable to search for mosques. Please try again.'
+                    });
                 }
             }
 
+            // Rest of the methods remain the same as in the previous implementation
             processMosques(data) {
-                // Clear existing markers
                 this.currentMarkers.forEach(marker => this.map.removeLayer(marker));
                 this.currentMarkers = [];
                 this.currentMosques = [];
@@ -273,74 +306,113 @@
                 `).join('');
             }
 
+            autoLocate() {
+                if (navigator.geolocation) {
+                    Swal.fire({
+                        title: 'Locating...',
+                        text: 'Finding your current location',
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const { latitude, longitude } = position.coords;
+                            this.map.setView([latitude, longitude], 12);
+                            this.map.panTo(new L.LatLng(latitude, longitude));
+                            
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Location Found!',
+                                text: 'Searching for mosques near you...',
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+
+                            // Reverse geocode to get city name
+                            axios.get(`https://nominatim.openstreetmap.org/reverse`, {
+                                params: {
+                                    lat: latitude,
+                                    lon: longitude,
+                                    format: 'json'
+                                }
+                            }).then(response => {
+                                const city = response.data.address.city || 
+                                             response.data.address.town || 
+                                             response.data.address.village || 
+                                             'Current Location';
+                                
+                                document.getElementById('cityInput').value = city;
+                                this.searchMosques();
+                            });
+                        },
+                        (error) => {
+                            console.error('Geolocation error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Location Error',
+                                text: 'Could not retrieve your location. Please check permissions.'
+                            });
+                        }
+                    );
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Not Supported',
+                        text: 'Geolocation is not supported by your browser'
+                    });
+                }
+            }
+
             async showMosqueDetails(index) {
                 const mosque = this.currentMosques[index];
                 const detailsPanel = document.getElementById('mosqueDetails');
 
-                try {
-                    // Simulated AI insights (replace with actual AI service)
-                    const aiInsights = await this.generateAIInsights(mosque);
+                // Simulated Gemini AI insights
+                const aiInsights = await this.generateAIInsights(mosque);
 
-                    detailsPanel.innerHTML = `
-                        <h3>${mosque.name}</h3>
+                detailsPanel.innerHTML = `
+                    <div class="card-header bg-primary text-white">
+                        <h4>${mosque.name}</h4>
+                    </div>
+                    <div class="card-body">
                         <div class="mb-3">
                             <strong>Location:</strong> 
                             ${mosque.lat.toFixed(4)}, ${mosque.lon.toFixed(4)}
                         </div>
                         
                         <div class="card mt-3">
-                            <div class="card-header bg-primary text-white">
-                                Mosque Details
-                            </div>
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">
                                     <strong>Denomination:</strong> 
                                     ${mosque.tags.denomination || 'Not Specified'}
                                 </li>
                                 <li class="list-group-item">
-                                    <strong>Website:</strong> 
-                                    ${mosque.tags.website || 'Not Available'}
+                                    <strong>Website:</strong>${mosque.tags.website || 'Not Available'}
                                 </li>
                             </ul>
                         </div>
 
-                        <div class="ai-insights mt-3">
-                            <h4>✨ Cultural Insights</h4>
-                            <p>${aiInsights}</p>
+                        <div class="ai-insights mt-3 p-3 rounded">
+                            <h5 class="mb-2">✨ Cultural Insights</h5>
+                            <p class="text-muted">${aiInsights}</p>
                         </div>
-                    `;
-                } catch (error) {
-                    console.error('Details error:', error);
-                }
+                    </div>
+                `;
             }
 
             async generateAIInsights(mosque) {
-                // Placeholder for AI generation - would typically use OpenAI/Gemini
-                return `A culturally rich mosque with historical significance in the local community. 
-                The mosque serves as a spiritual and social center, bringing together people of faith 
-                and providing essential religious services.`;
-            }
+                // Placeholder for Gemini AI insights generation
+                const culturalContexts = [
+                    "A vibrant spiritual center deeply rooted in local community traditions.",
+                    "An architectural gem reflecting the rich Islamic heritage of the region.",
+                    "A welcoming mosque that bridges cultural and generational divides.",
+                    "A significant landmark that serves both religious and social purposes.",
+                    "A testament to the enduring faith and resilience of the local Muslim community."
+                ];
 
-            autoLocate() {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        (position) => {
-                            const { latitude, longitude } = position.coords;
-                            this.map.setView([latitude, longitude], 12);
-                            
-                            // Automatically search mosques near current location
-                            this.map.panTo(new L.LatLng(latitude, longitude));
-                            document.getElementById('cityInput').value = 'Current Location';
-                            this.searchMosques();
-                        },
-                        (error) => {
-                            console.error('Geolocation error:', error);
-                            alert('Could not retrieve location');
-                        }
-                    );
-                } else {
-                    alert('Geolocation is not supported by your browser');
-                }
+                return culturalContexts[Math.floor(Math.random() * culturalContexts.length)];
             }
         }
 
