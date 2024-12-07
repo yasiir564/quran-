@@ -178,19 +178,19 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 
     <script>
-    class MosqueFinder {
-        constructor() {
-            // IMPORTANT: Replace with your actual Gemini API key
-            this.GEMINI_API_KEY = 'AIzaSyB3pkExmoGi55reR2ogSAdv66G4QGYCvfg';
-            this.map = null;
-            this.currentMarkers = [];
-            this.currentMosques = [];
-            this.currentLocation = null;
-            this.initializeMap();
-            this.setupEventListeners();
-        }
+   class MosqueFinder {
+    constructor() {
+        // IMPORTANT: Replace with your actual Gemini API key
+        this.GEMINI_API_KEY = 'AIzaSyB3pkExmoGi55reR2ogSAdv66G4QGYCvfg';
+        this.map = null;
+        this.currentMarkers = [];
+        this.currentMosques = [];
+        this.currentLocation = null;
+        this.initializeMap();
+        this.setupEventListeners();
+    }
 
-        initializeMap() {
+    initializeMap() {
         this.map = L.map('mainMap').setView([0, 0], 2);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
@@ -407,9 +407,22 @@
             return "AI insights unavailable. Please configure the Gemini API key.";
         }
 
-        const prompt = `Provide a brief, culturally sensitive description of a mosque in ${mosque.city}. 
-        Focus on its significance, architectural features, or community role. 
-        Be respectful and avoid stereotypes. Maximum 100 words.`;
+        // Compile more specific contextual information
+        const additionalContext = [
+            mosque.denomination ? `Denomination: ${mosque.denomination}` : '',
+            mosque.website ? `Official Website: ${mosque.website}` : '',
+        ].filter(Boolean).join(', ');
+
+        const prompt = `Provide a detailed, culturally sensitive description of a mosque in ${mosque.city}. 
+        Context: ${additionalContext}. 
+        Include:
+        - Historical significance (if known)
+        - Architectural style
+        - Community role
+        - Any unique features
+        
+        Be respectful, fact-based, and avoid stereotypes. 
+        Maximum 150 words. If specific details are unavailable, provide general, informative context.`;
 
         try {
             const response = await axios.post(
@@ -421,11 +434,19 @@
                 }
             );
 
-            return response.data.candidates[0].content.parts[0].text || 
-                   "A significant spiritual and community center serving local Muslims.";
+            const aiText = response.data.candidates[0].content.parts[0].text || 
+                           "A significant spiritual and community center serving local Muslims.";
+
+            // Fallback information if AI response is too generic
+            const fallbackInfo = `A ${mosque.denomination || 'local'} mosque located in ${mosque.city}. 
+            This place of worship serves the local Muslim community, offering spiritual guidance and a gathering space for religious and social activities.`;
+
+            // If AI response seems too generic, use fallback
+            return aiText.length < 50 ? fallbackInfo : aiText;
+
         } catch (error) {
             console.error('Gemini API Error:', error);
-            return "AI insights temporarily unavailable.";
+            return "A significant spiritual center serving the local Muslim community in " + mosque.city;
         }
     }
 
