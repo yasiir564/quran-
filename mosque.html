@@ -4,366 +4,348 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced Mosque Finder</title>
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --background-color: #f4f7f6;
         }
+
         body {
-            background-color: #f4f7f6;
-            line-height: 1.6;
+            background-color: var(--background-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .container {
-            max-width: 1200px;
+
+        .mosque-finder-container {
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #2c3e50;
-        }
-        .location-search {
-            display: flex;
-            margin-bottom: 20px;
-            gap: 10px;
-        }
-        #cityInput, #locationSearch {
-            flex-grow: 1;
-            padding: 10px;
-            border: 2px solid #3498db;
-            border-radius: 4px;
-        }
-        .btn {
-            padding: 10px 15px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .btn:hover {
-            background-color: #2980b9;
-        }
-        #map {
-            height: 400px;
-            width: 100%;
-            margin-bottom: 20px;
-            border-radius: 8px;
-        }
-        .mosques-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        .mosque-list {
-            max-height: 70vh;
-            overflow-y: auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
+
+        #mainMap {
+            height: 500px;
+            border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        .mosque-card {
-            background-color: #f9f9f9;
-            margin-bottom: 15px;
-            padding: 15px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .mosque-details {
+
+        .search-section {
             background-color: white;
+            border-radius: 10px;
             padding: 20px;
-            border-radius: 8px;
+            margin-bottom: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        .ai-insights {
-            background-color: #e6f3ff;
+
+        .advanced-filters {
+            background-color: #f8f9fa;
+            border-radius: 10px;
             padding: 15px;
             margin-top: 15px;
-            border-radius: 8px;
         }
-        @media (max-width: 768px) {
-            .mosques-container {
-                grid-template-columns: 1fr;
-            }
+
+        .mosque-list-container {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .mosque-card {
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .mosque-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .details-panel {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .ai-insights {
+            background-color: #e6f2ff;
+            border-left: 4px solid var(--secondary-color);
+            padding: 15px;
+            margin-top: 15px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🕌 Mosque Finder</h1>
-        </div>
-
-        <div class="location-search">
-            <input type="text" id="cityInput" placeholder="Enter city or town">
-            <button id="locationSearch" class="btn">Search Mosques</button>
-            <button id="autoLocate" class="btn">Use My Location</button>
-        </div>
-
-        <div id="map"></div>
-
-        <div class="mosques-container">
-            <div id="mosqueList" class="mosque-list">
-                <p>Search for mosques in a city</p>
+    <div class="mosque-finder-container">
+        <div class="row">
+            <div class="col-12 text-center mb-4">
+                <h1 class="display-4">🕌 Advanced Mosque Finder</h1>
             </div>
-            <div id="mosqueDetails" class="mosque-details">
-                <p>Select a mosque to view details</p>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="search-section">
+                    <h3>Search & Filters</h3>
+                    <div class="input-group mb-3">
+                        <input type="text" id="cityInput" class="form-control" placeholder="Enter city or location">
+                        <button id="searchButton" class="btn btn-primary">Search</button>
+                    </div>
+
+                    <div class="advanced-filters">
+                        <h5>Advanced Filters</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <select id="denominationFilter" class="form-select">
+                                    <option value="">All Denominations</option>
+                                    <option value="sunni">Sunni</option>
+                                    <option value="shia">Shia</option>
+                                    <option value="sufi">Sufi</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <select id="facilityFilter" class="form-select">
+                                    <option value="">Facilities</option>
+                                    <option value="women">Women's Section</option>
+                                    <option value="education">Islamic Education</option>
+                                    <option value="parking">Parking</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" id="fridayPrayerCheck">
+                            <label class="form-check-label" for="fridayPrayerCheck">
+                                Friday Prayer Available
+                            </label>
+                        </div>
+                    </div>
+
+                    <button id="locateButton" class="btn btn-success mt-3 w-100">
+                        🌍 Use My Location
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <div id="mainMap"></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mosque-list-container">
+                        <div id="mosqueList" class="row g-3"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div id="mosqueDetails" class="details-panel">
+                            <p class="text-muted text-center">Select a mosque to view details</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-    <script type="module">
-        // Configuration
-        const GOOGLE_MAPS_API_KEY = 'AIzaSyDz8qN4VfQZ6AdeBhOa5y8HpN1sFlhHtl0';
-        const GEMINI_API_KEY = 'AIzaSyB3pkExmoGi55reR2ogSAdv66G4QGYCvfg';
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <script>
+        // App Configuration
+        const CONFIG = {
+            OPENAI_API_KEY: 'sk-proj-...',  // Replace with actual key
+            OSM_NOMINATIM_URL: 'https://nominatim.openstreetmap.org/search',
+            OVERPASS_API_URL: 'https://overpass-api.de/api/interpreter'
+        };
 
-        // Import Gemini AI 
-        import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+        class MosqueFinder {
+            constructor() {
+                this.map = null;
+                this.currentMarkers = [];
+                this.currentMosques = [];
+                this.initializeMap();
+                this.setupEventListeners();
+            }
 
-        // Global variables
-        let map, geocoder, placesService;
-        let currentMosques = [];
+            initializeMap() {
+                this.map = L.map('mainMap').setView([0, 0], 2);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(this.map);
+            }
 
-        // Initialize the application
-        function initApp() {
-            // Load Google Maps
-            const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&callback=initMap`;
-            script.async = true;
-            document.head.appendChild(script);
-        }
-
-        // Initialize Map
-        window.initMap = function() {
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: { lat: 0, lng: 0 },
-                zoom: 2
-            });
-
-            geocoder = new google.maps.Geocoder();
-            placesService = new google.maps.places.PlacesService(map);
-
-            // Event Listeners
-            document.getElementById('locationSearch').addEventListener('click', searchMosquesInCity);
-            document.getElementById('autoLocate').addEventListener('click', autoLocateAndSearch);
-            document.getElementById('cityInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') searchMosquesInCity();
-            });
-        }
-
-        // Auto Locate and Search
-        function autoLocateAndSearch() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        // Use reverse geocoding to get city name
-                        geocoder.geocode(
-                            { location: { 
-                                lat: position.coords.latitude, 
-                                lng: position.coords.longitude 
-                            }}, 
-                            (results, status) => {
-                                if (status === 'OK') {
-                                    const city = findCityInResults(results);
-                                    document.getElementById('cityInput').value = city;
-                                    searchMosquesInCity();
-                                } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Location Error',
-                                        text: 'Could not determine your city'
-                                    });
-                                }
-                            }
-                        );
-                    },
-                    (error) => {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Location Access',
-                            text: 'Please enable location services or enter a city manually',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                );
-            } else {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Geolocation Not Supported',
-                    text: 'Your browser does not support location services'
+            setupEventListeners() {
+                document.getElementById('searchButton').addEventListener('click', () => this.searchMosques());
+                document.getElementById('locateButton').addEventListener('click', () => this.autoLocate());
+                document.getElementById('cityInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.searchMosques();
                 });
             }
-        }
 
-        // Find City in Geocoder Results
-        function findCityInResults(results) {
-            for (let result of results) {
-                for (let component of result.address_components) {
-                    if (component.types.includes('locality') || 
-                        component.types.includes('administrative_area_level_1')) {
-                        return component.long_name;
-                    }
+            async searchMosques() {
+                const city = document.getElementById('cityInput').value.trim();
+                if (!city) {
+                    alert('Please enter a city or location');
+                    return;
                 }
-            }
-            return 'Unknown Location';
-        }
 
-        // Search Mosques in City
-        async function searchMosquesInCity() {
-            const city = document.getElementById('cityInput').value.trim();
-            
-            if (!city) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Input Required',
-                    text: 'Please enter a city name'
-                });
-                return;
-            }
-
-            // Show loading
-            Swal.fire({
-                title: 'Searching Mosques',
-                html: 'Finding mosques in ' + city,
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-
-            try {
-                // Geocode the city
-                geocoder.geocode({ address: city }, (results, status) => {
-                    if (status === 'OK') {
-                        const location = results[0].geometry.location;
-                        map.setCenter(location);
-                        map.setZoom(12);
-
-                        // Search for mosques
-                        placesService.nearbySearch({
-                            location: location,
-                            radius: 20000, // 20 km radius
-                            type: ['mosque']
-                        }, processMosques);
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Location Error',
-                            text: 'Could not find location for ' + city
-                        });
-                    }
-                });
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Search Error',
-                    text: error.message
-                });
-            }
-        }
-
-        // Process Mosque Results
-        function processMosques(results, status) {
-            Swal.close();
-
-            if (status === google.maps.places.PlacesServiceStatus.OK) {
-                // Clear previous markers
-                map.getChildNodes().forEach(marker => marker.setMap(null));
-
-                currentMosques = results.map((mosque, index) => {
-                    // Add marker for each mosque
-                    new google.maps.Marker({
-                        position: mosque.geometry.location,
-                        map: map,
-                        title: mosque.name
+                try {
+                    const nominatimResponse = await axios.get(CONFIG.OSM_NOMINATIM_URL, {
+                        params: {
+                            q: city,
+                            format: 'json',
+                            limit: 1
+                        }
                     });
 
-                    return {
-                        name: mosque.name,
-                        vicinity: mosque.vicinity,
-                        location: mosque.geometry.location.toJSON()
-                    };
-                });
+                    if (nominatimResponse.data.length === 0) {
+                        alert('Location not found');
+                        return;
+                    }
 
-                renderMosqueList();
-            } else {
-                Swal.fire({
-                    icon: 'info',
-                    title: 'No Mosques Found',
-                    text: 'No mosques found in this area'
-                });
+                    const { lat, lon } = nominatimResponse.data[0];
+                    this.map.setView([lat, lon], 12);
+
+                    const overpassQuery = `
+                        [out:json][timeout:25];
+                        (
+                            node["amenity"="place_of_worship"]["religion"="muslim"](around:5000,${lat},${lon});
+                            way["amenity"="place_of_worship"]["religion"="muslim"](around:5000,${lat},${lon});
+                            relation["amenity"="place_of_worship"]["religion"="muslim"](around:5000,${lat},${lon});
+                        );
+                        out body;
+                        >;
+                        out skel qt;
+                    `;
+
+                    const overpassResponse = await axios.post(CONFIG.OVERPASS_API_URL, overpassQuery);
+                    this.processMosques(overpassResponse.data);
+                } catch (error) {
+                    console.error('Search error:', error);
+                    alert('Error searching for mosques');
+                }
             }
-        }
 
-        // Render Mosque List
-        function renderMosqueList() {
-            const mosqueList = document.getElementById('mosqueList');
-            
-            mosqueList.innerHTML = currentMosques.map((mosque, index) => `
-                <div class="mosque-card">
-                    <div>
+            processMosques(data) {
+                // Clear existing markers
+                this.currentMarkers.forEach(marker => this.map.removeLayer(marker));
+                this.currentMarkers = [];
+                this.currentMosques = [];
+
+                const uniqueMosques = new Set();
+
+                data.elements.forEach(mosque => {
+                    if (mosque.type === 'node' && !uniqueMosques.has(mosque.id)) {
+                        uniqueMosques.add(mosque.id);
+
+                        const marker = L.marker([mosque.lat, mosque.lon])
+                            .addTo(this.map)
+                            .bindPopup(mosque.tags.name || 'Unnamed Mosque');
+
+                        this.currentMarkers.push(marker);
+                        this.currentMosques.push({
+                            id: mosque.id,
+                            name: mosque.tags.name || 'Unnamed Mosque',
+                            lat: mosque.lat,
+                            lon: mosque.lon,
+                            tags: mosque.tags
+                        });
+                    }
+                });
+
+                this.renderMosqueList();
+            }
+
+            renderMosqueList() {
+                const mosqueList = document.getElementById('mosqueList');
+                mosqueList.innerHTML = this.currentMosques.map((mosque, index) => `
+                    <div class="col-12">
+                        <div class="card mosque-card" onclick="mosqueFinder.showMosqueDetails(${index})">
+                            <div class="card-body">
+                                <h5 class="card-title">${mosque.name}</h5>
+                                <p class="card-text text-muted">
+                                    ${mosque.tags.denomination || 'Unknown Denomination'}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            async showMosqueDetails(index) {
+                const mosque = this.currentMosques[index];
+                const detailsPanel = document.getElementById('mosqueDetails');
+
+                try {
+                    // Simulated AI insights (replace with actual AI service)
+                    const aiInsights = await this.generateAIInsights(mosque);
+
+                    detailsPanel.innerHTML = `
                         <h3>${mosque.name}</h3>
-                        <p>${mosque.vicinity}</p>
-                    </div>
-                    <button onclick="showMosqueDetails(${index})" class="btn">Details</button>
-                </div>
-            `).join('');
-        }
+                        <div class="mb-3">
+                            <strong>Location:</strong> 
+                            ${mosque.lat.toFixed(4)}, ${mosque.lon.toFixed(4)}
+                        </div>
+                        
+                        <div class="card mt-3">
+                            <div class="card-header bg-primary text-white">
+                                Mosque Details
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <strong>Denomination:</strong> 
+                                    ${mosque.tags.denomination || 'Not Specified'}
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Website:</strong> 
+                                    ${mosque.tags.website || 'Not Available'}
+                                </li>
+                            </ul>
+                        </div>
 
-        // Show Mosque Details
-        async function showMosqueDetails(index) {
-            const mosque = currentMosques[index];
-            
-            try {
-                // Initialize Gemini AI
-                const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-                const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+                        <div class="ai-insights mt-3">
+                            <h4>✨ Cultural Insights</h4>
+                            <p>${aiInsights}</p>
+                        </div>
+                    `;
+                } catch (error) {
+                    console.error('Details error:', error);
+                }
+            }
 
-                // Generate AI insights
-                const prompt = `Provide a detailed, culturally sensitive description of the ${mosque.name} mosque. 
-                Include its:
-                - Historical significance
-                - Architectural features
-                - Community importance
-                - Any unique cultural aspects
-                Use respectful and informative language that honors Islamic traditions.`;
+            async generateAIInsights(mosque) {
+                // Placeholder for AI generation - would typically use OpenAI/Gemini
+                return `A culturally rich mosque with historical significance in the local community. 
+                The mosque serves as a spiritual and social center, bringing together people of faith 
+                and providing essential religious services.`;
+            }
 
-                const result = await model.generateContent(prompt);
-                const aiInsights = await result.response.text();
-
-                // Update mosque details
-                document.getElementById('mosqueDetails').innerHTML = `
-                    <h2>${mosque.name}</h2>
-                    <p><strong>Location:</strong> ${mosque.vicinity}</p>
-                    
-                    <div class="ai-insights">
-                        <h3>✨ AI Insights</h3>
-                        <p>${aiInsights}</p>
-                    </div>
-                `;
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Details Error',
-                    text: error.message
-                });
+            autoLocate() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const { latitude, longitude } = position.coords;
+                            this.map.setView([latitude, longitude], 12);
+                            
+                            // Automatically search mosques near current location
+                            this.map.panTo(new L.LatLng(latitude, longitude));
+                            document.getElementById('cityInput').value = 'Current Location';
+                            this.searchMosques();
+                        },
+                        (error) => {
+                            console.error('Geolocation error:', error);
+                            alert('Could not retrieve location');
+                        }
+                    );
+                } else {
+                    alert('Geolocation is not supported by your browser');
+                }
             }
         }
-
-        // Expose to global scope
-        window.showMosqueDetails = showMosqueDetails;
 
         // Initialize the app
-        initApp();
+        const mosqueFinder = new MosqueFinder();
     </script>
 </body>
 </html>
