@@ -317,6 +317,123 @@ body::before {
         font-size: 0.9em;
     }
 }
+        .header {
+    background: none;
+    padding: 0;
+    box-shadow: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 280px;
+    background: var(--card-bg);
+    border-right: 1px solid var(--border-color);
+    z-index: 1000;
+    transition: transform var(--transition-speed);
+}
+
+.sidebar-header {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-logo {
+    font-size: 1.5em;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.reading-options {
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+}
+
+.reading-option-btn {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 0.95em;
+}
+
+.reading-option-btn i {
+    width: 24px;
+    text-align: center;
+    margin-right: 10px;
+}
+
+.container {
+    margin-left: 280px;
+    padding: 30px;
+}
+
+.mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1001;
+    background: var(--card-bg);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    box-shadow: var(--card-shadow);
+    color: var(--text-color);
+}
+
+/* Responsive Design Updates */
+@media (max-width: 1024px) {
+    .header {
+        transform: translateX(-100%);
+    }
+
+    .header.active {
+        transform: translateX(0);
+    }
+
+    .container {
+        margin-left: 0;
+        padding: 20px;
+        padding-top: 80px;
+    }
+
+    .mobile-menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        width: 260px;
+    }
+
+    .container {
+        padding: 15px;
+        padding-top: 80px;
+    }
+
+    .reading-option-btn {
+        padding: 12px;
+        font-size: 0.9em;
+    }
+}
+
+/* Dark mode updates */
+.dark-mode .header {
+    background: var(--card-bg);
+}
+
+.dark-mode .mobile-menu-toggle {
+    background: var(--card-bg);
+    color: var(--text-color);
+}
     </style>
 </head>
 <body>
@@ -337,6 +454,30 @@ body::before {
                     Toggle Theme
                 </button>
             </div>
+        </div>
+    </header>
+    <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <header class="header">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">Noble Quran</div>
+            <div class="sidebar-subtitle">Read & Listen</div>
+        </div>
+        <div class="reading-options">
+            <button class="reading-option-btn" data-mode="quran-only">
+                <i class="fas fa-book-open"></i>
+                Quran Only
+            </button>
+            <button class="reading-option-btn" data-mode="quran-audio">
+                <i class="fas fa-headphones"></i>
+                Quran with Audio & Translation
+            </button>
+            <button class="reading-option-btn" id="dark-mode-toggle">
+                <i class="fas fa-moon"></i>
+                Toggle Theme
+            </button>
         </div>
     </header>
 
@@ -489,6 +630,21 @@ body::before {
 
         // Initial load
         loadContent();
+         const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const header = document.querySelector('.header');
+
+        mobileMenuToggle.addEventListener('click', () => {
+            header.classList.toggle('active');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 1024 && 
+                !header.contains(e.target) && 
+                !mobileMenuToggle.contains(e.target)) {
+                header.classList.remove('active');
+            }
+        });
     </script>
 </body>
 </html>
