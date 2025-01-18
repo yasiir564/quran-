@@ -8,7 +8,6 @@
     <title>Noble Quran - Read and Listen</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&family=Poppins:wght@400;500;600&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="audio-player.css">
     <style>
 :root {
     --primary-color: #2575fc;
@@ -435,153 +434,6 @@ body::before {
     background: var(--card-bg);
     color: var(--text-color);
 }
-        /* Modern Audio Player Styles */
-.audio-player-container {
-    background: var(--card-bg);
-    border-radius: 10px;
-    padding: 15px;
-    margin: 15px 0;
-    box-shadow: var(--card-shadow);
-    transition: all var(--transition-speed);
-}
-
-.audio-controls {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 10px;
-}
-
-.play-pause-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: none;
-    background: var(--primary-color);
-    color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all var(--transition-speed);
-}
-
-.play-pause-btn:hover {
-    transform: scale(1.05);
-    background: var(--secondary-color);
-}
-
-.progress-container {
-    flex-grow: 1;
-    height: 5px;
-    background: var(--border-color);
-    border-radius: 3px;
-    cursor: pointer;
-    position: relative;
-}
-
-.progress-bar {
-    height: 100%;
-    background: var(--primary-color);
-    border-radius: 3px;
-    position: relative;
-    transition: width 0.1s linear;
-}
-
-.progress-bar::after {
-    content: '';
-    position: absolute;
-    right: -5px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 10px;
-    height: 10px;
-    background: var(--primary-color);
-    border-radius: 50%;
-    opacity: 0;
-    transition: opacity 0.2s;
-}
-
-.progress-container:hover .progress-bar::after {
-    opacity: 1;
-}
-
-.time-display {
-    font-size: 0.9em;
-    color: var(--text-color);
-    min-width: 100px;
-    text-align: center;
-}
-
-.volume-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    position: relative;
-}
-
-.volume-btn {
-    background: none;
-    border: none;
-    color: var(--text-color);
-    cursor: pointer;
-    padding: 5px;
-}
-
-.volume-slider {
-    width: 80px;
-    height: 5px;
-    -webkit-appearance: none;
-    background: var(--border-color);
-    border-radius: 3px;
-    outline: none;
-}
-
-.volume-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--primary-color);
-    cursor: pointer;
-    transition: all var(--transition-speed);
-}
-
-.volume-slider::-webkit-slider-thumb:hover {
-    transform: scale(1.1);
-}
-
-.playback-speed {
-    background: none;
-    border: none;
-    color: var(--text-color);
-    cursor: pointer;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 0.9em;
-    transition: all var(--transition-speed);
-}
-
-.playback-speed:hover {
-    background: var(--border-color);
-}
-
-/* Dark mode specific styles */
-.dark-mode .audio-player-container {
-    background: var(--card-bg);
-}
-
-/* Responsive styles */
-@media (max-width: 768px) {
-    .volume-container {
-        display: none;
-    }
-    
-    .time-display {
-        min-width: 80px;
-        font-size: 0.8em;
-    }
-}
     </style>
 </head>
 <body>
@@ -616,354 +468,165 @@ body::before {
             <!-- Content will be loaded here -->
         </div>
     </main>
-    <!-- Replace the original audio element in your HTML with this structure -->
-<div class="audio-player-container">
-    <div class="audio-controls">
-        <button class="play-pause-btn">
-            <i class="fas fa-play"></i>
-        </button>
-        <div class="progress-container">
-            <div class="progress-bar" style="width: 0%"></div>
-        </div>
-        <div class="time-display">
-            <span class="current-time">0:00</span> / <span class="duration">0:00</span>
-        </div>
-        <div class="volume-container">
-            <button class="volume-btn">
-                <i class="fas fa-volume-up"></i>
-            </button>
-            <input type="range" class="volume-slider" min="0" max="1" step="0.1" value="1">
-        </div>
-        <button class="playback-speed">1x</button>
-    </div>
-    <audio class="audio-player" style="display: none;">
-        <source src="" type="audio/mpeg">
-    </audio>
-</div>
-    <script src="audio-player.js"></script>
 
     <script>
-      // Global state management
-const state = {
-    currentMode: 'quran-audio',
-    currentSurah: 1,
-    currentAyah: 0,
-    autoScrollEnabled: true
-};
+        let currentMode = 'quran-audio';
+        let currentSurah = 1;
+        let currentAyah = 0;
+        let autoScrollEnabled = true;
 
-class AudioPlayer {
-    constructor(container, audioSource, index) {
-        this.container = container;
-        this.index = index;
-        this.audioSource = audioSource;
-        this.speeds = [0.75, 1, 1.25, 1.5, 2];
-        this.currentSpeedIndex = 1;
-        this.isPlaying = false;
-        
-        this.initializePlayer();
-    }
+        const quranContent = document.getElementById('quran-content');
 
-    initializePlayer() {
-        this.createHTML();
-        this.initializeElements();
-        this.attachEventListeners();
-        this.loadAudio();
-    }
-
-    createHTML() {
-        this.container.innerHTML = `
-            <div class="audio-controls">
-                <button class="play-pause-btn" aria-label="Play/Pause">
-                    <i class="fas fa-play"></i>
-                </button>
-                <div class="progress-container">
-                    <div class="progress-bar"></div>
-                    <div class="progress-handle"></div>
-                </div>
-                <div class="time-display">
-                    <span class="current-time">0:00</span> / <span class="duration">0:00</span>
-                </div>
-                <div class="volume-container">
-                    <button class="volume-btn" aria-label="Volume">
-                        <i class="fas fa-volume-up"></i>
-                    </button>
-                    <input type="range" class="volume-slider" min="0" max="1" step="0.1" value="1">
-                </div>
-                <button class="playback-speed" aria-label="Playback Speed">1x</button>
-            </div>
-        `;
-    }
-
-    initializeElements() {
-        // Create audio element programmatically
-        this.audio = new Audio(this.audioSource);
-        this.audio.preload = 'metadata';
-
-        // Get DOM elements
-        this.playPauseBtn = this.container.querySelector('.play-pause-btn');
-        this.progressContainer = this.container.querySelector('.progress-container');
-        this.progressBar = this.container.querySelector('.progress-bar');
-        this.progressHandle = this.container.querySelector('.progress-handle');
-        this.currentTimeDisplay = this.container.querySelector('.current-time');
-        this.durationDisplay = this.container.querySelector('.duration');
-        this.volumeBtn = this.container.querySelector('.volume-btn');
-        this.volumeSlider = this.container.querySelector('.volume-slider');
-        this.playbackSpeedBtn = this.container.querySelector('.playback-speed');
-    }
-
-    attachEventListeners() {
-        // Audio events
-        this.audio.addEventListener('loadedmetadata', () => this.handleMetadataLoaded());
-        this.audio.addEventListener('timeupdate', () => this.updateProgress());
-        this.audio.addEventListener('ended', () => this.handleAudioEnd());
-        this.audio.addEventListener('error', (e) => this.handleError(e));
-
-        // Control events
-        this.playPauseBtn.addEventListener('click', () => this.togglePlay());
-        this.progressContainer.addEventListener('click', (e) => this.seek(e));
-        this.volumeBtn.addEventListener('click', () => this.toggleMute());
-        this.volumeSlider.addEventListener('input', (e) => this.updateVolume(e));
-        this.playbackSpeedBtn.addEventListener('click', () => this.changeSpeed());
-
-        // Progress bar drag functionality
-        this.progressHandle.addEventListener('mousedown', (e) => this.startDragging(e));
-        document.addEventListener('mousemove', (e) => this.handleDrag(e));
-        document.addEventListener('mouseup', () => this.stopDragging());
-    }
-
-    loadAudio() {
-        this.audio.load();
-    }
-
-    handleMetadataLoaded() {
-        this.durationDisplay.textContent = this.formatTime(this.audio.duration);
-        this.progressBar.style.width = '0%';
-    }
-
-    formatTime(seconds) {
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = Math.floor(seconds % 60);
-        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-    }
-
-    updateProgress() {
-        if (!this.audio.duration) return;
-        
-        const progress = (this.audio.currentTime / this.audio.duration) * 100;
-        this.progressBar.style.width = `${progress}%`;
-        this.progressHandle.style.left = `${progress}%`;
-        this.currentTimeDisplay.textContent = this.formatTime(this.audio.currentTime);
-    }
-
-    togglePlay() {
-        if (this.audio.paused) {
-            this.play();
-        } else {
-            this.pause();
-        }
-    }
-
-    play() {
-        // Stop all other audio players
-        document.querySelectorAll('.audio-player').forEach(player => {
-            if (player !== this.audio) player.pause();
+        // Reading mode buttons
+        document.querySelectorAll('.reading-option-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const mode = btn.dataset.mode;
+                if (mode) {
+                    currentMode = mode;
+                    loadContent();
+                    document.querySelectorAll('.reading-option-btn').forEach(b => 
+                        b.classList.remove('active'));
+                    btn.classList.add('active');
+                }
+            });
         });
 
-        this.audio.play()
-            .then(() => {
-                this.isPlaying = true;
-                this.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                this.highlightCurrentAyah();
-            })
-            .catch(error => this.handleError(error));
-    }
-
-    pause() {
-        this.audio.pause();
-        this.isPlaying = false;
-        this.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-    }
-
-    seek(e) {
-        const rect = this.progressContainer.getBoundingClientRect();
-        const percent = (e.clientX - rect.left) / rect.width;
-        this.audio.currentTime = percent * this.audio.duration;
-    }
-
-    toggleMute() {
-        this.audio.muted = !this.audio.muted;
-        this.updateVolumeIcon();
-    }
-
-    updateVolume(e) {
-        this.audio.volume = e.target.value;
-        this.audio.muted = false;
-        this.updateVolumeIcon();
-    }
-
-    updateVolumeIcon() {
-        const icon = this.audio.muted || this.audio.volume === 0 ? 'volume-mute' :
-                    this.audio.volume < 0.5 ? 'volume-down' : 'volume-up';
-        this.volumeBtn.innerHTML = `<i class="fas fa-${icon}"></i>`;
-    }
-
-    changeSpeed() {
-        this.currentSpeedIndex = (this.currentSpeedIndex + 1) % this.speeds.length;
-        this.audio.playbackRate = this.speeds[this.currentSpeedIndex];
-        this.playbackSpeedBtn.textContent = `${this.speeds[this.currentSpeedIndex]}x`;
-    }
-
-    handleAudioEnd() {
-        this.isPlaying = false;
-        this.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-        if (typeof handleAyahComplete === 'function') {
-            handleAyahComplete(this.index);
-        }
-    }
-
-    handleError(error) {
-        console.error('Audio player error:', error);
-        // Add user-friendly error handling here
-    }
-
-    highlightCurrentAyah() {
-        document.querySelectorAll('.ayah-container').forEach(container => {
-            container.classList.remove('active');
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
         });
-        const currentContainer = document.getElementById(`ayah-${this.index}`);
-        if (currentContainer) {
-            currentContainer.classList.add('active');
-            if (state.autoScrollEnabled) {
-                currentContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        async function loadContent() {
+            const surahNumber = new URLSearchParams(window.location.search).get('surah') || currentSurah;
+            currentSurah = parseInt(surahNumber);
+            
+            try {
+                const [surahData, translationData, audioData] = await Promise.all([
+                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`).then(r => r.json()),
+                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`).then(r => r.json()),
+                    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`).then(r => r.json())
+                ]);
+
+                let html = `
+                    <h1>${surahData.data.englishName} - ${surahData.data.name}</h1>
+                    <p class="surah-info">${surahData.data.englishNameTranslation}</p>
+                `;
+
+                surahData.data.ayahs.forEach((ayah, index) => {
+                    html += `
+                        <div class="ayah-container" id="ayah-${index}">
+                            <div class="ayah-number">${convertToArabicNumbers(index + 1)}</div>
+                            <div class="ayah">${ayah.text}</div>
+                    `;
+                    
+                    if (currentMode === 'quran-audio') {
+                        html += `
+                            <div class="translation">${translationData.data.ayahs[index].text}</div>
+                            <audio class="audio-player" onended="handleAyahComplete(${index})" data-ayah="${index}">
+                                <source src="${audioData.data.ayahs[index].audio}" type="audio/mpeg">
+                            </audio>
+                        `;
+                    }
+
+                    html += `</div>`;
+                });
+
+                html += `
+                    <div class="navigation-buttons">
+                        ${currentSurah > 1 ? `
+                            <button class="nav-btn" onclick="navigateSurah(${currentSurah - 1})">
+                                <i class="fas fa-chevron-left"></i> Previous Surah
+                            </button>
+                        ` : ''}
+                        ${currentSurah < 114 ? `
+                            <button class="nav-btn" onclick="navigateSurah(${currentSurah + 1})">
+                                Next Surah <i class="fas fa-chevron-right"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+
+                quranContent.innerHTML = html;
+
+                // Initialize first audio if in audio mode
+                if (currentMode === 'quran-audio') {
+                    const firstAudio = document.querySelector('.audio-player');
+                    if (firstAudio) {
+                        firstAudio.play();
+                        highlightCurrentAyah(0);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading content:', error);
+                quranContent.innerHTML = '<p>Error loading content. Please try again later.</p>';
             }
         }
-    }
-}
 
-// Content loading and navigation functions
-async function loadContent() {
-    const surahNumber = new URLSearchParams(window.location.search).get('surah') || state.currentSurah;
-    state.currentSurah = parseInt(surahNumber);
-    
-    try {
-        const [surahData, translationData, audioData] = await Promise.all([
-            fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`).then(r => r.json()),
-            fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`).then(r => r.json()),
-            fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`).then(r => r.json())
-        ]);
+        function handleAyahComplete(ayahIndex) {
+            const nextAyah = ayahIndex + 1;
+            const nextAudio = document.querySelector(`audio[data-ayah="${nextAyah}"]`);
+            
+            if (nextAudio) {
+                nextAudio.play();
+                highlightCurrentAyah(nextAyah);
+                if (autoScrollEnabled) {
+                    scrollToAyah(nextAyah);
+                }
+            } else if (currentSurah < 114) {
+                // Navigate to next surah if available
+                navigateSurah(currentSurah + 1);
+            }
+        }
 
-        renderContent(surahData, translationData, audioData);
-        initializeAudioPlayers(audioData);
-    } catch (error) {
-        console.error('Error loading content:', error);
-        document.getElementById('quran-content').innerHTML = 
-            '<p class="error">Error loading content. Please try again later.</p>';
-    }
-}
+        function highlightCurrentAyah(ayahIndex) {
+            document.querySelectorAll('.ayah-container').forEach(container => {
+                container.classList.remove('active');
+            });
+            const currentContainer = document.getElementById(`ayah-${ayahIndex}`);
+            if (currentContainer) {
+                currentContainer.classList.add('active');
+            }
+        }
 
-function renderContent(surahData, translationData, audioData) {
-    const quranContent = document.getElementById('quran-content');
-    let html = `
-        <h1>${surahData.data.englishName} - ${surahData.data.name}</h1>
-        <p class="surah-info">${surahData.data.englishNameTranslation}</p>
-    `;
+        function scrollToAyah(ayahIndex) {
+            const ayahElement = document.getElementById(`ayah-${ayahIndex}`);
+            if (ayahElement) {
+                ayahElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }
+        }
 
-    surahData.data.ayahs.forEach((ayah, index) => {
-        html += `
-            <div class="ayah-container" id="ayah-${index}">
-                <div class="ayah-number">${convertToArabicNumbers(index + 1)}</div>
-                <div class="ayah">${ayah.text}</div>
-                ${state.currentMode === 'quran-audio' ? `
-                    <div class="translation">${translationData.data.ayahs[index].text}</div>
-                    <div class="audio-player-container" data-ayah="${index}"></div>
-                ` : ''}
-            </div>
-        `;
-    });
+        function navigateSurah(surahNumber) {
+            currentSurah = surahNumber;
+            window.history.pushState({}, '', `?surah=${surahNumber}`);
+            loadContent();
+        }
 
-    html += createNavigationButtons();
-    quranContent.innerHTML = html;
-}
+        function convertToArabicNumbers(num) {
+            const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+            return num.toString().split('').map(digit => arabicNumbers[digit]).join('');
+        }
 
-function initializeAudioPlayers(audioData) {
-    if (state.currentMode !== 'quran-audio') return;
+        // Initial load
+        loadContent();
+         const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const header = document.querySelector('.header');
 
-    document.querySelectorAll('.audio-player-container').forEach((container, index) => {
-        new AudioPlayer(container, audioData.data.ayahs[index].audio, index);
-    });
-}
+        mobileMenuToggle.addEventListener('click', () => {
+            header.classList.toggle('active');
+        });
 
-function createNavigationButtons() {
-    return `
-        <div class="navigation-buttons">
-            ${state.currentSurah > 1 ? `
-                <button class="nav-btn" onclick="navigateSurah(${state.currentSurah - 1})">
-                    <i class="fas fa-chevron-left"></i> Previous Surah
-                </button>
-            ` : ''}
-            ${state.currentSurah < 114 ? `
-                <button class="nav-btn" onclick="navigateSurah(${state.currentSurah + 1})">
-                    Next Surah <i class="fas fa-chevron-right"></i>
-                </button>
-            ` : ''}
-        </div>
-    `;
-}
-
-function navigateSurah(surahNumber) {
-    state.currentSurah = surahNumber;
-    window.history.pushState({}, '', `?surah=${surahNumber}`);
-    loadContent();
-}
-
-function convertToArabicNumbers(num) {
-    const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-    return num.toString().split('').map(digit => arabicNumbers[digit]).join('');
-}
-
-// Event Listeners
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize reading mode buttons
-    document.querySelectorAll('.reading-option-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const mode = btn.dataset.mode;
-            if (mode) {
-                state.currentMode = mode;
-                loadContent();
-                document.querySelectorAll('.reading-option-btn').forEach(b => 
-                    b.classList.remove('active'));
-                btn.classList.add('active');
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 1024 && 
+                !header.contains(e.target) && 
+                !mobileMenuToggle.contains(e.target)) {
+                header.classList.remove('active');
             }
         });
-    });
-
-    // Dark mode toggle
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    darkModeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-    });
-
-    // Mobile menu
-    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-    const header = document.querySelector('.header');
-
-    mobileMenuToggle?.addEventListener('click', () => {
-        header.classList.toggle('active');
-    });
-
-    // Close mobile menu when clicking outside
-    document.addEventListener('click', (e) => {
-        if (window.innerWidth <= 1024 && 
-            header && 
-            !header.contains(e.target) && 
-            !mobileMenuToggle?.contains(e.target)) {
-            header.classList.remove('active');
-        }
-    });
-
-    // Initial content load
-    loadContent();
-});
     </script>
 </body>
 </html>
