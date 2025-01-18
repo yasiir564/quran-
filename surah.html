@@ -643,72 +643,101 @@ body::before {
     <script src="audio-player.js"></script>
 
     <script>
-       let currentMode = 'quran-audio';
-let currentSurah = 1;
-let currentAyah = 0;
-let autoScrollEnabled = true;
+      // Global state management
+const state = {
+    currentMode: 'quran-audio',
+    currentSurah: 1,
+    currentAyah: 0,
+    autoScrollEnabled: true
+};
 
-const quranContent = document.getElementById('quran-content');
-
-// Audio Player Class
 class AudioPlayer {
     constructor(container, audioSource, index) {
         this.container = container;
         this.index = index;
+        this.audioSource = audioSource;
         this.speeds = [0.75, 1, 1.25, 1.5, 2];
         this.currentSpeedIndex = 1;
+        this.isPlaying = false;
         
-        this.audio = container.querySelector('.audio-player');
-        this.playPauseBtn = container.querySelector('.play-pause-btn');
-        this.progressContainer = container.querySelector('.progress-container');
-        this.progressBar = container.querySelector('.progress-bar');
-        this.currentTimeDisplay = container.querySelector('.current-time');
-        this.durationDisplay = container.querySelector('.duration');
-        this.volumeBtn = container.querySelector('.volume-btn');
-        this.volumeSlider = container.querySelector('.volume-slider');
-        this.playbackSpeedBtn = container.querySelector('.playback-speed');
+        this.initializePlayer();
+    }
 
+    initializePlayer() {
+        this.createHTML();
+        this.initializeElements();
         this.attachEventListeners();
+        this.loadAudio();
+    }
+
+    createHTML() {
+        this.container.innerHTML = `
+            <div class="audio-controls">
+                <button class="play-pause-btn" aria-label="Play/Pause">
+                    <i class="fas fa-play"></i>
+                </button>
+                <div class="progress-container">
+                    <div class="progress-bar"></div>
+                    <div class="progress-handle"></div>
+                </div>
+                <div class="time-display">
+                    <span class="current-time">0:00</span> / <span class="duration">0:00</span>
+                </div>
+                <div class="volume-container">
+                    <button class="volume-btn" aria-label="Volume">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    <input type="range" class="volume-slider" min="0" max="1" step="0.1" value="1">
+                </div>
+                <button class="playback-speed" aria-label="Playback Speed">1x</button>
+            </div>
+        `;
+    }
+
+    initializeElements() {
+        // Create audio element programmatically
+        this.audio = new Audio(this.audioSource);
+        this.audio.preload = 'metadata';
+
+        // Get DOM elements
+        this.playPauseBtn = this.container.querySelector('.play-pause-btn');
+        this.progressContainer = this.container.querySelector('.progress-container');
+        this.progressBar = this.container.querySelector('.progress-bar');
+        this.progressHandle = this.container.querySelector('.progress-handle');
+        this.currentTimeDisplay = this.container.querySelector('.current-time');
+        this.durationDisplay = this.container.querySelector('.duration');
+        this.volumeBtn = this.container.querySelector('.volume-btn');
+        this.volumeSlider = this.container.querySelector('.volume-slider');
+        this.playbackSpeedBtn = this.container.querySelector('.playback-speed');
     }
 
     attachEventListeners() {
-        // Audio metadata loaded
-        this.audio.addEventListener('loadedmetadata', () => {
-            this.durationDisplay.textContent = this.formatTime(this.audio.duration);
-        });
-
-        // Time update
+        // Audio events
+        this.audio.addEventListener('loadedmetadata', () => this.handleMetadataLoaded());
         this.audio.addEventListener('timeupdate', () => this.updateProgress());
+        this.audio.addEventListener('ended', () => this.handleAudioEnd());
+        this.audio.addEventListener('error', (e) => this.handleError(e));
 
-        // Play/Pause
+        // Control events
         this.playPauseBtn.addEventListener('click', () => this.togglePlay());
-
-        // Progress bar click
         this.progressContainer.addEventListener('click', (e) => this.seek(e));
-
-        // Volume controls
         this.volumeBtn.addEventListener('click', () => this.toggleMute());
         this.volumeSlider.addEventListener('input', (e) => this.updateVolume(e));
-
-        // Playback speed
         this.playbackSpeedBtn.addEventListener('click', () => this.changeSpeed());
 
-        // Handle audio end
-        this.audio.addEventListener('ended', () => {
-            this.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-            handleAyahComplete(this.index);
-        });
+        // Progress bar drag functionality
+        this.progressHandle.addEventListener('mousedown', (e) => this.startDragging(e));
+        document.addEventListener('mousemove', (e) => this.handleDrag(e));
+        document.addEventListener('mouseup', () => this.stopDragging());
+    }
 
-        // Pause other players when this one starts
-        this.audio.addEventListener('play', () => {
-            document.querySelectorAll('.audio-player').forEach(player => {
-                if (player !== this.audio && !player.paused) {
-                    player.pause();
-                    player.closest('.audio-player-container')
-                        .querySelector('.play-pause-btn').innerHTML = '<i class="fas fa-play"></i>';
-                }
-            });
-        });
+    loadAudio() {
+        this.audio.load();
+    }
+
+    handleMetadataLoaded() {
+        this.durationDisplay.textContent = this.formatTime(this.audio.duration);
+        this.progressBar.style.width = '0%';
     }
 
     formatTime(seconds) {
@@ -718,20 +747,41 @@ class AudioPlayer {
     }
 
     updateProgress() {
+        if (!this.audio.duration) return;
+        
         const progress = (this.audio.currentTime / this.audio.duration) * 100;
         this.progressBar.style.width = `${progress}%`;
+        this.progressHandle.style.left = `${progress}%`;
         this.currentTimeDisplay.textContent = this.formatTime(this.audio.currentTime);
     }
 
     togglePlay() {
         if (this.audio.paused) {
-            this.audio.play();
-            this.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            highlightCurrentAyah(this.index);
+            this.play();
         } else {
-            this.audio.pause();
-            this.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            this.pause();
         }
+    }
+
+    play() {
+        // Stop all other audio players
+        document.querySelectorAll('.audio-player').forEach(player => {
+            if (player !== this.audio) player.pause();
+        });
+
+        this.audio.play()
+            .then(() => {
+                this.isPlaying = true;
+                this.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                this.highlightCurrentAyah();
+            })
+            .catch(error => this.handleError(error));
+    }
+
+    pause() {
+        this.audio.pause();
+        this.isPlaying = false;
+        this.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
     }
 
     seek(e) {
@@ -741,24 +791,20 @@ class AudioPlayer {
     }
 
     toggleMute() {
-        if (this.audio.volume > 0) {
-            this.lastVolume = this.audio.volume;
-            this.audio.volume = 0;
-            this.volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-            this.volumeSlider.value = 0;
-        } else {
-            this.audio.volume = this.lastVolume || 1;
-            this.volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-            this.volumeSlider.value = this.lastVolume || 1;
-        }
+        this.audio.muted = !this.audio.muted;
+        this.updateVolumeIcon();
     }
 
     updateVolume(e) {
         this.audio.volume = e.target.value;
-        this.volumeBtn.innerHTML = `<i class="fas fa-volume-${
-            this.audio.volume === 0 ? 'mute' : 
-            this.audio.volume <= 0.5 ? 'down' : 'up'
-        }"></i>`;
+        this.audio.muted = false;
+        this.updateVolumeIcon();
+    }
+
+    updateVolumeIcon() {
+        const icon = this.audio.muted || this.audio.volume === 0 ? 'volume-mute' :
+                    this.audio.volume < 0.5 ? 'volume-down' : 'volume-up';
+        this.volumeBtn.innerHTML = `<i class="fas fa-${icon}"></i>`;
     }
 
     changeSpeed() {
@@ -766,12 +812,38 @@ class AudioPlayer {
         this.audio.playbackRate = this.speeds[this.currentSpeedIndex];
         this.playbackSpeedBtn.textContent = `${this.speeds[this.currentSpeedIndex]}x`;
     }
+
+    handleAudioEnd() {
+        this.isPlaying = false;
+        this.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        if (typeof handleAyahComplete === 'function') {
+            handleAyahComplete(this.index);
+        }
+    }
+
+    handleError(error) {
+        console.error('Audio player error:', error);
+        // Add user-friendly error handling here
+    }
+
+    highlightCurrentAyah() {
+        document.querySelectorAll('.ayah-container').forEach(container => {
+            container.classList.remove('active');
+        });
+        const currentContainer = document.getElementById(`ayah-${this.index}`);
+        if (currentContainer) {
+            currentContainer.classList.add('active');
+            if (state.autoScrollEnabled) {
+                currentContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    }
 }
 
-// Load content function
+// Content loading and navigation functions
 async function loadContent() {
-    const surahNumber = new URLSearchParams(window.location.search).get('surah') || currentSurah;
-    currentSurah = parseInt(surahNumber);
+    const surahNumber = new URLSearchParams(window.location.search).get('surah') || state.currentSurah;
+    state.currentSurah = parseInt(surahNumber);
     
     try {
         const [surahData, translationData, audioData] = await Promise.all([
@@ -780,121 +852,66 @@ async function loadContent() {
             fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`).then(r => r.json())
         ]);
 
-        let html = `
-            <h1>${surahData.data.englishName} - ${surahData.data.name}</h1>
-            <p class="surah-info">${surahData.data.englishNameTranslation}</p>
-        `;
+        renderContent(surahData, translationData, audioData);
+        initializeAudioPlayers(audioData);
+    } catch (error) {
+        console.error('Error loading content:', error);
+        document.getElementById('quran-content').innerHTML = 
+            '<p class="error">Error loading content. Please try again later.</p>';
+    }
+}
 
-        surahData.data.ayahs.forEach((ayah, index) => {
-            html += `
-                <div class="ayah-container" id="ayah-${index}">
-                    <div class="ayah-number">${convertToArabicNumbers(index + 1)}</div>
-                    <div class="ayah">${ayah.text}</div>
-            `;
-            
-            if (currentMode === 'quran-audio') {
-                html += `
-                    <div class="translation">${translationData.data.ayahs[index].text}</div>
-                    <div class="audio-player-container" data-ayah="${index}">
-                        <div class="audio-controls">
-                            <button class="play-pause-btn">
-                                <i class="fas fa-play"></i>
-                            </button>
-                            <div class="progress-container">
-                                <div class="progress-bar" style="width: 0%"></div>
-                            </div>
-                            <div class="time-display">
-                                <span class="current-time">0:00</span> / <span class="duration">0:00</span>
-                            </div>
-                            <div class="volume-container">
-                                <button class="volume-btn">
-                                    <i class="fas fa-volume-up"></i>
-                                </button>
-                                <input type="range" class="volume-slider" min="0" max="1" step="0.1" value="1">
-                            </div>
-                            <button class="playback-speed">1x</button>
-                        </div>
-                        <audio class="audio-player" style="display: none;" data-ayah="${index}">
-                            <source src="${audioData.data.ayahs[index].audio}" type="audio/mpeg">
-                        </audio>
-                    </div>
-                `;
-            }
+function renderContent(surahData, translationData, audioData) {
+    const quranContent = document.getElementById('quran-content');
+    let html = `
+        <h1>${surahData.data.englishName} - ${surahData.data.name}</h1>
+        <p class="surah-info">${surahData.data.englishNameTranslation}</p>
+    `;
 
-            html += `</div>`;
-        });
-
+    surahData.data.ayahs.forEach((ayah, index) => {
         html += `
-            <div class="navigation-buttons">
-                ${currentSurah > 1 ? `
-                    <button class="nav-btn" onclick="navigateSurah(${currentSurah - 1})">
-                        <i class="fas fa-chevron-left"></i> Previous Surah
-                    </button>
-                ` : ''}
-                ${currentSurah < 114 ? `
-                    <button class="nav-btn" onclick="navigateSurah(${currentSurah + 1})">
-                        Next Surah <i class="fas fa-chevron-right"></i>
-                    </button>
+            <div class="ayah-container" id="ayah-${index}">
+                <div class="ayah-number">${convertToArabicNumbers(index + 1)}</div>
+                <div class="ayah">${ayah.text}</div>
+                ${state.currentMode === 'quran-audio' ? `
+                    <div class="translation">${translationData.data.ayahs[index].text}</div>
+                    <div class="audio-player-container" data-ayah="${index}"></div>
                 ` : ''}
             </div>
         `;
-
-        quranContent.innerHTML = html;
-
-        // Initialize all audio players
-        if (currentMode === 'quran-audio') {
-            document.querySelectorAll('.audio-player-container').forEach((container, index) => {
-                new AudioPlayer(container, audioData.data.ayahs[index].audio, index);
-            });
-        }
-    } catch (error) {
-        console.error('Error loading content:', error);
-        quranContent.innerHTML = '<p>Error loading content. Please try again later.</p>';
-    }
-}
-
-function handleAyahComplete(ayahIndex) {
-    const nextAyah = ayahIndex + 1;
-    const nextAudioContainer = document.querySelector(`.audio-player-container[data-ayah="${nextAyah}"]`);
-    
-    if (nextAudioContainer) {
-        const nextAudioPlayer = nextAudioContainer.querySelector('.audio-player');
-        const nextPlayBtn = nextAudioContainer.querySelector('.play-pause-btn');
-        if (nextAudioPlayer && nextPlayBtn) {
-            nextAudioPlayer.play();
-            nextPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            highlightCurrentAyah(nextAyah);
-            if (autoScrollEnabled) {
-                scrollToAyah(nextAyah);
-            }
-        }
-    } else if (currentSurah < 114) {
-        navigateSurah(currentSurah + 1);
-    }
-}
-
-function highlightCurrentAyah(ayahIndex) {
-    document.querySelectorAll('.ayah-container').forEach(container => {
-        container.classList.remove('active');
     });
-    const currentContainer = document.getElementById(`ayah-${ayahIndex}`);
-    if (currentContainer) {
-        currentContainer.classList.add('active');
-    }
+
+    html += createNavigationButtons();
+    quranContent.innerHTML = html;
 }
 
-function scrollToAyah(ayahIndex) {
-    const ayahElement = document.getElementById(`ayah-${ayahIndex}`);
-    if (ayahElement) {
-        ayahElement.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-        });
-    }
+function initializeAudioPlayers(audioData) {
+    if (state.currentMode !== 'quran-audio') return;
+
+    document.querySelectorAll('.audio-player-container').forEach((container, index) => {
+        new AudioPlayer(container, audioData.data.ayahs[index].audio, index);
+    });
+}
+
+function createNavigationButtons() {
+    return `
+        <div class="navigation-buttons">
+            ${state.currentSurah > 1 ? `
+                <button class="nav-btn" onclick="navigateSurah(${state.currentSurah - 1})">
+                    <i class="fas fa-chevron-left"></i> Previous Surah
+                </button>
+            ` : ''}
+            ${state.currentSurah < 114 ? `
+                <button class="nav-btn" onclick="navigateSurah(${state.currentSurah + 1})">
+                    Next Surah <i class="fas fa-chevron-right"></i>
+                </button>
+            ` : ''}
+        </div>
+    `;
 }
 
 function navigateSurah(surahNumber) {
-    currentSurah = surahNumber;
+    state.currentSurah = surahNumber;
     window.history.pushState({}, '', `?surah=${surahNumber}`);
     loadContent();
 }
@@ -904,45 +921,49 @@ function convertToArabicNumbers(num) {
     return num.toString().split('').map(digit => arabicNumbers[digit]).join('');
 }
 
-// Reading mode buttons
-document.querySelectorAll('.reading-option-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const mode = btn.dataset.mode;
-        if (mode) {
-            currentMode = mode;
-            loadContent();
-            document.querySelectorAll('.reading-option-btn').forEach(b => 
-                b.classList.remove('active'));
-            btn.classList.add('active');
+// Event Listeners
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize reading mode buttons
+    document.querySelectorAll('.reading-option-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const mode = btn.dataset.mode;
+            if (mode) {
+                state.currentMode = mode;
+                loadContent();
+                document.querySelectorAll('.reading-option-btn').forEach(b => 
+                    b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+        });
+    });
+
+    // Dark mode toggle
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+    });
+
+    // Mobile menu
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const header = document.querySelector('.header');
+
+    mobileMenuToggle?.addEventListener('click', () => {
+        header.classList.toggle('active');
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 1024 && 
+            header && 
+            !header.contains(e.target) && 
+            !mobileMenuToggle?.contains(e.target)) {
+            header.classList.remove('active');
         }
     });
+
+    // Initial content load
+    loadContent();
 });
-
-// Dark mode toggle
-const darkModeToggle = document.getElementById('dark-mode-toggle');
-darkModeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-});
-
-// Mobile menu toggle
-const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-const header = document.querySelector('.header');
-
-mobileMenuToggle.addEventListener('click', () => {
-    header.classList.toggle('active');
-});
-
-// Close sidebar when clicking outside on mobile
-document.addEventListener('click', (e) => {
-    if (window.innerWidth <= 1024 && 
-        !header.contains(e.target) && 
-        !mobileMenuToggle.contains(e.target)) {
-        header.classList.remove('active');
-    }
-});
-
-// Initial load
-loadContent();
     </script>
 </body>
 </html>
