@@ -8,6 +8,7 @@
     <title>Noble Quran - Read and Listen</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&family=Poppins:wght@400;500;600&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="audio-player.css">
     <style>
 :root {
     --primary-color: #2575fc;
@@ -434,6 +435,153 @@ body::before {
     background: var(--card-bg);
     color: var(--text-color);
 }
+        /* Modern Audio Player Styles */
+.audio-player-container {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px 0;
+    box-shadow: var(--card-shadow);
+    transition: all var(--transition-speed);
+}
+
+.audio-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.play-pause-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-speed);
+}
+
+.play-pause-btn:hover {
+    transform: scale(1.05);
+    background: var(--secondary-color);
+}
+
+.progress-container {
+    flex-grow: 1;
+    height: 5px;
+    background: var(--border-color);
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--primary-color);
+    border-radius: 3px;
+    position: relative;
+    transition: width 0.1s linear;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    right: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.progress-container:hover .progress-bar::after {
+    opacity: 1;
+}
+
+.time-display {
+    font-size: 0.9em;
+    color: var(--text-color);
+    min-width: 100px;
+    text-align: center;
+}
+
+.volume-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+.volume-btn {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    padding: 5px;
+}
+
+.volume-slider {
+    width: 80px;
+    height: 5px;
+    -webkit-appearance: none;
+    background: var(--border-color);
+    border-radius: 3px;
+    outline: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+
+.playback-speed {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    transition: all var(--transition-speed);
+}
+
+.playback-speed:hover {
+    background: var(--border-color);
+}
+
+/* Dark mode specific styles */
+.dark-mode .audio-player-container {
+    background: var(--card-bg);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .volume-container {
+        display: none;
+    }
+    
+    .time-display {
+        min-width: 80px;
+        font-size: 0.8em;
+    }
+}
     </style>
 </head>
 <body>
@@ -468,6 +616,31 @@ body::before {
             <!-- Content will be loaded here -->
         </div>
     </main>
+    <!-- Replace the original audio element in your HTML with this structure -->
+<div class="audio-player-container">
+    <div class="audio-controls">
+        <button class="play-pause-btn">
+            <i class="fas fa-play"></i>
+        </button>
+        <div class="progress-container">
+            <div class="progress-bar" style="width: 0%"></div>
+        </div>
+        <div class="time-display">
+            <span class="current-time">0:00</span> / <span class="duration">0:00</span>
+        </div>
+        <div class="volume-container">
+            <button class="volume-btn">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <input type="range" class="volume-slider" min="0" max="1" step="0.1" value="1">
+        </div>
+        <button class="playback-speed">1x</button>
+    </div>
+    <audio class="audio-player" style="display: none;">
+        <source src="" type="audio/mpeg">
+    </audio>
+</div>
+    <script src="audio-player.js"></script>
 
     <script>
         let currentMode = 'quran-audio';
@@ -490,6 +663,165 @@ body::before {
                 }
             });
         });
+
+        class AudioPlayer {
+    constructor(container, audioSource, index) {
+        this.container = container;
+        this.index = index;
+        this.speeds = [0.75, 1, 1.25, 1.5, 2];
+        this.currentSpeedIndex = 1;
+
+        this.initializeHTML(audioSource);
+        this.initializeElements();
+        this.attachEventListeners();
+    }
+
+    initializeHTML(audioSource) {
+        this.container.innerHTML = `
+            <div class="audio-controls">
+                <button class="play-pause-btn">
+                    <i class="fas fa-play"></i>
+                </button>
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 0%"></div>
+                </div>
+                <div class="time-display">
+                    <span class="current-time">0:00</span> / <span class="duration">0:00</span>
+                </div>
+                <div class="volume-container">
+                    <button class="volume-btn">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    <input type="range" class="volume-slider" min="0" max="1" step="0.1" value="1">
+                </div>
+                <button class="playback-speed">1x</button>
+            </div>
+            <audio class="audio-player" style="display: none;">
+                <source src="${audioSource}" type="audio/mpeg">
+            </audio>
+        `;
+    }
+
+    initializeElements() {
+        this.audio = this.container.querySelector('.audio-player');
+        this.playPauseBtn = this.container.querySelector('.play-pause-btn');
+        this.progressContainer = this.container.querySelector('.progress-container');
+        this.progressBar = this.container.querySelector('.progress-bar');
+        this.currentTimeDisplay = this.container.querySelector('.current-time');
+        this.durationDisplay = this.container.querySelector('.duration');
+        this.volumeBtn = this.container.querySelector('.volume-btn');
+        this.volumeSlider = this.container.querySelector('.volume-slider');
+        this.playbackSpeedBtn = this.container.querySelector('.playback-speed');
+    }
+
+    attachEventListeners() {
+        // Audio metadata loaded
+        this.audio.addEventListener('loadedmetadata', () => {
+            this.durationDisplay.textContent = this.formatTime(this.audio.duration);
+        });
+
+        // Time update
+        this.audio.addEventListener('timeupdate', () => this.updateProgress());
+
+        // Play/Pause
+        this.playPauseBtn.addEventListener('click', () => this.togglePlay());
+
+        // Progress bar click
+        this.progressContainer.addEventListener('click', (e) => this.seek(e));
+
+        // Volume controls
+        this.volumeBtn.addEventListener('click', () => this.toggleMute());
+        this.volumeSlider.addEventListener('input', (e) => this.updateVolume(e));
+
+        // Playback speed
+        this.playbackSpeedBtn.addEventListener('click', () => this.changeSpeed());
+
+        // Handle audio end
+        this.audio.addEventListener('ended', () => {
+            this.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            if (typeof handleAyahComplete === 'function') {
+                handleAyahComplete(this.index);
+            }
+        });
+    }
+
+    formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = Math.floor(seconds % 60);
+        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+    updateProgress() {
+        const progress = (this.audio.currentTime / this.audio.duration) * 100;
+        this.progressBar.style.width = `${progress}%`;
+        this.currentTimeDisplay.textContent = this.formatTime(this.audio.currentTime);
+    }
+
+    togglePlay() {
+        if (this.audio.paused) {
+            this.audio.play();
+            this.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        } else {
+            this.audio.pause();
+            this.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        }
+    }
+
+    seek(e) {
+        const rect = this.progressContainer.getBoundingClientRect();
+        const percent = (e.clientX - rect.left) / rect.width;
+        this.audio.currentTime = percent * this.audio.duration;
+    }
+
+    toggleMute() {
+        if (this.audio.volume > 0) {
+            this.audio.volume = 0;
+            this.volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            this.volumeSlider.value = 0;
+        } else {
+            this.audio.volume = this.volumeSlider.value;
+            this.volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+        }
+    }
+
+    updateVolume(e) {
+        this.audio.volume = e.target.value;
+        this.volumeBtn.innerHTML = `<i class="fas fa-volume-${this.audio.volume > 0.5 ? 'up' : 'down'}"></i>`;
+    }
+
+    changeSpeed() {
+        this.currentSpeedIndex = (this.currentSpeedIndex + 1) % this.speeds.length;
+        this.audio.playbackRate = this.speeds[this.currentSpeedIndex];
+        this.playbackSpeedBtn.textContent = `${this.speeds[this.currentSpeedIndex]}x`;
+    }
+}
+
+// Initialize audio players
+function initializeAudioPlayers() {
+    const containers = document.querySelectorAll('.audio-player-container');
+    containers.forEach((container, index) => {
+        const audioSource = // Get your audio source here
+        new AudioPlayer(container, audioSource, index);
+    });
+}
+
+// Modify your loadContent function to use the new AudioPlayer class
+function modifyLoadContent() {
+    // ... your existing code ...
+    if (currentMode === 'quran-audio') {
+        html += `
+            <div class="translation">${translationData.data.ayahs[index].text}</div>
+            <div class="audio-player-container" data-ayah="${index}"></div>
+        `;
+    }
+    // ... after setting innerHTML ...
+    if (currentMode === 'quran-audio') {
+        document.querySelectorAll('.audio-player-container').forEach((container, index) => {
+            const audioSource = audioData.data.ayahs[index].audio;
+            new AudioPlayer(container, audioSource, index);
+        });
+    }
+}
 
         // Dark mode toggle
         const darkModeToggle = document.getElementById('dark-mode-toggle');
