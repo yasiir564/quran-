@@ -527,6 +527,127 @@ body::before {
 .dark-mode .ayah-container:hover {
     background-color: rgba(255, 255, 255, 0.02);
 }
+        .reciter-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.reciter-selection-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    max-width: 800px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.reciters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.reciter-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.reciter-card:hover {
+    background: #f5f5f5;
+    transform: translateY(-2px);
+}
+
+.reciter-card.active {
+    border-color: #4CAF50;
+    background: #E8F5E9;
+}
+
+.reciter-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 0.5rem;
+}
+
+.reciter-name {
+    text-align: center;
+    font-weight: 500;
+}
+
+.audio-options {
+    position: relative;
+    display: inline-block;
+}
+
+.options-toggle {
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+.options-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    display: none;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.options-menu.active {
+    display: block;
+}
+
+.options-menu button {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.options-menu button:hover {
+    background: #f5f5f5;
+}
+
+.close-overlay {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+}
+
+.close-overlay:hover {
+    background: #45a049;
+}
     </style>
 </head>
 <body>
@@ -577,6 +698,7 @@ let currentSurah = 1;
 let currentAyah = 0;
 let autoScrollEnabled = true;
 let currentFontIndex = 0;
+let currentReciter = 'ar.alafasy'; // Default reciter
 const fonts = ['Amiri', 'Scheherazade New', 'Noto Naskh Arabic', 'Dubai'];
 
 // Get DOM elements
@@ -585,6 +707,15 @@ const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
 const header = document.querySelector('.header');
 const fontChangeToggle = document.getElementById('font-change-toggle');
 const darkModeToggle = document.getElementById('dark-mode-toggle');
+
+// Reciters data with avatars
+const recitersData = [
+    { id: 'ar.alafasy', name: 'Mishary Rashid Alafasy', avatar: 'https://quranicaudio.com/public/images/reciters/mishari.jpg' },
+    { id: 'ar.abdurrahmaansudais', name: 'Abdurrahmaan As-Sudais', avatar: 'https://quranicaudio.com/public/images/reciters/sudais.jpg' },
+    { id: 'ar.hudhaify', name: 'Ali Al-Hudhaify', avatar: 'https://quranicaudio.com/public/images/reciters/hudhaify.jpg' },
+    { id: 'ar.minshawi', name: 'Mohamed Siddiq Al-Minshawi', avatar: 'https://quranicaudio.com/public/images/reciters/minshawi.jpg' },
+    { id: 'ar.mahermuaiqly', name: 'Maher Al Muaiqly', avatar: 'https://quranicaudio.com/public/images/reciters/maher.jpg' }
+];
 
 // Event Listeners
 document.querySelectorAll('.reading-option-btn').forEach(btn => {
@@ -655,9 +786,90 @@ document.addEventListener('ended', (e) => {
             if (autoScrollEnabled) {
                 scrollToAyah(nextAyah);
             }
+        } else if (currentSurah < 114) {
+            Swal.fire({
+                title: 'Surah Complete',
+                text: 'Moving to next Surah...',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            }).then(() => {
+                navigateSurah(currentSurah + 1);
+            });
         }
     }
 }, true);
+
+// Reciter selection overlay
+function showReciterSelection() {
+    const overlay = document.createElement('div');
+    overlay.className = 'reciter-overlay';
+    
+    let recitersHTML = `
+        <div class="reciter-selection-container">
+            <h2>Select Reciter</h2>
+            <div class="reciters-grid">
+    `;
+    
+    recitersData.forEach(reciter => {
+        recitersHTML += `
+            <div class="reciter-card ${currentReciter === reciter.id ? 'active' : ''}" 
+                 data-reciter-id="${reciter.id}">
+                <img src="${reciter.avatar}" alt="${reciter.name}" class="reciter-avatar">
+                <div class="reciter-name">${reciter.name}</div>
+            </div>
+        `;
+    });
+    
+    recitersHTML += `
+            </div>
+            <button class="close-overlay">Close</button>
+        </div>
+    `;
+    
+    overlay.innerHTML = recitersHTML;
+    document.body.appendChild(overlay);
+    
+    // Add event listeners
+    overlay.querySelector('.close-overlay').addEventListener('click', () => {
+        overlay.remove();
+    });
+    
+    overlay.querySelectorAll('.reciter-card').forEach(card => {
+        card.addEventListener('click', async () => {
+            const newReciterId = card.dataset.reciterId;
+            if (newReciterId !== currentReciter) {
+                currentReciter = newReciterId;
+                await loadContent(); // Reload content with new reciter
+                overlay.remove();
+                
+                Swal.fire({
+                    title: 'Reciter Changed',
+                    text: `Now playing: ${recitersData.find(r => r.id === currentReciter).name}`,
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
+        });
+    });
+}
+
+// Create audio player options
+function createAudioPlayerOptions(ayahIndex) {
+    return `
+        <div class="audio-options">
+            <button class="options-toggle">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <div class="options-menu">
+                <button class="change-reciter" data-ayah="${ayahIndex}">
+                    <i class="fas fa-microphone"></i> Change Reciter
+                </button>
+            </div>
+        </div>
+    `;
+}
 
 // Main content loading function
 async function loadContent() {
@@ -665,7 +877,6 @@ async function loadContent() {
     currentSurah = parseInt(surahNumber);
     
     try {
-        // Show loading state
         Swal.fire({
             title: 'Loading Surah...',
             didOpen: () => {
@@ -680,7 +891,7 @@ async function loadContent() {
             fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`).then(r => r.json()),
             fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`).then(r => r.json()),
             currentMode === 'quran-audio' ? 
-                fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`).then(r => r.json()) : 
+                fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/${currentReciter}`).then(r => r.json()) : 
                 Promise.resolve(null)
         ]);
 
@@ -689,7 +900,6 @@ async function loadContent() {
             <p class="surah-info">${surahData.data.englishNameTranslation}</p>
         `;
 
-        // Add Bismillah except for Surah At-Tawbah (9)
         if (currentSurah !== 9) {
             html += `
                 <div class="bismillah">
@@ -709,6 +919,7 @@ async function loadContent() {
             if (currentMode === 'quran-audio') {
                 html += `
                     <div class="custom-audio-player">
+                        ${createAudioPlayerOptions(index)}
                         <audio controls data-ayah="${index}">
                             <source src="${audioData.data.ayahs[index].audio}" type="audio/mpeg">
                         </audio>
@@ -737,7 +948,29 @@ async function loadContent() {
 
         quranContent.innerHTML = html;
 
-        // Close loading state
+        // Add event listeners for audio options
+        document.querySelectorAll('.options-toggle').forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const menu = toggle.nextElementSibling;
+                menu.classList.toggle('active');
+            });
+        });
+
+        document.querySelectorAll('.change-reciter').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showReciterSelection();
+            });
+        });
+
+        // Close options menus when clicking outside
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.options-menu').forEach(menu => {
+                menu.classList.remove('active');
+            });
+        });
+
         Swal.close();
 
         // Initialize first audio if in audio mode
