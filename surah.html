@@ -526,8 +526,7 @@ body::before {
 
 .dark-mode .ayah-container:hover {
     background-color: rgba(255, 255, 255, 0.02);
-}
-        .reciter-overlay {
+}.reciter-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -544,33 +543,55 @@ body::before {
     background: white;
     padding: 2rem;
     border-radius: 1rem;
-    max-width: 800px;
+    max-width: 1000px;
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
 }
 
+.reciter-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.reciter-search {
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    width: 100%;
+    transition: border-color 0.2s;
+}
+
+.reciter-search:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
 .reciters-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1rem;
     margin: 1rem 0;
 }
 
 .reciter-card {
     display: flex;
-    flex-direction: column;
     align-items: center;
     padding: 1rem;
     border: 1px solid #ddd;
     border-radius: 0.5rem;
     cursor: pointer;
     transition: all 0.2s;
+    background: white;
 }
 
 .reciter-card:hover {
     background: #f5f5f5;
     transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 .reciter-card.active {
@@ -578,75 +599,98 @@ body::before {
     background: #E8F5E9;
 }
 
+.reciter-image {
+    flex-shrink: 0;
+    margin-right: 1rem;
+}
+
 .reciter-avatar {
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     object-fit: cover;
-    margin-bottom: 0.5rem;
+}
+
+.reciter-info {
+    flex-grow: 1;
+    overflow: hidden;
 }
 
 .reciter-name {
-    text-align: center;
     font-weight: 500;
-}
-
-.audio-options {
-    position: relative;
-    display: inline-block;
-}
-
-.options-toggle {
-    background: none;
-    border: none;
-    padding: 0.5rem;
-    cursor: pointer;
-}
-
-.options-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 0.5rem;
-    padding: 0.5rem;
-    display: none;
-    z-index: 10;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.options-menu.active {
-    display: block;
-}
-
-.options-menu button {
-    display: block;
-    width: 100%;
-    padding: 0.5rem 1rem;
-    border: none;
-    background: none;
-    text-align: left;
-    cursor: pointer;
+    margin-bottom: 0.25rem;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.options-menu button:hover {
-    background: #f5f5f5;
+.reciter-arabic-name {
+    font-family: 'Amiri', serif;
+    color: #666;
+    font-size: 1.1rem;
+    direction: rtl;
+    text-align: right;
 }
 
 .close-overlay {
     margin-top: 1rem;
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1.5rem;
     background: #4CAF50;
     color: white;
     border: none;
-    border-radius: 0.25rem;
+    border-radius: 0.5rem;
     cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
 }
 
 .close-overlay:hover {
     background: #45a049;
+}
+
+/* Dark mode support */
+.dark-mode .reciter-selection-container {
+    background: #1e1e1e;
+    color: white;
+}
+
+.dark-mode .reciter-card {
+    background: #2d2d2d;
+    border-color: #404040;
+}
+
+.dark-mode .reciter-card:hover {
+    background: #353535;
+}
+
+.dark-mode .reciter-arabic-name {
+    color: #aaa;
+}
+
+.dark-mode .reciter-search {
+    background: #2d2d2d;
+    border-color: #404040;
+    color: white;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .reciter-selection-container {
+        padding: 1rem;
+    }
+    
+    .reciters-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .reciter-card {
+        padding: 0.75rem;
+    }
+    
+    .reciter-avatar {
+        width: 50px;
+        height: 50px;
+    }
 }
     </style>
 </head>
@@ -708,37 +752,119 @@ const header = document.querySelector('.header');
 const fontChangeToggle = document.getElementById('font-change-toggle');
 const darkModeToggle = document.getElementById('dark-mode-toggle');
 
-// Reciters data with avatars
 const recitersData = [
-    { id: '1', name: 'AbdulBaset AbdulSamad', arabicName: 'عبد الباسط عبد الصمد', imageUrl: 'qmkxyvfiawea1.jpg' },
-        { id: '2', name: 'Maher Al-Muaiqly', arabicName: 'ماهر المعيقلي', imageUrl: 'images (6).jpeg' },
-        { id: '3', name: 'Abdur-Rahman As-Sudais', arabicName: 'عبد الرحمن السديس', imageUrl: 'Abdul-Rahman-Al-Sudais.jpg' },
-        { id: '4', name: 'Saud Al-Shuraim', arabicName: 'سعود الشريم', imageUrl: 'transparent-saud-al-shuraim.webp' },
-        { id: '5', name: 'Mishary Rashid Alafasy', arabicName: 'مشاري راشد العفاسي', imageUrl: 'download (10).jpeg' },
-        { id: '6', name: 'Ali Jaber', arabicName: 'علي جابر', imageUrl: 'ali-jaber.webp' },
-        { id: '7', name: 'Yasser Al-Dosari', arabicName: 'ياسر الدوسري', imageUrl: 'download (11).jpeg' },
-        { id: '8', name: 'Salah Al-Budair', arabicName: 'صلاح البدير', imageUrl: 'download (12).jpeg' },
-        { id: '9', name: 'Ahmad Al-Ajmi', arabicName: 'أحمد العجمي', imageUrl: 'download (13).jpeg' },
-        { id: '10', name: 'Khalil Al-Husary', arabicName: 'خليل الحصري', imageUrl: 'download (14).jpeg' },
-        { id: '11', name: 'Muhammad Siddiq Al-Minshawi', arabicName: 'محمد صديق المنشاوي', imageUrl: 'download (15).jpeg' },
-        { id: '12', name: 'Saad Al-Ghamdi', arabicName: 'سعد الغامدي', imageUrl: 'download (16).jpeg' },
-        { id: '13', name: 'Abu Bakr Al-Shatri', arabicName: 'أبو بكر الشاطري', imageUrl: 'download (17).jpeg' },
-        { id: '14', name: 'Hani Rifai', arabicName: 'هاني الرفاعي', imageUrl: 'download (18).jpeg' },
-        { id: '15', name: 'Abdullah Basfar', arabicName: 'عبد الله بصفر', imageUrl: 'download (19).jpeg' },
-        { id: '17', name: 'Mohammad Al-Tablawi', arabicName: 'محمد الطبلاوي', imageUrl: 'mohamed-tablawi.jpg' },
-        { id: '18', name: 'Khalid Al-Jaleel', arabicName: 'خالد الجليل', imageUrl: 'download (20).jpeg' },
-        { id: '19', name: 'Yasser Al-Mazroyee', arabicName: 'ياسر المزروعي', imageUrl: 'download (21).jpeg' },
-        { id: '20', name: 'Fares Abbad', arabicName: 'فارس عباد', imageUrl: 'download (22).jpeg' },
-        { id: '22', name: 'Abdul-Rahman Al-Ossi', arabicName: 'عبد الرحمن العوسي', imageUrl: 'download (23).jpeg' },
-        { id: '23', name: 'Ahmad Al-Huthaify', arabicName: 'أحمد الحذيفي', imageUrl: 'download (24).jpeg' },
-        { id: '24', name: 'Muhammad Ayyub', arabicName: 'محمد أيوب', imageUrl: 'download (25).jpeg' },
-        { id: '25', name: 'Muhammad Jibreel', arabicName: 'محمد جبريل', imageUrl: 'download (26).jpeg' },
-        { id: '26', name: 'AbdulRashid Sufi', arabicName: 'عبد الرشيد صوفي', imageUrl: 'download (27).jpeg' },
-        { id: '27', name: 'Ibrahim Al-Akhdar', arabicName: 'إبراهيم الأخضر', imageUrl: 'download (28).jpeg' },
-        { id: '28', name: 'Muhammad Al-Luhaidan', arabicName: 'محمد اللحيدان', imageUrl: 'download (29).jpeg' },
-        { id: '29', name: 'Yahya Hawwa', arabicName: 'يحيى حوا', imageUrl: 'download (30).jpeg' },
-        { id: '30', name: 'Abdul Wadood Haneef', arabicName: 'عبد الودود حنيف', imageUrl: 'download (31).jpeg' }
-    ];
+    { id: 'ar.abdulbasitmurattal', name: 'AbdulBaset AbdulSamad', arabicName: 'عبد الباسط عبد الصمد', identifier: 'Mujawwad', imageUrl: 'qmkxyvfiawea1.jpg' },
+    { id: 'ar.mahermuaiqly', name: 'Maher Al-Muaiqly', arabicName: 'ماهر المعيقلي', imageUrl: 'images (6).jpeg' },
+    { id: 'ar.abdurrahmaansudais', name: 'Abdur-Rahman As-Sudais', arabicName: 'عبد الرحمن السديس', imageUrl: 'Abdul-Rahman-Al-Sudais.jpg' },
+    { id: 'ar.shuraim', name: 'Saud Al-Shuraim', arabicName: 'سعود الشريم', imageUrl: 'transparent-saud-al-shuraim.webp' },
+    { id: 'ar.alafasy', name: 'Mishary Rashid Alafasy', arabicName: 'مشاري راشد العفاسي', imageUrl: 'download (10).jpeg' },
+    { id: 'ar.alijabir', name: 'Ali Jaber', arabicName: 'علي جابر', imageUrl: 'ali-jaber.webp' },
+    { id: 'ar.dosari', name: 'Yasser Al-Dosari', arabicName: 'ياسر الدوسري', imageUrl: 'download (11).jpeg' },
+    { id: 'ar.alboudair', name: 'Salah Al-Budair', arabicName: 'صلاح البدير', imageUrl: 'download (12).jpeg' },
+    { id: 'ar.ajamy', name: 'Ahmad Al-Ajmi', arabicName: 'أحمد العجمي', imageUrl: 'download (13).jpeg' },
+    { id: 'ar.husary', name: 'Khalil Al-Husary', arabicName: 'خليل الحصري', imageUrl: 'download (14).jpeg' },
+    { id: 'ar.minshawi', name: 'Muhammad Siddiq Al-Minshawi', arabicName: 'محمد صديق المنشاوي', imageUrl: 'download (15).jpeg' },
+    { id: 'ar.ghamdi', name: 'Saad Al-Ghamdi', arabicName: 'سعد الغامدي', imageUrl: 'download (16).jpeg' },
+    { id: 'ar.shatri', name: 'Abu Bakr Al-Shatri', arabicName: 'أبو بكر الشاطري', imageUrl: 'download (17).jpeg' },
+    { id: 'ar.rifai', name: 'Hani Rifai', arabicName: 'هاني الرفاعي', imageUrl: 'download (18).jpeg' },
+    { id: 'ar.basfar', name: 'Abdullah Basfar', arabicName: 'عبد الله بصفر', imageUrl: 'download (19).jpeg' },
+    { id: 'ar.tablawi', name: 'Mohammad Al-Tablawi', arabicName: 'محمد الطبلاوي', imageUrl: 'mohamed-tablawi.jpg' },
+    { id: 'ar.jaleel', name: 'Khalid Al-Jaleel', arabicName: 'خالد الجليل', imageUrl: 'download (20).jpeg' },
+    { id: 'ar.mazroyee', name: 'Yasser Al-Mazroyee', arabicName: 'ياسر المزروعي', imageUrl: 'download (21).jpeg' },
+    { id: 'ar.fares', name: 'Fares Abbad', arabicName: 'فارس عباد', imageUrl: 'download (22).jpeg' },
+    { id: 'ar.alossi', name: 'Abdul-Rahman Al-Ossi', arabicName: 'عبد الرحمن العوسي', imageUrl: 'download (23).jpeg' },
+    { id: 'ar.hudhaify', name: 'Ahmad Al-Huthaify', arabicName: 'أحمد الحذيفي', imageUrl: 'download (24).jpeg' },
+    { id: 'ar.ayyub', name: 'Muhammad Ayyub', arabicName: 'محمد أيوب', imageUrl: 'download (25).jpeg' },
+    { id: 'ar.jibreel', name: 'Muhammad Jibreel', arabicName: 'محمد جبريل', imageUrl: 'download (26).jpeg' },
+    { id: 'ar.sufi', name: 'AbdulRashid Sufi', arabicName: 'عبد الرشيد صوفي', imageUrl: 'download (27).jpeg' },
+    { id: 'ar.akhdar', name: 'Ibrahim Al-Akhdar', arabicName: 'إبراهيم الأخضر', imageUrl: 'download (28).jpeg' },
+    { id: 'ar.luhaidan', name: 'Muhammad Al-Luhaidan', arabicName: 'محمد اللحيدان', imageUrl: 'download (29).jpeg' },
+    { id: 'ar.hawwa', name: 'Yahya Hawwa', arabicName: 'يحيى حوا', imageUrl: 'download (30).jpeg' },
+    { id: 'ar.haneef', name: 'Abdul Wadood Haneef', arabicName: 'عبد الودود حنيف', imageUrl: 'download (31).jpeg' }
+];
+
+// Updated reciter selection function with search and improved UI
+function showReciterSelection() {
+    const overlay = document.createElement('div');
+    overlay.className = 'reciter-overlay';
+    
+    let recitersHTML = `
+        <div class="reciter-selection-container">
+            <div class="reciter-header">
+                <h2>Select Reciter</h2>
+                <input type="text" 
+                       class="reciter-search" 
+                       placeholder="Search reciters..."
+                       dir="auto">
+            </div>
+            <div class="reciters-grid">
+    `;
+    
+    recitersData.forEach(reciter => {
+        recitersHTML += `
+            <div class="reciter-card ${currentReciter === reciter.id ? 'active' : ''}" 
+                 data-reciter-id="${reciter.id}">
+                <div class="reciter-image">
+                    <img src="assets/images/reciters/${reciter.imageUrl}" 
+                         alt="${reciter.name}" 
+                         class="reciter-avatar"
+                         onerror="this.src='assets/images/default-avatar.png'">
+                </div>
+                <div class="reciter-info">
+                    <div class="reciter-name">${reciter.name}</div>
+                    <div class="reciter-arabic-name">${reciter.arabicName}</div>
+                </div>
+            </div>
+        `;
+    });
+    
+    recitersHTML += `
+            </div>
+            <button class="close-overlay">Close</button>
+        </div>
+    `;
+    
+    overlay.innerHTML = recitersHTML;
+    document.body.appendChild(overlay);
+    
+    // Add search functionality
+    const searchInput = overlay.querySelector('.reciter-search');
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        overlay.querySelectorAll('.reciter-card').forEach(card => {
+            const reciterId = card.dataset.reciterId;
+            const reciter = recitersData.find(r => r.id === reciterId);
+            const isMatch = reciter.name.toLowerCase().includes(searchTerm) || 
+                          reciter.arabicName.includes(searchTerm);
+            card.style.display = isMatch ? 'flex' : 'none';
+        });
+    });
+
+    // Add event listeners
+    overlay.querySelector('.close-overlay').addEventListener('click', () => {
+        overlay.remove();
+    });
+    
+    overlay.querySelectorAll('.reciter-card').forEach(card => {
+        card.addEventListener('click', async () => {
+            const newReciterId = card.dataset.reciterId;
+            if (newReciterId !== currentReciter) {
+                const selectedReciter = recitersData.find(r => r.id === newReciterId);
+                currentReciter = newReciterId;
+                await loadContent();
+                overlay.remove();
+                
+                Swal.fire({
+                    title: 'Reciter Changed',
+                    text: `Now playing: ${selectedReciter.name}`,
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
+        });
+    });
+}
 
 // Event Listeners
 document.querySelectorAll('.reading-option-btn').forEach(btn => {
