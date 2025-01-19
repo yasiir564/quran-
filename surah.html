@@ -783,48 +783,32 @@ const recitersData = [
     { id: 'ar.haneef', name: 'Abdul Wadood Haneef', arabicName: 'عبد الودود حنيف', imageUrl: 'download (31).jpeg' }
 ];
 
-// Get DOM elements
-const quranContent = document.getElementById('quran-content');
-const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-const header = document.querySelector('.header');
-const fontChangeToggle = document.getElementById('font-change-toggle');
-const darkModeToggle = document.getElementById('dark-mode-toggle');
-
-// Function to load content (placeholder for actual implementation)
-async function loadContent() {
-    console.log(`Loading content for mode: ${currentMode}, reciter: ${currentReciter}`);
-}
-
-// Function to show reciter selection overlay
+// Updated reciter selection function with search and improved UI
 function showReciterSelection() {
     const overlay = document.createElement('div');
     overlay.className = 'reciter-overlay';
-
+    
     let recitersHTML = `
         <div class="reciter-selection-container">
             <div class="reciter-header">
                 <h2>Select Reciter</h2>
-                <input 
-                    type="text" 
-                    class="reciter-search" 
-                    placeholder="Search reciters..." 
-                    dir="auto" 
-                    aria-label="Search Reciters">
+                <input type="text" 
+                       class="reciter-search" 
+                       placeholder="Search reciters..."
+                       dir="auto">
             </div>
             <div class="reciters-grid">
     `;
-
-    recitersData.forEach((reciter) => {
+    
+    recitersData.forEach(reciter => {
         recitersHTML += `
-            <div 
-                class="reciter-card ${currentReciter === reciter.id ? 'active' : ''}" 
-                data-reciter-id="${reciter.id}">
+            <div class="reciter-card ${currentReciter === reciter.id ? 'active' : ''}" 
+                 data-reciter-id="${reciter.id}">
                 <div class="reciter-image">
-                    <img 
-                        src="reciters/${reciter.imageUrl}" 
-                        alt="${reciter.name}" 
-                        class="reciter-avatar"
-                        onerror="this.src='default-avatar.png'">
+                    <img src="reciters/${reciter.imageUrl}" 
+                         alt="${reciter.name}" 
+                         class="reciter-avatar"
+                         onerror="this.src='default-avatar.png'">
                 </div>
                 <div class="reciter-info">
                     <div class="reciter-name">${reciter.name}</div>
@@ -833,15 +817,16 @@ function showReciterSelection() {
             </div>
         `;
     });
-
+    
     recitersHTML += `
             </div>
-            <button class="close-overlay" aria-label="Close Reciter Selection">Close</button>
+            <button class="close-overlay">Close</button>
         </div>
     `;
-
+    
     overlay.innerHTML = recitersHTML;
     document.body.appendChild(overlay);
+    
     // Add search functionality
     const searchInput = overlay.querySelector('.reciter-search');
     searchInput.addEventListener('input', (e) => {
