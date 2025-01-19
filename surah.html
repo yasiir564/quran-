@@ -837,7 +837,7 @@ const recitersData = [
     { id: 'ar.haneef', name: 'Abdul Wadood Haneef', arabicName: 'عبد الودود حنيف', imageUrl: 'download (31).jpeg' }
 ];
 
-// Updated reciter selection function with search and improved UI
+// Reciter selection overlay
 function showReciterSelection() {
     const overlay = document.createElement('div');
     overlay.className = 'reciter-overlay';
@@ -859,10 +859,10 @@ function showReciterSelection() {
             <div class="reciter-card ${currentReciter === reciter.id ? 'active' : ''}" 
                  data-reciter-id="${reciter.id}">
                 <div class="reciter-image">
-                    <img src="reciters/${reciter.imageUrl}" 
+                    <img src="assets/images/reciters/${reciter.imageUrl}" 
                          alt="${reciter.name}" 
                          class="reciter-avatar"
-                         onerror="this.src='default-avatar.png'">
+                         onerror="this.onerror=null; this.src='assets/images/default-avatar.png';">
                 </div>
                 <div class="reciter-info">
                     <div class="reciter-name">${reciter.name}</div>
@@ -881,8 +881,7 @@ function showReciterSelection() {
     overlay.innerHTML = recitersHTML;
     document.body.appendChild(overlay);
     
-    // Add search functionality
-    const searchInput = overlay.querySelector('.reciter-search');
+     const searchInput = overlay.querySelector('.reciter-search');
     searchInput.addEventListener('input', (e) => {
         const searchTerm = e.target.value.toLowerCase();
         overlay.querySelectorAll('.reciter-card').forEach(card => {
@@ -893,7 +892,7 @@ function showReciterSelection() {
             card.style.display = isMatch ? 'flex' : 'none';
         });
     });
-
+    
     // Add event listeners
     overlay.querySelector('.close-overlay').addEventListener('click', () => {
         overlay.remove();
