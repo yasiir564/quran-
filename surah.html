@@ -805,10 +805,10 @@ function showReciterSelection() {
             <div class="reciter-card ${currentReciter === reciter.id ? 'active' : ''}" 
                  data-reciter-id="${reciter.id}">
                 <div class="reciter-image">
-                    <img src="assets/images/reciters/${reciter.imageUrl}" 
+                    <img src="reciters/${reciter.imageUrl}" 
                          alt="${reciter.name}" 
                          class="reciter-avatar"
-                         onerror="this.src='assets/images/default-avatar.png'">
+                         onerror="this.src='default-avatar.png'">
                 </div>
                 <div class="reciter-info">
                     <div class="reciter-name">${reciter.name}</div>
