@@ -499,6 +499,34 @@ body::before {
     text-align: center;
     margin-right: 10px;
 }
+        .bismillah {
+    text-align: center;
+    font-size: 2em;
+    margin: 20px 0;
+    font-family: inherit;
+}
+
+.ayah-end {
+    display: inline-block;
+    margin-right: 5px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.ayah-container {
+    margin-bottom: 1.5em;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.ayah-container:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.dark-mode .ayah-container:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+}
     </style>
 </head>
 <body>
@@ -544,7 +572,7 @@ body::before {
     </main>
 
     <script>
-       let currentMode = 'quran-audio';
+let currentMode = 'quran-audio';
 let currentSurah = 1;
 let currentAyah = 0;
 let autoScrollEnabled = true;
@@ -616,7 +644,7 @@ fontChangeToggle.addEventListener('click', () => {
 
 // Audio completion event listener
 document.addEventListener('ended', (e) => {
-    if (e.target.tagName === 'AUDIO') {
+    if (e.target.tagName === 'AUDIO' && currentMode === 'quran-audio') {
         const currentAyah = parseInt(e.target.dataset.ayah);
         const nextAyah = currentAyah + 1;
         const nextAudio = document.querySelector(`audio[data-ayah="${nextAyah}"]`);
@@ -651,7 +679,9 @@ async function loadContent() {
         const [surahData, translationData, audioData] = await Promise.all([
             fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`).then(r => r.json()),
             fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`).then(r => r.json()),
-            fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`).then(r => r.json())
+            currentMode === 'quran-audio' ? 
+                fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`).then(r => r.json()) : 
+                Promise.resolve(null)
         ]);
 
         let html = `
@@ -659,20 +689,30 @@ async function loadContent() {
             <p class="surah-info">${surahData.data.englishNameTranslation}</p>
         `;
 
-        surahData.data.ayahs.forEach((ayah, index) => {
+        // Add Bismillah except for Surah At-Tawbah (9)
+        if (currentSurah !== 9) {
             html += `
-                <div class="ayah-container" id="ayah-${index}">
-                    <div class="ayah-number">${convertToArabicNumbers(index + 1)}</div>
-                    <div class="ayah" style="font-family: ${fonts[currentFontIndex]}">${ayah.text}</div>
+                <div class="bismillah">
+                    ﷽
+                </div>
+            `;
+        }
+
+        surahData.data.ayahs.forEach((ayah, index) => {
+            html += `<div class="ayah-container" id="ayah-${index}">
+                <div class="ayah-number">${convertToArabicNumbers(index + 1)}</div>
+                <div class="ayah" style="font-family: ${fonts[currentFontIndex]}">
+                    ${ayah.text}
+                    <span class="ayah-end">﴿${convertToArabicNumbers(index + 1)}﴾</span>
+                </div>`;
+
+            if (currentMode === 'quran-audio') {
+                html += `
                     <div class="custom-audio-player">
                         <audio controls data-ayah="${index}">
                             <source src="${audioData.data.ayahs[index].audio}" type="audio/mpeg">
                         </audio>
                     </div>
-            `;
-            
-            if (currentMode === 'quran-audio') {
-                html += `
                     <div class="translation">${translationData.data.ayahs[index].text}</div>
                 `;
             }
@@ -702,7 +742,7 @@ async function loadContent() {
 
         // Initialize first audio if in audio mode
         if (currentMode === 'quran-audio') {
-            const firstAudio = document.querySelector('.audio-player');
+            const firstAudio = document.querySelector('audio');
             if (firstAudio) {
                 firstAudio.play();
                 highlightCurrentAyah(0);
@@ -721,25 +761,27 @@ async function loadContent() {
 }
 
 function handleAyahComplete(ayahIndex) {
-    const nextAyah = ayahIndex + 1;
-    const nextAudio = document.querySelector(`audio[data-ayah="${nextAyah}"]`);
-    
-    if (nextAudio) {
-        nextAudio.play();
-        highlightCurrentAyah(nextAyah);
-        if (autoScrollEnabled) {
-            scrollToAyah(nextAyah);
+    if (currentMode === 'quran-audio') {
+        const nextAyah = ayahIndex + 1;
+        const nextAudio = document.querySelector(`audio[data-ayah="${nextAyah}"]`);
+        
+        if (nextAudio) {
+            nextAudio.play();
+            highlightCurrentAyah(nextAyah);
+            if (autoScrollEnabled) {
+                scrollToAyah(nextAyah);
+            }
+        } else if (currentSurah < 114) {
+            Swal.fire({
+                title: 'Surah Complete',
+                text: 'Moving to next Surah...',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            }).then(() => {
+                navigateSurah(currentSurah + 1);
+            });
         }
-    } else if (currentSurah < 114) {
-        Swal.fire({
-            title: 'Surah Complete',
-            text: 'Moving to next Surah...',
-            icon: 'success',
-            timer: 2000,
-            showConfirmButton: false
-        }).then(() => {
-            navigateSurah(currentSurah + 1);
-        });
     }
 }
 
