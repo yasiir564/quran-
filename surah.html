@@ -1004,6 +1004,7 @@ document.addEventListener('ended', (e) => {
 }, true);
 
 // Reciter selection overlay
+// Reciter selection overlay
 function showReciterSelection() {
     const overlay = document.createElement('div');
     overlay.className = 'reciter-overlay';
@@ -1018,8 +1019,16 @@ function showReciterSelection() {
         recitersHTML += `
             <div class="reciter-card ${currentReciter === reciter.id ? 'active' : ''}" 
                  data-reciter-id="${reciter.id}">
-                <img src="${reciter.avatar}" alt="${reciter.name}" class="reciter-avatar">
-                <div class="reciter-name">${reciter.name}</div>
+                <div class="reciter-image">
+                    <img src="reciters/${reciter.imageUrl}" 
+                         alt="${reciter.name}" 
+                         class="reciter-avatar"
+                         onerror="this.src='default-avatar.png'">
+                </div>
+                <div class="reciter-info">
+                    <div class="reciter-name">${reciter.name}</div>
+                    <div class="reciter-arabic-name">${reciter.arabicName}</div>
+                </div>
             </div>
         `;
     });
@@ -1042,13 +1051,14 @@ function showReciterSelection() {
         card.addEventListener('click', async () => {
             const newReciterId = card.dataset.reciterId;
             if (newReciterId !== currentReciter) {
+                const selectedReciter = recitersData.find(r => r.id === newReciterId);
                 currentReciter = newReciterId;
-                await loadContent(); // Reload content with new reciter
+                await loadContent();
                 overlay.remove();
                 
                 Swal.fire({
                     title: 'Reciter Changed',
-                    text: `Now playing: ${recitersData.find(r => r.id === currentReciter).name}`,
+                    text: `Now playing: ${selectedReciter.name}`,
                     icon: 'success',
                     timer: 2000,
                     showConfirmButton: false
