@@ -32,16 +32,7 @@
       "logo": "tinywow_Quran pro_62044384.png"
     }
     </script>
-	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <defs>
-    <pattern id="islamic-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-      <path d="M0 10 L10 0 L20 10 L10 20 Z" fill="none" stroke="rgba(37, 117, 252, 0.1)" stroke-width="0.5"/>
-      <circle cx="10" cy="10" r="3" fill="none" stroke="rgba(37, 117, 252, 0.1)" stroke-width="0.5"/>
-      <path d="M10 0 L10 20 M0 10 L20 10" stroke="rgba(37, 117, 252, 0.1)" stroke-width="0.5"/>
-    </pattern>
-  </defs>
-  <rect width="100" height="100" fill="url(#islamic-pattern)"/>
-</svg>
+	
     <style>
         body {
             animation: gradientAnimation 10s infinite;
@@ -1020,11 +1011,62 @@ header {
                 -5px -5px 15px rgba(255, 255, 255, 0.8);
     border: 1px solid rgba(37, 117, 252, 0.1);
 }
+	     /* Base pattern container */
+    .geometric-pattern-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -2;
+    }
+
+    /* Pattern overlay with gradient */
+    .geometric-pattern-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            linear-gradient(
+                rgba(255, 255, 255, 0.95), 
+                rgba(255, 255, 255, 0.95)
+            );
+        z-index: -1;
+    }
+
+    /* SVG pattern styling */
+    .geometric-pattern {
+        width: 100%;
+        height: 100%;
+        opacity: 0.1;
+    }
+
+    /* Ensure content remains above pattern */
+    #main {
+        position: relative;
+        z-index: 1;
+    }
 
 
 </style>
 </head>
 <body>
+	<div class="geometric-pattern-container">
+    <svg class="geometric-pattern" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+        <defs>
+            <pattern id="islamic-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                <path d="M0 10 L10 0 L20 10 L10 20 Z" fill="none" stroke="#2575fc" stroke-width="0.5"/>
+                <circle cx="10" cy="10" r="3" fill="none" stroke="#2575fc" stroke-width="0.5"/>
+                <path d="M10 0 L10 20 M0 10 L20 10" stroke="#2575fc" stroke-width="0.5"/>
+            </pattern>
+        </defs>
+        <rect width="100" height="100" fill="url(#islamic-pattern)"/>
+    </svg>
+    <div class="geometric-pattern-overlay"></div>
+</div>
     <header>
         <div class="announcement-bar">
             <p>Welcome To Quran Pro.</p>
