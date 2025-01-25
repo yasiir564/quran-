@@ -890,57 +890,12 @@ class QuranAPIService {
     }
 }
 
-// Bookmark Manager with enhanced localStorage handling
-class BookmarkManager {
-    constructor() {
-        this.bookmarks = this.loadBookmarks();
-    }
-
-    loadBookmarks() {
-        try {
-            return JSON.parse(localStorage.getItem('quranBookmarks') || '[]');
-        } catch {
-            return [];
-        }
-    }
-
-    addBookmark(surah, ayah) {
-        const bookmark = { surah, ayah };
-        const exists = this.bookmarks.some(b => b.surah === surah && b.ayah === ayah);
-        
-        if (!exists) {
-            this.bookmarks.push(bookmark);
-            this.saveBookmarks();
-            Utils.showToast('Bookmark Added', `Surah ${surah}, Ayah ${ayah}`);
-        }
-    }
-
-    removeBookmark(surah, ayah) {
-        this.bookmarks = this.bookmarks.filter(
-            b => !(b.surah === surah && b.ayah === ayah)
-        );
-        this.saveBookmarks();
-    }
-
-    saveBookmarks() {
-        try {
-            localStorage.setItem('quranBookmarks', JSON.stringify(this.bookmarks));
-        } catch {
-            console.error('Failed to save bookmarks');
-        }
-    }
-
-    getBookmarks() {
-        return this.bookmarks;
-    }
-}
-
 // Main Quran App Class
 class QuranApp {
     constructor() {
         this.state = AppState;
-        this.bookmarkManager = new BookmarkManager();
         this.initializeEventListeners();
+        this.setupReciterSelectionUI();
     }
 
     initializeEventListeners() {
@@ -948,6 +903,46 @@ class QuranApp {
             this.setupUIEventListeners();
             this.loadInitialContent();
         });
+    }
+
+    setupReciterSelectionUI() {
+        const reciterContainer = document.createElement('div');
+        reciterContainer.id = 'reciter-selection';
+        reciterContainer.className = 'reciter-selection';
+
+        const reciterTitle = document.createElement('h3');
+        reciterTitle.textContent = 'Select Reciter';
+        reciterContainer.appendChild(reciterTitle);
+
+        const reciterGrid = document.createElement('div');
+        reciterGrid.className = 'reciter-grid';
+
+        this.state.recitersData.forEach(reciter => {
+            const reciterCard = document.createElement('div');
+            reciterCard.className = 'reciter-card';
+            reciterCard.dataset.reciterId = reciter.id;
+            
+            const reciterImage = document.createElement('img');
+            reciterImage.src = reciter.imageUrl;
+            reciterImage.alt = reciter.name;
+
+            const reciterName = document.createElement('div');
+            reciterName.className = 'reciter-name';
+            reciterName.innerHTML = `
+                <span class="english-name">${reciter.name}</span>
+                <span class="arabic-name">${reciter.arabicName}</span>
+            `;
+
+            reciterCard.appendChild(reciterImage);
+            reciterCard.appendChild(reciterName);
+
+            reciterCard.addEventListener('click', () => this.changeReciter(reciter.id));
+
+            reciterGrid.appendChild(reciterCard);
+        });
+
+        reciterContainer.appendChild(reciterGrid);
+        document.body.appendChild(reciterContainer);
     }
 
     setupUIEventListeners() {
@@ -988,6 +983,30 @@ class QuranApp {
         document.querySelectorAll('.reading-option-btn').forEach(b => 
             b.classList.remove('active'));
         activeButton.classList.add('active');
+    }
+
+    changeReciter(reciterId) {
+        const selectedReciter = this.state.recitersData.find(r => r.id === reciterId);
+        
+        if (selectedReciter) {
+            this.state.currentReciter = reciterId;
+            
+            // Highlight selected reciter
+            document.querySelectorAll('.reciter-card').forEach(card => {
+                card.classList.remove('selected');
+                if (card.dataset.reciterId === reciterId) {
+                    card.classList.add('selected');
+                }
+            });
+
+            Utils.showToast(
+                'Reciter Changed', 
+                `Now listening to ${selectedReciter.name}`
+            );
+
+            // Reload current surah with new reciter
+            this.loadContent();
+        }
     }
 
     cycleFonts() {
