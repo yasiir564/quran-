@@ -1160,13 +1160,7 @@ class QuranApp {
         }
     }
 
-    highlightCurrentAyah(ayahIndex) {
-        document.querySelectorAll('.ayah-container').forEach(container => {
-            container.classList.remove('active');
-        });
-        
-        const currentContainer = document.getElementById(`ayah-${ayahIndex}`);
-        if (currentContainer)highlightCurrentAyah(ayahIndex) {
+   highlightCurrentAyah(ayahIndex) {
         document.querySelectorAll('.ayah-container').forEach(container => {
             container.classList.remove('active');
         });
