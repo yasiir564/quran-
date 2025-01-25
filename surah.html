@@ -776,43 +776,37 @@ const AppState = {
         { 
             id: 'ar.abdulbasitmurattal', 
             name: 'AbdulBaset AbdulSamad', 
-            arabicName: 'عبد الباسط عبد الصمد', 
-            imageUrl: 'assets/images/reciters/abdulbasit.jpg' 
+            arabicName: 'عبد الباسط عبد الصمد'
         },
         { 
             id: 'ar.mahermuaiqly', 
             name: 'Maher Al-Muaiqly', 
-            arabicName: 'ماهر المعيقلي', 
-            imageUrl: 'assets/images/reciters/maher.jpg' 
+            arabicName: 'ماهر المعيقلي'
         },
         { 
             id: 'ar.abdurrahmaansudais', 
             name: 'Abdur-Rahman As-Sudais', 
-            arabicName: 'عبد الرحمن السديس', 
-            imageUrl: 'assets/images/reciters/sudais.jpg' 
+            arabicName: 'عبد الرحمن السديس'
         },
         { 
             id: 'ar.shuraim', 
             name: 'Saud Al-Shuraim', 
-            arabicName: 'سعود الشريم', 
-            imageUrl: 'assets/images/reciters/shuraim.jpg' 
+            arabicName: 'سعود الشريم'
         },
         { 
             id: 'ar.alafasy', 
             name: 'Mishary Rashid Alafasy', 
-            arabicName: 'مشاري راشد العفاسي', 
-            imageUrl: 'assets/images/reciters/alafasy.jpg' 
+            arabicName: 'مشاري راشد العفاسي'
         },
         { 
             id: 'ar.alijabir', 
             name: 'Ali Jaber', 
-            arabicName: 'علي جابر', 
-            imageUrl: 'assets/images/reciters/alijaber.jpg' 
+            arabicName: 'علي جابر'
         }
     ]
 };
 
-// Utility functions
+// Utility functions (unchanged)
 const Utils = {
     convertToArabicNumbers(num) {
         const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
@@ -832,7 +826,7 @@ const Utils = {
     }
 };
 
-// API Service for fetching Quran data
+// API Service (unchanged)
 class QuranAPIService {
     static async fetchSurahData(surahNumber, reciter = 'ar.alafasy') {
         try {
@@ -866,90 +860,76 @@ class QuranApp {
     }
 
     setupReciterSelectionUI() {
-        const reciterContainer = document.createElement('div');
-        reciterContainer.id = 'reciter-selection';
-        reciterContainer.className = 'reciter-selection';
-
-        const reciterTitle = document.createElement('h3');
-        reciterTitle.textContent = 'Select Reciter';
-        reciterContainer.appendChild(reciterTitle);
-
-        const reciterGrid = document.createElement('div');
-        reciterGrid.className = 'reciter-grid';
-
+        const reciterOverlay = document.getElementById('reciter-overlay');
+        const reciterList = document.getElementById('reciter-list');
+        
         this.state.recitersData.forEach(reciter => {
-            const reciterCard = document.createElement('div');
-            reciterCard.className = 'reciter-card';
-            reciterCard.dataset.reciterId = reciter.id;
+            const reciterItem = document.createElement('div');
+            reciterItem.className = 'reciter-item';
+            reciterItem.dataset.reciterId = reciter.id;
             
-            const reciterImage = document.createElement('img');
-            reciterImage.src = reciter.imageUrl;
-            reciterImage.alt = reciter.name;
-
-            const reciterName = document.createElement('div');
-            reciterName.className = 'reciter-name';
-            reciterName.innerHTML = `
-                <span class="english-name">${reciter.name}</span>
-                <span class="arabic-name">${reciter.arabicName}</span>
+            reciterItem.innerHTML = `
+                <div class="reciter-name">${reciter.name}</div>
+                <div class="reciter-arabic-name">${reciter.arabicName}</div>
             `;
 
-            reciterCard.appendChild(reciterImage);
-            reciterCard.appendChild(reciterName);
-
-            reciterCard.addEventListener('click', () => this.changeReciter(reciter.id));
-
-            reciterGrid.appendChild(reciterCard);
+            reciterItem.addEventListener('click', () => this.changeReciter(reciter.id));
+            reciterList.appendChild(reciterItem);
         });
 
-        reciterContainer.appendChild(reciterGrid);
-        document.body.appendChild(reciterContainer);
+        // Close overlay events
+        document.querySelector('.close-reciter-overlay').addEventListener('click', () => {
+            document.getElementById('reciter-overlay').style.display = 'none';
+        });
+
+        // Open reciter selection overlay
+        document.getElementById('reciter-selection-btn').addEventListener('click', () => {
+            document.getElementById('reciter-overlay').style.display = 'flex';
+            
+            // Highlight current reciter
+            const reciterItems = document.querySelectorAll('.reciter-item');
+            reciterItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.reciterId === this.state.currentReciter) {
+                    item.classList.add('active');
+                }
+            });
+        });
     }
 
-   setupUIEventListeners() {
-    // Reading mode selection
-    document.querySelectorAll('.reading-option-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const mode = btn.dataset.mode;
-            if (mode) {
-                this.state.currentMode = mode;
-                this.loadContent();
-                this.updateActiveMode(btn);
-            }
+    setupUIEventListeners() {
+        // Reading mode selection
+        document.querySelectorAll('.reading-option-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const mode = btn.dataset.mode;
+                if (mode) {
+                    this.state.currentMode = mode;
+                    this.loadContent();
+                    this.updateActiveMode(btn);
+                }
+            });
         });
-    });
 
-    // Dark mode toggle
-    document.getElementById('dark-mode-toggle').addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        const isDarkMode = document.body.classList.contains('dark-mode');
-        Utils.showToast(
-            `${isDarkMode ? 'Dark' : 'Light'} Mode`, 
-            'Theme changed successfully'
-        );
-    });
+        // Dark mode toggle
+        document.getElementById('dark-mode-toggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            Utils.showToast(
+                `${isDarkMode ? 'Dark' : 'Light'} Mode`, 
+                'Theme changed successfully'
+            );
+        });
 
-    // Reciter selection button
-    const reciterButton = document.createElement('button');
-    reciterButton.id = 'reciter-selection-btn';
-    reciterButton.textContent = 'Change Reciter';
-    reciterButton.addEventListener('click', () => {
-        const reciterSelection = document.getElementById('reciter-selection');
-        if (reciterSelection) {
-            reciterSelection.classList.toggle('visible');
-        }
-    });
-    document.querySelector('.header').appendChild(reciterButton);
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-toggle').addEventListener('click', () => {
+            document.querySelector('.header').classList.toggle('active');
+        });
 
-    // Mobile menu toggle
-    document.getElementById('mobile-menu-toggle').addEventListener('click', () => {
-        document.querySelector('.header').classList.toggle('active');
-    });
-
-    // Font change functionality
-    document.getElementById('font-change-toggle').addEventListener('click', () => {
-        this.cycleFonts();
-    });
-}
+        // Font change functionality
+        document.getElementById('font-change-toggle').addEventListener('click', () => {
+            this.cycleFonts();
+        });
+    }
 
     updateActiveMode(activeButton) {
         document.querySelectorAll('.reading-option-btn').forEach(b => 
@@ -964,10 +944,11 @@ class QuranApp {
             this.state.currentReciter = reciterId;
             
             // Highlight selected reciter
-            document.querySelectorAll('.reciter-card').forEach(card => {
-                card.classList.remove('selected');
-                if (card.dataset.reciterId === reciterId) {
-                    card.classList.add('selected');
+            const reciterItems = document.querySelectorAll('.reciter-item');
+            reciterItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.reciterId === reciterId) {
+                    item.classList.add('active');
                 }
             });
 
@@ -975,6 +956,9 @@ class QuranApp {
                 'Reciter Changed', 
                 `Now listening to ${selectedReciter.name}`
             );
+
+            // Close overlay
+            document.getElementById('reciter-overlay').style.display = 'none';
 
             // Reload current surah with new reciter
             this.loadContent();
@@ -1034,6 +1018,10 @@ class QuranApp {
         }
     }
 
+    // Remaining methods (generateSurahHTML, generateAyahHTML, generateNavigationButtons, 
+    // setupAudioControls, handleAudioPlay, handleAudioEnded, highlightCurrentAyah, 
+    // scrollToAyah, navigateSurah) remain unchanged from the previous implementation
+    
     generateSurahHTML(surahData, translationData, audioData = null) {
         let html = `
             <h1>${surahData.englishName} - ${surahData.name}</h1>
