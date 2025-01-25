@@ -745,6 +745,45 @@ body::before {
         padding: 0.875rem 1.75rem;
     }
 }
+        #reciter-selection {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    z-index: 1000;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+#reciter-selection.visible {
+    display: block;
+}
+
+.reciter-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.reciter-card {
+    cursor: pointer;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+    transition: background-color 0.3s;
+}
+
+.reciter-card:hover {
+    background-color: #f0f0f0;
+}
+
+.reciter-card.selected {
+    background-color: #e0e0e0;
+    border-color: #007bff;
+}
 
     </style>
 </head>
@@ -945,39 +984,51 @@ class QuranApp {
         document.body.appendChild(reciterContainer);
     }
 
-    setupUIEventListeners() {
-        // Reading mode selection
-        document.querySelectorAll('.reading-option-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const mode = btn.dataset.mode;
-                if (mode) {
-                    this.state.currentMode = mode;
-                    this.loadContent();
-                    this.updateActiveMode(btn);
-                }
-            });
+   setupUIEventListeners() {
+    // Reading mode selection
+    document.querySelectorAll('.reading-option-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const mode = btn.dataset.mode;
+            if (mode) {
+                this.state.currentMode = mode;
+                this.loadContent();
+                this.updateActiveMode(btn);
+            }
         });
+    });
 
-        // Dark mode toggle
-        document.getElementById('dark-mode-toggle').addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-            const isDarkMode = document.body.classList.contains('dark-mode');
-            Utils.showToast(
-                `${isDarkMode ? 'Dark' : 'Light'} Mode`, 
-                'Theme changed successfully'
-            );
-        });
+    // Dark mode toggle
+    document.getElementById('dark-mode-toggle').addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        Utils.showToast(
+            `${isDarkMode ? 'Dark' : 'Light'} Mode`, 
+            'Theme changed successfully'
+        );
+    });
 
-        // Mobile menu toggle
-        document.getElementById('mobile-menu-toggle').addEventListener('click', () => {
-            document.querySelector('.header').classList.toggle('active');
-        });
+    // Reciter selection button
+    const reciterButton = document.createElement('button');
+    reciterButton.id = 'reciter-selection-btn';
+    reciterButton.textContent = 'Change Reciter';
+    reciterButton.addEventListener('click', () => {
+        const reciterSelection = document.getElementById('reciter-selection');
+        if (reciterSelection) {
+            reciterSelection.classList.toggle('visible');
+        }
+    });
+    document.querySelector('.header').appendChild(reciterButton);
 
-        // Font change functionality
-        document.getElementById('font-change-toggle').addEventListener('click', () => {
-            this.cycleFonts();
-        });
-    }
+    // Mobile menu toggle
+    document.getElementById('mobile-menu-toggle').addEventListener('click', () => {
+        document.querySelector('.header').classList.toggle('active');
+    });
+
+    // Font change functionality
+    document.getElementById('font-change-toggle').addEventListener('click', () => {
+        this.cycleFonts();
+    });
+}
 
     updateActiveMode(activeButton) {
         document.querySelectorAll('.reading-option-btn').forEach(b => 
