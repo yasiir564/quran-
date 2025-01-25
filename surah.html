@@ -791,51 +791,48 @@ body::before {
     </main>
 
     <script>
+// Global state variables
 let currentMode = 'quran-audio';
 let currentSurah = 1;
 let currentAyah = 0;
 let autoScrollEnabled = true;
 let currentFontIndex = 0;
-let currentReciter = 'ar.alafasy'; // Default reciter
-const fonts = ['Amiri', 'Scheherazade New', 'Noto Naskh Arabic', 'Dubai'];
+let currentReciter = 'ar.alafasy';
 
-// Get DOM elements
+// Comprehensive font list
+const fonts = [
+    'Amiri', 
+    'Scheherazade New', 
+    'Noto Naskh Arabic', 
+    'Dubai', 
+    'Lateef', 
+    'El Messiri', 
+    'Mada', 
+    'Changa', 
+    'Cairo',
+    'Arabic Typesetting',
+    'Markazi Text'
+];
+
+// DOM element references
 const quranContent = document.getElementById('quran-content');
 const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
 const header = document.querySelector('.header');
 const fontChangeToggle = document.getElementById('font-change-toggle');
 const darkModeToggle = document.getElementById('dark-mode-toggle');
 
+// Comprehensive reciters data
 const recitersData = [
-    { id: 'ar.abdulbasitmurattal', name: 'AbdulBaset AbdulSamad', arabicName: 'عبد الباسط عبد الصمد', identifier: 'Mujawwad', imageUrl: 'qmkxyvfiawea1.jpg' },
-    { id: 'ar.mahermuaiqly', name: 'Maher Al-Muaiqly', arabicName: 'ماهر المعيقلي', imageUrl: 'images (6).jpeg' },
-    { id: 'ar.abdurrahmaansudais', name: 'Abdur-Rahman As-Sudais', arabicName: 'عبد الرحمن السديس', imageUrl: 'Abdul-Rahman-Al-Sudais.jpg' },
-    { id: 'ar.shuraim', name: 'Saud Al-Shuraim', arabicName: 'سعود الشريم', imageUrl: 'transparent-saud-al-shuraim.webp' },
-    { id: 'ar.alafasy', name: 'Mishary Rashid Alafasy', arabicName: 'مشاري راشد العفاسي', imageUrl: 'download (10).jpeg' },
-    { id: 'ar.alijabir', name: 'Ali Jaber', arabicName: 'علي جابر', imageUrl: 'ali-jaber.webp' },
-    { id: 'ar.dosari', name: 'Yasser Al-Dosari', arabicName: 'ياسر الدوسري', imageUrl: 'download (11).jpeg' },
-    { id: 'ar.alboudair', name: 'Salah Al-Budair', arabicName: 'صلاح البدير', imageUrl: 'download (12).jpeg' },
-    { id: 'ar.ajamy', name: 'Ahmad Al-Ajmi', arabicName: 'أحمد العجمي', imageUrl: 'download (13).jpeg' },
-    { id: 'ar.husary', name: 'Khalil Al-Husary', arabicName: 'خليل الحصري', imageUrl: 'download (14).jpeg' },
-    { id: 'ar.minshawi', name: 'Muhammad Siddiq Al-Minshawi', arabicName: 'محمد صديق المنشاوي', imageUrl: 'download (15).jpeg' },
-    { id: 'ar.ghamdi', name: 'Saad Al-Ghamdi', arabicName: 'سعد الغامدي', imageUrl: 'download (16).jpeg' },
-    { id: 'ar.shatri', name: 'Abu Bakr Al-Shatri', arabicName: 'أبو بكر الشاطري', imageUrl: 'download (17).jpeg' },
-    { id: 'ar.rifai', name: 'Hani Rifai', arabicName: 'هاني الرفاعي', imageUrl: 'download (18).jpeg' },
-    { id: 'ar.basfar', name: 'Abdullah Basfar', arabicName: 'عبد الله بصفر', imageUrl: 'download (19).jpeg' },
-    { id: 'ar.tablawi', name: 'Mohammad Al-Tablawi', arabicName: 'محمد الطبلاوي', imageUrl: 'mohamed-tablawi.jpg' },
-    { id: 'ar.jaleel', name: 'Khalid Al-Jaleel', arabicName: 'خالد الجليل', imageUrl: 'download (20).jpeg' },
-    { id: 'ar.mazroyee', name: 'Yasser Al-Mazroyee', arabicName: 'ياسر المزروعي', imageUrl: 'download (21).jpeg' },
-    { id: 'ar.fares', name: 'Fares Abbad', arabicName: 'فارس عباد', imageUrl: 'download (22).jpeg' },
-    { id: 'ar.alossi', name: 'Abdul-Rahman Al-Ossi', arabicName: 'عبد الرحمن العوسي', imageUrl: 'download (23).jpeg' },
-    { id: 'ar.hudhaify', name: 'Ahmad Al-Huthaify', arabicName: 'أحمد الحذيفي', imageUrl: 'download (24).jpeg' },
-    { id: 'ar.ayyub', name: 'Muhammad Ayyub', arabicName: 'محمد أيوب', imageUrl: 'download (25).jpeg' },
-    { id: 'ar.jibreel', name: 'Muhammad Jibreel', arabicName: 'محمد جبريل', imageUrl: 'download (26).jpeg' },
-    { id: 'ar.sufi', name: 'AbdulRashid Sufi', arabicName: 'عبد الرشيد صوفي', imageUrl: 'download (27).jpeg' },
-    { id: 'ar.akhdar', name: 'Ibrahim Al-Akhdar', arabicName: 'إبراهيم الأخضر', imageUrl: 'download (28).jpeg' },
-    { id: 'ar.luhaidan', name: 'Muhammad Al-Luhaidan', arabicName: 'محمد اللحيدان', imageUrl: 'download (29).jpeg' },
-    { id: 'ar.hawwa', name: 'Yahya Hawwa', arabicName: 'يحيى حوا', imageUrl: 'download (30).jpeg' },
-    { id: 'ar.haneef', name: 'Abdul Wadood Haneef', arabicName: 'عبد الودود حنيف', imageUrl: 'download (31).jpeg' }
-];
+    { id: 'ar.abdulbasitmurattal', name: 'AbdulBaset AbdulSamad', arabicName: 'عبد الباسط عبد الصمد', imageUrl: 'assets/images/reciters/qmkxyvfiawea1.jpg' },
+    { id: 'ar.mahermuaiqly', name: 'Maher Al-Muaiqly', arabicName: 'ماهر المعيقلي', imageUrl: 'assets/images/reciters/images (6).jpeg' },
+    { id: 'ar.abdurrahmaansudais', name: 'Abdur-Rahman As-Sudais', arabicName: 'عبد الرحمن السديس', imageUrl: 'assets/images/reciters/Abdul-Rahman-Al-Sudais.jpg' },
+    { id: 'ar.shuraim', name: 'Saud Al-Shuraim', arabicName: 'سعود الشريم', imageUrl: 'assets/images/reciters/transparent-saud-al-shuraim.webp' },
+    { id: 'ar.alafasy', name: 'Mishary Rashid Alafasy', arabicName: 'مشاري راشد العفاسي', imageUrl: 'assets/images/reciters/download (10).jpeg' },
+    { id: 'ar.alijabir', name: 'Ali Jaber', arabicName: 'علي جابر', imageUrl: 'assets/images/reciters/ali-jaber.webp' },
+].map(reciter => ({
+    ...reciter,
+    imageUrl: reciter.imageUrl.replace(/^(assets\/)?images\/reciters\//, 'assets/images/reciters/')
+}));
 
 // Reciter selection overlay
 function showReciterSelection() {
@@ -859,7 +856,7 @@ function showReciterSelection() {
             <div class="reciter-card ${currentReciter === reciter.id ? 'active' : ''}" 
                  data-reciter-id="${reciter.id}">
                 <div class="reciter-image">
-                    <img src="assets/images/reciters/${reciter.imageUrl}" 
+                    <img src="${reciter.imageUrl}" 
                          alt="${reciter.name}" 
                          class="reciter-avatar"
                          onerror="this.onerror=null; this.src='assets/images/default-avatar.png';">
@@ -881,7 +878,8 @@ function showReciterSelection() {
     overlay.innerHTML = recitersHTML;
     document.body.appendChild(overlay);
     
-     const searchInput = overlay.querySelector('.reciter-search');
+    // Search functionality
+    const searchInput = overlay.querySelector('.reciter-search');
     searchInput.addEventListener('input', (e) => {
         const searchTerm = e.target.value.toLowerCase();
         overlay.querySelectorAll('.reciter-card').forEach(card => {
@@ -893,159 +891,12 @@ function showReciterSelection() {
         });
     });
     
-    // Add event listeners
+    // Close overlay
     overlay.querySelector('.close-overlay').addEventListener('click', () => {
         overlay.remove();
     });
     
-    overlay.querySelectorAll('.reciter-card').forEach(card => {
-        card.addEventListener('click', async () => {
-            const newReciterId = card.dataset.reciterId;
-            if (newReciterId !== currentReciter) {
-                const selectedReciter = recitersData.find(r => r.id === newReciterId);
-                currentReciter = newReciterId;
-                await loadContent();
-                overlay.remove();
-                
-                Swal.fire({
-                    title: 'Reciter Changed',
-                    text: `Now playing: ${selectedReciter.name}`,
-                    icon: 'success',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-            }
-        });
-    });
-}
-
-// Event Listeners
-document.querySelectorAll('.reading-option-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const mode = btn.dataset.mode;
-        if (mode) {
-            currentMode = mode;
-            loadContent();
-            document.querySelectorAll('.reading-option-btn').forEach(b => 
-                b.classList.remove('active'));
-            btn.classList.add('active');
-        }
-    });
-});
-
-darkModeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    const isDarkMode = document.body.classList.contains('dark-mode');
-    Swal.fire({
-        title: `${isDarkMode ? 'Dark' : 'Light'} Mode Activated`,
-        icon: 'success',
-        timer: 1500,
-        showConfirmButton: false,
-        background: isDarkMode ? '#1e1e1e' : '#fff',
-        color: isDarkMode ? '#fff' : '#000'
-    });
-});
-
-mobileMenuToggle.addEventListener('click', () => {
-    header.classList.toggle('active');
-});
-
-// Close sidebar when clicking outside on mobile
-document.addEventListener('click', (e) => {
-    if (window.innerWidth <= 1024 && 
-        !header.contains(e.target) && 
-        !mobileMenuToggle.contains(e.target)) {
-        header.classList.remove('active');
-    }
-});
-
-// Font change functionality
-fontChangeToggle.addEventListener('click', () => {
-    currentFontIndex = (currentFontIndex + 1) % fonts.length;
-    document.querySelectorAll('.ayah').forEach(ayah => {
-        ayah.style.fontFamily = fonts[currentFontIndex];
-    });
-    
-    Swal.fire({
-        title: 'Font Changed!',
-        text: `Current font: ${fonts[currentFontIndex]}`,
-        icon: 'success',
-        timer: 1500,
-        showConfirmButton: false
-    });
-});
-
-// Audio completion event listener
-document.addEventListener('ended', (e) => {
-    if (e.target.tagName === 'AUDIO' && currentMode === 'quran-audio') {
-        const currentAyah = parseInt(e.target.dataset.ayah);
-        const nextAyah = currentAyah + 1;
-        const nextAudio = document.querySelector(`audio[data-ayah="${nextAyah}"]`);
-        
-        if (nextAudio) {
-            nextAudio.play();
-            highlightCurrentAyah(nextAyah);
-            if (autoScrollEnabled) {
-                scrollToAyah(nextAyah);
-            }
-        } else if (currentSurah < 114) {
-            Swal.fire({
-                title: 'Surah Complete',
-                text: 'Moving to next Surah...',
-                icon: 'success',
-                timer: 2000,
-                showConfirmButton: false
-            }).then(() => {
-                navigateSurah(currentSurah + 1);
-            });
-        }
-    }
-}, true);
-
-// Reciter selection overlay
-// Reciter selection overlay
-function showReciterSelection() {
-    const overlay = document.createElement('div');
-    overlay.className = 'reciter-overlay';
-    
-    let recitersHTML = `
-        <div class="reciter-selection-container">
-            <h2>Select Reciter</h2>
-            <div class="reciters-grid">
-    `;
-    
-    recitersData.forEach(reciter => {
-        recitersHTML += `
-            <div class="reciter-card ${currentReciter === reciter.id ? 'active' : ''}" 
-                 data-reciter-id="${reciter.id}">
-                <div class="reciter-image">
-                    <img src="reciters/${reciter.imageUrl}" 
-                         alt="${reciter.name}" 
-                         class="reciter-avatar"
-                         onerror="this.src='default-avatar.png'">
-                </div>
-                <div class="reciter-info">
-                    <div class="reciter-name">${reciter.name}</div>
-                    <div class="reciter-arabic-name">${reciter.arabicName}</div>
-                </div>
-            </div>
-        `;
-    });
-    
-    recitersHTML += `
-            </div>
-            <button class="close-overlay">Close</button>
-        </div>
-    `;
-    
-    overlay.innerHTML = recitersHTML;
-    document.body.appendChild(overlay);
-    
-    // Add event listeners
-    overlay.querySelector('.close-overlay').addEventListener('click', () => {
-        overlay.remove();
-    });
-    
+    // Reciter selection
     overlay.querySelectorAll('.reciter-card').forEach(card => {
         card.addEventListener('click', async () => {
             const newReciterId = card.dataset.reciterId;
@@ -1100,10 +951,19 @@ async function loadContent() {
         });
 
         const [surahData, translationData, audioData] = await Promise.all([
-            fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`).then(r => r.json()),
-            fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`).then(r => r.json()),
+            fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`).then(r => {
+                if (!r.ok) throw new Error('Surah data fetch failed');
+                return r.json();
+            }),
+            fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`).then(r => {
+                if (!r.ok) throw new Error('Translation data fetch failed');
+                return r.json();
+            }),
             currentMode === 'quran-audio' ? 
-                fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/${currentReciter}`).then(r => r.json()) : 
+                fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/${currentReciter}`).then(r => {
+                    if (!r.ok) throw new Error('Audio data fetch failed');
+                    return r.json();
+                }) : 
                 Promise.resolve(null)
         ]);
 
@@ -1198,13 +1058,14 @@ async function loadContent() {
         console.error('Error loading content:', error);
         Swal.fire({
             title: 'Error',
-            text: 'Failed to load content. Please try again later.',
+            text: `Failed to load content: ${error.message}. Please check your internet connection.`,
             icon: 'error'
         });
-        quranContent.innerHTML = '<p>Error loading content. Please try again later.</p>';
+        quranContent.innerHTML = `<p>Error loading content: ${error.message}. Please try again later.</p>`;
     }
 }
 
+// Audio and navigation functions
 function handleAyahComplete(ayahIndex) {
     if (currentMode === 'quran-audio') {
         const nextAyah = ayahIndex + 1;
@@ -1265,13 +1126,255 @@ function navigateSurah(surahNumber) {
     });
 }
 
+// Utility functions
 function convertToArabicNumbers(num) {
     const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
     return num.toString().split('').map(digit => arabicNumbers[digit]).join('');
 }
 
-// Initialize content on page load
-loadContent();
+// Event Listeners
+document.addEventListener('DOMContentLoaded', () => {
+    // Reading mode selection
+    document.querySelectorAll('.reading-option-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const mode = btn.dataset.mode;
+            if (mode) {
+                currentMode = mode;
+                loadContent();
+                document.querySelectorAll('.reading-option-btn').forEach(b => 
+                    b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+        });
+    });
+
+    // Dark mode toggle
+    darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        Swal.fire({
+            title: `${isDarkMode ? 'Dark' : 'Light'} Mode Activated`,
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false,
+            background: isDarkMode ? '#1e1e1e' : '#fff',
+            color: isDarkMode ? '#fff' : '#000'
+        });
+    });
+
+    // Mobile menu toggle
+    mobileMenuToggle.addEventListener('click', () => {
+        header.classList.toggle('active');
+    });
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 1024 && 
+            !header.contains(e.target) && 
+            mobileMenuToggle.contains(e.target)) {
+        header.classList.remove('active');
+    }
+
+    // Font change functionality
+    fontChangeToggle.addEventListener('click', () => {
+        currentFontIndex = (currentFontIndex + 1) % fonts.length;
+        document.querySelectorAll('.ayah').forEach(ayah => {
+            ayah.style.fontFamily = fonts[currentFontIndex];
+        });
+        
+        Swal.fire({
+            title: 'Font Changed!',
+            text: `Current font: ${fonts[currentFontIndex]}`,
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false
+        });
+    });
+
+    // Audio completion event listener
+    document.addEventListener('ended', (e) => {
+        if (e.target.tagName === 'AUDIO' && currentMode === 'quran-audio') {
+            const currentAyahIndex = parseInt(e.target.dataset.ayah);
+            handleAyahComplete(currentAyahIndex);
+        }
+    }, true);
+
+    // Auto-scroll toggle
+    const autoScrollToggle = document.getElementById('auto-scroll-toggle');
+    if (autoScrollToggle) {
+        autoScrollToggle.addEventListener('click', () => {
+            autoScrollEnabled = !autoScrollEnabled;
+            Swal.fire({
+                title: `Auto-Scroll ${autoScrollEnabled ? 'Enabled' : 'Disabled'}`,
+                icon: 'info',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        });
+    }
+
+    // Reciter selection button
+    const reciterSelectionBtn = document.getElementById('reciter-selection-btn');
+    if (reciterSelectionBtn) {
+        reciterSelectionBtn.addEventListener('click', showReciterSelection);
+    }
+
+    // Initialize content on page load
+    loadContent();
+});
+
+// Additional utility functions
+function initializeAudioControls() {
+    const audioElements = document.querySelectorAll('audio');
+    audioElements.forEach(audio => {
+        audio.addEventListener('play', () => {
+            const ayahIndex = parseInt(audio.dataset.ayah);
+            highlightCurrentAyah(ayahIndex);
+            if (autoScrollEnabled) {
+                scrollToAyah(ayahIndex);
+            }
+        });
+    });
+}
+
+function setupAudioPlayerInteractions() {
+    // Pause other audio when one starts playing
+    const audioElements = document.querySelectorAll('audio');
+    audioElements.forEach(audio => {
+        audio.addEventListener('play', () => {
+            audioElements.forEach(otherAudio => {
+                if (otherAudio !== audio) {
+                    otherAudio.pause();
+                }
+            });
+        });
+    });
+}
+
+// Error handling for audio playback
+function handleAudioPlaybackError(error) {
+    console.error('Audio Playback Error:', error);
+    Swal.fire({
+        title: 'Audio Playback Error',
+        text: 'Unable to play audio. Please check your internet connection.',
+        icon: 'error',
+        confirmButtonText: 'Retry'
+    }).then(() => {
+        loadContent();
+    });
+}
+
+// Bookmark management
+const bookmarkManager = {
+    bookmarks: JSON.parse(localStorage.getItem('quranBookmarks') || '[]'),
+    
+    addBookmark(surah, ayah) {
+        const bookmark = { surah, ayah };
+        if (!this.bookmarks.some(b => b.surah === surah && b.ayah === ayah)) {
+            this.bookmarks.push(bookmark);
+            this.saveBookmarks();
+            Swal.fire({
+                title: 'Bookmark Added',
+                text: `Surah ${surah}, Ayah ${ayah}`,
+                icon: 'success',
+                timer: 1500
+            });
+        }
+    },
+    
+    removeBookmark(surah, ayah) {
+        this.bookmarks = this.bookmarks.filter(
+            b => !(b.surah === surah && b.ayah === ayah)
+        );
+        this.saveBookmarks();
+    },
+    
+    saveBookmarks() {
+        localStorage.setItem('quranBookmarks', JSON.stringify(this.bookmarks));
+    },
+    
+    getBookmarks() {
+        return this.bookmarks;
+    },
+    
+    showBookmarksOverlay() {
+        const overlay = document.createElement('div');
+        overlay.className = 'bookmarks-overlay';
+        
+        let bookmarksHTML = `
+            <div class="bookmarks-container">
+                <h2>Your Bookmarks</h2>
+                <div class="bookmarks-list">
+        `;
+        
+        if (this.bookmarks.length === 0) {
+            bookmarksHTML += '<p>No bookmarks yet.</p>';
+        } else {
+            this.bookmarks.forEach(bookmark => {
+                bookmarksHTML += `
+                    <div class="bookmark-item">
+                        <span>Surah ${bookmark.surah}, Ayah ${bookmark.ayah}</span>
+                        <button class="go-to-bookmark" 
+                                data-surah="${bookmark.surah}" 
+                                data-ayah="${bookmark.ayah}">
+                            Go to
+                        </button>
+                        <button class="remove-bookmark" 
+                                data-surah="${bookmark.surah}" 
+                                data-ayah="${bookmark.ayah}">
+                            Remove
+                        </button>
+                    </div>
+                `;
+            });
+        }
+        
+        bookmarksHTML += `
+                </div>
+                <button class="close-bookmarks">Close</button>
+            </div>
+        `;
+        
+        overlay.innerHTML = bookmarksHTML;
+        document.body.appendChild(overlay);
+        
+        // Event listeners for bookmark actions
+        overlay.querySelector('.close-bookmarks').addEventListener('click', () => {
+            overlay.remove();
+        });
+        
+        overlay.querySelectorAll('.go-to-bookmark').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const surah = btn.dataset.surah;
+                navigateSurah(parseInt(surah));
+                overlay.remove();
+            });
+        });
+        
+        overlay.querySelectorAll('.remove-bookmark').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const surah = btn.dataset.surah;
+                const ayah = btn.dataset.ayah;
+                this.removeBookmark(parseInt(surah), parseInt(ayah));
+                btn.closest('.bookmark-item').remove();
+            });
+        });
+    }
+};
+
+// Export functions and objects for global access
+window.navigateSurah = navigateSurah;
+window.showReciterSelection = showReciterSelection;
+window.bookmarkManager = bookmarkManager;
+
+// Expose initialization functions
+function initializeQuranApp() {
+    initializeAudioControls();
+    setupAudioPlayerInteractions();
+}
+
+// Call initialization when DOM is fully loaded
+document.addEventListener('DOMContentLoaded', initializeQuranApp);
     </script>
 </body>
 </html>
