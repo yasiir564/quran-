@@ -271,128 +271,116 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const juzzList = document.getElementById('juzz-list');
-            const loader = document.getElementById('loader');
-            const darkModeToggle = document.getElementById('dark-mode-toggle');
-            const searchInput = document.getElementById('search-input');
+document.addEventListener('DOMContentLoaded', function () {
+    const juzzList = document.getElementById('juzz-list');
+    const loader = document.getElementById('loader');
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const searchInput = document.getElementById('search-input');
 
-            // Fetch Juzz Details
-            async function fetchJuzzDetails() {
-                try {
-                    const response = await fetch('https://api.alquran.cloud/v1/juz');
-                    const data = await response.json();
-                    
-                    if (data.code === 200 && data.data) {
-                        const juzzNames = data.data.map((juzz, index) => ({
-                            en: `Juzz ${index + 1}`,
-                            ar: juzz.surahs.map(surah => surah.name).join(', '),
-                            surahStart: juzz.surahs[0].number,
-                            surahEnd: juzz.surahs[juzz.surahs.length - 1].number
-                        }));
-                        
-                        renderJuzzList(juzzNames);
-                        loader.style.display = 'none';
-                        return juzzNames;
-                    } else {
-                        throw new Error('Failed to fetch Juzz details');
-                    }
-                } catch (error) {
-                    console.error('Error fetching Juzz details:', error);
-                    loader.textContent = 'Error loading Juzz list';
-                    loader.style.color = 'red';
-                }
-            }
+    // Manually defined Juzz Names
+    const juzzNames = [
+        { en: 'Alif Lam Meem', ar: 'الم', surahStart: 1, surahEnd: 5 },
+        { en: 'Sayaqul', ar: 'سيقول', surahStart: 6, surahEnd: 10 },
+        { en: 'Tilkar Rusul', ar: 'تلك الرسل', surahStart: 11, surahEnd: 15 },
+        { en: 'Lan Tanalul Birr', ar: 'لن تنالوا البر', surahStart: 16, surahEnd: 20 },
+        { en: 'Wal Muhsanat', ar: 'والمحصنات', surahStart: 21, surahEnd: 25 },
+        { en: 'La Yuhibbullah', ar: 'لا يحب الله', surahStart: 26, surahEnd: 30 },
+        { en: 'Wa Iza Samiu', ar: 'وإذا سمعوا', surahStart: 31, surahEnd: 35 },
+        { en: 'Wa Lau Annana', ar: 'ولو أننا', surahStart: 36, surahEnd: 40 },
+        { en: 'Qalal Malau', ar: 'قال الملأ', surahStart: 41, surahEnd: 45 },
+        { en: 'Wa A\'lamu', ar: 'واعلموا', surahStart: 46, surahEnd: 50 },
+        { en: 'Yatadhiroon', ar: 'يعتذرون', surahStart: 51, surahEnd: 55 },
+        { en: 'Wa Ma Min Dabbah', ar: 'وما من دابة', surahStart: 56, surahEnd: 60 },
+        { en: 'Wa Ma Ubarri\'u', ar: 'وما أبرئ', surahStart: 61, surahEnd: 65 },
+        { en: 'Rubama', ar: 'ربما', surahStart: 66, surahEnd: 70 },
+        { en: 'Subhanallazi', ar: 'سبحان الذي', surahStart: 71, surahEnd: 75 },
+        { en: 'Qal Alam', ar: 'قال ألم', surahStart: 76, surahEnd: 80 },
+        { en: 'Iqtaraba Linnas', ar: 'اقترب للناس', surahStart: 81, surahEnd: 85 },
+        { en: 'Qad Aflaha', ar: 'قد أفلح', surahStart: 86, surahEnd: 90 },
+        { en: 'Wa Qalallazina', ar: 'وقال الذين', surahStart: 91, surahEnd: 95 },
+        { en: 'A\'man Khalaq', ar: 'أمن خلق', surahStart: 96, surahEnd: 100 },
+        { en: 'Utlu Ma Uhiya', ar: 'اتل ما أوحي', surahStart: 101, surahEnd: 105 },
+        { en: 'Wa Man Yaqnut', ar: 'ومن يقنت', surahStart: 106, surahEnd: 110 },
+        { en: 'Wa Mali', ar: 'وما لي', surahStart: 111, surahEnd: 115 },
+        { en: 'Faman Azlam', ar: 'فمن أظلم', surahStart: 116, surahEnd: 120 },
+        { en: 'Ilaihi Yuraddu', ar: 'إليه يرد', surahStart: 121, surahEnd: 125 },
+        { en: 'Ha Meem', ar: 'حم', surahStart: 126, surahEnd: 130 },
+        { en: 'Qala Fama Khatbukum', ar: 'قال فما خطبكم', surahStart: 131, surahEnd: 135 },
+        { en: 'Qad Sami Allah', ar: 'قد سمع الله', surahStart: 136, surahEnd: 140 },
+        { en: 'Tabarakallazi', ar: 'تبارك الذي', surahStart: 141, surahEnd: 145 },
+        { en: 'Amma Yatasa\'alun', ar: 'عم يتساءلون', surahStart: 146, surahEnd: 150 }
+    ];
 
-            // Create and append juzz items
-            function renderJuzzList(data) {
-                juzzList.innerHTML = '';
-                const fragment = document.createDocumentFragment();
-                data.forEach((juzz, index) => {
-                    const juzzDiv = document.createElement('div');
-                    juzzDiv.classList.add('juzz', 'bg-white', 'dark:bg-gray-800', 'p-4', 'rounded-lg', 'shadow-md', 'cursor-pointer');
-                    juzzDiv.innerHTML = `
-                        <div class="text-xl font-bold text-gray-700 dark:text-white">Juzz ${index + 1}</div>
-                        <div class="text-sm text-gray-600 dark:text-gray-300">${juzz.en}</div>
-                        <div class="text-right text-gray-800 dark:text-white">${juzz.ar}</div>
-                    `;
-                    
-                    juzzDiv.addEventListener('click', () => {
-                        Swal.fire({
-                            title: `Juzz ${index + 1}`,
-                            html: `
-                                <p class="mb-2"><strong>Surahs:</strong> ${juzz.ar}</p>
-                                <p><strong>Starts from Surah:</strong> ${juzz.surahStart}</p>
-                                <p><strong>Ends at Surah:</strong> ${juzz.surahEnd}</p>
-                            `,
-                            icon: 'info',
-                            showCancelButton: true,
-                            confirmButtonText: 'View Juzz Details',
-                            cancelButtonText: 'Cancel'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = `juzz_detail.html?juzz=${index + 1}`;
-                            }
-                        });
-                    });
-
-                    fragment.appendChild(juzzDiv);
-                });
-                juzzList.appendChild(fragment);
-            }
-
-            // Search functionality
-            searchInput.addEventListener('input', async (e) => {
-                const searchTerm = e.target.value.toLowerCase();
-                const juzzNames = await fetchJuzzDetails();
-                const filteredJuzz = juzzNames.filter(juzz => 
-                    juzz.en.toLowerCase().includes(searchTerm) || 
-                    juzz.ar.toLowerCase().includes(searchTerm)
-                );
-                renderJuzzList(filteredJuzz);
+    // Create and append juzz items
+    function renderJuzzList(data) {
+        juzzList.innerHTML = '';
+        const fragment = document.createDocumentFragment();
+        data.forEach((juzz, index) => {
+            const juzzDiv = document.createElement('div');
+            juzzDiv.classList.add('juzz', 'bg-white', 'dark:bg-gray-800', 'p-4', 'rounded-lg', 'shadow-md', 'cursor-pointer');
+            juzzDiv.innerHTML = `
+                <div class="text-xl font-bold text-gray-700 dark:text-white">Juzz ${index + 1}</div>
+                <div class="text-sm text-gray-600 dark:text-gray-300">${juzz.en}</div>
+                <div class="text-right text-gray-800 dark:text-white">${juzz.ar}</div>
+            `;
+            
+            juzzDiv.addEventListener('click', () => {
+                alert(`Juzz ${index + 1}\n\nSurahs: ${juzz.ar}\nStarts from Surah: ${juzz.surahStart}\nEnds at Surah: ${juzz.surahEnd}`);
             });
 
-            // Dark mode toggle
-            darkModeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('dark-mode');
-                darkModeToggle.querySelector('i').classList.toggle('fa-moon');
-                darkModeToggle.querySelector('i').classList.toggle('fa-sun');
-            });
-
-            // Profile button
-            document.getElementById('profile-btn').addEventListener('click', () => {
-                Swal.fire({
-                    title: 'Profile',
-                    text: 'Profile functionality coming soon!',
-                    icon: 'info'
-                });
-            });
-
-            // Particle JS Configuration
-            particlesJS('particles-js', {
-                particles: {
-                    number: { value: 80, density: { enable: true, value_area: 800 } },
-                    color: { value: '#ffffff' },
-                    shape: {
-                        type: 'circle',
-                        stroke: { width: 0, color: '#000000' },
-                        polygon: { nb_sides: 5 }
-                    },
-                    opacity: { value: 0.5, random: false },
-                    size: { value: 3, random: true },
-                    line_linked: { enable: true, distance: 150, color: '#ffffff', opacity: 0.4, width: 1 },
-                    move: { enable: true, speed: 6, direction: 'none', random: false }
-                },
-                interactivity: {
-                    detect_on: 'canvas',
-                    events: { onhover: { enable: true, mode: 'repulse' } },
-                    modes: { repulse: { distance: 100, duration: 0.4 } }
-                }
-            });
-
-            // Initial fetch of Juzz details
-            fetchJuzzDetails();
+            fragment.appendChild(juzzDiv);
         });
+        juzzList.appendChild(fragment);
+    }
+
+    // Search functionality
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredJuzz = juzzNames.filter(juzz => 
+            juzz.en.toLowerCase().includes(searchTerm) || 
+            juzz.ar.toLowerCase().includes(searchTerm)
+        );
+        renderJuzzList(filteredJuzz);
+    });
+
+    // Dark mode toggle
+    darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        darkModeToggle.querySelector('i').classList.toggle('fa-moon');
+        darkModeToggle.querySelector('i').classList.toggle('fa-sun');
+    });
+
+    // Profile button
+    document.getElementById('profile-btn').addEventListener('click', () => {
+        alert('Profile functionality coming soon!');
+    });
+
+    // Particle JS Configuration
+    particlesJS('particles-js', {
+        particles: {
+            number: { value: 80, density: { enable: true, value_area: 800 } },
+            color: { value: '#ffffff' },
+            shape: {
+                type: 'circle',
+                stroke: { width: 0, color: '#000000' },
+                polygon: { nb_sides: 5 }
+            },
+            opacity: { value: 0.5, random: false },
+            size: { value: 3, random: true },
+            line_linked: { enable: true, distance: 150, color: '#ffffff', opacity: 0.4, width: 1 },
+            move: { enable: true, speed: 6, direction: 'none', random: false }
+        },
+        interactivity: {
+            detect_on: 'canvas',
+            events: { onhover: { enable: true, mode: 'repulse' } },
+            modes: { repulse: { distance: 100, duration: 0.4 } }
+        }
+    });
+
+    // Initial render of Juzz list
+    renderJuzzList(juzzNames);
+    loader.style.display = 'none';
+});
     </script>
 </body>
 </html>
