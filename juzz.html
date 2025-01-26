@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
 :root {
---bg-color: #2575fc;
-    --sidebar-bg:  #6a11cb;
+    --bg-color: #2575fc;
+    --sidebar-bg: #6a11cb;
     --text-color: #ffffff;
     --card-bg: rgba(255, 255, 255, 0.2);
     --hover-color: rgba(255, 255, 255, 0.3);
@@ -39,11 +39,12 @@
 
 body {
     font-family: 'Nunito', sans-serif;
-    background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+    background: linear-gradient(135deg, var(--bg-color), #6a11cb);
     color: var(--text-color);
     min-height: 100vh;
     overflow-x: hidden;
     transition: background 0.3s ease;
+    line-height: 1.6;
 }
 
 body.light-mode {
@@ -60,41 +61,36 @@ body.light-mode {
 
 .container {
     display: flex;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    flex-direction: column;
 }
 
-/* Sidebar - Mobile First */
+/* Sidebar Responsive Design */
 .sidebar {
-    width: 80px;
+    width: 100%;
     background: var(--sidebar-bg);
     backdrop-filter: blur(10px);
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    padding: 20px 0;
-    transition: width 0.3s ease;
-    overflow: hidden;
-    position: fixed;
-    height: 100%;
+    padding: 10px;
+    position: sticky;
+    top: 0;
     z-index: 1000;
-}
-
-.sidebar:hover {
-    width: 250px;
+    overflow-x: auto;
 }
 
 .sidebar-item {
     display: flex;
     align-items: center;
-    width: 100%;
-    padding: 15px;
+    padding: 10px;
     color: var(--text-color);
     text-decoration: none;
     opacity: 0.7;
     transition: opacity 0.3s, background 0.3s;
     white-space: nowrap;
-    position: relative;
+    flex: 1;
+    justify-content: center;
 }
 
 .sidebar-item:hover {
@@ -103,38 +99,26 @@ body.light-mode {
 }
 
 .sidebar-item i {
-    margin-right: 15px;
+    margin-right: 10px;
     font-size: 1.2em;
-    min-width: 40px;
-    text-align: center;
 }
 
 .sidebar-item span {
     opacity: 0;
     transition: opacity 0.3s;
-    position: absolute;
-    left: 60px;
-    white-space: nowrap;
-}
-
-.sidebar:hover .sidebar-item span {
-    opacity: 1;
 }
 
 .main-content {
     flex-grow: 1;
-    margin-left: 80px;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    overflow: hidden;
-    width: calc(100% - 80px);
+    padding: 15px;
+    width: 100%;
 }
 
 .header {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
+    text-align: center;
     margin-bottom: 20px;
 }
 
@@ -145,33 +129,39 @@ body.light-mode {
 
 .header-actions {
     display: flex;
+    flex-direction: column;
+    width: 100%;
     align-items: center;
 }
 
 .search-bar {
+    width: 100%;
+    max-width: 400px;
     display: flex;
     align-items: center;
     background: #6a11cb;
     border-radius: 30px;
     padding: 10px 15px;
-    margin-right: 15px;
+    margin-bottom: 10px;
 }
 
 .search-bar input {
     background: transparent;
     border: none;
     color: var(--text-color);
-    width: 200px;
+    width: 100%;
     outline: none;
 }
 
 .header-btn {
+    width: 100%;
+    max-width: 200px;
     background: rgba(255, 255, 255, 0.2);
     color: var(--text-color);
     border: none;
     padding: 10px 15px;
     border-radius: 30px;
-    margin-left: 10px;
+    margin-bottom: 10px;
     cursor: pointer;
     transition: background 0.3s;
 }
@@ -182,18 +172,17 @@ body.light-mode {
 
 .juzz-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    overflow-y: auto;
-    padding: 20px;
-    max-height: calc(100vh - 150px);
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 10px;
+    max-height: none;
 }
 
 .juzz {
-    background:  #6a11cb;
+    background: #6a11cb;
     backdrop-filter: blur(10px);
     border-radius: 15px;
-    padding: 20px;
+    padding: 15px;
     text-align: center;
     cursor: pointer;
     transition: transform 0.3s, box-shadow 0.3s;
@@ -221,7 +210,7 @@ body.light-mode {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+    background: linear-gradient(135deg, var(--bg-color), #6a11cb);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -242,53 +231,99 @@ body.light-mode {
     100% { transform: rotate(360deg); }
 }
 
-/* Responsive Adjustments */
-@media screen and (max-width: 768px) {
-    .sidebar {
-        width: 100%;
-        height: auto;
+/* Tablet and Desktop Breakpoints */
+@media screen and (min-width: 768px) {
+    .container {
         flex-direction: row;
-        position: relative;
-        padding: 10px;
     }
 
-    .sidebar:hover {
-        width: 100%;
+    .sidebar {
+        width: 250px;
+        flex-direction: column;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
     }
 
     .sidebar-item {
-        flex: 1;
-        justify-content: center;
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .sidebar-item i {
+        margin-right: 15px;
     }
 
     .sidebar-item span {
         opacity: 1;
         position: static;
-        margin-left: 5px;
+    }
+
+    .main-content {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+        padding: 20px;
+    }
+
+    .header {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
+    }
+
+    .header-actions {
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+
+    .search-bar, .header-btn {
+        width: auto;
+        margin-left: 10px;
+    }
+
+    .juzz-list {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        max-height: calc(100vh - 150px);
+        overflow-y: auto;
+    }
+}
+
+/* Large Desktop Breakpoint */
+@media screen and (min-width: 1200px) {
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        box-shadow: 0 0 30px rgba(0,0,0,0.1);
+    }
+
+    .juzz-list {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+/* Accessibility and Print Styles */
+@media print {
+    body {
+        background: white;
+        color: black;
+    }
+
+    .sidebar {
+        display: none;
     }
 
     .main-content {
         margin-left: 0;
         width: 100%;
     }
+}
 
-    .header {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .header-actions {
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .search-bar, .header-btn {
-        width: 100%;
-        margin: 10px 0;
-    }
-
-    .juzz-list {
-        grid-template-columns: 1fr;
+/* Reduced Motion Preference */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation: none !important;
     }
 }
     </style>
