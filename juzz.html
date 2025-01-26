@@ -6,6 +6,7 @@
     <title>Juzz List - Modern Islamic Scripture Navigator</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         :root {
             --bg-gradient-start: #8a2be2;
@@ -43,10 +44,11 @@
             color: var(--text-color);
             min-height: 100vh;
             overflow-x: hidden;
+            transition: background 0.3s ease;
         }
 
         body.light-mode {
-            background: linear-gradient(135deg, #ffffff, #f0f0f0);
+            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
             color: #333;
         }
 
@@ -123,9 +125,128 @@
             overflow: hidden;
         }
 
-        /* Rest of the existing styles remain the same */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header-title {
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 10px 15px;
+            margin-right: 15px;
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            width: 200px;
+            outline: none;
+        }
+
+        .light-mode .search-bar input {
+            color: #333;
+        }
+
+        .header-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--text-color);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 30px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .juzz-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            overflow-y: auto;
+            padding: 20px;
+            max-height: calc(100vh - 150px);
+        }
+
+        .juzz {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .juzz:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .light-mode .juzz {
+            background: rgba(0,0,0,0.05);
+            color: #333;
+        }
+
+        .juzz-en {
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+
+        .juzz-ar {
+            font-size: 1.2em;
+            margin-top: 5px;
+            direction: rtl;
+        }
+
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top: 5px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div id="particles-js"></div>
@@ -178,39 +299,41 @@
         const darkModeToggle = document.getElementById('dark-mode-toggle');
         const searchInput = document.getElementById('search-input');
 
+        // Juzz Names with complete information
         const juzzNames = [
-        { en: 'Alif Lam Meem', ar: 'الم', surahStart: 1, surahEnd: 5 },
-        { en: 'Sayaqul', ar: 'سيقول', surahStart: 6, surahEnd: 10 },
-        { en: 'Tilkar Rusul', ar: 'تلك الرسل', surahStart: 11, surahEnd: 15 },
-        { en: 'Lan Tanalul Birr', ar: 'لن تنالوا البر', surahStart: 16, surahEnd: 20 },
-        { en: 'Wal Muhsanat', ar: 'والمحصنات', surahStart: 21, surahEnd: 25 },
-        { en: 'La Yuhibbullah', ar: 'لا يحب الله', surahStart: 26, surahEnd: 30 },
-        { en: 'Wa Iza Samiu', ar: 'وإذا سمعوا', surahStart: 31, surahEnd: 35 },
-        { en: 'Wa Lau Annana', ar: 'ولو أننا', surahStart: 36, surahEnd: 40 },
-        { en: 'Qalal Malau', ar: 'قال الملأ', surahStart: 41, surahEnd: 45 },
-        { en: 'Wa A\'lamu', ar: 'واعلموا', surahStart: 46, surahEnd: 50 },
-        { en: 'Yatadhiroon', ar: 'يعتذرون', surahStart: 51, surahEnd: 55 },
-        { en: 'Wa Ma Min Dabbah', ar: 'وما من دابة', surahStart: 56, surahEnd: 60 },
-        { en: 'Wa Ma Ubarri\'u', ar: 'وما أبرئ', surahStart: 61, surahEnd: 65 },
-        { en: 'Rubama', ar: 'ربما', surahStart: 66, surahEnd: 70 },
-        { en: 'Subhanallazi', ar: 'سبحان الذي', surahStart: 71, surahEnd: 75 },
-        { en: 'Qal Alam', ar: 'قال ألم', surahStart: 76, surahEnd: 80 },
-        { en: 'Iqtaraba Linnas', ar: 'اقترب للناس', surahStart: 81, surahEnd: 85 },
-        { en: 'Qad Aflaha', ar: 'قد أفلح', surahStart: 86, surahEnd: 90 },
-        { en: 'Wa Qalallazina', ar: 'وقال الذين', surahStart: 91, surahEnd: 95 },
-        { en: 'A\'man Khalaq', ar: 'أمن خلق', surahStart: 96, surahEnd: 100 },
-        { en: 'Utlu Ma Uhiya', ar: 'اتل ما أوحي', surahStart: 101, surahEnd: 105 },
-        { en: 'Wa Man Yaqnut', ar: 'ومن يقنت', surahStart: 106, surahEnd: 110 },
-        { en: 'Wa Mali', ar: 'وما لي', surahStart: 111, surahEnd: 115 },
-        { en: 'Faman Azlam', ar: 'فمن أظلم', surahStart: 116, surahEnd: 120 },
-        { en: 'Ilaihi Yuraddu', ar: 'إليه يرد', surahStart: 121, surahEnd: 125 },
-        { en: 'Ha Meem', ar: 'حم', surahStart: 126, surahEnd: 130 },
-        { en: 'Qala Fama Khatbukum', ar: 'قال فما خطبكم', surahStart: 131, surahEnd: 135 },
-        { en: 'Qad Sami Allah', ar: 'قد سمع الله', surahStart: 136, surahEnd: 140 },
-        { en: 'Tabarakallazi', ar: 'تبارك الذي', surahStart: 141, surahEnd: 145 },
-        { en: 'Amma Yatasa\'alun', ar: 'عم يتساءلون', surahStart: 146, surahEnd: 150 }
-    ];
+            { en: 'Alif Lam Meem', ar: 'الم', surahStart: 1, surahEnd: 5 },
+            { en: 'Sayaqul', ar: 'سيقول', surahStart: 6, surahEnd: 10 },
+            { en: 'Tilkar Rusul', ar: 'تلك الرسل', surahStart: 11, surahEnd: 15 },
+            { en: 'Lan Tanalul Birr', ar: 'لن تنالوا البر', surahStart: 16, surahEnd: 20 },
+            { en: 'Wal Muhsanat', ar: 'والمحصنات', surahStart: 21, surahEnd: 25 },
+            { en: 'La Yuhibbullah', ar: 'لا يحب الله', surahStart: 26, surahEnd: 30 },
+            { en: 'Wa Iza Samiu', ar: 'وإذا سمعوا', surahStart: 31, surahEnd: 35 },
+            { en: 'Wa Lau Annana', ar: 'ولو أننا', surahStart: 36, surahEnd: 40 },
+            { en: 'Qalal Malau', ar: 'قال الملأ', surahStart: 41, surahEnd: 45 },
+            { en: 'Wa A\'lamu', ar: 'واعلموا', surahStart: 46, surahEnd: 50 },
+            { en: 'Yatadhiroon', ar: 'يعتذرون', surahStart: 51, surahEnd: 55 },
+            { en: 'Wa Ma Min Dabbah', ar: 'وما من دابة', surahStart: 56, surahEnd: 60 },
+            { en: 'Wa Ma Ubarri\'u', ar: 'وما أبرئ', surahStart: 61, surahEnd: 65 },
+            { en: 'Rubama', ar: 'ربما', surahStart: 66, surahEnd: 70 },
+            { en: 'Subhanallazi', ar: 'سبحان الذي', surahStart: 71, surahEnd: 75 },
+            { en: 'Qal Alam', ar: 'قال ألم', surahStart: 76, surahEnd: 80 },
+            { en: 'Iqtaraba Linnas', ar: 'اقترب للناس', surahStart: 81, surahEnd: 85 },
+            { en: 'Qad Aflaha', ar: 'قد أفلح', surahStart: 86, surahEnd: 90 },
+            { en: 'Wa Qalallazina', ar: 'وقال الذين', surahStart: 91, surahEnd: 95 },
+            { en: 'A\'man Khalaq', ar: 'أمن خلق', surahStart: 96, surahEnd: 100 },
+            { en: 'Utlu Ma Uhiya', ar: 'اتل ما أوحي', surahStart: 101, surahEnd: 105 },
+            { en: 'Wa Man Yaqnut', ar: 'ومن يقنت', surahStart: 106, surahEnd: 110 },
+            { en: 'Wa Mali', ar: 'وما لي', surahStart: 111, surahEnd: 115 },
+            { en: 'Faman Azlam', ar: 'فمن أظلم', surahStart: 116, surahEnd: 120 },
+            { en: 'Ilaihi Yuraddu', ar: 'إليه يرد', surahStart: 121, surahEnd: 125 },
+            { en: 'Ha Meem', ar: 'حم', surahStart: 126, surahEnd: 130 },
+            { en: 'Qala Fama Khatbukum', ar: 'قال فما خطبكم', surahStart: 131, surahEnd: 135 },
+            { en: 'Qad Sami Allah', ar: 'قد سمع الله', surahStart: 136, surahEnd: 140 },
+            { en: 'Tabarakallazi', ar: 'تبارك الذي', surahStart: 141, surahEnd: 145 },
+            { en: 'Amma Yatasa\'alun', ar: 'عم يتساءلون', surahStart: 146, surahEnd: 150 }
+        ];
 
+        // Render Juzz List
         function renderJuzzList(data) {
             juzzList.innerHTML = '';
             const fragment = document.createDocumentFragment();
@@ -223,31 +346,52 @@
                     <div class="juzz-ar">${juzz.ar}</div>
                 `;
                 
-                juzzDiv.addEventListener('click', () => {
-                    window.location.href = `juzz_detail.html?juzz=${index + 1}`;
-                });
-
-                fragment.appendChild(juzzDiv);
+                // Redirect to Juzz Detail Page with parameters
+            juzzDiv.addEventListener('click', () => {
+                window.location.href = `juzz_detail.html?juzz=${index + 1}&start=${juzz.surahStart}&end=${juzz.surahEnd}`;
             });
-            juzzList.appendChild(fragment);
+
+            fragment.appendChild(juzzDiv);
+        });
+        juzzList.appendChild(fragment);
+    }
+
+    // Search functionality
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredJuzz = juzzNames.filter(juzz => 
+            juzz.en.toLowerCase().includes(searchTerm) || 
+            juzz.ar.toLowerCase().includes(searchTerm)
+        );
+        renderJuzzList(filteredJuzz);
+    });
+
+    // Dark Mode Toggle
+    darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('light-mode');
+        const moonIcon = darkModeToggle.querySelector('i');
+        
+        // Toggle icon
+        if (moonIcon.classList.contains('fa-moon')) {
+            moonIcon.classList.replace('fa-moon', 'fa-sun');
+            localStorage.setItem('theme', 'light');
+        } else {
+            moonIcon.classList.replace('fa-sun', 'fa-moon');
+            localStorage.setItem('theme', 'dark');
         }
+    });
 
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const filteredJuzz = juzzNames.filter(juzz => 
-                juzz.en.toLowerCase().includes(searchTerm) || 
-                juzz.ar.toLowerCase().includes(searchTerm)
-            );
-            renderJuzzList(filteredJuzz);
-        });
+    // Check for Saved Theme
+    function checkSavedTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+            darkModeToggle.querySelector('i').classList.replace('fa-moon', 'fa-sun');
+        }
+    }
 
-        darkModeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('light-mode');
-            const moonIcon = darkModeToggle.querySelector('i');
-            moonIcon.classList.toggle('fa-moon');
-            moonIcon.classList.toggle('fa-sun');
-        });
-
+    // Particles.js Configuration
+    function initParticles() {
         particlesJS('particles-js', {
             particles: {
                 number: { value: 50, density: { enable: true, value_area: 800 } },
@@ -255,19 +399,53 @@
                 shape: { type: 'circle' },
                 opacity: { value: 0.5, random: false },
                 size: { value: 3, random: true },
-                line_linked: { enable: true, distance: 150, color: '#8a2be2', opacity: 0.4, width: 1 },
-                move: { enable: true, speed: 6, direction: 'none', random: false }
+                line_linked: { 
+                    enable: true, 
+                    distance: 150, 
+                    color: '#8a2be2', 
+                    opacity: 0.4, 
+                    width: 1 
+                },
+                move: { 
+                    enable: true, 
+                    speed: 6, 
+                    direction: 'none', 
+                    random: false 
+                }
             },
             interactivity: {
                 detect_on: 'canvas',
-                events: { onhover: { enable: true, mode: 'repulse' } },
-                modes: { repulse: { distance: 100, duration: 0.4 } }
+                events: { 
+                    onhover: { enable: true, mode: 'repulse' } 
+                },
+                modes: { 
+                    repulse: { distance: 100, duration: 0.4 } 
+                }
             }
         });
+    }
 
+    // Initialize Page
+    function initPage() {
+        checkSavedTheme();
         renderJuzzList(juzzNames);
+        initParticles();
         loader.style.display = 'none';
+    }
+
+    // Error Handling
+    window.addEventListener('error', (event) => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Something went wrong! Please try again later.',
+            footer: `Error: ${event.message}`
+        });
     });
-    </script>
+
+    // Initialize the page
+    initPage();
+});
+</script>
 </body>
 </html>
