@@ -394,56 +394,82 @@ body.dark-mode h1 {
     text-decoration: underline;
 }
 
+/* Sidebar Styles */
 .sidebar {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
     background: linear-gradient(135deg, #2575fc 0%, #6a11cb 100%);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    backdrop-filter: blur(10px);
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    backdrop-filter: blur(15px);
+}
+
+.sidebar .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+    color: white;
+    cursor: pointer;
 }
 
 .sidebar a {
+    padding: 15px 25px;
+    text-decoration: none;
+    font-size: 18px;
+    color: white;
+    display: block;
     transition: all 0.3s ease;
-    border-radius: 10px;
-    margin: 10px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
+    border-left: 4px solid transparent;
 }
 
 .sidebar a:hover {
     background-color: rgba(255,255,255,0.2);
+    border-left-color: white;
     transform: translateX(10px);
 }
-        #main {
-            transition: margin-left .5s;
-            padding: 16px;
-        }
 
-        .openbtn {
-            font-size: 20px;
-            cursor: pointer;
-            background-color: #2575fc;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            position: fixed;
-            top: 40px;
-            left: 10px;
-            z-index: 1000;
-        }
-
-        .openbtn:hover {
-            background-color: #0056b3;
-        }
-#main {
-    transition: margin-left .5s;
-    padding: 16px;
+.sidebar a i, .sidebar a lord-icon {
+    margin-right: 15px;
+    color: white;
+    font-size: 20px;
 }
 
-@media screen and (max-height: 450px) {
-    .sidebar {padding-top: 15px;}
-    .sidebar a {font-size: 18px;}
+.sidebar .nav-section {
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 10px;
 }
 
+.sidebar .nav-section-title {
+    color: rgba(255,255,255,0.7);
+    font-size: 14px;
+    padding: 10px 25px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Responsive Sidebar */
+@media screen and (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        padding-top: 80px;
+    }
+    
+    .sidebar a {
+        font-size: 16px;
+        padding: 12px 20px;
+    }
+}
+
+/* Sidebar Toggle Button */
 .openbtn {
     font-size: 20px;
     cursor: pointer;
@@ -452,13 +478,48 @@ body.dark-mode h1 {
     padding: 10px 15px;
     border: none;
     position: fixed;
-    top: 50px;
+    top: 10px;
     left: 10px;
-    z-index: 1000; /* High z-index to ensure it's on top */
+    z-index: 1100;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
 }
 
 .openbtn:hover {
-    background-color: #0056b3;
+    background-color: #6a11cb;
+}
+
+/* Main Content Adjustment when Sidebar is Open */
+#main {
+    transition: margin-left 0.5s;
+    padding: 16px;
+}
+
+/* Dark Mode Sidebar */
+body.dark-mode .sidebar {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+body.dark-mode .sidebar a {
+    color: #e0e0e0;
+}
+
+body.dark-mode .sidebar a:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+/* Scrollbar for Sidebar */
+.sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 4px;
 }
 
 /* Navigation */
