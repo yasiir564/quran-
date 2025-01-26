@@ -3,21 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juzz List - Modern Islamic Resource</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Juzz List - Modern Islamic Scripture Navigator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.3.4/tsparticles.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #34495e;
-            --accent-color: #3498db;
+            --bg-gradient-start: #6a11cb;
+            --bg-gradient-end: #2575fc;
+            --sidebar-bg: rgba(255, 255, 255, 0.1);
+            --text-color: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.2);
+            --hover-color: rgba(255, 255, 255, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f7;
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            color: var(--text-color);
+            min-height: 100vh;
             overflow-x: hidden;
         }
 
@@ -26,136 +36,295 @@
             width: 100%;
             height: 100%;
             z-index: -1;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 80px;
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            transition: width 0.3s ease;
+        }
+
+        .sidebar:hover {
+            width: 250px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 15px;
+            color: var(--text-color);
+            text-decoration: none;
+            opacity: 0.7;
+            transition: opacity 0.3s, background 0.3s;
+        }
+
+        .sidebar-item:hover {
+            opacity: 1;
+            background: var(--hover-color);
+        }
+
+        .sidebar-item i {
+            margin-right: 15px;
+            font-size: 1.2em;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .sidebar-item span {
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar:hover .sidebar-item span {
+            opacity: 1;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header-title {
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 10px 15px;
+            margin-right: 15px;
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            width: 200px;
+            outline: none;
+        }
+
+        .header-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--text-color);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 30px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .juzz-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            overflow-y: auto;
+            padding: 20px;
+            max-height: calc(100vh - 150px);
+        }
+
+        .juzz {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .juzz:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .juzz-en {
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+
+        .juzz-ar {
+            font-size: 1.2em;
+            margin-top: 5px;
+            direction: rtl;
+        }
+
+        /* Loader */
+        .loader {
+            position: fixed;
             top: 0;
             left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
         }
 
-        .sidebar {
-            transition: transform 0.3s ease-in-out;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top: 5px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
 
-        .sidebar-toggle {
-            transition: transform 0.3s ease;
-        }
-
-        .juzz-card {
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .juzz-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 </head>
-<body class="bg-gray-100">
-    <!-- Particles Background -->
+<body>
     <div id="particles-js"></div>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="#" class="sidebar-item">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back</span>
+            </a>
+            <a href="#" class="sidebar-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="#" class="sidebar-item">
+                <i class="fas fa-user"></i>
+                <span>Login</span>
+            </a>
+            <a href="#" class="sidebar-item">
+                <i class="fas fa-info-circle"></i>
+                <span>About Us</span>
+            </a>
+            <a href="#" class="sidebar-item">
+                <i class="fas fa-envelope"></i>
+                <span>Contact</span>
+            </a>
+        </aside>
 
-    <!-- Sidebar -->
-    <div id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white shadow-lg transform -translate-x-full z-50 transition-transform duration-300 ease-in-out">
-        <div class="p-5">
-            <h2 class="text-2xl font-bold mb-5">Menu</h2>
-            <nav>
-                <ul>
-                    <li class="mb-3">
-                        <a href="#" class="flex items-center p-2 hover:bg-gray-100 rounded">
-                            <i class="fas fa-home mr-3"></i>Home
-                        </a>
-                    </li>
-                    <li class="mb-3">
-                        <a href="#" class="flex items-center p-2 hover:bg-gray-100 rounded">
-                            <i class="fas fa-user mr-3"></i>Login
-                        </a>
-                    </li>
-                    <li class="mb-3">
-                        <a href="#" class="flex items-center p-2 hover:bg-gray-100 rounded">
-                            <i class="fas fa-info-circle mr-3"></i>About Us
-                        </a>
-                    </li>
-                    <li class="mb-3">
-                        <a href="#" class="flex items-center p-2 hover:bg-gray-100 rounded">
-                            <i class="fas fa-envelope mr-3"></i>Contact
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="container mx-auto px-4 relative z-10">
-        <!-- Header -->
-        <header class="flex justify-between items-center py-5">
-            <!-- Sidebar Toggle -->
-            <button id="sidebar-toggle" class="text-2xl">
-                <i class="fas fa-bars"></i>
-            </button>
-
-            <!-- Title -->
-            <h1 class="text-3xl font-bold text-center flex-grow">Juzz List</h1>
-
-            <!-- Header Actions -->
-            <div class="flex items-center space-x-4">
-                <!-- Search Bar -->
-                <div class="relative">
-                    <input type="text" id="search-input" placeholder="Search Juzz..." 
-                        class="px-3 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <i class="fas fa-search absolute right-3 top-3 text-gray-400"></i>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <h1 class="header-title">Juzz List</h1>
+                <div class="header-actions">
+                    <div class="search-bar">
+                        <i class="fas fa-search" style="color: white; margin-right: 10px;"></i>
+                        <input type="text" placeholder="Search Juzz..." id="search-input">
+                    </div>
+                    <button class="header-btn" id="dark-mode-toggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="header-btn" id="profile-btn">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
                 </div>
+            </header>
 
-                <!-- Dark Mode Toggle -->
-                <button id="dark-mode-toggle" class="focus:outline-none">
-                    <i class="fas fa-moon text-2xl"></i>
-                </button>
-
-                <!-- Profile/Settings -->
-                <button id="profile-settings" class="focus:outline-none">
-                    <i class="fas fa-user-cog text-2xl"></i>
-                </button>
-            </div>
-        </header>
-
-        <!-- Juzz List Grid -->
-        <div id="juzz-list" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-8"></div>
+            <div id="juzz-list" class="juzz-list"></div>
+        </main>
     </div>
 
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const juzzList = document.getElementById('juzz-list');
-            const sidebarToggle = document.getElementById('sidebar-toggle');
-            const sidebar = document.getElementById('sidebar');
+            const loader = document.getElementById('loader');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
             const searchInput = document.getElementById('search-input');
 
-            // Juzz Data
             const juzzNames = [
                 { en: 'Alif Lam Meem', ar: 'الم' },
-                // ... (previous juzz names array)
+                // ... (rest of the juzz names from the previous code)
             ];
 
-            // Render Juzz List
-            function renderJuzzList(filteredJuzz = juzzNames) {
+            // Particle JS Configuration
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 80, density: { enable: true, value_area: 800 } },
+                    color: { value: '#ffffff' },
+                    shape: {
+                        type: 'circle',
+                        stroke: { width: 0, color: '#000000' },
+                        polygon: { nb_sides: 5 }
+                    },
+                    opacity: { value: 0.5, random: false },
+                    size: { value: 3, random: true },
+                    line_linked: { enable: true, distance: 150, color: '#ffffff', opacity: 0.4, width: 1 },
+                    move: { enable: true, speed: 6, direction: 'none', random: false }
+                },
+                interactivity: {
+                    detect_on: 'canvas',
+                    events: { onhover: { enable: true, mode: 'repulse' } },
+                    modes: { repulse: { distance: 100, duration: 0.4 } }
+                }
+            });
+
+            // Create and append juzz items
+            function renderJuzzList(data) {
                 juzzList.innerHTML = '';
-                filteredJuzz.forEach((juzz, index) => {
+                const fragment = document.createDocumentFragment();
+                data.forEach((juzz, index) => {
                     const juzzDiv = document.createElement('div');
-                    juzzDiv.classList.add('juzz-card', 'bg-white', 'bg-opacity-70', 'p-4', 'rounded-lg', 'shadow-md', 'text-center', 'cursor-pointer', 'transform', 'hover:scale-105', 'transition', 'duration-300');
+                    juzzDiv.classList.add('juzz');
                     juzzDiv.innerHTML = `
-                        <div class="text-xl font-semibold text-blue-600">Juzz ${index + 1}</div>
-                        <div class="text-sm text-gray-600 mt-2">${juzz.en}</div>
-                        <div class="text-lg font-arabic mt-1">${juzz.ar}</div>
+                        <div class="juzz-number">Juzz ${index + 1}</div>
+                        <div class="juzz-en">${juzz.en}</div>
+                        <div class="juzz-ar">${juzz.ar}</div>
                     `;
                     
                     juzzDiv.addEventListener('click', () => {
                         Swal.fire({
                             title: `Juzz ${index + 1}`,
-                            text: `Navigate to Juzz ${index + 1}?`,
+                            text: `You are about to navigate to Juzz ${index + 1}.`,
                             icon: 'info',
                             showCancelButton: true,
-                            confirmButtonText: 'Yes',
-                            cancelButtonText: 'No'
+                            confirmButtonText: 'Yes, go ahead!',
+                            cancelButtonText: 'No, stay here'
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 window.location.href = `juzz_detail.html?juzz=${index + 1}`;
@@ -163,26 +332,16 @@
                         });
                     });
 
-                    juzzList.appendChild(juzzDiv);
+                    fragment.appendChild(juzzDiv);
                 });
+                juzzList.appendChild(fragment);
             }
 
             // Initial render
-            renderJuzzList();
+            renderJuzzList(juzzNames);
+            loader.style.display = 'none';
 
-            // Sidebar Toggle
-            sidebarToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('-translate-x-full');
-            });
-
-            // Dark Mode Toggle
-            darkModeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('dark');
-                darkModeToggle.querySelector('i').classList.toggle('fa-moon');
-                darkModeToggle.querySelector('i').classList.toggle('fa-sun');
-            });
-
-            // Search Functionality
+            // Search functionality
             searchInput.addEventListener('input', (e) => {
                 const searchTerm = e.target.value.toLowerCase();
                 const filteredJuzz = juzzNames.filter(juzz => 
@@ -192,52 +351,20 @@
                 renderJuzzList(filteredJuzz);
             });
 
-            // Particles Background
-            tsParticles.load("particles-js", {
-                particles: {
-                    number: { value: 80, density: { enable: true, value_area: 800 } },
-                    color: { value: "#3498db" },
-                    shape: {
-                        type: "circle",
-                        stroke: { width: 0, color: "#000000" },
-                        polygon: { nb_sides: 5 }
-                    },
-                    opacity: {
-                        value: 0.5,
-                        random: false,
-                        anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false }
-                    },
-                    size: {
-                        value: 3,
-                        random: true,
-                        anim: { enable: false, speed: 40, size_min: 0.1, sync: false }
-                    },
-                    line_linked: {
-                        enable: true,
-                        distance: 150,
-                        color: "#2980b9",
-                        opacity: 0.4,
-                        width: 1
-                    },
-                    move: {
-                        enable: true,
-                        speed: 6,
-                        direction: "none",
-                        random: false,
-                        straight: false,
-                        out_mode: "out",
-                        bounce: false
-                    }
-                },
-                interactivity: {
-                    detect_on: "canvas",
-                    events: {
-                        onhover: { enable: true, mode: "repulse" },
-                        onclick: { enable: true, mode: "push" },
-                        resize: true
-                    }
-                },
-                retina_detect: true
+            // Dark mode toggle
+            darkModeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                darkModeToggle.querySelector('i').classList.toggle('fa-moon');
+                darkModeToggle.querySelector('i').classList.toggle('fa-sun');
+            });
+
+            // Profile button
+            document.getElementById('profile-btn').addEventListener('click', () => {
+                Swal.fire({
+                    title: 'Profile',
+                    text: 'Profile functionality coming soon!',
+                    icon: 'info'
+                });
             });
         });
     </script>
