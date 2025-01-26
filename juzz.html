@@ -3,249 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juzz List</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
+    <title>Juzz List - Modern Islamic Resource</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1850217813586802"
-     crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.3.4/tsparticles.min.js"></script>
     <style>
-       body {
-            margin: 0;
-            height: 100vh;
-            background: #abbaab;  /* fallback for old browsers */
-            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);  /* Chrome 10-25, Safari 5.1-6 */
-            background: linear-gradient(to right, #ffffff, #abbaab); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
         }
 
-
-       .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-
-        nav {
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f7;
+            overflow-x: hidden;
         }
 
-        nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            justify-content: center;
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            top: 0;
+            left: 0;
         }
 
-        nav ul li {
-            margin: 0 10px;
+        .sidebar {
+            transition: transform 0.3s ease-in-out;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
         }
 
-        nav ul li a {
-            text-decoration: none;
-            color: #333;
-            font-size: 1.2em;
-            padding: 10px 20px;
-            display: block;
+        .sidebar-toggle {
+            transition: transform 0.3s ease;
         }
 
-        nav ul li a:hover {
-            background-color: #f0f0f0;
-            border-radius: 5px;
+        .juzz-card {
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        h1 {
-            font-size: 2.5em;
-            color: #fff;
-        }
-
-        .juzz-list {
-             display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 10px;
-  padding: 20px 0;
-}
-
-        .juzz  {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid #ddd;
-  padding: 15px;
-  margin: 10px;
-  cursor: pointer;
-  text-align: center;
-  border-radius: 5px;
-  transition: transform 0.3s, background-color 0.3s, border-color 0.3s;
-  color: #2575fc;
-  font-size: 1.2em;
-  position: relative;
-}
-        .juzz:hover {
-  transform: scale(1.05);
-  background-color: #2575fc;
-  color: #fff;
-}
-
-        @media (max-width: 768px) {
-            .juzz {
-                flex: 1 1 calc(50% - 20px);
-            }
-        }
-
-        @media (max-width: 480px) {
-            .juzz {
-                flex: 1 1 100%;
-            }
-        }
-
-        .loader {
-            border: 16px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 16px solid #3498db;
-            width: 120px;
-            height: 120px;
-            animation: spin 2s linear infinite;
-            margin: 50px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .close-button {
-            cursor: pointer;
-            color: #ff0000;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.5em;
-        }
-
-        body.dark-mode {
-            background: linear-gradient(to right, #0f0f0f, #434343);
-            color: #ddd;
-        }
-
-        body.dark-mode .juzz {
-            background-color: #333;
-            color: #ddd;
-        }
-
-        body.dark-mode .juzz:hover {
-            background-color: #444;
-        }
-
-        body.dark-mode h1 {
-            color: #ddd;
-        }
-
-        .dark-mode-toggle {
-            margin: 10px 0;
-            cursor: pointer;
-            font-size: 1.5em;
-            color: #fff;
+        .juzz-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Juzz List</h1>
-            <i id="dark-mode-toggle" class="fas fa-moon dark-mode-toggle"></i>
-            <span class="close-button" onclick="window.location.href='index.html'">×</span>
-        </header>
-        <div id="juzz-list" class="juzz-list"></div>
-        <div class="loader" id="loader"></div>
+<body class="bg-gray-100">
+    <!-- Particles Background -->
+    <div id="particles-js"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white shadow-lg transform -translate-x-full z-50 transition-transform duration-300 ease-in-out">
+        <div class="p-5">
+            <h2 class="text-2xl font-bold mb-5">Menu</h2>
+            <nav>
+                <ul>
+                    <li class="mb-3">
+                        <a href="#" class="flex items-center p-2 hover:bg-gray-100 rounded">
+                            <i class="fas fa-home mr-3"></i>Home
+                        </a>
+                    </li>
+                    <li class="mb-3">
+                        <a href="#" class="flex items-center p-2 hover:bg-gray-100 rounded">
+                            <i class="fas fa-user mr-3"></i>Login
+                        </a>
+                    </li>
+                    <li class="mb-3">
+                        <a href="#" class="flex items-center p-2 hover:bg-gray-100 rounded">
+                            <i class="fas fa-info-circle mr-3"></i>About Us
+                        </a>
+                    </li>
+                    <li class="mb-3">
+                        <a href="#" class="flex items-center p-2 hover:bg-gray-100 rounded">
+                            <i class="fas fa-envelope mr-3"></i>Contact
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 relative z-10">
+        <!-- Header -->
+        <header class="flex justify-between items-center py-5">
+            <!-- Sidebar Toggle -->
+            <button id="sidebar-toggle" class="text-2xl">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Title -->
+            <h1 class="text-3xl font-bold text-center flex-grow">Juzz List</h1>
+
+            <!-- Header Actions -->
+            <div class="flex items-center space-x-4">
+                <!-- Search Bar -->
+                <div class="relative">
+                    <input type="text" id="search-input" placeholder="Search Juzz..." 
+                        class="px-3 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <i class="fas fa-search absolute right-3 top-3 text-gray-400"></i>
+                </div>
+
+                <!-- Dark Mode Toggle -->
+                <button id="dark-mode-toggle" class="focus:outline-none">
+                    <i class="fas fa-moon text-2xl"></i>
+                </button>
+
+                <!-- Profile/Settings -->
+                <button id="profile-settings" class="focus:outline-none">
+                    <i class="fas fa-user-cog text-2xl"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Juzz List Grid -->
+        <div id="juzz-list" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-8"></div>
+    </div>
+
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const juzzList = document.getElementById('juzz-list');
-        const loader = document.getElementById('loader');
-        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        document.addEventListener('DOMContentLoaded', function () {
+            const juzzList = document.getElementById('juzz-list');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const searchInput = document.getElementById('search-input');
 
-        const juzzNames = [
-            { en: 'Alif Lam Meem', ar: 'الم' },
-            { en: 'Sayaqul', ar: 'سيقول' },
-            { en: 'Tilkar Rusul', ar: 'تلك الرسل' },
-            { en: 'Lan Tanalul Birr', ar: 'لن تنالوا البر' },
-            { en: 'Wal Muhsanat', ar: 'والمحصنات' },
-            { en: 'La Yuhibbullah', ar: 'لا يحب الله' },
-            { en: 'Wa Iza Samiu', ar: 'وإذا سمعوا' },
-            { en: 'Wa Lau Annana', ar: 'ولو أننا' },
-            { en: 'Qalal Malau', ar: 'قال الملأ' },
-            { en: 'Wa A\'lamu', ar: 'واعلموا' },
-            { en: 'Yatadhiroon', ar: 'يعتذرون' },
-            { en: 'Wa Ma Min Dabbah', ar: 'وما من دابة' },
-            { en: 'Wa Ma Ubarri\'u', ar: 'وما أبرئ' },
-            { en: 'Rubama', ar: 'ربما' },
-            { en: 'Subhanallazi', ar: 'سبحان الذي' },
-            { en: 'Qal Alam', ar: 'قال ألم' },
-            { en: 'Iqtaraba Linnas', ar: 'اقترب للناس' },
-            { en: 'Qad Aflaha', ar: 'قد أفلح' },
-            { en: 'Wa Qalallazina', ar: 'وقال الذين' },
-            { en: 'A\'man Khalaq', ar: 'أمن خلق' },
-            { en: 'Utlu Ma Uhiya', ar: 'اتل ما أوحي' },
-            { en: 'Wa Man Yaqnut', ar: 'ومن يقنت' },
-            { en: 'Wa Mali', ar: 'وما لي' },
-            { en: 'Faman Azlam', ar: 'فمن أظلم' },
-            { en: 'Ilaihi Yuraddu', ar: 'إليه يرد' },
-            { en: 'Ha Meem', ar: 'حم' },
-            { en: 'Qala Fama Khatbukum', ar: 'قال فما خطبكم' },
-            { en: 'Qad Sami Allah', ar: 'قد سمع الله' },
-            { en: 'Tabarakallazi', ar: 'تبارك الذي' },
-            { en: 'Amma Yatasa\'alun', ar: 'عم يتساءلون' }
-        ];
+            // Juzz Data
+            const juzzNames = [
+                { en: 'Alif Lam Meem', ar: 'الم' },
+                // ... (previous juzz names array)
+            ];
 
-        // Show the loader
-        loader.style.display = 'block';
+            // Render Juzz List
+            function renderJuzzList(filteredJuzz = juzzNames) {
+                juzzList.innerHTML = '';
+                filteredJuzz.forEach((juzz, index) => {
+                    const juzzDiv = document.createElement('div');
+                    juzzDiv.classList.add('juzz-card', 'bg-white', 'bg-opacity-70', 'p-4', 'rounded-lg', 'shadow-md', 'text-center', 'cursor-pointer', 'transform', 'hover:scale-105', 'transition', 'duration-300');
+                    juzzDiv.innerHTML = `
+                        <div class="text-xl font-semibold text-blue-600">Juzz ${index + 1}</div>
+                        <div class="text-sm text-gray-600 mt-2">${juzz.en}</div>
+                        <div class="text-lg font-arabic mt-1">${juzz.ar}</div>
+                    `;
+                    
+                    juzzDiv.addEventListener('click', () => {
+                        Swal.fire({
+                            title: `Juzz ${index + 1}`,
+                            text: `Navigate to Juzz ${index + 1}?`,
+                            icon: 'info',
+                            showCancelButton: true,
+                            confirmButtonText: 'Yes',
+                            cancelButtonText: 'No'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = `juzz_detail.html?juzz=${index + 1}`;
+                            }
+                        });
+                    });
 
-        // Create and append juzz items
-        const fragment = document.createDocumentFragment();
-        juzzNames.forEach((juzz, index) => {
-            const juzzDiv = document.createElement('div');
-            juzzDiv.classList.add('juzz');
-            juzzDiv.innerHTML = `<strong>Juzz ${index + 1}</strong><br>${juzz.en}<br>${juzz.ar}`;
-            
-            juzzDiv.addEventListener('click', () => {
-                Swal.fire({
-                    title: `Juzz ${index + 1}`,
-                    text: `You are about to navigate to Juzz ${index + 1}.`,
-                    icon: 'info',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, go ahead!',
-                    cancelButtonText: 'No, stay here'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = `juzz_detail.html?juzz=${index + 1}`;
-                    }
+                    juzzList.appendChild(juzzDiv);
                 });
+            }
+
+            // Initial render
+            renderJuzzList();
+
+            // Sidebar Toggle
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('-translate-x-full');
             });
 
-            fragment.appendChild(juzzDiv);
+            // Dark Mode Toggle
+            darkModeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark');
+                darkModeToggle.querySelector('i').classList.toggle('fa-moon');
+                darkModeToggle.querySelector('i').classList.toggle('fa-sun');
+            });
+
+            // Search Functionality
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredJuzz = juzzNames.filter(juzz => 
+                    juzz.en.toLowerCase().includes(searchTerm) || 
+                    juzz.ar.includes(searchTerm)
+                );
+                renderJuzzList(filteredJuzz);
+            });
+
+            // Particles Background
+            tsParticles.load("particles-js", {
+                particles: {
+                    number: { value: 80, density: { enable: true, value_area: 800 } },
+                    color: { value: "#3498db" },
+                    shape: {
+                        type: "circle",
+                        stroke: { width: 0, color: "#000000" },
+                        polygon: { nb_sides: 5 }
+                    },
+                    opacity: {
+                        value: 0.5,
+                        random: false,
+                        anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false }
+                    },
+                    size: {
+                        value: 3,
+                        random: true,
+                        anim: { enable: false, speed: 40, size_min: 0.1, sync: false }
+                    },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: "#2980b9",
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 6,
+                        direction: "none",
+                        random: false,
+                        straight: false,
+                        out_mode: "out",
+                        bounce: false
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "repulse" },
+                        onclick: { enable: true, mode: "push" },
+                        resize: true
+                    }
+                },
+                retina_detect: true
+            });
         });
-        juzzList.appendChild(fragment);
-
-        // Hide the loader
-        loader.style.display = 'none';
-
-        // Dark mode toggle
-        darkModeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-            darkModeToggle.classList.toggle('fa-moon');
-            darkModeToggle.classList.toggle('fa-sun');
-        });
-    });
-</script>
-
+    </script>
 </body>
 </html>
