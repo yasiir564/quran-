@@ -34,7 +34,7 @@
     </script>
     <style>
         body {
-            animation: gradientAnimation 10s infinite;
+            
             font-family: 'Amiri', serif;
             margin: 0;
             padding: 0;
@@ -300,17 +300,7 @@ header {
     100% { transform: rotate(360deg); }
 }
 
-@keyframes gradientAnimation {
-    0% {
-        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-    }
-    50% {
-        background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
-    }
-    100% {
-        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-    }
-}
+
 
 body.dark-mode {
     background: linear-gradient(to right, #0f0f0f, #434343);
@@ -405,62 +395,24 @@ body.dark-mode h1 {
 }
 
 .sidebar {
-            height: 100%;
-            width: 250px;
-            position: fixed;
-            z-index: 1000;
-            top: 0;
-            left: -250px;
-            background: linear-gradient(to top, #a8edea, #fed6e3);
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 85px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-        }
+    background: linear-gradient(135deg, #2575fc 0%, #6a11cb 100%);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+}
 
+.sidebar a {
+    transition: all 0.3s ease;
+    border-radius: 10px;
+    margin: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
 
-
-        .sidebar.open {
-            left: 0;
-        }
-
-        .sidebar a {
-            padding: 10px 15px;
-            text-decoration: none;
-            font-size: 18px;
-            color: #111;
-            display: block;
-            transition: 0.3s;
-        }
-
-        .sidebar a:hover {
-            color: #fff;
-            background-color: #2575fc;
-        }
-
-        .sidebar .closebtn {
-            position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-        }
-
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 999;
-        }
-
-        .sidebar-overlay.active {
-            display: block;
-        }
-
+.sidebar a:hover {
+    background-color: rgba(255,255,255,0.2);
+    transform: translateX(10px);
+}
         #main {
             transition: margin-left .5s;
             padding: 16px;
@@ -845,7 +797,44 @@ footer .text-center {
     text-align: center;
     margin-top: 20px;
 }
+/* Modern Scrollbar */
+body {
+    scrollbar-width: thin;
+    scrollbar-color: #2575fc #f1f1f1;
+}
 
+body::-webkit-scrollbar {
+    width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: #2575fc;
+    border-radius: 20px;
+}
+	    .surah-action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.action-btn {
+    padding: 10px 20px;
+    background-color: #2575fc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.action-btn:hover {
+    background-color: #1a5aaa;
+}
 
 </style>
 </head>
@@ -931,6 +920,10 @@ footer .text-center {
             <div id="surah-list" class="surah-list"></div>
             <div class="loader" id="loader"></div>
         </div>
+	    <div class="surah-action-buttons">
+    <button id="read-juzz-btn" class="action-btn">Read Juzz</button>
+    <button id="read-surah-btn" class="action-btn">Read Surah</button>
+</div>
     </div>
 	
 
@@ -969,6 +962,8 @@ footer .text-center {
     </footer>
 
     <script src="https://unpkg.com/idb@6.1.0/build/iife/index-min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
             function updateProfileIcon() {
@@ -1244,6 +1239,17 @@ footer .text-center {
 
     // Example: Attach the handleLogout function to a logout button
     document.getElementById('logout-button').addEventListener('click', handleLogout);
+});
+	    particlesJS('main', {
+    particles: {
+        number: { value: 80, density: { enable: true, value_area: 800 } },
+        color: { value: '#2575fc' },
+        shape: { type: 'circle' },
+        opacity: { value: 0.5, random: false },
+        size: { value: 3, random: true },
+        line_linked: { enable: true, distance: 150, color: '#2575fc', opacity: 0.4, width: 1 },
+        move: { enable: true, speed: 6, direction: 'none', random: false }
+    }
 });
  </script>
 </body>
