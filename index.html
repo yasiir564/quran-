@@ -580,7 +580,7 @@ nav ul {
     margin-top: 50px;
     flex-wrap: wrap;
     position: relative;
-    perspective: 1000px; /* For 3D effects */
+    perspective: 1000px;
 }
 
 .card {
@@ -600,8 +600,8 @@ nav ul {
     background-size: cover;
     background-position: center;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(4px);
+    transform-style: preserve-3d;
 }
 
 .card::before {
@@ -611,11 +611,23 @@ nav ul {
     left: 0;
     width: 100%;
     height: 100%;
-    border: 2px solid transparent;
+    border: 2px solid rgba(255, 255, 255, 0.1);
     border-radius: 16px;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+    box-shadow: 
+        0 0 0 4px rgba(255, 255, 255, 0.1),
+        inset 0 0 20px rgba(255, 255, 255, 0.1);
     z-index: 1;
+    backdrop-filter: blur(4px);
+}
+
+.card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: linear-gradient(
         45deg,
         transparent 0%,
@@ -624,18 +636,27 @@ nav ul {
         rgba(255, 255, 255, 0.1) 55%,
         transparent 100%
     );
-    background-size: 200% 200%;
-    animation: shimmer 3s infinite;
+    transform: translateX(-100%);
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 2;
 }
 
 .card:hover {
-    transform: translateY(-8px) scale(1.02) rotateX(5deg);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05) translateY(-10px) rotateX(5deg);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.2),
+        0 15px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card:hover::after {
+    transform: translateX(100%);
 }
 
 .card:hover::before {
-    border-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 20px 8px rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 
+        0 0 30px 5px rgba(255, 255, 255, 0.2),
+        inset 0 0 30px rgba(255, 255, 255, 0.1);
 }
 
 .card p {
@@ -644,23 +665,18 @@ nav ul {
     border-radius: 8px;
     margin: 0;
     position: relative;
-    z-index: 2;
+    z-index: 3;
     transform: translateY(100%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
 }
 
 .card:hover p {
     transform: translateY(0);
+    opacity: 1;
 }
 
-@keyframes shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}
-
-/* Responsive Styles */
 @media (max-width: 768px) {
     .mobile-cards {
         flex-wrap: nowrap;
@@ -674,20 +690,20 @@ nav ul {
 
     .card {
         flex: 0 0 auto;
-        margin: 10px 5px;
         width: 180px;
         height: 180px;
         scroll-snap-align: center;
+        margin: 10px 5px;
     }
 
     .mobile-cards::-webkit-scrollbar {
         height: 6px;
-        background: rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.1);
         border-radius: 3px;
     }
 
     .mobile-cards::-webkit-scrollbar-thumb {
-        background: rgba(37, 117, 252, 0.6);
+        background: rgba(255, 255, 255, 0.2);
         border-radius: 3px;
     }
 
@@ -702,17 +718,17 @@ nav ul {
         z-index: 10;
         animation: float 2s ease-in-out infinite;
         cursor: pointer;
-        text-shadow: 0 0 10px rgba(37, 117, 252, 0.4);
+        text-shadow: 0 0 10px rgba(37, 117, 252, 0.5);
     }
 
     @keyframes float {
         0%, 100% {
             transform: translateY(-50%) translateX(0);
-            opacity: 0.6;
+            filter: brightness(1);
         }
         50% {
             transform: translateY(-50%) translateX(8px);
-            opacity: 1;
+            filter: brightness(1.3);
         }
     }
 }
