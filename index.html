@@ -961,24 +961,6 @@ body.dark-mode h1 {
     animation: rotateAnnouncementBg 10s linear infinite;
     z-index: 0;
 }
-  .announcement-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    padding: 10px 20px;
-}
-.announcement-bar-left {
-    display: flex;
-    align-items: center;
-    gap: 15px; /* For spacing */
-}
-.announcement-bar-right {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
 
 @keyframes rotateAnnouncementBg {
     0% { transform: rotate(0deg); }
@@ -1148,18 +1130,6 @@ audio {
 .spacer {
     height: 24px;
 }
-	    @media screen and (max-width: 768px) {
-    .announcement-bar {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .announcement-bar-left, .announcement-bar-right {
-        flex-direction: column;
-        width: 100%;
-        justify-content: center;
-    }
-}
-
   /* Modern Footer Styles */
 footer {
     background-color: #ffffff;
@@ -1352,16 +1322,6 @@ footer ul li a:hover::after {
         <div class="announcement-bar">
             <p>Welcome To Quran Pro.</p>
         </div>
-	    <div class="announcement-bar">
-    <div class="announcement-bar-left">
-        <button id="quran-pro-btn">Quran Pro</button>
-    </div>
-    <div class="announcement-bar-right header-icons">
-        <a href="#" class="profile-btn">Profile</a>
-        <a href="#" class="notification-btn">Notification</a>
-    </div>
-</div>
-
         <div class="header-icons">
             <a href="login.html" title="Login">
                 <div class="icon-container">
