@@ -779,71 +779,157 @@ audio {
 .spacer {
     height: 20px; /* Adjust height as needed */
 }
-    /* Footer Styles */
+  /* Modern Footer Styles */
 footer {
-    background-color: #2575fc;
-    color: #fff;
-    padding: 20px 0;
+    background-color: #ffffff;
+    color: #333333;
+    padding: 60px 0 40px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
 }
 
 footer .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+}
+
+.footer-column {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 20px;
 }
 
 footer h3 {
-    font-size: 1.5em;
-    margin-bottom: 10px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 20px;
+    position: relative;
 }
 
-footer p, footer ul {
+footer h3::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    width: 40px;
+    height: 3px;
+    background-color: #2575fc;
+    border-radius: 2px;
+}
+
+footer p {
+    line-height: 1.6;
+    color: #666666;
     margin: 0;
-    padding: 0;
 }
 
 footer ul {
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
 footer ul li {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 footer ul li a {
-    color: #fff;
+    color: #666666;
     text-decoration: none;
-    transition: color 0.3s;
+    transition: all 0.3s ease;
+    display: inline-block;
+    position: relative;
+}
+
+footer ul li a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: #2575fc;
+    transition: width 0.3s ease;
 }
 
 footer ul li a:hover {
-    color: #f0f0f0;
-    text-decoration: underline;
+    color: #2575fc;
+}
+
+footer ul li a:hover::after {
+    width: 100%;
 }
 
 footer .donate-btn {
     display: inline-block;
-    background-color: #ff5722;
-    color: #fff;
-    padding: 15px 30px;
-    border-radius: 5px;
+    background-color: #2575fc;
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 8px;
     text-decoration: none;
-    font-weight: bold;
-    transition: background-color 0.3s;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
 }
 
 footer .donate-btn:hover {
-    background-color: #e64a19;
+    background-color: #ffffff;
+    color: #2575fc;
+    border-color: #2575fc;
+    transform: translateY(-2px);
 }
 
-footer .text-center {
+.footer-bottom {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #eeeeee;
+    color: #888888;
+    font-size: 0.9rem;
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    footer .container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    footer {
+        padding: 40px 0 30px;
+    }
+    
+    .footer-column {
+        text-align: center;
+    }
+    
+    footer h3::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+	    /* Modern Scroll Bar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+        }
+
 
 
 </style>
@@ -934,38 +1020,29 @@ footer .text-center {
 	
 
     <footer>
-	
-        <div class="container">
-            <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
-                <div style="flex: 1; min-width: 200px; margin: 10px;">
-                    <h3>About Quran Pro</h3>
-                    <p>Welcome to Quran Pro, your all-in-one Islamic app. Read and listen to the Quran with ease. Use our Tasbih tool to keep track of your dhikr. View worldwide prayer times to never miss a prayer. Our AI chatbot is here to assist you with any questions. Join us in enhancing your spiritual journey.</p>
-                </div>
-                <div style="flex: 1; min-width: 200px; margin: 10px;">
-                    <h3>Useful Links</h3>
-                    <ul style="list-style-type: none; padding: 0;">
-                        <li><a href="index.html">Read Quran</a></li>
-                        <li><a href="juzz.html">Read in Juzz</a></li>
-                        <li><a href="audio.html">Listen to Quran</a></li>
-                        <li><a href="sitemap.xml">Site map</a></li>
-                    </ul>
-                </div>
-                <div style="flex: 1; min-width: 200px; margin: 10px;">
-                    <h3>Legal</h3>
-                    <ul style="list-style-type: none; padding: 0;">
-                        <li><a href="privacypolicy.html">Privacy Policy</a></li>
-                        <li><a href="termsandconditions.html">Terms & Conditions</a></li>
-                        <li><a href="contact.html">Contact us</a></li>
-                    </ul>
-                </div>
-                <div style="flex: 1; min-width: 200px; margin: 10px; text-align: center;">
-                    <h3>Support Us</h3>
-                    <p>Your support helps us to keep providing and improving our services. Consider making a donation to help us grow.</p>
-                </div>
-            </div>
-            <p class="text-center">&copy; 2024 Quran Pro. All rights reserved.</p>
+    <div class="container">
+        <div class="footer-column">
+            <h3>About Us</h3>
+            <p>Your about text here...</p>
         </div>
-    </footer>
+        <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h3>Support Us</h3>
+            <p>Help us make a difference.</p>
+            <a href="#" class="donate-btn">Donate Now</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 Your Company. All rights reserved.</p>
+    </div>
+</footer>
 
     <script src="https://unpkg.com/idb@6.1.0/build/iife/index-min.js"></script>
     <script>
