@@ -301,16 +301,79 @@ header {
 
 @keyframes gradientAnimation {
     0% {
-        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+        background-image: linear-gradient(
+            45deg,
+            #a8edea 0%,
+            #fed6e3 50%,
+            #a8edea 100%
+        );
+        background-size: 200% 200%;
+        background-position: 0% 0%;
+        filter: brightness(1) saturate(1);
     }
+    
+    25% {
+        background-image: linear-gradient(
+            135deg,
+            #a8edea 0%,
+            #fed6e3 50%,
+            #a8edea 100%
+        );
+        background-size: 200% 200%;
+        background-position: 50% 50%;
+        filter: brightness(1.1) saturate(1.2);
+    }
+    
     50% {
-        background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 100%);
+        background-image: linear-gradient(
+            225deg,
+            #a8edea 0%,
+            #fed6e3 50%,
+            #a8edea 100%
+        );
+        background-size: 200% 200%;
+        background-position: 100% 100%;
+        filter: brightness(1.2) saturate(1.1);
     }
+    
+    75% {
+        background-image: linear-gradient(
+            315deg,
+            #a8edea 0%,
+            #fed6e3 50%,
+            #a8edea 100%
+        );
+        background-size: 200% 200%;
+        background-position: 50% 50%;
+        filter: brightness(1.1) saturate(1.2);
+    }
+    
     100% {
-        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+        background-image: linear-gradient(
+            45deg,
+            #a8edea 0%,
+            #fed6e3 50%,
+            #a8edea 100%
+        );
+        background-size: 200% 200%;
+        background-position: 0% 0%;
+        filter: brightness(1) saturate(1);
     }
 }
 
+/* Apply the animation */
+.element-with-gradient {
+    animation: gradientAnimation 15s infinite ease-in-out;
+    background-blend-mode: soft-light;
+    transition: all 0.5s ease-in-out;
+}
+
+/* Optional hover effect */
+.element-with-gradient:hover {
+    animation-play-state: paused;
+    filter: brightness(1.2) contrast(1.1);
+    transform: scale(1.02);
+}
 body.dark-mode {
     background: linear-gradient(to right, #0f0f0f, #434343);
     color: #ddd;
