@@ -578,27 +578,30 @@ nav ul {
     display: flex;
     justify-content: space-around;
     margin-top: 50px;
-    flex-wrap: wrap; /* Default wrapping for larger screens */
-    position: relative; /* Needed for the arrow indicator */
+    flex-wrap: wrap;
+    position: relative;
+    perspective: 1000px; /* For 3D effects */
 }
 
 .card {
     padding: 20px;
     margin: 10px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
     text-align: center;
     color: white;
     position: relative;
-    width: 100px; /* Default size for desktop */
-    height: 100px; /* Default size for desktop */
+    width: 100px;
+    height: 100px;
     display: flex;
     align-items: flex-end;
     justify-content: center;
     overflow: hidden;
     background-size: cover;
     background-position: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
 }
 
 .card::before {
@@ -609,59 +612,85 @@ nav ul {
     width: 100%;
     height: 100%;
     border: 2px solid transparent;
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.5);
+    border-radius: 16px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
     z-index: 1;
+    background: linear-gradient(
+        45deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.1) 45%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.1) 55%,
+        transparent 100%
+    );
+    background-size: 200% 200%;
+    animation: shimmer 3s infinite;
+}
+
+.card:hover {
+    transform: translateY(-8px) scale(1.02) rotateX(5deg);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
 .card:hover::before {
     border-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.5);
-}
-
-.card:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 20px 8px rgba(255, 255, 255, 0.3);
 }
 
 .card p {
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 5px;
-    border-radius: 5px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 8px 12px;
+    border-radius: 8px;
     margin: 0;
     position: relative;
     z-index: 2;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.card:hover p {
+    transform: translateY(0);
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }
 
 /* Responsive Styles */
 @media (max-width: 768px) {
     .mobile-cards {
-        flex-wrap: nowrap; /* No wrapping for horizontal scroll */
-        overflow-x: scroll; /* Enable horizontal scroll */
-        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-        margin-top: 80px; /* Add space between cards and header */
-        padding-left: 10px; /* Add some padding to the left for better alignment */
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-top: 80px;
+        padding: 20px 10px;
+        gap: 15px;
+        scroll-snap-type: x mandatory;
     }
 
     .card {
-        flex: 0 0 auto; /* Cards do not shrink or grow, keeping their size */
-        margin: 10px 5px; /* Adjust margins for horizontal alignment */
-        width: 180px; /* Larger card size for mobile */
-        height: 180px; /* Larger card size for mobile */
+        flex: 0 0 auto;
+        margin: 10px 5px;
+        width: 180px;
+        height: 180px;
+        scroll-snap-align: center;
     }
 
-    /* Optional: Hide scrollbar for a cleaner look */
     .mobile-cards::-webkit-scrollbar {
-        display: none; /* For WebKit browsers */
+        height: 6px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 3px;
     }
 
-    .mobile-cards {
-        -ms-overflow-style: none;  /* For Internet Explorer and Edge */
-        scrollbar-width: none;  /* For Firefox */
+    .mobile-cards::-webkit-scrollbar-thumb {
+        background: rgba(37, 117, 252, 0.6);
+        border-radius: 3px;
     }
 
-    /* Scroll Indicator Arrow */
     .scroll-arrow {
         display: block;
         position: absolute;
@@ -671,17 +700,19 @@ nav ul {
         font-size: 2em;
         color: #2575fc;
         z-index: 10;
-        animation: bounce 1.5s infinite;
+        animation: float 2s ease-in-out infinite;
         cursor: pointer;
+        text-shadow: 0 0 10px rgba(37, 117, 252, 0.4);
     }
 
-    /* Scroll Arrow Animation */
-    @keyframes bounce {
+    @keyframes float {
         0%, 100% {
             transform: translateY(-50%) translateX(0);
+            opacity: 0.6;
         }
         50% {
-            transform: translateY(-50%) translateX(5px);
+            transform: translateY(-50%) translateX(8px);
+            opacity: 1;
         }
     }
 }
@@ -1177,9 +1208,7 @@ footer ul li a:hover::after {
             <a href="donate.html" class="donate-btn">Donate Now</a>
         </div>
     </div>
-    <div class="footer-bottom">
-        <p>&copy; 2025 Quran Pro. All rights reserved.</p>
-    </div>
+
 </footer>
 
     <script src="https://unpkg.com/idb@6.1.0/build/iife/index-min.js"></script>
