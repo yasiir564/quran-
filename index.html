@@ -1527,24 +1527,33 @@ footer ul li a:hover::after {
 /* Enhanced Support Section */
 .support-section {
     background: linear-gradient(135deg, rgba(37,117,252,0.1) 0%, rgba(106,17,203,0.1) 100%);
-    padding: 40px 20px;
+    padding: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 30px;
+    gap: 20px;
+    flex-wrap: wrap; /* Added to ensure better responsive behavior */
+    width: 100%;
 }
 
 .support-content {
-    flex: 1;
-    max-width: 500px;
-    padding: 0 15px;
+    flex: 1 1 300px; /* Changed to allow better wrapping */
+    min-width: 280px; /* Minimum width to maintain readability */
+    padding: 15px;
 }
 
 .support-image {
-    flex: 1;
-    max-width: 500px;
+    flex: 1 1 300px; /* Changed to allow better wrapping */
+    min-width: 280px; /* Minimum width for image container */
     position: relative;
     animation: float 6s ease-in-out infinite;
+}
+
+/* Make images responsive */
+.support-image img {
+    max-width: 100%;
+    height: auto;
+    display: block;
 }
 
 .btn {
@@ -1574,48 +1583,67 @@ footer ul li a:hover::after {
     50% { transform: translateY(-20px); }
 }
 
-/* Responsive Styles */
-@media screen and (max-width: 1024px) {
+/* Responsive Breakpoints */
+@media screen and (max-width: 1200px) {
     .support-section {
-        padding: 30px 15px;
-        gap: 20px;
+        padding: 15px;
     }
-
+    
     .support-content,
     .support-image {
-        max-width: 450px;
+        flex: 1 1 400px;
     }
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 900px) {
     .support-section {
         flex-direction: column;
         text-align: center;
-        padding: 30px 15px;
     }
-
+    
     .support-content,
     .support-image {
-        max-width: 100%;
+        flex: 1 1 100%;
+        max-width: 600px;
+        margin: 0 auto;
     }
-
+    
     .btn {
         max-width: 250px;
     }
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 600px) {
     .support-section {
-        padding: 20px 10px;
+        padding: 10px;
     }
-
+    
+    .support-content,
+    .support-image {
+        padding: 10px;
+        min-width: 200px;
+    }
+    
     .btn {
         max-width: 100%;
-        margin: 10px auto;
-        padding: 10px 20px;
+        margin: 10px 0;
     }
 }
 
+/* Ensure container is responsive */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container constraints */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
 
 </style>
 </head>
