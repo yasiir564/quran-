@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qibla Direction - Halal Hub</title>
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.css">
+    
+    <style>
+        /* Theme Variables */
+        :root {
+            --primary-color: #2575fc;
+            --secondary-color: #6a11cb;
+            --text-color: #333;
+            --bg-color: #ffffff;
+            --card-bg: #ffffff;
+        }
+
+        .dark-mode {
+            --primary-color: #4a90e2;
+            --secondary-color: #7c4dff;
+            --text-color: #ffffff;
+            --bg-color: #1a1a1a;
+            --card-bg: #2d2d2d;
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+       /* Header Container */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 50px;
+    background: var(--bg-color);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+/* Logo Container */
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 700;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Header Buttons */
+.header-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn i {
+    font-size: 16px;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(37,117,252,0.2);
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--text-color);
+}
+
+.btn-secondary:hover {
+    background: rgba(37,117,252,0.1);
+}
+
+/* Mobile Menu Toggle */
+.mobile-menu-toggle {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-color);
+    background: none;
+    border: none;
+    padding: 10px;
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-toggle:hover {
+    transform: scale(1.1);
+}
+
+/* Sidebar Styles */
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100vh;
+    background: var(--card-bg);
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    transition: right 0.3s ease;
+    z-index: 1000;
+    padding: 20px;
+    display: none;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(37,117,252,0.1);
+}
+
+.close-sidebar {
+    font-size: 24px;
+    color: var(--text-color);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close-sidebar:hover {
+    transform: rotate(90deg);
+}
+
+.sidebar .header-buttons {
+    flex-direction: column;
+    gap: 15px;
+}
+
+.sidebar .btn {
+    width: 100%;
+    justify-content: center;
+}
+
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    z-index: 999;
+    backdrop-filter: blur(3px);
+    transition: opacity 0.3s ease;
+    opacity: 0;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 1024px) {
+    .header {
+        padding: 15px 30px;
+    }
+
+    .logo {
+        font-size: 20px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .header {
+        padding: 15px 20px;
+    }
+
+    .header .header-buttons {
+        display: none;
+    }
+
+    .mobile-menu-toggle {
+        display: block;
+    }
+
+    .sidebar {
+        display: block;
+    }
+
+    .sidebar.active {
+        right: 0;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    .logo {
+        font-size: 18px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .header {
+        padding: 12px 15px;
+    }
+
+    .sidebar {
+        width: 280px;
+    }
+
+    .btn {
+        padding: 8px 14px;
+        font-size: 14px;
+    }
+
+    .mobile-menu-toggle {
+        font-size: 20px;
+    }
+}
+
+/* Dark Mode Adjustments */
+.dark-mode .sidebar {
+    background: var(--bg-color);
+}
+
+.dark-mode .sidebar-header {
+    border-bottom-color: rgba(255,255,255,0.1);
+}
+
+/* Animation Classes */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.sidebar.active {
+    animation: slideIn 0.3s ease forwards;
+}
+
+.sidebar-overlay.active {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+        /* View Controls */
+        .view-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        /* AR View Styles */
+        #arView {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            background: #000;
+        }
+
+        .ar-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            text-align: center;
+            z-index: 1001;
+            pointer-events: none;
+        }
+
+        .close-ar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1002;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Compass Styles */
+        .compass-view {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+        }
+
+        .compass-rose {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="%232575fc" stroke-width="2"/><path d="M50 5 L53 45 L50 50 L47 45 Z" fill="%232575fc"/><text x="50" y="20" text-anchor="middle" fill="%232575fc">N</text><text x="80" y="53" text-anchor="middle" fill="%232575fc">E</text><text x="50" y="85" text-anchor="middle" fill="%232575fc">S</text><text x="20" y="53" text-anchor="middle" fill="%232575fc">W</text></svg>') center/contain no-repeat;
+            transition: transform 0.1s ease;
+        }
+
+        .qibla-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 50%;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            transform-origin: bottom center;
+            border-radius: 5px;
+        }
+
+        /* Container Styles */
+        .qibla-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .location-info {
+            margin: 20px 0;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 12px 24px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            font-weight: 500;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37,117,252,0.2);
+        }
+
+        /* Benefits Section */
+        .benefits-section {
+            padding: 50px 20px;
+            background: linear-gradient(135deg, rgba(37,117,252,0.1) 0%, rgba(106,17,203,0.1) 100%);
+            margin-top: 40px;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .benefit-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .benefit-icon {
+            font-size: 36px;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .compass-view {
+                width: 250px;
+                height: 250px;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+         /* Footer */
+.footer {
+    background: var(--bg-color);
+    padding: 50px 20px;
+    margin-top: 50px;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+}
+
+.footer-section {
+    padding: 20px;
+}
+
+.newsletter-form {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.newsletter-input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 2px solid var(--primary-color);
+    border-radius: 25px;
+    background: transparent;
+    color: var(--text-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .footer {
+        padding: 40px 15px;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr; /* Stacks sections vertically on smaller screens */
+        gap: 30px;
+    }
+
+    .newsletter-form {
+        flex-direction: column;
+    }
+
+    .newsletter-input {
+        width: 100%; /* Full width on smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .footer {
+        padding: 30px 10px;
+    }
+
+    .footer-content {
+        gap: 20px;
+    }
+
+    .newsletter-form {
+        gap: 15px;
+    }
+
+    .newsletter-input {
+        padding: 8px 12px;
+    }
+}
+ /* Enhanced Footer Links */
+        .quick-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            position: relative;
+            display: block;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .quick-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            transition: width 0.3s ease;
+        }
+
+        .quick-links a:hover::after {
+            width: 100%;
+        }
+         /* Modern Scroll Bar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+        }
+
+             /* Tools Section */
+.tools-section {
+    padding: 50px;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 36px;
+    margin-bottom: 50px;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 20px;
+}
+
+.tool-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.tool-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+}
+
+.tool-card:hover {
+    transform: translateY(-10px);
+}
+
+.tool-card:hover::before {
+    opacity: 0.1;
+}
+
+.tool-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+    z-index: 1;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+    .tools-section {
+        padding: 40px;
+    }
+
+    .section-title {
+        font-size: 32px;
+        margin-bottom: 40px;
+    }
+
+    .tools-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    .tool-card {
+        padding: 25px;
+    }
+
+    .tool-icon {
+        font-size: 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .tools-section {
+        padding: 30px;
+    }
+
+    .section-title {
+        font-size: 28px;
+        margin-bottom: 30px;
+    }
+
+    .tools-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .tool-card {
+        padding: 20px;
+    }
+
+    .tool-icon {
+        font-size: 36px;
+    }
+}
+    .tool-card {
+    position: relative;
+    padding-right: 45px !important; /* Make space for the arrow */
+}
+
+.tool-card::after {
+    content: '→';
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.tool-card:hover::after {
+    opacity: 1;
+    right: 15px;
+}
+
+@media (max-width: 480px) {
+    .tools-section {
+        padding: 20px;
+    }
+
+    .section-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .tools-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .tool-card {
+        padding: 15px;
+    }
+
+    .tool-icon {
+        font-size: 30px;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <header class="header">
+    <div class="logo-container">
+        <i class="fas fa-mosque"></i>
+        <span class="logo">Quran Pro</span>
+    </div>
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="header-buttons">
+        <button class="btn btn-secondary" onclick="toggleDarkMode()">
+            <i class="fas fa-moon"></i>
+        </button>
+        <button class="btn btn-primary">Sign In</button>
+    </div>
+</header>
+
+<!-- Add sidebar markup -->
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div class="sidebar">
+    <div class="sidebar-header">
+        <span class="logo">Menu</span>
+        <button class="close-sidebar" onclick="toggleSidebar()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="header-buttons">
+        <button class="btn btn-secondary" onclick="toggleDarkMode()">
+            <i class="fas fa-moon"></i> Dark Mode
+        </button>
+        <button class="btn btn-primary">
+            <i class="fas fa-sign-in-alt"></i> Sign In
+        </button>
+    </div>
+</div>
+
+
+    <div class="qibla-container">
+        <h1 style="background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            Qibla Direction Finder
+        </h1>
+        <p>Find the accurate direction of the Kaaba for your prayers</p>
+
+        <div class="view-controls">
+            <button class="btn" onclick="activateCompassView()">
+                <i class="fas fa-compass"></i> Compass View
+            </button>
+            <button class="btn" onclick="activateARView()">
+                <i class="fas fa-camera"></i> AR View
+            </button>
+        </div>
+
+        <div class="compass-view">
+            <div class="compass-rose"></div>
+            <div class="qibla-indicator"></div>
+        </div>
+
+        <div class="location-info">
+            <p>Your Location: <span id="location-text">Detecting...</span></p>
+            <p>Distance to Kaaba: <span id="distance-text">Calculating...</span></p>
+            <p>Qibla Direction: <span id="direction-text">Determining...</span></p>
+        </div>
+
+        <button class="btn" onclick="requestLocation()">
+            <i class="fas fa-location-arrow"></i> Update Location
+        </button>
+    </div>
+
+    <!-- AR View -->
+    <div id="arView">
+        <button class="close-ar" onclick="deactivateARView()">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="ar-overlay">
+            <h2>Qibla Direction</h2>
+            <p id="ar-direction"></p>
+        </div>
+    </div>
+
+    <!-- Benefits Section -->
+    <section class="benefits-section">
+        <h2 style="text-align: center; margin-bottom: 30px; background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            Benefits of Using Our Qibla Finder
+        </h2>
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <i class="fas fa-compass benefit-icon"></i>
+                <h3>Precise Direction</h3>
+                <p>Uses advanced GPS and mathematical calculations to provide the most accurate Qibla direction.</p>
+            </div>
+            <div class="benefit-card">
+                <i class="fas fa-globe benefit-icon"></i>
+                <h3>Works Worldwide</h3>
+                <p>Accurate anywhere in the world, taking into account the Earth's curvature for precise calculations.</p>
+            </div>
+            <div class="benefit-card">
+                <i class="fas fa-mobile-alt benefit-icon"></i>
+                <h3>Real-Time Updates</h3>
+                <p>Updates automatically as you move, ensuring accuracy even while traveling.</p>
+            </div>
+            <div class="benefit-card">
+                <i class="fas fa-map-marked-alt benefit-icon"></i>
+                <h3>Location History</h3>
+                <p>Save frequently visited locations for quick access to Qibla direction anywhere.</p>
+            </div>
+        </div>
+    </section>
+
+      
+    
+    <!-- External Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.js"></script>
+
+    <script>
+        // Constants
+        const KAABA_LAT = 21.422487;
+        const KAABA_LONG = 39.826206;
+        let currentQiblaDirection = 0;
+        let deviceOrientation = { alpha: 0, beta: 0, gamma: 0 };
+
+        // Compass and Orientation Functions
+        function initCompass() {
+            if (window.DeviceOrientationEvent) {
+                window.addEventListener('deviceorientation', handleOrientation);
+                return true;
+            }
+            return false;
+        }
+
+        function handleOrientation(event) {
+            if (event.alpha !== null) {
+                deviceOrientation = {
+                    alpha: event.alpha,
+                    beta: event.beta,
+                    gamma: event.gamma
+                };
+                updateCompassDisplay();
+            }
+        }
+
+        function updateCompassDisplay() {
+            const compassRose = document.querySelector('.compass-rose');
+            const qiblaIndicator = document.querySelector('.qibla-indicator');
+            
+            compassRose.style.transform = `rotate(${-deviceOrientation.alpha}deg)`;
+            const qiblaAngle = (currentQiblaDirection - deviceOrientation.alpha + 360) % 360;
+            qiblaIndicator.style.transform = `rotate(${qiblaAngle}deg)`;
+            
+            if (document.getElementById('arView').style.display === 'block') {
+                document.getElementById('ar-direction').textContent = 
+                    `${qiblaAngle.toFixed(1)}° from current direction`;
+            }
+        }
+        function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+    
+    // Prevent body scrolling when sidebar is open
+    document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+}
+
+        // View Control Functions
+        function activateCompassView() {
+            document.querySelector('.compass-view').style.display = 'block';
+            document.getElementById('arView').style.display = 'none';
+        }
+
+        async function activateARView() {
+            if (!navigator.xr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'AR Not Supported',
+                    text: 'Your device does not support AR features.'
+                });
+                return;
+            }
+
+            try {
+                const session = await navigator.xr.requestSession('immersive-ar');
+                document.getElementById('arView').style.display = 'block';
+                initARSession(session);
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'AR Error',
+                    text: 'Could not start AR session: ' + err.message
+                });
+            }
+        }
+
+        function deactivateARView() {
+            document.getElementById('arView').style.display = 'none';
+        }
+
+        async function initARSession(session) {
+            const canvas = document.createElement('canvas');
+            document.getElementById('arView').appendChild(canvas);
+            const gl = canvas.getContext('webgl', { xrCompatible: true });
+
+            session.addEventListener('end', () => {
+                deactivateARView();
+            });
+
+            const loop = (timestamp, frame) => {
+                if (frame) {
+                    const pose = frame.getViewerPose(referenceSpace);
+                    if (pose) {
+                        updateAROverlay(pose);
+                    }
+                }
+                session.requestAnimationFrame(loop);
+            };
+            session.requestAnimationFrame(loop);
+        }
+
+        // Location and Calculation Functions
+        function requestLocation() {
+            if (navigator.geolocation) {
+                Swal.fire({
+                    title: 'Detecting Location',
+                    text: 'Please wait while we access your location...',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    willOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                navigator.geolocation.getCurrentPosition(handleLocation, handleError);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Geolocation Not Supported',
+                    text: 'Your browser does not support geolocation services.',
+                    confirmButtonColor: '#2575fc'
+                });
+            }
+        }
+
+        function handleLocation(position) {
+            const lat1 = position.coords.latitude;
+            const lon1 = position.coords.longitude;
+            
+            currentQiblaDirection = calculateQiblaDirection(lat1, lon1);
+            const distance = calculateDistance(lat1, lon1, KAABA_LAT, KAABA_LONG);
+            
+            document.getElementById('location-text').textContent = `${lat1.toFixed(4)}°N, ${lon1.toFixed(4)}°E`;
+            document.getElementById('distance-text').textContent = `${distance.toFixed(0)} km`;
+            document.getElementById('direction-text').textContent = `${currentQiblaDirection.toFixed(1)}° from North`;
+
+            // Initialize compass after getting location
+            if (!initCompass()) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Compass Not Available',
+                    text: 'Your device does not support compass features. Direction will be shown statically.'
+                });
+            }
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Location Updated',
+                text: 'Qibla direction has been calculated successfully!',
+                timer: 2000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
+        }
+
+        function handleError(error) {
+            let errorMessage = '';
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    errorMessage = "Please allow location access to find Qibla direction";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorMessage = "Location information is unavailable";
+                    break;
+                case error.TIMEOUT:
+                    errorMessage = "Location request timed out";
+                    break;
+                default:
+                    errorMessage = "An unknown error occurred";
+                    break;
+            }
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Location Error',
+                text: errorMessage,
+                confirmButtonColor: '#2575fc'
+            });
+        }
+
+        // Mathematical Calculation Functions
+        function calculateQiblaDirection(lat1, lon1) {
+            const φ1 = lat1 * Math.PI / 180;
+            const φ2 = KAABA_LAT * Math.PI / 180;
+            const Δλ = (KAABA_LONG - lon1) * Math.PI / 180;
+            const y = Math.sin(Δλ);
+            const x = Math.cos(φ1) * Math.tan(φ2) - Math.sin(φ1) * Math.cos(Δλ);
+            const qibla = Math.atan2(y, x) * 180 / Math.PI;
+            return (qibla + 360) % 360;
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth's radius in kilometers
+            const φ1 = lat1 * Math.PI / 180;
+            const φ2 = lat2 * Math.PI / 180;
+            const Δφ = (lat2 - lat1) * Math.PI / 180;
+            const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                    Math.cos(φ1) * Math.cos(φ2) *
+                    Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // Theme Functions
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+            
+            const theme = document.body.classList.contains('dark-mode') ? 'Dark' : 'Light';
+            Swal.fire({
+                icon: 'success',
+                title: `${theme} Mode Activated`,
+                text: `Successfully switched to ${theme.toLowerCase()} mode`,
+                timer: 1500,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
+        }
+
+        // Initialization
+        window.addEventListener('load', () => {
+            // Check for saved dark mode preference
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+
+            // Show welcome message
+            Swal.fire({
+                icon: 'info',
+                title: 'Welcome to Qibla Finder',
+                text: 'Allow location access to find the accurate Qibla direction',
+                confirmButtonColor: '#2575fc'
+            }).then(() => {
+                requestLocation();
+            });
+        });
+    </script>
+</body>
+</html>
