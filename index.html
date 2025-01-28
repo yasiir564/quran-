@@ -1549,6 +1549,40 @@ const API_BASE_URL = 'https://api.alquran.cloud/v1';
 const DB_NAME = 'quran-reader-db';
 const DB_VERSION = 1;
 
+// Juzz Data Configuration
+const JUZZ_DATA = [
+  { number: 1, name: "Alif Lām Mīm", range: "Al-Baqarah 1-141", startSurah: 1, startAyah: 1, endSurah: 2, endAyah: 141 },
+  { number: 2, name: "Sayaqūl", range: "Al-Baqarah 142-252", startSurah: 2, startAyah: 142, endSurah: 2, endAyah: 252 },
+  { number: 3, name: "Tilka 'r-Rusul", range: "Al-Baqarah 253 - Al-i'Imran 92", startSurah: 2, startAyah: 253, endSurah: 3, endAyah: 92 },
+  { number: 4, name: "Lan Tana Lu", range: "Al-i'Imran 93 - An-Nisa 23", startSurah: 3, startAyah: 93, endSurah: 4, endAyah: 23 },
+  { number: 5, name: "Wal Muhsanat", range: "An-Nisa 24-147", startSurah: 4, startAyah: 24, endSurah: 4, endAyah: 147 },
+  { number: 6, name: "La Yuhibbu 'l-Lah", range: "An-Nisa 148 - Al-Ma'idah 81", startSurah: 4, startAyah: 148, endSurah: 5, endAyah: 81 },
+  { number: 7, name: "Wa Idha Sami'u", range: "Al-Ma'idah 82 - Al-An'am 110", startSurah: 5, startAyah: 82, endSurah: 6, endAyah: 110 },
+  { number: 8, name: "Wa Law Annana", range: "Al-An'am 111 - Al-A'raf 87", startSurah: 6, startAyah: 111, endSurah: 7, endAyah: 87 },
+  { number: 9, name: "Qala 'l-Mala'", range: "Al-A'raf 88-171", startSurah: 7, startAyah: 88, endSurah: 7, endAyah: 171 },
+  { number: 10, name: "Wa A'lamu", range: "Al-A'raf 172 - Al-Anfal 40", startSurah: 7, startAyah: 172, endSurah: 8, endAyah: 40 },
+  { number: 11, name: "Ya'tadhirun", range: "Al-Anfal 41 - At-Tawbah 92", startSurah: 8, startAyah: 41, endSurah: 9, endAyah: 92 },
+  { number: 12, name: "Wa Ma Min Dabbah", range: "At-Tawbah 93 - Hud 5", startSurah: 9, startAyah: 93, endSurah: 11, endAyah: 5 },
+  { number: 13, name: "Wa Ma Ubri'u", range: "Hud 6 - Yusuf 52", startSurah: 11, startAyah: 6, endSurah: 12, endAyah: 52 },
+  { number: 14, name: "Rubama", range: "Yusuf 53 - Al-Hijr 1", startSurah: 12, startAyah: 53, endSurah: 15, endAyah: 1 },
+  { number: 15, name: "Subhana 'Ladhi", range: "Al-Hijr 2 - Al-Isra 1", startSurah: 15, startAyah: 2, endSurah: 17, endAyah: 1 },
+  { number: 16, name: "Qal Alam", range: "Al-Isra 2 - Al-Kahf 74", startSurah: 17, startAyah: 2, endSurah: 18, endAyah: 74 },
+  { number: 17, name: "Iqtaraba", range: "Al-Kahf 75 - Ta-Ha 135", startSurah: 18, startAyah: 75, endSurah: 20, endAyah: 135 },
+  { number: 18, name: "Qadd Aflaha", range: "Al-Anbiya 1 - Al-Mu'minun 118", startSurah: 21, startAyah: 1, endSurah: 23, endAyah: 118 },
+  { number: 19, name: "Wa Qala 'Ladhina", range: "An-Nur 1 - Al-Furqan 20", startSurah: 24, startAyah: 1, endSurah: 25, endAyah: 20 },
+  { number: 20, name: "A'man Khalaq", range: "Al-Furqan 21 - An-Naml 55", startSurah: 25, startAyah: 21, endSurah: 27, endAyah: 55 },
+  { number: 21, name: "Utlu Ma Uhi", range: "An-Naml 56 - Al-Ankabut 45", startSurah: 27, startAyah: 56, endSurah: 29, endAyah: 45 },
+  { number: 22, name: "Wa Man Yaqnut", range: "Al-Ankabut 46 - Al-Ahzab 30", startSurah: 29, startAyah: 46, endSurah: 33, endAyah: 30 },
+  { number: 23, name: "Wa Ma Li", range: "Al-Ahzab 31 - Ya-Sin 27", startSurah: 33, startAyah: 31, endSurah: 36, endAyah: 27 },
+  { number: 24, name: "Fa Man Azlam", range: "Ya-Sin 28 - Az-Zumar 31", startSurah: 36, startAyah: 28, endSurah: 39, endAyah: 31 },
+  { number: 25, name: "Ilayhi Yurad", range: "Az-Zumar 32 - Fussilat 46", startSurah: 39, startAyah: 32, endSurah: 41, endAyah: 46 },
+  { number: 26, name: "Ha Mim", range: "Fussilat 47 - Al-Jathiya 37", startSurah: 41, startAyah: 47, endSurah: 45, endAyah: 37 },
+  { number: 27, name: "Qala Fa Ma Khatbukum", range: "Al-Ahqaf 1 - Adh-Dhariyat 30", startSurah: 46, startAyah: 1, endSurah: 51, endAyah: 30 },
+  { number: 28, name: "Qad Sami'a Allah", range: "Adh-Dhariyat 31 - Al-Mujadila 1", startSurah: 51, startAyah: 31, endSurah: 58, endAyah: 1 },
+  { number: 29, name: "Tabarak Alladhi", range: "Al-Mujadila 2 - At-Tahrim 12", startSurah: 58, startAyah: 2, endSurah: 66, endAyah: 12 },
+  { number: 30, name: "Amma Yatasa'alun", range: "Al-Mulk 1 - An-Nas 6", startSurah: 67, startAyah: 1, endSurah: 114, endAyah: 6 }
+];
+
 // DOM Elements Cache
 const Elements = {
   init() {
@@ -1582,6 +1616,7 @@ const DatabaseService = {
     return await idb.openDB(DB_NAME, DB_VERSION, {
       upgrade(db) {
         db.createObjectStore('surahs', { keyPath: 'number' });
+        db.createObjectStore('juzz', { keyPath: 'number' });
       }
     });
   },
@@ -1589,27 +1624,44 @@ const DatabaseService = {
   async getSurahs() {
     try {
       const db = await this.initDB();
-      const surahs = await db.getAll('surahs');
+      let surahs = await db.getAll('surahs');
       
-      if (surahs.length) {
-        return surahs.map((surah, index) => ({
-          ...surah,
-          number: index + 1,
-        }));
+      if (!surahs.length) {
+        const response = await fetch(`${API_BASE_URL}/surah`);
+        const data = await response.json();
+        surahs = data.data;
+        
+        const tx = db.transaction('surahs', 'readwrite');
+        for (const surah of surahs) {
+          await tx.store.put(surah);
+        }
+        await tx.done;
       }
       
-      const response = await fetch(`${API_BASE_URL}/surah`);
-      const data = await response.json();
-      
-      const tx = db.transaction('surahs', 'readwrite');
-      for (const surah of data.data) {
-        await tx.store.put(surah);
-      }
-      await tx.done;
-      
-      return data.data;
+      return surahs;
     } catch (error) {
       ErrorHandler.handle(error, 'DatabaseService.getSurahs');
+      return [];
+    }
+  },
+
+  async getJuzz() {
+    try {
+      const db = await this.initDB();
+      let juzz = await db.getAll('juzz');
+      
+      if (!juzz.length) {
+        const tx = db.transaction('juzz', 'readwrite');
+        for (const juzzItem of JUZZ_DATA) {
+          await tx.store.put(juzzItem);
+        }
+        await tx.done;
+        juzz = JUZZ_DATA;
+      }
+      
+      return juzz;
+    } catch (error) {
+      ErrorHandler.handle(error, 'DatabaseService.getJuzz');
       return [];
     }
   }
@@ -1635,6 +1687,12 @@ const UIService = {
     arabicName.textContent = surah.name;
     
     div.append(numberSpan, nameText, arabicName);
+    
+    // Add click event to redirect to surah.html
+    div.addEventListener('click', () => {
+      window.location.href = `surah.html?number=${surah.number}`;
+    });
+    
     return div;
   },
 
@@ -1707,7 +1765,10 @@ const UIService = {
     Elements.juzzList.appendChild(fragment);
   },
 
-  updateProfileIcon() {
+  // ... rest of the UIService methods remain the same ...
+};
+
+updateProfileIcon() {
     const userAvatar = localStorage.getItem('userAvatar');
     const { defaultIcon, userPic, link } = Elements.profileElements;
     
@@ -1850,25 +1911,6 @@ const EventHandlers = {
       const element = document.querySelector(hash);
       element?.scrollIntoView();
     }
-  },
-
-  async handleLogout() {
-    try {
-      localStorage.removeItem('userName');
-      localStorage.removeItem('userEmail');
-      localStorage.removeItem('userAvatar');
-      UIService.updateProfileIcon();
-      
-      await auth.signOut();
-      window.location.href = 'login.html';
-    } catch (error) {
-      ErrorHandler.handle(error, 'handleLogout');
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Error signing out. Please try again!',
-      });
-    }
   }
 };
 
@@ -1893,8 +1935,19 @@ const LoadingService = {
 
   async loadContent() {
     this.show();
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    this.hide();
+    try {
+      // Load Surah data
+      const surahs = await DatabaseService.getSurahs();
+      await UIService.showSurahs(0, 15, surahs);
+      
+      // Load Juzz data
+      const juzzData = await DatabaseService.getJuzz();
+      UIService.generateJuzzList(juzzData);
+    } catch (error) {
+      ErrorHandler.handle(error, 'LoadingService.loadContent');
+    } finally {
+      this.hide();
+    }
   }
 };
 
@@ -1924,7 +1977,7 @@ async function initializeApp() {
     // Register service worker
     await ServiceWorkerManager.register();
     
-    // Show loading screen
+    // Load content
     await LoadingService.loadContent();
     
     // Initialize UI
@@ -1936,13 +1989,6 @@ async function initializeApp() {
     if (darkMode) {
       document.body.classList.add('dark-mode');
     }
-    
-    // Load Surah data
-    const surahs = await DatabaseService.getSurahs();
-    await UIService.showSurahs(0, 15, surahs);
-    
-    // Generate Juzz list
-    UIService.generateJuzzList(JUZZ_DATA);
     
   } catch (error) {
     ErrorHandler.handle(error, 'initializeApp');
@@ -1961,7 +2007,8 @@ if (typeof module !== 'undefined' && module.exports) {
     EventHandlers,
     ErrorHandler,
     LoadingService,
-    ServiceWorkerManager
+    ServiceWorkerManager,
+    JUZZ_DATA
   };
 }
  </script>
