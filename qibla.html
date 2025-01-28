@@ -4,13 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Qibla Direction - Quran Pro</title>
+
+    <!-- Meta Description -->
+    <meta name="description" content="Find the Qibla direction with Quran Pro. Get accurate Qibla direction based on your location and never miss your prayer alignment again.">
+
+    <!-- Keywords -->
+    <meta name="keywords" content="Qibla direction, find Qibla, prayer direction, accurate Qibla, Quran Pro, Islamic tools">
     
     <!-- External CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.css">
-        <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
-
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1850217813586802"
+     crossorigin="anonymous"></script>
     
     <style>
         /* Theme Variables */
@@ -722,204 +728,46 @@
         font-size: 30px;
     }
 }
-        /* 2. SIDEBAR STYLES */
-.sidebar {
-    height: 100vh;
-    width: 280px;
-    position: fixed;
-    z-index: 1000;
-    top: 0;
-    left: -280px;
-    background: linear-gradient(135deg, #7f1bf2, #9543f5);
-    overflow-x: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    padding-top: 85px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.sidebar.open {
-    left: 0;
-    box-shadow: 0 0 50px rgba(127, 27, 242, 0.3);
-}
-
-.sidebar a {
-    padding: 14px 24px;
-    text-decoration: none;
-    font-size: 16px;
-    color: rgba(255, 255, 255, 0.9);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: all 0.3s ease;
-    border-radius: 0 25px 25px 0;
-    margin: 4px 0;
-    margin-right: 16px;
-    font-weight: 500;
-}
-
-.sidebar a:hover {
-    color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: translateX(8px);
-}
-
-.sidebar a.active {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
-}
-
-.sidebar .closebtn {
-    position: absolute;
-    top: 20px;
-    right: 25px;
-    font-size: 28px;
-    color: rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    margin: 0;
-    padding: 0;
-}
-
-.sidebar .closebtn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: rotate(90deg);
-}
-
-.sidebar-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6);
-    z-index: 999;
-    backdrop-filter: blur(3px);
-    transition: all 0.3s ease;
-}
-
-.sidebar-overlay.active {
-    display: block;
-}
-
-.openbtn {
-    font-size: 18px;
-    cursor: pointer;
-    background-color: #7f1bf2;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    position: fixed;
-    top: 40px;
-    left: 20px;
-    z-index: 1000;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(127, 27, 242, 0.3);
-}
-
-.openbtn:hover {
-    background-color: #6813d0;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(127, 27, 242, 0.4);
-}
-
-#main {
-    transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    padding: 20px;
-}
-
-@media screen and (max-width: 768px) {
-    .sidebar {
-        width: 100%;
-        left: -100%;
-    }
-    
-    .openbtn {
-        top: 20px;
-        left: 20px;
-    }
-}
-
-@media screen and (max-height: 450px) {
-    .sidebar {
-        padding-top: 60px;
-    }
-    
-    .sidebar a {
-        font-size: 16px;
-        padding: 10px 20px;
-    }
-}
 
     </style>
 </head>
 <body>
     <header class="header">
-        <!-- Overlay for sidebar -->
-        <div class="sidebar-overlay"></div>
+    <div class="logo-container">
         
-        <!-- Sidebar -->
-        <div id="mySidebar" class="sidebar">
-            <button class="closebtn sidebar-toggle">&times;</button>
-            <a href="index.html">
-                <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" 
-                          trigger="hover" 
-                          colors="primary:#ffffff,secondary:#08a88a" 
-                          style="width:50px;height:50px">
-                </lord-icon> 
-                Read Quran
-            </a>
-            <a href="juzz.html">
-                <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" 
-                          trigger="hover" 
-                          colors="primary:#ffffff,secondary:#08a88a" 
-                          style="width:50px;height:50px">
-                </lord-icon> 
-                Read in Juzz
-            </a>
-            <a href="audio.html">
-                <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" 
-                          trigger="hover" 
-                          colors="primary:#ffffff,secondary:#08a88a" 
-                          style="width:50px;height:50px">
-                </lord-icon> 
-                Listen to Quran
-            </a>
-            <a href="prayer.html">
-                <lord-icon src="https://cdn.lordicon.com/tftaqjwp.json" 
-                          trigger="hover" 
-                          colors="primary:#ffffff,secondary:#08a88a" 
-                          style="width:50px;height:50px">
-                </lord-icon> 
-                Prayer Time
-            </a>
-            <a href="donate.html">
-                <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" 
-                          trigger="hover" 
-                          colors="primary:#ffffff,secondary:#08a88a" 
-                          style="width:50px;height:50px">
-                </lord-icon> 
-                Donate with Love
-            </a>
-        </div>
+        <span class="logo">Quran Pro</span>
+    </div>
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="header-buttons">
+        <button class="btn btn-secondary" onclick="toggleDarkMode()">
+            <i class="fas fa-moon"></i>
+        </button>
+        <a href="login.html">
+  <button class="btn btn-primary">Sign In</button>
+</a>
+    </div>
+</header>
 
-        <!-- Main content -->
-        <div id="main">
-            <button class="sidebar-toggle openbtn">&#9776; Quran Pro</button>
-        </div>
-    </header>
-
-
-
+<!-- Add sidebar markup -->
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div class="sidebar">
+    <div class="sidebar-header">
+        <span class="logo">Menu</span>
+        <button class="close-sidebar" onclick="toggleSidebar()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="header-buttons">
+        <button class="btn btn-secondary" onclick="toggleDarkMode()">
+            <i class="fas fa-moon"></i> Dark Mode
+        </button>
+        <button class="btn btn-primary">
+            <i class="fas fa-sign-in-alt"></i> Sign In
+        </button>
+    </div>
+</div>
 
 
     <div class="qibla-container">
@@ -999,267 +847,248 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.js"></script>
 
     <script>
-// Constants for Kaaba coordinates
-const KAABA_LAT = 21.422487;
-const KAABA_LONG = 39.826206;
+        // Constants
+        const KAABA_LAT = 21.422487;
+        const KAABA_LONG = 39.826206;
+        let currentQiblaDirection = 0;
+        let deviceOrientation = { alpha: 0, beta: 0, gamma: 0 };
 
-// Global state variables
-let currentQiblaDirection = 0;
-let deviceOrientation = { alpha: 0, beta: 0, gamma: 0 };
-let isSidebarOpen = false;
-
-// Improved Sidebar functionality
-class SidebarManager {
-    constructor() {
-        this.sidebar = document.getElementById('mySidebar');
-        this.main = document.getElementById('main');
-        this.overlay = document.getElementById('sidebarOverlay');
-        this.openBtn = document.getElementById('openSidebarBtn');
-        this.closeBtn = document.getElementById('closeSidebarBtn');
-        
-        this.init();
-    }
-
-    init() {
-        // Initialize event listeners
-        this.openBtn?.addEventListener('click', () => this.open());
-        this.closeBtn?.addEventListener('click', () => this.close());
-        this.overlay?.addEventListener('click', () => this.close());
-        
-        // Handle escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && isSidebarOpen) {
-                this.close();
+        // Compass and Orientation Functions
+        function initCompass() {
+            if (window.DeviceOrientationEvent) {
+                window.addEventListener('deviceorientation', handleOrientation);
+                return true;
             }
-        });
+            return false;
+        }
 
-        // Handle click outside
-        document.addEventListener('click', (e) => {
-            if (isSidebarOpen && 
-                !this.sidebar?.contains(e.target) && 
-                !this.openBtn?.contains(e.target)) {
-                this.close();
+        function handleOrientation(event) {
+            if (event.alpha !== null) {
+                deviceOrientation = {
+                    alpha: event.alpha,
+                    beta: event.beta,
+                    gamma: event.gamma
+                };
+                updateCompassDisplay();
             }
-        });
-    }
+        }
 
-    open() {
-        if (!this.sidebar) return;
-        
-        this.sidebar.style.transform = 'translateX(0)';
-        this.sidebar.setAttribute('aria-hidden', 'false');
-        this.main?.classList.add('sidebar-active');
-        this.overlay?.classList.add('active');
-        isSidebarOpen = true;
-        
-        // Trap focus within sidebar
-        this.sidebar.focus();
-    }
-
-    close() {
-        if (!this.sidebar) return;
-        
-        this.sidebar.style.transform = 'translateX(-100%)';
-        this.sidebar.setAttribute('aria-hidden', 'true');
-        this.main?.classList.remove('sidebar-active');
-        this.overlay?.classList.remove('active');
-        isSidebarOpen = false;
-    }
+        function updateCompassDisplay() {
+            const compassRose = document.querySelector('.compass-rose');
+            const qiblaIndicator = document.querySelector('.qibla-indicator');
+            
+            compassRose.style.transform = `rotate(${-deviceOrientation.alpha}deg)`;
+            const qiblaAngle = (currentQiblaDirection - deviceOrientation.alpha + 360) % 360;
+            qiblaIndicator.style.transform = `rotate(${qiblaAngle}deg)`;
+            
+            if (document.getElementById('arView').style.display === 'block') {
+                document.getElementById('ar-direction').textContent = 
+                    `${qiblaAngle.toFixed(1)}° from current direction`;
+            }
+        }
+        function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+    
+    // Prevent body scrolling when sidebar is open
+    document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
 }
 
-// Compass functionality
-class CompassManager {
-    constructor() {
-        this.compassRose = document.querySelector('.compass-rose');
-        this.qiblaIndicator = document.querySelector('.qibla-indicator');
-        this.init();
-    }
-
-    init() {
-        if (window.DeviceOrientationEvent) {
-            window.addEventListener('deviceorientation', (e) => this.handleOrientation(e));
-            return true;
+        // View Control Functions
+        function activateCompassView() {
+            document.querySelector('.compass-view').style.display = 'block';
+            document.getElementById('arView').style.display = 'none';
         }
-        return false;
-    }
 
-    handleOrientation(event) {
-        if (event.alpha !== null) {
-            deviceOrientation = {
-                alpha: event.alpha,
-                beta: event.beta,
-                gamma: event.gamma
+        async function activateARView() {
+            if (!navigator.xr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'AR Not Supported',
+                    text: 'Your device does not support AR features.'
+                });
+                return;
+            }
+
+            try {
+                const session = await navigator.xr.requestSession('immersive-ar');
+                document.getElementById('arView').style.display = 'block';
+                initARSession(session);
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'AR Error',
+                    text: 'Could not start AR session: ' + err.message
+                });
+            }
+        }
+
+        function deactivateARView() {
+            document.getElementById('arView').style.display = 'none';
+        }
+
+        async function initARSession(session) {
+            const canvas = document.createElement('canvas');
+            document.getElementById('arView').appendChild(canvas);
+            const gl = canvas.getContext('webgl', { xrCompatible: true });
+
+            session.addEventListener('end', () => {
+                deactivateARView();
+            });
+
+            const loop = (timestamp, frame) => {
+                if (frame) {
+                    const pose = frame.getViewerPose(referenceSpace);
+                    if (pose) {
+                        updateAROverlay(pose);
+                    }
+                }
+                session.requestAnimationFrame(loop);
             };
-            this.updateDisplay();
-        }
-    }
-
-    updateDisplay() {
-        if (!this.compassRose || !this.qiblaIndicator) return;
-
-        this.compassRose.style.transform = `rotate(${-deviceOrientation.alpha}deg)`;
-        const qiblaAngle = (currentQiblaDirection - deviceOrientation.alpha + 360) % 360;
-        this.qiblaIndicator.style.transform = `rotate(${qiblaAngle}deg)`;
-
-        // Update AR view if active
-        const arDirection = document.getElementById('ar-direction');
-        if (arDirection && document.getElementById('arView')?.style.display === 'block') {
-            arDirection.textContent = `${qiblaAngle.toFixed(1)}° from current direction`;
-        }
-    }
-}
-
-// Location and Qibla calculation
-class QiblaCalculator {
-    static async requestLocation() {
-        if (!navigator.geolocation) {
-            await this.showError('Geolocation Not Supported', 
-                'Your browser does not support geolocation services.');
-            return;
+            session.requestAnimationFrame(loop);
         }
 
-        try {
-            const position = await this.getCurrentPosition();
-            await this.handleLocation(position);
-        } catch (error) {
-            await this.handleError(error);
+        // Location and Calculation Functions
+        function requestLocation() {
+            if (navigator.geolocation) {
+                Swal.fire({
+                    title: 'Detecting Location',
+                    text: 'Please wait while we access your location...',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    willOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                navigator.geolocation.getCurrentPosition(handleLocation, handleError);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Geolocation Not Supported',
+                    text: 'Your browser does not support geolocation services.',
+                    confirmButtonColor: '#2575fc'
+                });
+            }
         }
-    }
 
-    static getCurrentPosition() {
-        return new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject);
+        function handleLocation(position) {
+            const lat1 = position.coords.latitude;
+            const lon1 = position.coords.longitude;
+            
+            currentQiblaDirection = calculateQiblaDirection(lat1, lon1);
+            const distance = calculateDistance(lat1, lon1, KAABA_LAT, KAABA_LONG);
+            
+            document.getElementById('location-text').textContent = `${lat1.toFixed(4)}°N, ${lon1.toFixed(4)}°E`;
+            document.getElementById('distance-text').textContent = `${distance.toFixed(0)} km`;
+            document.getElementById('direction-text').textContent = `${currentQiblaDirection.toFixed(1)}° from North`;
+
+            // Initialize compass after getting location
+            if (!initCompass()) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Compass Not Available',
+                    text: 'Your device does not support compass features. Direction will be shown statically.'
+                });
+            }
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Location Updated',
+                text: 'Qibla direction has been calculated successfully!',
+                timer: 2000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
+        }
+
+        function handleError(error) {
+            let errorMessage = '';
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    errorMessage = "Please allow location access to find Qibla direction";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorMessage = "Location information is unavailable";
+                    break;
+                case error.TIMEOUT:
+                    errorMessage = "Location request timed out";
+                    break;
+                default:
+                    errorMessage = "An unknown error occurred";
+                    break;
+            }
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Location Error',
+                text: errorMessage,
+                confirmButtonColor: '#2575fc'
+            });
+        }
+
+        // Mathematical Calculation Functions
+        function calculateQiblaDirection(lat1, lon1) {
+            const φ1 = lat1 * Math.PI / 180;
+            const φ2 = KAABA_LAT * Math.PI / 180;
+            const Δλ = (KAABA_LONG - lon1) * Math.PI / 180;
+            const y = Math.sin(Δλ);
+            const x = Math.cos(φ1) * Math.tan(φ2) - Math.sin(φ1) * Math.cos(Δλ);
+            const qibla = Math.atan2(y, x) * 180 / Math.PI;
+            return (qibla + 360) % 360;
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth's radius in kilometers
+            const φ1 = lat1 * Math.PI / 180;
+            const φ2 = lat2 * Math.PI / 180;
+            const Δφ = (lat2 - lat1) * Math.PI / 180;
+            const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                    Math.cos(φ1) * Math.cos(φ2) *
+                    Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // Theme Functions
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+            
+            const theme = document.body.classList.contains('dark-mode') ? 'Dark' : 'Light';
+            Swal.fire({
+                icon: 'success',
+                title: `${theme} Mode Activated`,
+                text: `Successfully switched to ${theme.toLowerCase()} mode`,
+                timer: 1500,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
+        }
+
+        // Initialization
+        window.addEventListener('load', () => {
+            // Check for saved dark mode preference
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+
+            // Show welcome message
+            Swal.fire({
+                icon: 'info',
+                title: 'Welcome to Qibla Finder',
+                text: 'Allow location access to find the accurate Qibla direction',
+                confirmButtonColor: '#2575fc'
+            }).then(() => {
+                requestLocation();
+            });
         });
-    }
-
-    static async handleLocation(position) {
-        const { latitude: lat1, longitude: lon1 } = position.coords;
-        
-        currentQiblaDirection = this.calculateQiblaDirection(lat1, lon1);
-        const distance = this.calculateDistance(lat1, lon1, KAABA_LAT, KAABA_LONG);
-        
-        this.updateUI(lat1, lon1, distance, currentQiblaDirection);
-        
-        await Swal.fire({
-            icon: 'success',
-            title: 'Location Updated',
-            text: 'Qibla direction has been calculated successfully!',
-            timer: 2000,
-            showConfirmButton: false,
-            toast: true,
-            position: 'top-end'
-        });
-    }
-
-    static updateUI(lat, lon, distance, direction) {
-        const elements = {
-            location: document.getElementById('location-text'),
-            distance: document.getElementById('distance-text'),
-            direction: document.getElementById('direction-text')
-        };
-
-        if (elements.location) elements.location.textContent = `${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E`;
-        if (elements.distance) elements.distance.textContent = `${distance.toFixed(0)} km`;
-        if (elements.direction) elements.direction.textContent = `${direction.toFixed(1)}° from North`;
-    }
-
-    static calculateQiblaDirection(lat1, lon1) {
-        const φ1 = this.toRadians(lat1);
-        const φ2 = this.toRadians(KAABA_LAT);
-        const Δλ = this.toRadians(KAABA_LONG - lon1);
-        
-        const y = Math.sin(Δλ);
-        const x = Math.cos(φ1) * Math.tan(φ2) - Math.sin(φ1) * Math.cos(Δλ);
-        const qibla = this.toDegrees(Math.atan2(y, x));
-        
-        return (qibla + 360) % 360;
-    }
-
-    static calculateDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371; // Earth's radius in kilometers
-        const φ1 = this.toRadians(lat1);
-        const φ2 = this.toRadians(lat2);
-        const Δφ = this.toRadians(lat2 - lat1);
-        const Δλ = this.toRadians(lon2 - lon1);
-
-        const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-                Math.cos(φ1) * Math.cos(φ2) *
-                Math.sin(Δλ/2) * Math.sin(Δλ/2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        
-        return R * c;
-    }
-
-    static toRadians(degrees) {
-        return degrees * Math.PI / 180;
-    }
-
-    static toDegrees(radians) {
-        return radians * 180 / Math.PI;
-    }
-
-    static async handleError(error) {
-        const errorMessages = {
-            1: "Please allow location access to find Qibla direction",
-            2: "Location information is unavailable",
-            3: "Location request timed out",
-            default: "An unknown error occurred"
-        };
-
-        const message = errorMessages[error.code] || errorMessages.default;
-        
-        await Swal.fire({
-            icon: 'error',
-            title: 'Location Error',
-            text: message,
-            confirmButtonColor: '#2575fc'
-        });
-    }
-}
-
-// Theme management
-class ThemeManager {
-    static toggle() {
-        document.body.classList.toggle('dark-mode');
-        const isDark = document.body.classList.contains('dark-mode');
-        localStorage.setItem('darkMode', isDark);
-        
-        const theme = isDark ? 'Dark' : 'Light';
-        Swal.fire({
-            icon: 'success',
-            title: `${theme} Mode Activated`,
-            text: `Successfully switched to ${theme.toLowerCase()} mode`,
-            timer: 1500,
-            showConfirmButton: false,
-            toast: true,
-            position: 'top-end'
-        });
-    }
-
-    static init() {
-        if (localStorage.getItem('darkMode') === 'true') {
-            document.body.classList.add('dark-mode');
-        }
-    }
-}
-
-// Initialize everything when DOM is loaded
-document.addEventListener('DOMContentLoaded', async () => {
-    // Initialize all managers
-    const sidebarManager = new SidebarManager();
-    const compassManager = new CompassManager();
-    ThemeManager.init();
-
-    // Show welcome message and request location
-    await Swal.fire({
-        icon: 'info',
-        title: 'Welcome to Qibla Finder',
-        text: 'Allow location access to find the accurate Qibla direction',
-        confirmButtonColor: '#2575fc'
-    });
-
-    await QiblaCalculator.requestLocation();
-});
     </script>
 </body>
 </html>
