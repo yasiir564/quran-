@@ -1373,6 +1373,10 @@ footer ul li a:hover::after {
 
     <div id="main">
         <button class="openbtn" id="openSidebarBtn">&#9776; Quran Pro</button>
+	    <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search for a Surah...">
+                <button id="search-button"><i class="fas fa-search"></i></button>
+            </div>
         
         <div class="container">
             <div class="mobile-cards">
@@ -1395,13 +1399,9 @@ footer ul li a:hover::after {
                 <a href="ayat-al-kursi.html">Ayat Al-Kursi</a>
                 <a href="surah-al-kahf.html">Surah Al-Kahf</a>
             </div>
-            <div class="search-container">
-                <input type="text" id="search-input" placeholder="Search for a Surah...">
-                <button id="search-button"><i class="fas fa-search"></i></button>
-            </div>
-            <button id="dark-mode-toggle"><i class="fas fa-adjust"></i></button>
+
+          
             <div id="surah-list" class="surah-list"></div>
-            <div class="loader" id="loader"></div>
         </div>
     </div>
 	
