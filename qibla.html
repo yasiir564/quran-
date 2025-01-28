@@ -1006,29 +1006,49 @@ let currentQiblaDirection = 0;
 let deviceOrientation = { alpha: 0, beta: 0, gamma: 0 };
 
 // Sidebar functionality
-function toggleSidebar() {
+function openNav() {
     const sidebar = document.getElementById('mySidebar');
     const main = document.getElementById('main');
-    const overlay = document.querySelector('.sidebar-overlay');
+    const overlay = document.getElementById('sidebarOverlay');
     
-    if (sidebar.style.left === '0px' || sidebar.style.left === '') {
-        // Close sidebar
-        sidebar.style.left = '-250px';
-        main.style.marginLeft = '0';
-        if (overlay) {
-            overlay.classList.remove('active');
-        }
-        document.body.style.overflow = '';
-    } else {
-        // Open sidebar
-        sidebar.style.left = '0px';
-        main.style.marginLeft = '250px';
-        if (overlay) {
-            overlay.classList.add('active');
-        }
-        document.body.style.overflow = 'hidden';
+    if (sidebar) {
+        sidebar.style.left = '0';
+        if (main) main.style.marginLeft = '250px';
+        if (overlay) overlay.style.display = 'block';
     }
 }
+
+function closeNav() {
+    const sidebar = document.getElementById('mySidebar');
+    const main = document.getElementById('main');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    if (sidebar) {
+        sidebar.style.left = '-250px';
+        if (main) main.style.marginLeft = '0';
+        if (overlay) overlay.style.display = 'none';
+    }
+}
+
+// Initialize event listeners for sidebar
+document.addEventListener('DOMContentLoaded', () => {
+    // Set up sidebar open button listener
+    const openBtn = document.getElementById('openSidebarBtn');
+    if (openBtn) {
+        openBtn.addEventListener('click', openNav);
+    }
+
+    // Set up sidebar close button listener
+    const closeBtn = document.getElementById('closeSidebarBtn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeNav);
+    }
+
+    // Set up overlay click listener
+    const overlay = document.getElementById('sidebarOverlay');
+    if (overlay) {
+        overlay.addEventListener('click', closeNav);
+    }
 
 // Compass and Orientation Functions
 function initCompass() {
