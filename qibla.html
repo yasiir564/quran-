@@ -1171,6 +1171,22 @@
                 confirmButtonColor: '#2575fc'
             });
         }
+        // Sidebar functionality
+    function openNav() {
+        document.getElementById("mySidebar").style.left = "0";
+        document.getElementById("main").style.marginLeft = "250px";
+    }
+
+    function closeNav() {
+        document.getElementById("mySidebar").style.left = "-250px";
+        document.getElementById("main").style.marginLeft = "0";
+    }
+
+    // Event listener for close button
+    document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
+
+    // Event listener for open button
+    document.querySelector(".openbtn").addEventListener("click", openNav);
 
         // Mathematical Calculation Functions
         function calculateQiblaDirection(lat1, lon1) {
@@ -1231,9 +1247,7 @@
                 requestLocation();
             });
         });
-         document.getElementById('openSidebarBtn').addEventListener('click', openNav);
-            document.getElementById('closeSidebarBtn').addEventListener('click', closeNav);
-            document.getElementById('sidebarOverlay').addEventListener('click', closeNav);
+
         
     </script>
 </body>
