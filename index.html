@@ -1637,10 +1637,7 @@ const UIService = {
     div.append(numberSpan, nameText, arabicName);
     return div;
   },
- // Add a click listener to navigate to surah.html
-    div.addEventListener('click', () => {
-      window.location.href = `surah.html?number=${surah.number}`;
-    });
+
   async showSurahs(start, end, surahs) {
     const fragment = document.createDocumentFragment();
     
