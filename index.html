@@ -1544,91 +1544,41 @@ footer ul li a:hover::after {
     <script src="https://unpkg.com/idb@6.1.0/build/iife/index-min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
-            function updateProfileIcon() {
-                const userAvatar = localStorage.getItem('userAvatar');
-                const defaultProfileIcon = document.getElementById('default-profile-icon');
-                const userProfilePic = document.getElementById('user-profile-pic');
-                const profileLink = document.getElementById('profile-link');
+    // Utility Functions
+    function updateProfileIcon() {
+        const userAvatar = localStorage.getItem('userAvatar');
+        const defaultProfileIcon = document.getElementById('default-profile-icon');
+        const userProfilePic = document.getElementById('user-profile-pic');
+        const profileLink = document.getElementById('profile-link');
 
-                if (userAvatar) {
-                    defaultProfileIcon.style.display = 'none';
-                    userProfilePic.src = userAvatar;
-                    userProfilePic.style.display = 'block';
-                    profileLink.href = 'profile.html';
-                } else {
-                    defaultProfileIcon.style.display = 'block';
-                    userProfilePic.style.display = 'none';
-                    profileLink.href = 'login.html';
-                }
-            }
+        if (userAvatar) {
+            defaultProfileIcon.style.display = 'none';
+            userProfilePic.src = userAvatar;
+            userProfilePic.style.display = 'block';
+            profileLink.href = 'profile.html';
+        } else {
+            defaultProfileIcon.style.display = 'block';
+            userProfilePic.style.display = 'none';
+            profileLink.href = 'login.html';
+        }
+    }
 
-            updateProfileIcon();
+    function openNav() {
+        document.getElementById("mySidebar").classList.add("open");
+        document.getElementById("sidebarOverlay").classList.add("active");
+    }
 
-            function openNav() {
-                document.getElementById("mySidebar").classList.add("open");
-                document.getElementById("sidebarOverlay").classList.add("active");
-            }
+    function closeNav() {
+        document.getElementById("mySidebar").classList.remove("open");
+        document.getElementById("sidebarOverlay").classList.remove("active");
+    }
 
-            function closeNav() {
-                document.getElementById("mySidebar").classList.remove("open");
-                document.getElementById("sidebarOverlay").classList.remove("active");
-            }
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+    }
 
-            function toggleDarkMode() {
-                document.body.classList.toggle('dark-mode');
-            }
-
-            function performSearch() {
-                const query = document.querySelector('#search-input').value.toLowerCase();
-                const surahElements = document.querySelectorAll('.surah');
-
-                surahElements.forEach(surahElement => {
-                    const surahName = surahElement.innerText.toLowerCase();
-                    if (surahName.includes(query)) {
-                        surahElement.style.display = 'block';
-                    } else {
-                        surahElement.style.display = 'none';
-                    }
-                });
-            }
-
-            document.querySelector('.search-container button').addEventListener('click', performSearch);
-
-            document.querySelector('#search-input').addEventListener('keypress', function(event) {
-                if (event.key === 'Enter') {
-                    performSearch();
-                }
-            });
-
-            document.getElementById('openSidebarBtn').addEventListener('click', openNav);
-            document.getElementById('closeSidebarBtn').addEventListener('click', closeNav);
-            document.getElementById('sidebarOverlay').addEventListener('click', closeNav);
-
-            function showLoader() {
-                document.getElementById('loader').style.display = 'block';
-            }
-
-            function hideLoader() {
-                document.getElementById('loader').style.display = 'none';
-            }
-
-            function loadContent() {
-                showLoader();
-                setTimeout(hideLoader, 2000);
-            }
-
-            window.onload = loadContent;
-
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(function(registration) {
-                        console.log('Service Worker registered with scope:', registration.scope);
-                    }).catch(function(error) {
-                        console.log('Service Worker registration failed:', error);
-                    });
-            }
-
-              async function getSurahData() {
+    // Initialize IDB and fetch Surah data
+    async function getSurahData() {
         const db = await idb.openDB('quran-reader-db', 1, {
             upgrade(db) {
                 db.createObjectStore('surahs', { keyPath: 'number' });
@@ -1656,40 +1606,87 @@ footer ul li a:hover::after {
         }
     }
 
+    // Surah and Juzz Management
+    const surahBtn = document.getElementById('read-surah-btn');
+    const juzzBtn = document.getElementById('read-juzz-btn');
     const surahList = document.getElementById('surah-list');
+    const juzzList = document.getElementById('juzz-list');
     const loader = document.getElementById('loader');
-    loader.style.display = 'block';
 
-    let surahs = [];
-    try {
-        surahs = await getSurahData();
-        loader.style.display = 'none';
-        showSurahs(0, 15);
-    } catch (error) {
-        loader.style.display = 'none';
-        console.error('Error fetching Surahs:', error);
+    // Initialize view
+    surahBtn.classList.add('active');
+    juzzBtn.classList.remove('active');
+    surahList.style.display = 'grid';
+    juzzList.style.display = 'none';
+
+    const juzzData = [
+        { number: 1, name: "Alif Lām Mīm", range: "Al-Baqarah 1-141" },
+        { number: 2, name: "Sayaqūl", range: "Al-Baqarah 142-252" },
+        { number: 3, name: "Tilka 'r-Rusul", range: "Al-Baqarah 253 - Al-i-Imran 92" },
+        { number: 4, name: "Lan Tanalū", range: "Al-i-Imran 93-200, An-Nisa 1-23" },
+        { number: 5, name: "Wal Muhsanat", range: "An-Nisa 24-147" },
+        { number: 6, name: "La Yuhibbu 'l-lah", range: "An-Nisa 148-176, Al-Ma'idah 1-81" },
+        { number: 7, name: "Wa Idha Samiʿū", range: "Al-Ma'idah 82-120, Al-An'am 1-110" },
+        { number: 8, name: "Wa Law Annana", range: "Al-An'am 111-165, Al-A'raf 1-87" },
+        { number: 9, name: "Qala 'l-Mala'", range: "Al-A'raf 88-206, Al-Anfal 1-40" },
+        { number: 10, name: "Wa-ʿlamū", range: "Al-Anfal 41-75, At-Tawbah 1-92" },
+        { number: 11, name: "Yaʿtadhirūn", range: "At-Tawbah 93-129, Yunus 1-109, Hud 1-5" },
+        { number: 12, name: "Wa Mā Min Dābbah", range: "Hud 6-123, Yusuf 1-52" },
+        { number: 13, name: "Wa Mā Ubarri'u", range: "Yusuf 53-111, Ar-Ra'd 1-43, Ibrahim 1-52" },
+        { number: 14, name: "Rubamā", range: "Al-Hijr 1-99, An-Nahl 1-128" },
+        { number: 15, name: "Subhāna 'l-ladhī", range: "Al-Isra 1-111, Al-Kahf 1-74" },
+        { number: 16, name: "Qāla 'A-lam", range: "Al-Kahf 75-110, Maryam 1-98, Taha 1-135" },
+        { number: 17, name: "Iqtaraba Lin-nās", range: "Al-Anbya 1-112, Al-Hajj 1-78" },
+        { number: 18, name: "Qad Aflaha", range: "Al-Mu'minun 1-118, An-Nur 1-64" },
+        { number: 19, name: "Wa Qāla 'L-ladhīna", range: "Al-Furqan 1-77, Ash-Shu'ara 1-227" },
+        { number: 20, name: "A-man Khalaq", range: "An-Naml 1-93, Al-Qasas 1-88, Al-Ankabut 1-45" },
+        { number: 21, name: "Utlu Mā Ūhiya", range: "Al-Ankabut 46-69, Ar-Rum 1-60, Luqman 1-34" },
+        { number: 22, name: "Wa Man Yaqnut", range: "As-Sajda 1-30, Al-Ahzab 1-73" },
+        { number: 23, name: "Wa Mā Lī", range: "Saba 1-54, Fatir 1-45, Ya-Sin 1-83" },
+        { number: 24, name: "Fa-man Azlam", range: "As-Saffat 1-182, Sad 1-88, Az-Zumar 1-75" },
+        { number: 25, name: "Ilayhi Yuraddu", range: "Ghafir 1-85, Fussilat 1-46" },
+        { number: 26, name: "Hā Mīm", range: "Ash-Shura 1-53, Az-Zukhruf 1-89, Ad-Dukhan 1-59" },
+        { number: 27, name: "Qāla Fa-mā Khatbukum", range: "Al-Jathiya 1-37, Al-Ahqaf 1-35, Muhammad 1-38" },
+        { number: 28, name: "Qad Samiʿa 'l-lāh", range: "Al-Fath 1-29, Al-Hujurat 1-18, Qaf 1-45" },
+        { number: 29, name: "Tabāraka 'l-ladhī", range: "Adh-Dhariyat 1-60 to Al-Hadid 1-29" },
+        { number: 30, name: "ʿAmma", range: "Al-Mujadila 1-22 to An-Nas 1-6" }
+    ];
+
+    function generateJuzzList() {
+        juzzList.innerHTML = juzzData.map(juzz => `
+            <div class="juzz-item" onclick="window.location.href='juzz.html?juzz=${juzz.number}'">
+                <div class="juzz-number">Juzz ${juzz.number}</div>
+                <div class="juzz-name">${juzz.name}</div>
+                <div class="juzz-range">${juzz.range}</div>
+            </div>
+        `).join('');
     }
 
-    function showSurahs(start, end) {
+    function showSurahs(start, end, surahs) {
         const fragment = document.createDocumentFragment();
         surahs.slice(start, end).forEach(surah => {
             const surahDiv = document.createElement('div');
             surahDiv.classList.add('surah');
-            surahDiv.innerHTML = `<span>${surah.number}</span> ${surah.englishName} <div class="arabic-name">${surah.name}</div>`;
+            surahDiv.innerHTML = `
+                <span>${surah.number}</span> 
+                ${surah.englishName} 
+                <div class="arabic-name">${surah.name}</div>
+            `;
             surahDiv.addEventListener('click', () => {
                 window.location.href = `surah.html?surah=${surah.number}`;
             });
             fragment.appendChild(surahDiv);
         });
+        
         surahList.innerHTML = '';
         surahList.appendChild(fragment);
-        
+
         if (end < surahs.length) {
             const showMoreButton = document.createElement('button');
             showMoreButton.id = 'show-more-button';
             showMoreButton.textContent = 'Show More';
             showMoreButton.addEventListener('click', () => {
-                showSurahs(start + 15, end + 15);
+                showSurahs(start + 15, end + 15, surahs);
             });
             surahList.appendChild(showMoreButton);
         }
@@ -1699,45 +1696,87 @@ footer ul li a:hover::after {
             showLessButton.id = 'show-less-button';
             showLessButton.textContent = 'Show Less';
             showLessButton.addEventListener('click', () => {
-                showSurahs(0, 15);
+                showSurahs(0, 15, surahs);
             });
             surahList.appendChild(showLessButton);
         }
     }
 
-    const searchInput = document.getElementById('search-input');
-    const searchButton = document.getElementById('search-button');
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    // Initialize data
+    let surahs = [];
+    try {
+        loader.style.display = 'block';
+        surahs = await getSurahData();
+        loader.style.display = 'none';
+        showSurahs(0, 15, surahs);
+        generateJuzzList();
+    } catch (error) {
+        loader.style.display = 'none';
+        console.error('Error fetching Surahs:', error);
+    }
 
-    searchButton.addEventListener('click', () => {
-        const searchTerm = searchInput.value.toLowerCase();
-        const surahElements = surahList.querySelectorAll('.surah');
-        surahElements.forEach(surah => {
-            if (surah.innerText.toLowerCase().includes(searchTerm)) {
-                surah.style.display = 'block';
-            } else {
-                surah.style.display = 'none';
-            }
-        });
+    // Event Listeners
+    surahBtn.addEventListener('click', () => {
+        surahBtn.classList.add('active');
+        juzzBtn.classList.remove('active');
+        surahList.style.display = 'grid';
+        juzzList.style.display = 'none';
+        if (searchInput) searchInput.value = '';
     });
 
-    darkModeToggle.addEventListener('click', toggleDarkMode);
+    juzzBtn.addEventListener('click', () => {
+        juzzBtn.classList.add('active');
+        surahBtn.classList.remove('active');
+        surahList.style.display = 'none';
+        juzzList.style.display = 'grid';
+        if (searchInput) searchInput.value = '';
+    });
 
-    const hijriDate = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    }).format(new Date());
+    // Search functionality
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-button');
 
-    const hijriDateArabic = new Intl.DateTimeFormat('ar-TN-u-ca-islamic', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    }).format(new Date());
+    function performSearch() {
+        const searchTerm = searchInput.value.toLowerCase();
+        
+        if (surahList.style.display !== 'none') {
+            // Search in surah list
+            const surahElements = surahList.querySelectorAll('.surah');
+            surahElements.forEach(surah => {
+                surah.style.display = surah.innerText.toLowerCase().includes(searchTerm) ? 'block' : 'none';
+            });
+        } else {
+            // Search in juzz list
+            const juzzElements = juzzList.querySelectorAll('.juzz-item');
+            juzzElements.forEach(juzz => {
+                juzz.style.display = juzz.innerText.toLowerCase().includes(searchTerm) ? 'block' : 'none';
+            });
+        }
+    }
 
-    const calendarDiv = document.getElementById('calendar');
-    calendarDiv.innerHTML = `<p id="hijri-date">${hijriDate}</p><p id="hijri-date-arabic">${hijriDateArabic}</p>`;
+    if (searchButton) {
+        searchButton.addEventListener('click', performSearch);
+    }
 
+    if (searchInput) {
+        searchInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                performSearch();
+            }
+        });
+    }
+
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(function(registration) {
+                console.log('Service Worker registered with scope:', registration.scope);
+            }).catch(function(error) {
+                console.log('Service Worker registration failed:', error);
+            });
+    }
+
+    // Scroll Effects
     let lastScrollTop = 0;
     const header = document.querySelector('header');
     const sidebar = document.getElementById('mySidebar');
@@ -1783,101 +1822,24 @@ footer ul li a:hover::after {
         checkScroll();
     });
 
-    window.addEventListener('load', () => {
-        const hash = window.location.hash;
-        if (hash) {
-            document.querySelector(hash)?.scrollIntoView();
-        }
-    });
-		document.addEventListener('DOMContentLoaded', function() {
-    const surahBtn = document.getElementById('read-surah-btn');
-    const juzzBtn = document.getElementById('read-juzz-btn');
-    const surahList = document.getElementById('surah-list');
-    const juzzList = document.getElementById('juzz-list');
-
-    const juzzData = [
-        { number: 1, name: "Alif Lām Mīm", range: "Al-Baqarah 1-141" },
-        { number: 2, name: "Sayaqūl", range: "Al-Baqarah 142-252" },
-        { number: 3, name: "Tilka 'r-Rusul", range: "Al-Baqarah 253 - Al-i-Imran 92" },
-        { number: 4, name: "Lan Tanalū", range: "Al-i-Imran 93-200, An-Nisa 1-23" },
-        { number: 5, name: "Wal Muhsanat", range: "An-Nisa 24-147" },
-        { number: 6, name: "La Yuhibbu 'l-lah", range: "An-Nisa 148-176, Al-Ma'idah 1-81" },
-        { number: 7, name: "Wa Idha Samiʿū", range: "Al-Ma'idah 82-120, Al-An'am 1-110" },
-        { number: 8, name: "Wa Law Annana", range: "Al-An'am 111-165, Al-A'raf 1-87" },
-        { number: 9, name: "Qala 'l-Mala'", range: "Al-A'raf 88-206, Al-Anfal 1-40" },
-        { number: 10, name: "Wa-ʿlamū", range: "Al-Anfal 41-75, At-Tawbah 1-92" },
-        { number: 11, name: "Yaʿtadhirūn", range: "At-Tawbah 93-129, Yunus 1-109, Hud 1-5" },
-        { number: 12, name: "Wa Mā Min Dābbah", range: "Hud 6-123, Yusuf 1-52" },
-        { number: 13, name: "Wa Mā Ubarri'u", range: "Yusuf 53-111, Ar-Ra'd 1-43, Ibrahim 1-52" },
-        { number: 14, name: "Rubamā", range: "Al-Hijr 1-99, An-Nahl 1-128" },
-        { number: 15, name: "Subhāna 'l-ladhī", range: "Al-Isra 1-111, Al-Kahf 1-74" },
-        { number: 16, name: "Qāla 'A-lam", range: "Al-Kahf 75-110, Maryam 1-98, Taha 1-135" },
-        { number: 17, name: "Iqtaraba Lin-nās", range: "Al-Anbya 1-112, Al-Hajj 1-78" },
-        { number: 18, name: "Qad Aflaha", range: "Al-Mu'minun 1-118, An-Nur 1-64" },
-        { number: 19, name: "Wa Qāla 'L-ladhīna", range: "Al-Furqan 1-77, Ash-Shu'ara 1-227" },
-        { number: 20, name: "A-man Khalaq", range: "An-Naml 1-93, Al-Qasas 1-88, Al-Ankabut 1-45" },
-        { number: 21, name: "Utlu Mā Ūhiya", range: "Al-Ankabut 46-69, Ar-Rum 1-60, Luqman 1-34" },
-        { number: 22, name: "Wa Man Yaqnut", range: "As-Sajda 1-30, Al-Ahzab 1-73" },
-        { number: 23, name: "Wa Mā Lī", range: "Saba 1-54, Fatir 1-45, Ya-Sin 1-83" },
-        { number: 24, name: "Fa-man Azlam", range: "As-Saffat 1-182, Sad 1-88, Az-Zumar 1-75" },
-        { number: 25, name: "Ilayhi Yuraddu", range: "Ghafir 1-85, Fussilat 1-46" },
-        { number: 26, name: "Hā Mīm", range: "Ash-Shura 1-53, Az-Zukhruf 1-89, Ad-Dukhan 1-59" },
-        { number: 27, name: "Qāla Fa-mā Khatbukum", range: "Al-Jathiya 1-37, Al-Ahqaf 1-35, Muhammad 1-38" },
-        { number: 28, name: "Qad Samiʿa 'l-lāh", range: "Al-Fath 1-29, Al-Hujurat 1-18, Qaf 1-45" },
-        { number: 29, name: "Tabāraka 'l-ladhī", range: "Adh-Dhariyat 1-60 to Al-Hadid 1-29" },
-        { number: 30, name: "ʿAmma", range: "Al-Mujadila 1-22 to An-Nas 1-6" }
-    ];
-
-    const generateJuzzList = () => {
-        let juzzHTML = '';
-        juzzData.forEach(juzz => {
-            juzzHTML += `
-                <div class="juzz-item">
-                    <div class="juzz-number">Juzz ${juzz.number}</div>
-                    <div class="juzz-name">${juzz.name}</div>
-                    <div class="juzz-range">${juzz.range}</div>
-                </div>
-            `;
-        });
-        juzzList.innerHTML = juzzHTML;
-    };
-
     // Initial setup
-    generateJuzzList();
-    juzzList.style.display = 'none';
+    updateProfileIcon();
+    document.getElementById('openSidebarBtn').addEventListener('click', openNav);
+    document.getElementById('closeSidebarBtn').addEventListener('click', closeNav);
+    document.getElementById('sidebarOverlay').addEventListener('click', closeNav);
+    document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
 
-    surahBtn.addEventListener('click', () => {
-        surahBtn.classList.add('active');
-        juzzBtn.classList.remove('active');
-        surahList.style.display = 'grid';
-        juzzList.style.display = 'none';
-    });
-
-    juzzBtn.addEventListener('click', () => {
-        juzzBtn.classList.add('active');
-        surahBtn.classList.remove('active');
-        surahList.style.display = 'none';
-        juzzList.style.display = 'grid';
-    });
-});
-
-    // Function to handle logout
+    // Handle logout
     function handleLogout() {
-        // Clear user data from localStorage
         localStorage.removeItem('userName');
         localStorage.removeItem('userEmail');
         localStorage.removeItem('userAvatar');
-        
-        // Update the profile icon
         updateProfileIcon();
         
-        // Sign out from Firebase
         auth.signOut().then(() => {
-            // Redirect to login page or home page
             window.location.href = 'login.html';
-               }).catch((error) => {
+        }).catch((error) => {
             console.error('Error signing out:', error);
-            // Optionally, you can use SweetAlert to display an error message
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
@@ -1886,8 +1848,63 @@ footer ul li a:hover::after {
         });
     }
 
-    // Example: Attach the handleLogout function to a logout button
+    // Attach logout handler
     document.getElementById('logout-button').addEventListener('click', handleLogout);
+
+    // Hijri Calendar
+    const hijriDate = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    }).format(new Date());
+
+    const hijriDateArabic = new Intl.DateTimeFormat('ar-TN-u-ca-islamic', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    }).format(new Date());
+
+    const calendarDiv = document.getElementById('calendar');
+    if (calendarDiv) {
+        calendarDiv.innerHTML = `
+            <p id="hijri-date">${hijriDate}</p>
+            <p id="hijri-date-arabic">${hijriDateArabic}</p>
+        `;
+    }
+
+    // Handle hash-based navigation
+    window.addEventListener('load', () => {
+        const hash = window.location.hash;
+        if (hash) {
+            const element = document.querySelector(hash);
+            if (element) {
+                element.scrollIntoView();
+            }
+        }
+    });
+
+    // Loading screen
+    function showLoader() {
+        const loader = document.getElementById('loader');
+        if (loader) {
+            loader.style.display = 'block';
+        }
+    }
+
+    function hideLoader() {
+        const loader = document.getElementById('loader');
+        if (loader) {
+            loader.style.display = 'none';
+        }
+    }
+
+    function loadContent() {
+        showLoader();
+        setTimeout(hideLoader, 2000);
+    }
+
+    // Initialize content loading
+    loadContent();
 });
  </script>
 </body>
