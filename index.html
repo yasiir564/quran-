@@ -1524,36 +1524,95 @@ footer ul li a:hover::after {
         font-size: 30px;
     }
 }
-	    /* Enhanced Support Section */
-        .support-section {
-            background: linear-gradient(135deg, rgba(37,117,252,0.1) 0%, rgba(106,17,203,0.1) 100%);
-            padding: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 50px;
-        }
+/* Enhanced Support Section */
+.support-section {
+    background: linear-gradient(135deg, rgba(37,117,252,0.1) 0%, rgba(106,17,203,0.1) 100%);
+    padding: 40px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+}
 
-        .support-content {
-            flex: 1;
-            max-width: 500px;
-        }
+.support-content {
+    flex: 1;
+    max-width: 500px;
+    padding: 0 15px;
+}
 
-        .support-image {
-            flex: 1;
-            max-width: 500px;
-            position: relative;
-            animation: float 6s ease-in-out infinite;
-        }
+.support-image {
+    flex: 1;
+    max-width: 500px;
+    position: relative;
+    animation: float 6s ease-in-out infinite;
+}
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-	    .btn {
-        width: 100%;
-        max-width: 300px;
-        margin: 15px auto;
+.btn {
+    display: inline-block;
+    width: 100%;
+    max-width: 300px;
+    margin: 15px auto;
+    padding: 12px 24px;
+    border-radius: 6px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 1024px) {
+    .support-section {
+        padding: 30px 15px;
+        gap: 20px;
+    }
+
+    .support-content,
+    .support-image {
+        max-width: 450px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .support-section {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 15px;
+    }
+
+    .support-content,
+    .support-image {
+        max-width: 100%;
+    }
+
+    .btn {
+        max-width: 250px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .support-section {
+        padding: 20px 10px;
+    }
+
+    .btn {
+        max-width: 100%;
+        margin: 10px auto;
+        padding: 10px 20px;
     }
 }
 
