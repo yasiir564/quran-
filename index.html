@@ -631,73 +631,6 @@ body.dark-mode h1 {
         gap: 10px; /* Further reduce gap */
     }
 }
-	    .navigation-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin: 30px auto;
-    flex-wrap: wrap;
-    max-width: 600px;
-    padding: 0 20px;
-}
-
-.nav-button {
-    position: relative;
-    padding: 15px 30px;
-    min-width: 200px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: white;
-    background: linear-gradient(135deg, #2575fc, #6a11cb);
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 15px rgba(37, 117, 252, 0.2);
-}
-
-.nav-button:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        120deg,
-        transparent,
-        rgba(255, 255, 255, 0.3),
-        transparent
-    );
-    transition: 0.5s;
-}
-
-.nav-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(37, 117, 252, 0.3);
-}
-
-.nav-button:hover:before {
-    left: 100%;
-}
-
-.nav-button.active {
-    background: linear-gradient(135deg, #6a11cb, #2575fc);
-    box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
-}
-
-@media (max-width: 480px) {
-    .navigation-buttons {
-        gap: 15px;
-    }
-    
-    .nav-button {
-        min-width: 160px;
-        padding: 12px 24px;
-        font-size: 1rem;
-    }
-}
 
 
 /* 2. SIDEBAR STYLES */
@@ -1379,37 +1312,9 @@ footer ul li a:hover::after {
         ::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
         }
-.juzz-item {
-    background: white;
-    border-radius: 8px;
-    padding: 15px;
-    margin: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
 
-.juzz-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
 
-.juzz-number {
-    font-size: 1.2em;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
 
-.juzz-name {
-    color: #333;
-    margin-bottom: 5px;
-}
-
-.juzz-arabic-name {
-    font-family: 'Traditional Arabic', serif;
-    font-size: 1.3em;
-    color: #666;
-}
 </style>
 </head>
 <body>
@@ -1468,10 +1373,6 @@ footer ul li a:hover::after {
 
     <div id="main">
         <button class="openbtn" id="openSidebarBtn">&#9776; Quran Pro</button>
-	    <div class="search-container">
-                <input type="text" id="search-input" placeholder="Search for a Surah...">
-                <button id="search-button"><i class="fas fa-search"></i></button>
-            </div>
         
         <div class="container">
             <div class="mobile-cards">
@@ -1494,15 +1395,13 @@ footer ul li a:hover::after {
                 <a href="ayat-al-kursi.html">Ayat Al-Kursi</a>
                 <a href="surah-al-kahf.html">Surah Al-Kahf</a>
             </div>
-		<div class="navigation-buttons">
-    <button class="nav-button active" id="read-surah-btn">Read Surah</button>
-    <button class="nav-button" id="read-juzz-btn">Read Juzz</button>
-</div>
-           
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search for a Surah...">
+                <button id="search-button"><i class="fas fa-search"></i></button>
+            </div>
             <button id="dark-mode-toggle"><i class="fas fa-adjust"></i></button>
-            <div id="surah-list" class="grid-container"></div>
-<div id="juzz-list" class="grid-container" style="display: none;"></div>
-          <div class="loader" id="loader"></div>
+            <div id="surah-list" class="surah-list"></div>
+            <div class="loader" id="loader"></div>
         </div>
     </div>
 	
@@ -1535,485 +1434,281 @@ footer ul li a:hover::after {
 
     <script src="https://unpkg.com/idb@6.1.0/build/iife/index-min.js"></script>
     <script>
-// Constants
-const CACHE_NAME = 'quran-pro-v1';
-const API_BASE_URL = 'https://api.alquran.cloud/v1';
-const DB_NAME = 'quran-reader-db';
-const DB_VERSION = 1;
+        document.addEventListener('DOMContentLoaded', async function() {
+            function updateProfileIcon() {
+                const userAvatar = localStorage.getItem('userAvatar');
+                const defaultProfileIcon = document.getElementById('default-profile-icon');
+                const userProfilePic = document.getElementById('user-profile-pic');
+                const profileLink = document.getElementById('profile-link');
 
-// Simplified Juzz Data Configuration
-const JUZZ_DATA = [
-  { number: 1, englishName: "Juzz One", arabicName: "الجزء الأول" },
-  { number: 2, englishName: "Juzz Two", arabicName: "الجزء الثاني" },
-  { number: 3, englishName: "Juzz Three", arabicName: "الجزء الثالث" },
-  { number: 4, englishName: "Juzz Four", arabicName: "الجزء الرابع" },
-  { number: 5, englishName: "Juzz Five", arabicName: "الجزء الخامس" },
-  { number: 6, englishName: "Juzz Six", arabicName: "الجزء السادس" },
-  { number: 7, englishName: "Juzz Seven", arabicName: "الجزء السابع" },
-  { number: 8, englishName: "Juzz Eight", arabicName: "الجزء الثامن" },
-  { number: 9, englishName: "Juzz Nine", arabicName: "الجزء التاسع" },
-  { number: 10, englishName: "Juzz Ten", arabicName: "الجزء العاشر" },
-  { number: 11, englishName: "Juzz Eleven", arabicName: "الجزء الحادي عشر" },
-  { number: 12, englishName: "Juzz Twelve", arabicName: "الجزء الثاني عشر" },
-  { number: 13, englishName: "Juzz Thirteen", arabicName: "الجزء الثالث عشر" },
-  { number: 14, englishName: "Juzz Fourteen", arabicName: "الجزء الرابع عشر" },
-  { number: 15, englishName: "Juzz Fifteen", arabicName: "الجزء الخامس عشر" },
-  { number: 16, englishName: "Juzz Sixteen", arabicName: "الجزء السادس عشر" },
-  { number: 17, englishName: "Juzz Seventeen", arabicName: "الجزء السابع عشر" },
-  { number: 18, englishName: "Juzz Eighteen", arabicName: "الجزء الثامن عشر" },
-  { number: 19, englishName: "Juzz Nineteen", arabicName: "الجزء التاسع عشر" },
-  { number: 20, englishName: "Juzz Twenty", arabicName: "الجزء العشرون" },
-  { number: 21, englishName: "Juzz Twenty-One", arabicName: "الجزء الحادي والعشرون" },
-  { number: 22, englishName: "Juzz Twenty-Two", arabicName: "الجزء الثاني والعشرون" },
-  { number: 23, englishName: "Juzz Twenty-Three", arabicName: "الجزء الثالث والعشرون" },
-  { number: 24, englishName: "Juzz Twenty-Four", arabicName: "الجزء الرابع والعشرون" },
-  { number: 25, englishName: "Juzz Twenty-Five", arabicName: "الجزء الخامس والعشرون" },
-  { number: 26, englishName: "Juzz Twenty-Six", arabicName: "الجزء السادس والعشرون" },
-  { number: 27, englishName: "Juzz Twenty-Seven", arabicName: "الجزء السابع والعشرون" },
-  { number: 28, englishName: "Juzz Twenty-Eight", arabicName: "الجزء الثامن والعشرون" },
-  { number: 29, englishName: "Juzz Twenty-Nine", arabicName: "الجزء التاسع والعشرون" },
-  { number: 30, englishName: "Juzz Thirty", arabicName: "الجزء الثلاثون" }
-];
+                if (userAvatar) {
+                    defaultProfileIcon.style.display = 'none';
+                    userProfilePic.src = userAvatar;
+                    userProfilePic.style.display = 'block';
+                    profileLink.href = 'profile.html';
+                } else {
+                    defaultProfileIcon.style.display = 'block';
+                    userProfilePic.style.display = 'none';
+                    profileLink.href = 'login.html';
+                }
+            }
 
-// DOM Elements Cache
-const Elements = {
-  init() {
-    this.sidebar = document.getElementById('mySidebar');
-    this.header = document.querySelector('header');
-    this.surahList = document.getElementById('surah-list');
-    this.juzzList = document.getElementById('juzz-list');
-    this.loader = document.getElementById('loader');
-    this.searchInput = document.getElementById('search-input');
-    this.searchButton = document.getElementById('search-button');
-    this.darkModeToggle = document.getElementById('dark-mode-toggle');
-    this.openSidebarBtn = document.getElementById('openSidebarBtn');
-    this.closeSidebarBtn = document.getElementById('closeSidebarBtn');
-    this.sidebarOverlay = document.getElementById('sidebarOverlay');
-    this.calendarDiv = document.getElementById('calendar');
-    this.navigationButtons = {
-      surah: document.getElementById('read-surah-btn'),
-      juzz: document.getElementById('read-juzz-btn')
-    };
-    this.profileElements = {
-      defaultIcon: document.getElementById('default-profile-icon'),
-      userPic: document.getElementById('user-profile-pic'),
-      link: document.getElementById('profile-link')
-    };
-  }
-};
+            updateProfileIcon();
 
-// Database Service
-const DatabaseService = {
-  async initDB() {
-    return await idb.openDB(DB_NAME, DB_VERSION, {
-      upgrade(db) {
-        db.createObjectStore('surahs', { keyPath: 'number' });
-        db.createObjectStore('juzz', { keyPath: 'number' });
-      }
-    });
-  },
+            function openNav() {
+                document.getElementById("mySidebar").classList.add("open");
+                document.getElementById("sidebarOverlay").classList.add("active");
+            }
 
-  async getSurahs() {
+            function closeNav() {
+                document.getElementById("mySidebar").classList.remove("open");
+                document.getElementById("sidebarOverlay").classList.remove("active");
+            }
+
+            function toggleDarkMode() {
+                document.body.classList.toggle('dark-mode');
+            }
+
+            function performSearch() {
+                const query = document.querySelector('#search-input').value.toLowerCase();
+                const surahElements = document.querySelectorAll('.surah');
+
+                surahElements.forEach(surahElement => {
+                    const surahName = surahElement.innerText.toLowerCase();
+                    if (surahName.includes(query)) {
+                        surahElement.style.display = 'block';
+                    } else {
+                        surahElement.style.display = 'none';
+                    }
+                });
+            }
+
+            document.querySelector('.search-container button').addEventListener('click', performSearch);
+
+            document.querySelector('#search-input').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    performSearch();
+                }
+            });
+
+            document.getElementById('openSidebarBtn').addEventListener('click', openNav);
+            document.getElementById('closeSidebarBtn').addEventListener('click', closeNav);
+            document.getElementById('sidebarOverlay').addEventListener('click', closeNav);
+
+            function showLoader() {
+                document.getElementById('loader').style.display = 'block';
+            }
+
+            function hideLoader() {
+                document.getElementById('loader').style.display = 'none';
+            }
+
+            function loadContent() {
+                showLoader();
+                setTimeout(hideLoader, 2000);
+            }
+
+            window.onload = loadContent;
+
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(function(registration) {
+                        console.log('Service Worker registered with scope:', registration.scope);
+                    }).catch(function(error) {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            }
+
+              async function getSurahData() {
+        const db = await idb.openDB('quran-reader-db', 1, {
+            upgrade(db) {
+                db.createObjectStore('surahs', { keyPath: 'number' });
+            }
+        });
+
+        const surahs = await db.getAll('surahs');
+        if (surahs.length) {
+            return surahs.map((surah, index) => ({
+                ...surah,
+                number: index + 1,
+            }));
+        } else {
+            const response = await fetch('https://api.alquran.cloud/v1/surah');
+            const data = await response.json();
+            const tx = db.transaction('surahs', 'readwrite');
+            for (const surah of data.data) {
+                tx.store.put(surah);
+            }
+            await tx.done;
+            return data.data.map((surah, index) => ({
+                ...surah,
+                number: index + 1,
+            }));
+        }
+    }
+
+    const surahList = document.getElementById('surah-list');
+    const loader = document.getElementById('loader');
+    loader.style.display = 'block';
+
+    let surahs = [];
     try {
-      const db = await this.initDB();
-      let surahs = await db.getAll('surahs');
-      
-      if (!surahs.length) {
-        const response = await fetch(`${API_BASE_URL}/surah`);
-        const data = await response.json();
-        surahs = data.data;
+        surahs = await getSurahData();
+        loader.style.display = 'none';
+        showSurahs(0, 15);
+    } catch (error) {
+        loader.style.display = 'none';
+        console.error('Error fetching Surahs:', error);
+    }
+
+    function showSurahs(start, end) {
+        const fragment = document.createDocumentFragment();
+        surahs.slice(start, end).forEach(surah => {
+            const surahDiv = document.createElement('div');
+            surahDiv.classList.add('surah');
+            surahDiv.innerHTML = `<span>${surah.number}</span> ${surah.englishName} <div class="arabic-name">${surah.name}</div>`;
+            surahDiv.addEventListener('click', () => {
+                window.location.href = `surah.html?surah=${surah.number}`;
+            });
+            fragment.appendChild(surahDiv);
+        });
+        surahList.innerHTML = '';
+        surahList.appendChild(fragment);
         
-        const tx = db.transaction('surahs', 'readwrite');
-        for (const surah of surahs) {
-          await tx.store.put(surah);
+        if (end < surahs.length) {
+            const showMoreButton = document.createElement('button');
+            showMoreButton.id = 'show-more-button';
+            showMoreButton.textContent = 'Show More';
+            showMoreButton.addEventListener('click', () => {
+                showSurahs(start + 15, end + 15);
+            });
+            surahList.appendChild(showMoreButton);
         }
-        await tx.done;
-      }
-      
-      return surahs;
-    } catch (error) {
-      ErrorHandler.handle(error, 'DatabaseService.getSurahs');
-      return [];
-    }
-  },
 
-  async getJuzz() {
-    try {
-      const db = await this.initDB();
-      let juzz = await db.getAll('juzz');
-      
-      if (!juzz.length) {
-        const tx = db.transaction('juzz', 'readwrite');
-        for (const juzzItem of JUZZ_DATA) {
-          await tx.store.put(juzzItem);
+        if (start > 0) {
+            const showLessButton = document.createElement('button');
+            showLessButton.id = 'show-less-button';
+            showLessButton.textContent = 'Show Less';
+            showLessButton.addEventListener('click', () => {
+                showSurahs(0, 15);
+            });
+            surahList.appendChild(showLessButton);
         }
-        await tx.done;
-        juzz = JUZZ_DATA;
-      }
-      
-      return juzz;
-    } catch (error) {
-      ErrorHandler.handle(error, 'DatabaseService.getJuzz');
-      return [];
-    }
-  }
-};
-
-// UI Service
-const UIService = {
-  lastScrollTop: 0,
-  scrollTimeout: null,
-
-  createSurahElement(surah) {
-    const div = document.createElement('div');
-    div.classList.add('surah');
-    div.dataset.number = surah.number;
-    
-    const numberSpan = document.createElement('span');
-    numberSpan.textContent = surah.number;
-    
-    const nameText = document.createTextNode(` ${surah.englishName} `);
-    
-    const arabicName = document.createElement('div');
-    arabicName.classList.add('arabic-name');
-    arabicName.textContent = surah.name;
-    
-    div.append(numberSpan, nameText, arabicName);
-    
-    div.addEventListener('click', () => {
-      window.location.href = `surah.html?number=${surah.number}`;
-    });
-    
-    return div;
-  },
-
-  async showSurahs(start, end, surahs) {
-    const fragment = document.createDocumentFragment();
-    
-    surahs.slice(start, end).forEach(surah => {
-      const surahElement = this.createSurahElement(surah);
-      fragment.appendChild(surahElement);
-    });
-    
-    Elements.surahList.innerHTML = '';
-    Elements.surahList.appendChild(fragment);
-    
-    this.addNavigationButtons(start, end, surahs);
-  },
-
-  addNavigationButtons(start, end, surahs) {
-    if (end < surahs.length) {
-      const showMoreButton = document.createElement('button');
-      showMoreButton.id = 'show-more-button';
-      showMoreButton.textContent = 'Show More';
-      showMoreButton.addEventListener('click', () => {
-        this.showSurahs(start + 15, end + 15, surahs);
-      });
-      Elements.surahList.appendChild(showMoreButton);
     }
 
-    if (start > 0) {
-      const showLessButton = document.createElement('button');
-      showLessButton.id = 'show-less-button';
-      showLessButton.textContent = 'Show Less';
-      showLessButton.addEventListener('click', () => {
-        this.showSurahs(0, 15, surahs);
-      });
-      Elements.surahList.appendChild(showLessButton);
-    }
-  },
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-button');
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
 
-  generateJuzzList(juzzData) {
-    const fragment = document.createDocumentFragment();
-    
-    juzzData.forEach(juzz => {
-      const div = document.createElement('div');
-      div.classList.add('juzz-item');
-      div.setAttribute('role', 'button');
-      div.setAttribute('tabindex', '0');
-      
-      const numberDiv = document.createElement('div');
-      numberDiv.classList.add('juzz-number');
-      numberDiv.textContent = juzz.number;
-      
-      const nameDiv = document.createElement('div');
-      nameDiv.classList.add('juzz-name');
-      nameDiv.textContent = juzz.englishName;
-      
-      const arabicNameDiv = document.createElement('div');
-      arabicNameDiv.classList.add('juzz-arabic-name');
-      arabicNameDiv.textContent = juzz.arabicName;
-      
-      div.append(numberDiv, nameDiv, arabicNameDiv);
-      
-      div.addEventListener('click', () => {
-        window.location.href = `juzz_detail.html?juzz=${juzz.number}`;
-      });
-      
-      fragment.appendChild(div);
-    });
-    
-    Elements.juzzList.innerHTML = '';
-    Elements.juzzList.appendChild(fragment);
-  },
-
-  updateProfileIcon() {
-    const userAvatar = localStorage.getItem('userAvatar');
-    const { defaultIcon, userPic, link } = Elements.profileElements;
-    
-    if (userAvatar) {
-      defaultIcon.style.display = 'none';
-      userPic.src = userAvatar;
-      userPic.style.display = 'block';
-      link.href = 'profile.html';
-    } else {
-      defaultIcon.style.display = 'block';
-      userPic.style.display = 'none';
-      link.href = 'login.html';
-    }
-  },
-
-  updateCalendar() {
-    if (!Elements.calendarDiv) return;
-
-    const options = {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    };
-
-    const hijriDate = new Intl.DateTimeFormat('en-TN-u-ca-islamic', options).format(new Date());
-    const hijriDateArabic = new Intl.DateTimeFormat('ar-TN-u-ca-islamic', options).format(new Date());
-
-    const hijriElement = document.createElement('p');
-    hijriElement.id = 'hijri-date';
-    hijriElement.textContent = hijriDate;
-
-    const hijriArabicElement = document.createElement('p');
-    hijriArabicElement.id = 'hijri-date-arabic';
-    hijriArabicElement.textContent = hijriDateArabic;
-
-    Elements.calendarDiv.innerHTML = '';
-    Elements.calendarDiv.append(hijriElement, hijriArabicElement);
-  },
-
-  handleScroll() {
-    const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-    if (currentScrollTop > this.lastScrollTop) {
-      Elements.header.classList.remove('header-visible');
-      Elements.header.classList.add('header-hidden');
-      Elements.sidebar.classList.add('blur-effect');
-    } else {
-      Elements.header.classList.remove('header-hidden');
-      Elements.header.classList.add('header-visible');
-      Elements.sidebar.classList.remove('blur-effect');
-    }
-
-    this.lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
-
-    clearTimeout(this.scrollTimeout);
-    this.scrollTimeout = setTimeout(() => {
-      Elements.header.classList.remove('header-hidden');
-      Elements.header.classList.add('header-visible');
-      Elements.sidebar.classList.remove('blur-effect');
-    }, 200);
-  }
-};
-
-// Event Handlers
-const EventHandlers = {
-  init() {
-    // Navigation Events
-    Elements.navigationButtons.surah.addEventListener('click', () => {
-      this.switchView('surah');
+    searchButton.addEventListener('click', () => {
+        const searchTerm = searchInput.value.toLowerCase();
+        const surahElements = surahList.querySelectorAll('.surah');
+        surahElements.forEach(surah => {
+            if (surah.innerText.toLowerCase().includes(searchTerm)) {
+                surah.style.display = 'block';
+            } else {
+                surah.style.display = 'none';
+            }
+        });
     });
 
-    Elements.navigationButtons.juzz.addEventListener('click', () => {
-      this.switchView('juzz');
+    darkModeToggle.addEventListener('click', toggleDarkMode);
+
+    const hijriDate = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    }).format(new Date());
+
+    const hijriDateArabic = new Intl.DateTimeFormat('ar-TN-u-ca-islamic', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    }).format(new Date());
+
+    const calendarDiv = document.getElementById('calendar');
+    calendarDiv.innerHTML = `<p id="hijri-date">${hijriDate}</p><p id="hijri-date-arabic">${hijriDateArabic}</p>`;
+
+    let lastScrollTop = 0;
+    const header = document.querySelector('header');
+    const sidebar = document.getElementById('mySidebar');
+    let scrollTimeout;
+
+    function applyScrollEffects() {
+        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+        if (currentScrollTop > lastScrollTop) {
+            header.classList.remove('header-visible');
+            header.classList.add('header-hidden');
+            sidebar.classList.add('blur-effect');
+        } else {
+            header.classList.remove('header-hidden');
+            header.classList.add('header-visible');
+            sidebar.classList.remove('blur-effect');
+        }
+
+        lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
+
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            header.classList.remove('header-hidden');
+            header.classList.add('header-visible');
+            sidebar.classList.remove('blur-effect');
+        }, 200);
+    }
+
+    function checkScroll() {
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(section => {
+            const rect = section.getBoundingClientRect();
+            if (rect.top < window.innerHeight && rect.bottom >= 0) {
+                section.classList.add('blur');
+            } else {
+                section.classList.remove('blur');
+            }
+        });
+    }
+
+    window.addEventListener('scroll', () => {
+        applyScrollEffects();
+        checkScroll();
     });
 
-    // Search Events
-    Elements.searchButton?.addEventListener('click', () => this.performSearch());
-    Elements.searchInput?.addEventListener('keypress', (event) => {
-      if (event.key === 'Enter') this.performSearch();
+    window.addEventListener('load', () => {
+        const hash = window.location.hash;
+        if (hash) {
+            document.querySelector(hash)?.scrollIntoView();
+        }
     });
 
-    // Sidebar Events
-    Elements.openSidebarBtn.addEventListener('click', () => this.toggleSidebar(true));
-    Elements.closeSidebarBtn.addEventListener('click', () => this.toggleSidebar(false));
-    Elements.sidebarOverlay.addEventListener('click', () => this.toggleSidebar(false));
-
-    // Other Events
-    Elements.darkModeToggle.addEventListener('click', () => this.toggleDarkMode());
-    window.addEventListener('scroll', () => UIService.handleScroll());
-    
-    // Hash Navigation
-    window.addEventListener('load', this.handleHashNavigation);
-  },
-
-  switchView(view) {
-    const { surah, juzz } = Elements.navigationButtons;
-    
-    if (view === 'surah') {
-      surah.classList.add('active');
-      juzz.classList.remove('active');
-      Elements.surahList.style.display = 'grid';
-      Elements.juzzList.style.display = 'none';
-    } else {
-      juzz.classList.add('active');
-      surah.classList.remove('active');
-      Elements.surahList.style.display = 'none';
-      Elements.juzzList.style.display = 'grid';
+    // Function to handle logout
+    function handleLogout() {
+        // Clear user data from localStorage
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('userAvatar');
+        
+        // Update the profile icon
+        updateProfileIcon();
+        
+        // Sign out from Firebase
+        auth.signOut().then(() => {
+            // Redirect to login page or home page
+            window.location.href = 'login.html';
+               }).catch((error) => {
+            console.error('Error signing out:', error);
+            // Optionally, you can use SweetAlert to display an error message
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Error signing out. Please try again!',
+            });
+        });
     }
-    
-    if (Elements.searchInput) Elements.searchInput.value = '';
-  },
 
- performSearch() {
-    const searchTerm = Elements.searchInput.value.toLowerCase();
-    const isSearchingSurahs = Elements.surahList.style.display !== 'none';
-    
-    const elements = isSearchingSurahs ? 
-      Elements.surahList.querySelectorAll('.surah') : 
-      Elements.juzzList.querySelectorAll('.juzz-item');
-    
-    elements.forEach(element => {
-      const shouldDisplay = element.innerText.toLowerCase().includes(searchTerm);
-      element.style.display = shouldDisplay ? 'block' : 'none';
-    });
-  },
-
-  toggleSidebar(show) {
-    Elements.sidebar.classList.toggle('open', show);
-    Elements.sidebarOverlay.classList.toggle('active', show);
-  },
-
-  toggleDarkMode() {
-    document.body.classList.toggle('dark-mode');
-    localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-  },
-
-  handleHashNavigation() {
-    const hash = window.location.hash;
-    if (hash) {
-      const element = document.querySelector(hash);
-      element?.scrollIntoView();
-    }
-  }
-};
-
-// Error Handler
-const ErrorHandler = {
-  handle(error, context = '') {
-    console.error(`Error in ${context}:`, error);
-    // Add your error tracking service here if needed
-    
-    // Show user-friendly error message
-    if (Elements.loader) {
-      Elements.loader.style.display = 'none';
-    }
-    
-    // You can add custom error UI here if needed
-    const errorMessage = document.createElement('div');
-    errorMessage.classList.add('error-message');
-    errorMessage.textContent = 'An error occurred. Please try again later.';
-    document.body.appendChild(errorMessage);
-    
-    setTimeout(() => {
-      errorMessage.remove();
-    }, 3000);
-  }
-};
-
-// Loading Service
-const LoadingService = {
-  show() {
-    Elements.loader.style.display = 'block';
-  },
-
-  hide() {
-    Elements.loader.style.display = 'none';
-  },
-
-  async loadContent() {
-    this.show();
-    try {
-      // Load Surah data
-      const surahs = await DatabaseService.getSurahs();
-      await UIService.showSurahs(0, 15, surahs);
-      
-      // Load Juzz data
-      const juzzData = await DatabaseService.getJuzz();
-      UIService.generateJuzzList(juzzData);
-    } catch (error) {
-      ErrorHandler.handle(error, 'LoadingService.loadContent');
-    } finally {
-      this.hide();
-    }
-  }
-};
-
-// Service Worker Registration
-const ServiceWorkerManager = {
-  async register() {
-    if ('serviceWorker' in navigator) {
-      try {
-        const registration = await navigator.serviceWorker.register('/service-worker.js');
-        console.log('Service Worker registered with scope:', registration.scope);
-      } catch (error) {
-        ErrorHandler.handle(error, 'ServiceWorkerManager.register');
-      }
-    }
-  }
-};
-
-// App Initialization
-async function initializeApp() {
-  try {
-    // Initialize DOM elements
-    Elements.init();
-    
-    // Register event handlers
-    EventHandlers.init();
-    
-    // Register service worker
-    await ServiceWorkerManager.register();
-    
-    // Load content
-    await LoadingService.loadContent();
-    
-    // Initialize UI
-    UIService.updateProfileIcon();
-    UIService.updateCalendar();
-    
-    // Load dark mode preference
-    const darkMode = localStorage.getItem('darkMode') === 'true';
-    if (darkMode) {
-      document.body.classList.add('dark-mode');
-    }
-    
-  } catch (error) {
-    ErrorHandler.handle(error, 'initializeApp');
-    LoadingService.hide();
-  }
-}
-
-// Initialize the application when DOM is ready
-document.addEventListener('DOMContentLoaded', initializeApp);
-
-// Export for testing
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    UIService,
-    DatabaseService,
-    EventHandlers,
-    ErrorHandler,
-    LoadingService,
-    ServiceWorkerManager,
-    JUZZ_DATA
-  };
-}
+    // Example: Attach the handleLogout function to a logout button
+    document.getElementById('logout-button').addEventListener('click', handleLogout);
+});
  </script>
 </body>
 </html>
