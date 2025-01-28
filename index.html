@@ -1633,43 +1633,42 @@ footer ul li a:hover::after {
     <script src="https://unpkg.com/idb@6.1.0/build/iife/index-min.js"></script>
     <script>
 // Constants
-const CACHE_NAME = 'quran-pro-v1';
 const API_BASE_URL = 'https://api.alquran.cloud/v1';
 const DB_NAME = 'quran-reader-db';
 const DB_VERSION = 1;
 
-// Juzz Data Configuration
+// Simplified Juzz Data with just English and Arabic names
 const JUZZ_DATA = [
-  { number: 1, name: "Alif Lām Mīm", range: "Al-Baqarah 1-141", startSurah: 1, startAyah: 1, endSurah: 2, endAyah: 141 },
-  { number: 2, name: "Sayaqūl", range: "Al-Baqarah 142-252", startSurah: 2, startAyah: 142, endSurah: 2, endAyah: 252 },
-  { number: 3, name: "Tilka 'r-Rusul", range: "Al-Baqarah 253 - Al-i'Imran 92", startSurah: 2, startAyah: 253, endSurah: 3, endAyah: 92 },
-  { number: 4, name: "Lan Tana Lu", range: "Al-i'Imran 93 - An-Nisa 23", startSurah: 3, startAyah: 93, endSurah: 4, endAyah: 23 },
-  { number: 5, name: "Wal Muhsanat", range: "An-Nisa 24-147", startSurah: 4, startAyah: 24, endSurah: 4, endAyah: 147 },
-  { number: 6, name: "La Yuhibbu 'l-Lah", range: "An-Nisa 148 - Al-Ma'idah 81", startSurah: 4, startAyah: 148, endSurah: 5, endAyah: 81 },
-  { number: 7, name: "Wa Idha Sami'u", range: "Al-Ma'idah 82 - Al-An'am 110", startSurah: 5, startAyah: 82, endSurah: 6, endAyah: 110 },
-  { number: 8, name: "Wa Law Annana", range: "Al-An'am 111 - Al-A'raf 87", startSurah: 6, startAyah: 111, endSurah: 7, endAyah: 87 },
-  { number: 9, name: "Qala 'l-Mala'", range: "Al-A'raf 88-171", startSurah: 7, startAyah: 88, endSurah: 7, endAyah: 171 },
-  { number: 10, name: "Wa A'lamu", range: "Al-A'raf 172 - Al-Anfal 40", startSurah: 7, startAyah: 172, endSurah: 8, endAyah: 40 },
-  { number: 11, name: "Ya'tadhirun", range: "Al-Anfal 41 - At-Tawbah 92", startSurah: 8, startAyah: 41, endSurah: 9, endAyah: 92 },
-  { number: 12, name: "Wa Ma Min Dabbah", range: "At-Tawbah 93 - Hud 5", startSurah: 9, startAyah: 93, endSurah: 11, endAyah: 5 },
-  { number: 13, name: "Wa Ma Ubri'u", range: "Hud 6 - Yusuf 52", startSurah: 11, startAyah: 6, endSurah: 12, endAyah: 52 },
-  { number: 14, name: "Rubama", range: "Yusuf 53 - Al-Hijr 1", startSurah: 12, startAyah: 53, endSurah: 15, endAyah: 1 },
-  { number: 15, name: "Subhana 'Ladhi", range: "Al-Hijr 2 - Al-Isra 1", startSurah: 15, startAyah: 2, endSurah: 17, endAyah: 1 },
-  { number: 16, name: "Qal Alam", range: "Al-Isra 2 - Al-Kahf 74", startSurah: 17, startAyah: 2, endSurah: 18, endAyah: 74 },
-  { number: 17, name: "Iqtaraba", range: "Al-Kahf 75 - Ta-Ha 135", startSurah: 18, startAyah: 75, endSurah: 20, endAyah: 135 },
-  { number: 18, name: "Qadd Aflaha", range: "Al-Anbiya 1 - Al-Mu'minun 118", startSurah: 21, startAyah: 1, endSurah: 23, endAyah: 118 },
-  { number: 19, name: "Wa Qala 'Ladhina", range: "An-Nur 1 - Al-Furqan 20", startSurah: 24, startAyah: 1, endSurah: 25, endAyah: 20 },
-  { number: 20, name: "A'man Khalaq", range: "Al-Furqan 21 - An-Naml 55", startSurah: 25, startAyah: 21, endSurah: 27, endAyah: 55 },
-  { number: 21, name: "Utlu Ma Uhi", range: "An-Naml 56 - Al-Ankabut 45", startSurah: 27, startAyah: 56, endSurah: 29, endAyah: 45 },
-  { number: 22, name: "Wa Man Yaqnut", range: "Al-Ankabut 46 - Al-Ahzab 30", startSurah: 29, startAyah: 46, endSurah: 33, endAyah: 30 },
-  { number: 23, name: "Wa Ma Li", range: "Al-Ahzab 31 - Ya-Sin 27", startSurah: 33, startAyah: 31, endSurah: 36, endAyah: 27 },
-  { number: 24, name: "Fa Man Azlam", range: "Ya-Sin 28 - Az-Zumar 31", startSurah: 36, startAyah: 28, endSurah: 39, endAyah: 31 },
-  { number: 25, name: "Ilayhi Yurad", range: "Az-Zumar 32 - Fussilat 46", startSurah: 39, startAyah: 32, endSurah: 41, endAyah: 46 },
-  { number: 26, name: "Ha Mim", range: "Fussilat 47 - Al-Jathiya 37", startSurah: 41, startAyah: 47, endSurah: 45, endAyah: 37 },
-  { number: 27, name: "Qala Fa Ma Khatbukum", range: "Al-Ahqaf 1 - Adh-Dhariyat 30", startSurah: 46, startAyah: 1, endSurah: 51, endAyah: 30 },
-  { number: 28, name: "Qad Sami'a Allah", range: "Adh-Dhariyat 31 - Al-Mujadila 1", startSurah: 51, startAyah: 31, endSurah: 58, endAyah: 1 },
-  { number: 29, name: "Tabarak Alladhi", range: "Al-Mujadila 2 - At-Tahrim 12", startSurah: 58, startAyah: 2, endSurah: 66, endAyah: 12 },
-  { number: 30, name: "Amma Yatasa'alun", range: "Al-Mulk 1 - An-Nas 6", startSurah: 67, startAyah: 1, endSurah: 114, endAyah: 6 }
+  { number: 1, englishName: "Alif Lām Mīm", arabicName: "الم" },
+  { number: 2, englishName: "Sayaqūl", arabicName: "سيقول" },
+  { number: 3, englishName: "Tilka 'r-Rusul", arabicName: "تلك الرسل" },
+  { number: 4, englishName: "Lan Tana Lu", arabicName: "لن تنالوا" },
+  { number: 5, englishName: "Wal Muhsanat", arabicName: "والمحصنات" },
+  { number: 6, englishName: "La Yuhibbu 'l-Lah", arabicName: "لا يحب الله" },
+  { number: 7, englishName: "Wa Idha Sami'u", arabicName: "وإذا سمعوا" },
+  { number: 8, englishName: "Wa Law Annana", arabicName: "ولو أننا" },
+  { number: 9, englishName: "Qala 'l-Mala'", arabicName: "قال الملأ" },
+  { number: 10, englishName: "Wa A'lamu", arabicName: "واعلموا" },
+  { number: 11, englishName: "Ya'tadhirun", arabicName: "يعتذرون" },
+  { number: 12, englishName: "Wa Ma Min Dabbah", arabicName: "وما من دابة" },
+  { number: 13, englishName: "Wa Ma Ubri'u", arabicName: "وما أبرئ" },
+  { number: 14, englishName: "Rubama", arabicName: "ربما" },
+  { number: 15, englishName: "Subhana 'Ladhi", arabicName: "سبحان الذي" },
+  { number: 16, englishName: "Qal Alam", arabicName: "قال ألم" },
+  { number: 17, englishName: "Iqtaraba", arabicName: "اقترب" },
+  { number: 18, englishName: "Qadd Aflaha", arabicName: "قد أفلح" },
+  { number: 19, englishName: "Wa Qala 'Ladhina", arabicName: "وقال الذين" },
+  { number: 20, englishName: "A'man Khalaq", arabicName: "أمن خلق" },
+  { number: 21, englishName: "Utlu Ma Uhi", arabicName: "اتل ما أوحي" },
+  { number: 22, englishName: "Wa Man Yaqnut", arabicName: "ومن يقنت" },
+  { number: 23, englishName: "Wa Ma Li", arabicName: "وما لي" },
+  { number: 24, englishName: "Fa Man Azlam", arabicName: "فمن أظلم" },
+  { number: 25, englishName: "Ilayhi Yurad", arabicName: "إليه يرد" },
+  { number: 26, englishName: "Ha Mim", arabicName: "حم" },
+  { number: 27, englishName: "Qala Fa Ma Khatbukum", arabicName: "قال فما خطبكم" },
+  { number: 28, englishName: "Qad Sami'a Allah", arabicName: "قد سمع الله" },
+  { number: 29, englishName: "Tabarak Alladhi", arabicName: "تبارك الذي" },
+  { number: 30, englishName: "Amma Yatasa'alun", arabicName: "عم يتساءلون" }
 ];
 
 // DOM Elements Cache
@@ -1686,15 +1685,9 @@ const Elements = {
     this.openSidebarBtn = document.getElementById('openSidebarBtn');
     this.closeSidebarBtn = document.getElementById('closeSidebarBtn');
     this.sidebarOverlay = document.getElementById('sidebarOverlay');
-    this.calendarDiv = document.getElementById('calendar');
     this.navigationButtons = {
       surah: document.getElementById('read-surah-btn'),
       juzz: document.getElementById('read-juzz-btn')
-    };
-    this.profileElements = {
-      defaultIcon: document.getElementById('default-profile-icon'),
-      userPic: document.getElementById('user-profile-pic'),
-      link: document.getElementById('profile-link')
     };
   }
 };
@@ -1732,39 +1725,14 @@ const DatabaseService = {
       ErrorHandler.handle(error, 'DatabaseService.getSurahs');
       return [];
     }
-  },
-
-  async getJuzz() {
-    try {
-      const db = await this.initDB();
-      let juzz = await db.getAll('juzz');
-      
-      if (!juzz.length) {
-        const tx = db.transaction('juzz', 'readwrite');
-        for (const juzzItem of JUZZ_DATA) {
-          await tx.store.put(juzzItem);
-        }
-        await tx.done;
-        juzz = JUZZ_DATA;
-      }
-      
-      return juzz;
-    } catch (error) {
-      ErrorHandler.handle(error, 'DatabaseService.getJuzz');
-      return [];
-    }
   }
 };
 
 // UI Service
 const UIService = {
-  lastScrollTop: 0,
-  scrollTimeout: null,
-
   createSurahElement(surah) {
     const div = document.createElement('div');
     div.classList.add('surah');
-    div.dataset.number = surah.number;
     
     const numberSpan = document.createElement('span');
     numberSpan.textContent = surah.number;
@@ -1777,7 +1745,6 @@ const UIService = {
     
     div.append(numberSpan, nameText, arabicName);
     
-    // Add click event to redirect to surah.html
     div.addEventListener('click', () => {
       window.location.href = `surah.html?number=${surah.number}`;
     });
@@ -1785,143 +1752,59 @@ const UIService = {
     return div;
   },
 
-  async showSurahs(start, end, surahs) {
+  createJuzzElement(juzz) {
+    const div = document.createElement('div');
+    div.classList.add('juzz-item');
+    
+    const numberSpan = document.createElement('span');
+    numberSpan.textContent = `Juzz ${juzz.number}`;
+    
+    const englishName = document.createElement('div');
+    englishName.classList.add('juzz-name');
+    englishName.textContent = juzz.englishName;
+    
+    const arabicName = document.createElement('div');
+    arabicName.classList.add('arabic-name');
+    arabicName.textContent = juzz.arabicName;
+    
+    div.append(numberSpan, englishName, arabicName);
+    
+    div.addEventListener('click', () => {
+      window.location.href = `juzz_detail.html?number=${juzz.number}`;
+    });
+    
+    return div;
+  },
+
+  async showSurahs() {
+    const surahs = await DatabaseService.getSurahs();
     const fragment = document.createDocumentFragment();
     
-    surahs.slice(start, end).forEach(surah => {
+    surahs.forEach(surah => {
       const surahElement = this.createSurahElement(surah);
       fragment.appendChild(surahElement);
     });
     
     Elements.surahList.innerHTML = '';
     Elements.surahList.appendChild(fragment);
-    
-    this.addNavigationButtons(start, end, surahs);
   },
 
-  addNavigationButtons(start, end, surahs) {
-    if (end < surahs.length) {
-      const showMoreButton = document.createElement('button');
-      showMoreButton.id = 'show-more-button';
-      showMoreButton.textContent = 'Show More';
-      showMoreButton.addEventListener('click', () => {
-        this.showSurahs(start + 15, end + 15, surahs);
-      });
-      Elements.surahList.appendChild(showMoreButton);
-    }
-
-    if (start > 0) {
-      const showLessButton = document.createElement('button');
-      showLessButton.id = 'show-less-button';
-      showLessButton.textContent = 'Show Less';
-      showLessButton.addEventListener('click', () => {
-        this.showSurahs(0, 15, surahs);
-      });
-      Elements.surahList.appendChild(showLessButton);
-    }
-  },
-
-  generateJuzzList(juzzData) {
+  showJuzz() {
     const fragment = document.createDocumentFragment();
     
-    juzzData.forEach(juzz => {
-      const div = document.createElement('div');
-      div.classList.add('juzz-item');
-      div.setAttribute('role', 'button');
-      div.setAttribute('tabindex', '0');
-      
-      const numberDiv = document.createElement('div');
-      numberDiv.classList.add('juzz-number');
-      numberDiv.textContent = `Juzz ${juzz.number}`;
-      
-      const nameDiv = document.createElement('div');
-      nameDiv.classList.add('juzz-name');
-      nameDiv.textContent = juzz.name;
-      
-      const rangeDiv = document.createElement('div');
-      rangeDiv.classList.add('juzz-range');
-      rangeDiv.textContent = juzz.range;
-      
-      div.append(numberDiv, nameDiv, rangeDiv);
-      div.addEventListener('click', () => {
-        window.location.href = `juzz_detail.html?juzz=${juzz.number}`;
-      });
-      
-      fragment.appendChild(div);
+    JUZZ_DATA.forEach(juzz => {
+      const juzzElement = this.createJuzzElement(juzz);
+      fragment.appendChild(juzzElement);
     });
     
     Elements.juzzList.innerHTML = '';
     Elements.juzzList.appendChild(fragment);
-  },
-
-updateProfileIcon() {
-    const userAvatar = localStorage.getItem('userAvatar');
-    const { defaultIcon, userPic, link } = Elements.profileElements;
-    
-    if (userAvatar) {
-      defaultIcon.style.display = 'none';
-      userPic.src = userAvatar;
-      userPic.style.display = 'block';
-      link.href = 'profile.html';
-    } else {
-      defaultIcon.style.display = 'block';
-      userPic.style.display = 'none';
-      link.href = 'login.html';
-    }
-  },
-
-  updateCalendar() {
-    if (!Elements.calendarDiv) return;
-
-    const options = {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    };
-
-    const hijriDate = new Intl.DateTimeFormat('en-TN-u-ca-islamic', options).format(new Date());
-    const hijriDateArabic = new Intl.DateTimeFormat('ar-TN-u-ca-islamic', options).format(new Date());
-
-    const hijriElement = document.createElement('p');
-    hijriElement.id = 'hijri-date';
-    hijriElement.textContent = hijriDate;
-
-    const hijriArabicElement = document.createElement('p');
-    hijriArabicElement.id = 'hijri-date-arabic';
-    hijriArabicElement.textContent = hijriDateArabic;
-
-    Elements.calendarDiv.innerHTML = '';
-    Elements.calendarDiv.append(hijriElement, hijriArabicElement);
-  },
-
-  handleScroll() {
-    const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-    if (currentScrollTop > this.lastScrollTop) {
-      Elements.header.classList.remove('header-visible');
-      Elements.header.classList.add('header-hidden');
-      Elements.sidebar.classList.add('blur-effect');
-    } else {
-      Elements.header.classList.remove('header-hidden');
-      Elements.header.classList.add('header-visible');
-      Elements.sidebar.classList.remove('blur-effect');
-    }
-
-    this.lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
-
-    clearTimeout(this.scrollTimeout);
-    this.scrollTimeout = setTimeout(() => {
-      Elements.header.classList.remove('header-hidden');
-      Elements.header.classList.add('header-visible');
-      Elements.sidebar.classList.remove('blur-effect');
-    }, 200);
   }
 };
 
 // Event Handlers
 const EventHandlers = {
   init() {
-    // Navigation Events
     Elements.navigationButtons.surah.addEventListener('click', () => {
       this.switchView('surah');
     });
@@ -1930,23 +1813,16 @@ const EventHandlers = {
       this.switchView('juzz');
     });
 
-    // Search Events
     Elements.searchButton?.addEventListener('click', () => this.performSearch());
     Elements.searchInput?.addEventListener('keypress', (event) => {
       if (event.key === 'Enter') this.performSearch();
     });
 
-    // Sidebar Events
     Elements.openSidebarBtn.addEventListener('click', () => this.toggleSidebar(true));
     Elements.closeSidebarBtn.addEventListener('click', () => this.toggleSidebar(false));
     Elements.sidebarOverlay.addEventListener('click', () => this.toggleSidebar(false));
 
-    // Other Events
     Elements.darkModeToggle.addEventListener('click', () => this.toggleDarkMode());
-    window.addEventListener('scroll', () => UIService.handleScroll());
-    
-    // Hash Navigation
-    window.addEventListener('load', this.handleHashNavigation);
   },
 
   switchView(view) {
@@ -1989,14 +1865,6 @@ const EventHandlers = {
   toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
     localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-  },
-
-  handleHashNavigation() {
-    const hash = window.location.hash;
-    if (hash) {
-      const element = document.querySelector(hash);
-      element?.scrollIntoView();
-    }
   }
 };
 
@@ -2004,8 +1872,6 @@ const EventHandlers = {
 const ErrorHandler = {
   handle(error, context = '') {
     console.error(`Error in ${context}:`, error);
-    // Add your error tracking service here
-    // Show user-friendly error message if needed
   }
 };
 
@@ -2022,13 +1888,14 @@ const LoadingService = {
   async loadContent() {
     this.show();
     try {
-      // Load Surah data
-      const surahs = await DatabaseService.getSurahs();
-      await UIService.showSurahs(0, 15, surahs);
+      await UIService.showSurahs();
+      UIService.showJuzz();
       
-      // Load Juzz data
-      const juzzData = await DatabaseService.getJuzz();
-      UIService.generateJuzzList(juzzData);
+      // Load dark mode preference
+      const darkMode = localStorage.getItem('darkMode') === 'true';
+      if (darkMode) {
+        document.body.classList.add('dark-mode');
+      }
     } catch (error) {
       ErrorHandler.handle(error, 'LoadingService.loadContent');
     } finally {
@@ -2037,66 +1904,16 @@ const LoadingService = {
   }
 };
 
-// Service Worker Registration
-const ServiceWorkerManager = {
-  async register() {
-    if ('serviceWorker' in navigator) {
-      try {
-        const registration = await navigator.serviceWorker.register('/service-worker.js');
-        console.log('Service Worker registered with scope:', registration.scope);
-      } catch (error) {
-        ErrorHandler.handle(error, 'ServiceWorkerManager.register');
-      }
-    }
-  }
-};
-
-// App Initialization
-async function initializeApp() {
-  try {
-    // Initialize DOM elements
-    Elements.init();
-    
-    // Register event handlers
-    EventHandlers.init();
-    
-    // Register service worker
-    await ServiceWorkerManager.register();
-    
-    // Load content
-    await LoadingService.loadContent();
-    
-    // Initialize UI
-    UIService.updateProfileIcon();
-    UIService.updateCalendar();
-    
-    // Load dark mode preference
-    const darkMode = localStorage.getItem('darkMode') === 'true';
-    if (darkMode) {
-      document.body.classList.add('dark-mode');
-    }
-    
-  } catch (error) {
-    ErrorHandler.handle(error, 'initializeApp');
-    LoadingService.hide();
-  }
-}
-
 // Initialize the application when DOM is ready
-document.addEventListener('DOMContentLoaded', initializeApp);
-
-// Export for testing
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    UIService,
-    DatabaseService,
-    EventHandlers,
-    ErrorHandler,
-    LoadingService,
-    ServiceWorkerManager,
-    JUZZ_DATA
-  };
-}
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    Elements.init();
+    EventHandlers.init();
+    await LoadingService.loadContent();
+  } catch (error) {
+    ErrorHandler.handle(error, 'initialization');
+  }
+});
  </script>
 </body>
 </html>
