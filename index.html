@@ -1566,14 +1566,14 @@ const Elements = {
     this.calendarDiv = document.getElementById('calendar');
     this.navigationButtons = {
       surah: document.getElementById('read-surah-btn'),
-      juzz: document.getElementById('read-juzz-btn')
+      juzz: document.getElementById('read-juzz-btn'),
     };
     this.profileElements = {
       defaultIcon: document.getElementById('default-profile-icon'),
       userPic: document.getElementById('user-profile-pic'),
-      link: document.getElementById('profile-link')
+      link: document.getElementById('profile-link'),
     };
-  }
+  },
 };
 
 // Database Service
@@ -1581,8 +1581,10 @@ const DatabaseService = {
   async initDB() {
     return await idb.openDB(DB_NAME, DB_VERSION, {
       upgrade(db) {
-        db.createObjectStore('surahs', { keyPath: 'number' });
-      }
+        if (!db.objectStoreNames.contains('surahs')) {
+          db.createObjectStore('surahs', { keyPath: 'number' });
+        }
+      },
     });
   },
 
@@ -1590,29 +1592,26 @@ const DatabaseService = {
     try {
       const db = await this.initDB();
       const surahs = await db.getAll('surahs');
-      
+
       if (surahs.length) {
-        return surahs.map((surah, index) => ({
-          ...surah,
-          number: index + 1,
-        }));
+        return surahs;
       }
-      
+
       const response = await fetch(`${API_BASE_URL}/surah`);
       const data = await response.json();
-      
+
       const tx = db.transaction('surahs', 'readwrite');
       for (const surah of data.data) {
         await tx.store.put(surah);
       }
       await tx.done;
-      
+
       return data.data;
     } catch (error) {
-      ErrorHandler.handle(error, 'DatabaseService.getSurahs');
+      console.error('DatabaseService.getSurahs Error:', error);
       return [];
     }
-  }
+  },
 };
 
 // UI Service
@@ -1624,36 +1623,35 @@ const UIService = {
     const div = document.createElement('div');
     div.classList.add('surah');
     div.dataset.number = surah.number;
-    
+
     const numberSpan = document.createElement('span');
     numberSpan.textContent = surah.number;
-    
+
     const nameText = document.createTextNode(` ${surah.englishName} `);
-    
+
     const arabicName = document.createElement('div');
     arabicName.classList.add('arabic-name');
     arabicName.textContent = surah.name;
-    
-    // Add an event listener to open surah.html when clicked
+
     div.addEventListener('click', () => {
       window.location.href = `surah.html?number=${surah.number}`;
     });
-    
+
     div.append(numberSpan, nameText, arabicName);
     return div;
   },
 
   async showSurahs(start, end, surahs) {
     const fragment = document.createDocumentFragment();
-    
-    surahs.slice(start, end).forEach(surah => {
+
+    surahs.slice(start, end).forEach((surah) => {
       const surahElement = this.createSurahElement(surah);
       fragment.appendChild(surahElement);
     });
-    
+
     Elements.surahList.innerHTML = '';
     Elements.surahList.appendChild(fragment);
-    
+
     this.addNavigationButtons(start, end, surahs);
   },
 
@@ -1678,56 +1676,6 @@ const UIService = {
       Elements.surahList.appendChild(showLessButton);
     }
   },
-};
-
-  generateJuzzList(juzzData) {
-    const fragment = document.createDocumentFragment();
-    
-    juzzData.forEach(juzz => {
-      const div = document.createElement('div');
-      div.classList.add('juzz-item');
-      div.setAttribute('role', 'button');
-      div.setAttribute('tabindex', '0');
-      
-      const numberDiv = document.createElement('div');
-      numberDiv.classList.add('juzz-number');
-      numberDiv.textContent = `Juzz ${juzz.number}`;
-      
-      const nameDiv = document.createElement('div');
-      nameDiv.classList.add('juzz-name');
-      nameDiv.textContent = juzz.name;
-      
-      const rangeDiv = document.createElement('div');
-      rangeDiv.classList.add('juzz-range');
-      rangeDiv.textContent = juzz.range;
-      
-      div.append(numberDiv, nameDiv, rangeDiv);
-      div.addEventListener('click', () => {
-        window.location.href = `juzz_detail.html?juzz=${juzz.number}`;
-      });
-      
-      fragment.appendChild(div);
-    });
-    
-    Elements.juzzList.innerHTML = '';
-    Elements.juzzList.appendChild(fragment);
-  },
-
-  updateProfileIcon() {
-    const userAvatar = localStorage.getItem('userAvatar');
-    const { defaultIcon, userPic, link } = Elements.profileElements;
-    
-    if (userAvatar) {
-      defaultIcon.style.display = 'none';
-      userPic.src = userAvatar;
-      userPic.style.display = 'block';
-      link.href = 'profile.html';
-    } else {
-      defaultIcon.style.display = 'block';
-      userPic.style.display = 'none';
-      link.href = 'login.html';
-    }
-  },
 
   updateCalendar() {
     if (!Elements.calendarDiv) return;
@@ -1735,7 +1683,7 @@ const UIService = {
     const options = {
       day: 'numeric',
       month: 'long',
-      year: 'numeric'
+      year: 'numeric',
     };
 
     const hijriDate = new Intl.DateTimeFormat('en-TN-u-ca-islamic', options).format(new Date());
@@ -1752,65 +1700,35 @@ const UIService = {
     Elements.calendarDiv.innerHTML = '';
     Elements.calendarDiv.append(hijriElement, hijriArabicElement);
   },
-
-  handleScroll() {
-    const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-    if (currentScrollTop > this.lastScrollTop) {
-      Elements.header.classList.remove('header-visible');
-      Elements.header.classList.add('header-hidden');
-      Elements.sidebar.classList.add('blur-effect');
-    } else {
-      Elements.header.classList.remove('header-hidden');
-      Elements.header.classList.add('header-visible');
-      Elements.sidebar.classList.remove('blur-effect');
-    }
-
-    this.lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
-
-    clearTimeout(this.scrollTimeout);
-    this.scrollTimeout = setTimeout(() => {
-      Elements.header.classList.remove('header-hidden');
-      Elements.header.classList.add('header-visible');
-      Elements.sidebar.classList.remove('blur-effect');
-    }, 200);
-  }
 };
 
 // Event Handlers
 const EventHandlers = {
   init() {
-    // Navigation Events
-    Elements.navigationButtons.surah.addEventListener('click', () => {
+    Elements.navigationButtons.surah?.addEventListener('click', () => {
       this.switchView('surah');
     });
 
-    Elements.navigationButtons.juzz.addEventListener('click', () => {
+    Elements.navigationButtons.juzz?.addEventListener('click', () => {
       this.switchView('juzz');
     });
 
-    // Search Events
     Elements.searchButton?.addEventListener('click', () => this.performSearch());
     Elements.searchInput?.addEventListener('keypress', (event) => {
       if (event.key === 'Enter') this.performSearch();
     });
 
-    // Sidebar Events
-    Elements.openSidebarBtn.addEventListener('click', () => this.toggleSidebar(true));
-    Elements.closeSidebarBtn.addEventListener('click', () => this.toggleSidebar(false));
-    Elements.sidebarOverlay.addEventListener('click', () => this.toggleSidebar(false));
+    Elements.openSidebarBtn?.addEventListener('click', () => this.toggleSidebar(true));
+    Elements.closeSidebarBtn?.addEventListener('click', () => this.toggleSidebar(false));
+    Elements.sidebarOverlay?.addEventListener('click', () => this.toggleSidebar(false));
 
-    // Other Events
-    Elements.darkModeToggle.addEventListener('click', () => this.toggleDarkMode());
+    Elements.darkModeToggle?.addEventListener('click', () => this.toggleDarkMode());
     window.addEventListener('scroll', () => UIService.handleScroll());
-    
-    // Hash Navigation
-    window.addEventListener('load', this.handleHashNavigation);
   },
 
   switchView(view) {
     const { surah, juzz } = Elements.navigationButtons;
-    
+
     if (view === 'surah') {
       surah.classList.add('active');
       juzz.classList.remove('active');
@@ -1822,154 +1740,33 @@ const EventHandlers = {
       Elements.surahList.style.display = 'none';
       Elements.juzzList.style.display = 'grid';
     }
-    
+
     if (Elements.searchInput) Elements.searchInput.value = '';
   },
 
   performSearch() {
     const searchTerm = Elements.searchInput.value.toLowerCase();
     const isSearchingSurahs = Elements.surahList.style.display !== 'none';
-    
-    const elements = isSearchingSurahs ? 
-      Elements.surahList.querySelectorAll('.surah') : 
-      Elements.juzzList.querySelectorAll('.juzz-item');
-    
-    elements.forEach(element => {
-      const shouldDisplay = element.innerText.toLowerCase().includes(searchTerm);
-      element.style.display = shouldDisplay ? 'block' : 'none';
+    const elements = isSearchingSurahs
+      ? Elements.surahList.querySelectorAll('.surah')
+      : Elements.juzzList.querySelectorAll('.juzz-item');
+
+    elements.forEach((element) => {
+      const text = element.textContent.toLowerCase();
+      element.style.display = text.includes(searchTerm) ? '' : 'none';
     });
   },
 
-  toggleSidebar(show) {
-    Elements.sidebar.classList.toggle('open', show);
-    Elements.sidebarOverlay.classList.toggle('active', show);
-  },
-
-  toggleDarkMode() {
-    document.body.classList.toggle('dark-mode');
-    localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-  },
-
-  handleHashNavigation() {
-    const hash = window.location.hash;
-    if (hash) {
-      const element = document.querySelector(hash);
-      element?.scrollIntoView();
+  toggleSidebar(open) {
+    if (open) {
+      Elements.sidebar.classList.add('open');
+      Elements.sidebarOverlay.style.display = 'block';
+    } else {
+      Elements.sidebar.classList.remove('open');
+      Elements.sidebarOverlay.style.display = 'none';
     }
   },
 
-  async handleLogout() {
-    try {
-      localStorage.removeItem('userName');
-      localStorage.removeItem('userEmail');
-      localStorage.removeItem('userAvatar');
-      UIService.updateProfileIcon();
-      
-      await auth.signOut();
-      window.location.href = 'login.html';
-    } catch (error) {
-      ErrorHandler.handle(error, 'handleLogout');
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Error signing out. Please try again!',
-      });
-    }
-  }
-};
-
-// Error Handler
-const ErrorHandler = {
-  handle(error, context = '') {
-    console.error(`Error in ${context}:`, error);
-    // Add your error tracking service here
-    // Show user-friendly error message if needed
-  }
-};
-
-// Loading Service
-const LoadingService = {
-  show() {
-    Elements.loader.style.display = 'block';
-  },
-
-  hide() {
-    Elements.loader.style.display = 'none';
-  },
-
-  async loadContent() {
-    this.show();
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    this.hide();
-  }
-};
-
-// Service Worker Registration
-const ServiceWorkerManager = {
-  async register() {
-    if ('serviceWorker' in navigator) {
-      try {
-        const registration = await navigator.serviceWorker.register('/service-worker.js');
-        console.log('Service Worker registered with scope:', registration.scope);
-      } catch (error) {
-        ErrorHandler.handle(error, 'ServiceWorkerManager.register');
-      }
-    }
-  }
-};
-
-// App Initialization
-async function initializeApp() {
-  try {
-    // Initialize DOM elements
-    Elements.init();
-    
-    // Register event handlers
-    EventHandlers.init();
-    
-    // Register service worker
-    await ServiceWorkerManager.register();
-    
-    // Show loading screen
-    await LoadingService.loadContent();
-    
-    // Initialize UI
-    UIService.updateProfileIcon();
-    UIService.updateCalendar();
-    
-    // Load dark mode preference
-    const darkMode = localStorage.getItem('darkMode') === 'true';
-    if (darkMode) {
-      document.body.classList.add('dark-mode');
-    }
-    
-    // Load Surah data
-    const surahs = await DatabaseService.getSurahs();
-    await UIService.showSurahs(0, 15, surahs);
-    
-    // Generate Juzz list
-    UIService.generateJuzzList(JUZZ_DATA);
-    
-  } catch (error) {
-    ErrorHandler.handle(error, 'initializeApp');
-    LoadingService.hide();
-  }
-}
-
-// Initialize the application when DOM is ready
-document.addEventListener('DOMContentLoaded', initializeApp);
-
-// Export for testing
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    UIService,
-    DatabaseService,
-    EventHandlers,
-    ErrorHandler,
-    LoadingService,
-    ServiceWorkerManager
-  };
-}
  </script>
 </body>
 </html>
