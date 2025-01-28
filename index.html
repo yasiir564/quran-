@@ -1524,127 +1524,32 @@ footer ul li a:hover::after {
         font-size: 30px;
     }
 }
-	     //* Base styles for support/advertise section */
-.support-section {
-    background: linear-gradient(135deg, rgba(37,117,252,0.1) 0%, rgba(106,17,203,0.1) 100%);
-    padding: 50px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 50px;
-    flex-wrap: wrap;
-    margin: 40px 0;
-}
+	    /* Enhanced Support Section */
+        .support-section {
+            background: linear-gradient(135deg, rgba(37,117,252,0.1) 0%, rgba(106,17,203,0.1) 100%);
+            padding: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 50px;
+        }
 
-.support-content {
-    flex: 1;
-    min-width: 300px;
-    max-width: 500px;
-    padding: 20px;
-}
+        .support-content {
+            flex: 1;
+            max-width: 500px;
+        }
 
-.support-image {
-    flex: 1;
-    min-width: 300px;
-    max-width: 500px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-}
+        .support-image {
+            flex: 1;
+            max-width: 500px;
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+        }
 
-.support-image img {
-    max-width: 100%;
-    height: auto;
-    object-fit: contain;
-}
-
-/* Tablet Styles (max-width: 992px) */
-@media screen and (max-width: 992px) {
-    .support-section {
-        padding: 40px 15px;
-        gap: 30px;
-    }
-
-    .support-content {
-        text-align: center;
-        padding: 15px;
-    }
-
-    .section-title {
-        font-size: 30px;
-        margin-bottom: 30px;
-    }
-}
-
-/* Mobile Styles (max-width: 768px) */
-@media screen and (max-width: 768px) {
-    .support-section {
-        flex-direction: column !important; /* Override any row-reverse */
-        padding: 30px 15px;
-        gap: 20px;
-    }
-
-    .support-content {
-        min-width: 100%;
-        padding: 10px;
-    }
-
-    .support-image {
-        min-width: 100%;
-        order: -1; /* Always show image first on mobile */
-    }
-
-    .section-title {
-        font-size: 24px;
-        margin-bottom: 20px;
-    }
-
-    .support-content p {
-        font-size: 14px;
-        line-height: 1.6;
-    }
-
-    .btn {
-        width: 100%;
-        max-width: 300px;
-        margin: 15px auto;
-    }
-}
-
-/* Small Mobile Styles (max-width: 480px) */
-@media screen and (max-width: 480px) {
-    .support-section {
-        padding: 20px 10px;
-    }
-
-    .support-content {
-        padding: 5px;
-    }
-
-    .section-title {
-        font-size: 20px;
-        margin-bottom: 15px;
-    }
-}
-
-/* Animation for support image */
-@keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
-}
-
-.support-image {
-    animation: float 6s ease-in-out infinite;
-}
-
-/* Optional: Disable animation on mobile for better performance */
-@media screen and (max-width: 768px) {
-    .support-image {
-        animation: none;
-    }
-}
-
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
 
 
 </style>
