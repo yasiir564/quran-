@@ -1379,134 +1379,37 @@ footer ul li a:hover::after {
         ::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
         }
-/* Juzz List Container */
-.juzz-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1rem;
-  padding: 1rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* Individual Juzz Item */
 .juzz-item {
-  background-color: var(--card-bg, #fff);
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
-  cursor: pointer;
-  position: relative;
-  border: 1px solid var(--border-color, #e0e0e0);
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .juzz-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
 .juzz-number {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--primary-color, #2196F3);
-  margin-bottom: 0.5rem;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 
 .juzz-name {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-  color: var(--text-primary, #333);
-  font-family: var(--arabic-font, 'Traditional Arabic');
+    color: #333;
+    margin-bottom: 5px;
 }
 
-.juzz-range {
-  font-size: 0.9rem;
-  color: var(--text-secondary, #666);
-  line-height: 1.4;
+.juzz-arabic-name {
+    font-family: 'Traditional Arabic', serif;
+    font-size: 1.3em;
+    color: #666;
 }
-
-/* Dark Mode Styles */
-.dark-mode .juzz-item {
-  --card-bg: #1e1e1e;
-  --border-color: #333;
-  --text-primary: #fff;
-  --text-secondary: #aaa;
-}
-
-/* Responsive Grid Adjustments */
-@media (max-width: 768px) {
-  .juzz-container {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    padding: 0.5rem;
-  }
-  
-  .juzz-item {
-    padding: 1rem;
-  }
-  
-  .juzz-name {
-    font-size: 1.25rem;
-  }
-}
-
-/* Loading State */
-.juzz-item.loading {
-  opacity: 0.7;
-  pointer-events: none;
-}
-
-/* Interactive States */
-.juzz-item:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.juzz-item:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--primary-color, #2196F3);
-}
-
-/* Navigation Section Styles */
-.navigation-section {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin: 1rem 0;
-  padding: 1rem;
-}
-
-.nav-button {
-  padding: 0.5rem 1rem;
-  border: none;
-  background-color: var(--primary-color, #2196F3);
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.nav-button:hover {
-  background-color: var(--primary-dark, #1976D2);
-}
-
-/* Search Results Styles */
-.search-results .juzz-item {
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 </style>
 </head>
 <body>
@@ -1597,8 +1500,8 @@ footer ul li a:hover::after {
 </div>
            
             <button id="dark-mode-toggle"><i class="fas fa-adjust"></i></button>
-            <div id="surah-list" class="surah-list"></div>
-           <div id="juzz-content"></div>
+            <div id="surah-list" class="grid-container"></div>
+<div id="juzz-list" class="grid-container" style="display: none;"></div>
           <div class="loader" id="loader"></div>
         </div>
     </div>
