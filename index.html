@@ -1543,369 +1543,427 @@ footer ul li a:hover::after {
 
     <script src="https://unpkg.com/idb@6.1.0/build/iife/index-min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', async function() {
-    // Utility Functions
-    function updateProfileIcon() {
-        const userAvatar = localStorage.getItem('userAvatar');
-        const defaultProfileIcon = document.getElementById('default-profile-icon');
-        const userProfilePic = document.getElementById('user-profile-pic');
-        const profileLink = document.getElementById('profile-link');
+// Constants
+const CACHE_NAME = 'quran-pro-v1';
+const API_BASE_URL = 'https://api.alquran.cloud/v1';
+const DB_NAME = 'quran-reader-db';
+const DB_VERSION = 1;
 
-        if (userAvatar) {
-            defaultProfileIcon.style.display = 'none';
-            userProfilePic.src = userAvatar;
-            userProfilePic.style.display = 'block';
-            profileLink.href = 'profile.html';
-        } else {
-            defaultProfileIcon.style.display = 'block';
-            userProfilePic.style.display = 'none';
-            profileLink.href = 'login.html';
-        }
-    }
+// DOM Elements Cache
+const Elements = {
+  init() {
+    this.sidebar = document.getElementById('mySidebar');
+    this.header = document.querySelector('header');
+    this.surahList = document.getElementById('surah-list');
+    this.juzzList = document.getElementById('juzz-list');
+    this.loader = document.getElementById('loader');
+    this.searchInput = document.getElementById('search-input');
+    this.searchButton = document.getElementById('search-button');
+    this.darkModeToggle = document.getElementById('dark-mode-toggle');
+    this.openSidebarBtn = document.getElementById('openSidebarBtn');
+    this.closeSidebarBtn = document.getElementById('closeSidebarBtn');
+    this.sidebarOverlay = document.getElementById('sidebarOverlay');
+    this.calendarDiv = document.getElementById('calendar');
+    this.navigationButtons = {
+      surah: document.getElementById('read-surah-btn'),
+      juzz: document.getElementById('read-juzz-btn')
+    };
+    this.profileElements = {
+      defaultIcon: document.getElementById('default-profile-icon'),
+      userPic: document.getElementById('user-profile-pic'),
+      link: document.getElementById('profile-link')
+    };
+  }
+};
 
-    function openNav() {
-        document.getElementById("mySidebar").classList.add("open");
-        document.getElementById("sidebarOverlay").classList.add("active");
-    }
+// Database Service
+const DatabaseService = {
+  async initDB() {
+    return await idb.openDB(DB_NAME, DB_VERSION, {
+      upgrade(db) {
+        db.createObjectStore('surahs', { keyPath: 'number' });
+      }
+    });
+  },
 
-    function closeNav() {
-        document.getElementById("mySidebar").classList.remove("open");
-        document.getElementById("sidebarOverlay").classList.remove("active");
-    }
-
-    function toggleDarkMode() {
-        document.body.classList.toggle('dark-mode');
-    }
-
-    // Initialize IDB and fetch Surah data
-    async function getSurahData() {
-        const db = await idb.openDB('quran-reader-db', 1, {
-            upgrade(db) {
-                db.createObjectStore('surahs', { keyPath: 'number' });
-            }
-        });
-
-        const surahs = await db.getAll('surahs');
-        if (surahs.length) {
-            return surahs.map((surah, index) => ({
-                ...surah,
-                number: index + 1,
-            }));
-        } else {
-            const response = await fetch('https://api.alquran.cloud/v1/surah');
-            const data = await response.json();
-            const tx = db.transaction('surahs', 'readwrite');
-            for (const surah of data.data) {
-                tx.store.put(surah);
-            }
-            await tx.done;
-            return data.data.map((surah, index) => ({
-                ...surah,
-                number: index + 1,
-            }));
-        }
-    }
-
-    // Surah and Juzz Management
-    const surahBtn = document.getElementById('read-surah-btn');
-    const juzzBtn = document.getElementById('read-juzz-btn');
-    const surahList = document.getElementById('surah-list');
-    const juzzList = document.getElementById('juzz-list');
-    const loader = document.getElementById('loader');
-
-    // Initialize view
-    surahBtn.classList.add('active');
-    juzzBtn.classList.remove('active');
-    surahList.style.display = 'grid';
-    juzzList.style.display = 'none';
-
-    const juzzData = [
-        { number: 1, name: "Alif Lām Mīm", range: "Al-Baqarah 1-141" },
-        { number: 2, name: "Sayaqūl", range: "Al-Baqarah 142-252" },
-        { number: 3, name: "Tilka 'r-Rusul", range: "Al-Baqarah 253 - Al-i-Imran 92" },
-        { number: 4, name: "Lan Tanalū", range: "Al-i-Imran 93-200, An-Nisa 1-23" },
-        { number: 5, name: "Wal Muhsanat", range: "An-Nisa 24-147" },
-        { number: 6, name: "La Yuhibbu 'l-lah", range: "An-Nisa 148-176, Al-Ma'idah 1-81" },
-        { number: 7, name: "Wa Idha Samiʿū", range: "Al-Ma'idah 82-120, Al-An'am 1-110" },
-        { number: 8, name: "Wa Law Annana", range: "Al-An'am 111-165, Al-A'raf 1-87" },
-        { number: 9, name: "Qala 'l-Mala'", range: "Al-A'raf 88-206, Al-Anfal 1-40" },
-        { number: 10, name: "Wa-ʿlamū", range: "Al-Anfal 41-75, At-Tawbah 1-92" },
-        { number: 11, name: "Yaʿtadhirūn", range: "At-Tawbah 93-129, Yunus 1-109, Hud 1-5" },
-        { number: 12, name: "Wa Mā Min Dābbah", range: "Hud 6-123, Yusuf 1-52" },
-        { number: 13, name: "Wa Mā Ubarri'u", range: "Yusuf 53-111, Ar-Ra'd 1-43, Ibrahim 1-52" },
-        { number: 14, name: "Rubamā", range: "Al-Hijr 1-99, An-Nahl 1-128" },
-        { number: 15, name: "Subhāna 'l-ladhī", range: "Al-Isra 1-111, Al-Kahf 1-74" },
-        { number: 16, name: "Qāla 'A-lam", range: "Al-Kahf 75-110, Maryam 1-98, Taha 1-135" },
-        { number: 17, name: "Iqtaraba Lin-nās", range: "Al-Anbya 1-112, Al-Hajj 1-78" },
-        { number: 18, name: "Qad Aflaha", range: "Al-Mu'minun 1-118, An-Nur 1-64" },
-        { number: 19, name: "Wa Qāla 'L-ladhīna", range: "Al-Furqan 1-77, Ash-Shu'ara 1-227" },
-        { number: 20, name: "A-man Khalaq", range: "An-Naml 1-93, Al-Qasas 1-88, Al-Ankabut 1-45" },
-        { number: 21, name: "Utlu Mā Ūhiya", range: "Al-Ankabut 46-69, Ar-Rum 1-60, Luqman 1-34" },
-        { number: 22, name: "Wa Man Yaqnut", range: "As-Sajda 1-30, Al-Ahzab 1-73" },
-        { number: 23, name: "Wa Mā Lī", range: "Saba 1-54, Fatir 1-45, Ya-Sin 1-83" },
-        { number: 24, name: "Fa-man Azlam", range: "As-Saffat 1-182, Sad 1-88, Az-Zumar 1-75" },
-        { number: 25, name: "Ilayhi Yuraddu", range: "Ghafir 1-85, Fussilat 1-46" },
-        { number: 26, name: "Hā Mīm", range: "Ash-Shura 1-53, Az-Zukhruf 1-89, Ad-Dukhan 1-59" },
-        { number: 27, name: "Qāla Fa-mā Khatbukum", range: "Al-Jathiya 1-37, Al-Ahqaf 1-35, Muhammad 1-38" },
-        { number: 28, name: "Qad Samiʿa 'l-lāh", range: "Al-Fath 1-29, Al-Hujurat 1-18, Qaf 1-45" },
-        { number: 29, name: "Tabāraka 'l-ladhī", range: "Adh-Dhariyat 1-60 to Al-Hadid 1-29" },
-        { number: 30, name: "ʿAmma", range: "Al-Mujadila 1-22 to An-Nas 1-6" }
-    ];
-
-    function generateJuzzList() {
-        juzzList.innerHTML = juzzData.map(juzz => `
-            <div class="juzz-item" onclick="window.location.href='juzz.html?juzz=${juzz.number}'">
-                <div class="juzz-number">Juzz ${juzz.number}</div>
-                <div class="juzz-name">${juzz.name}</div>
-                <div class="juzz-range">${juzz.range}</div>
-            </div>
-        `).join('');
-    }
-
-    function showSurahs(start, end, surahs) {
-        const fragment = document.createDocumentFragment();
-        surahs.slice(start, end).forEach(surah => {
-            const surahDiv = document.createElement('div');
-            surahDiv.classList.add('surah');
-            surahDiv.innerHTML = `
-                <span>${surah.number}</span> 
-                ${surah.englishName} 
-                <div class="arabic-name">${surah.name}</div>
-            `;
-            surahDiv.addEventListener('click', () => {
-                window.location.href = `surah.html?surah=${surah.number}`;
-            });
-            fragment.appendChild(surahDiv);
-        });
-        
-        surahList.innerHTML = '';
-        surahList.appendChild(fragment);
-
-        if (end < surahs.length) {
-            const showMoreButton = document.createElement('button');
-            showMoreButton.id = 'show-more-button';
-            showMoreButton.textContent = 'Show More';
-            showMoreButton.addEventListener('click', () => {
-                showSurahs(start + 15, end + 15, surahs);
-            });
-            surahList.appendChild(showMoreButton);
-        }
-
-        if (start > 0) {
-            const showLessButton = document.createElement('button');
-            showLessButton.id = 'show-less-button';
-            showLessButton.textContent = 'Show Less';
-            showLessButton.addEventListener('click', () => {
-                showSurahs(0, 15, surahs);
-            });
-            surahList.appendChild(showLessButton);
-        }
-    }
-
-    // Initialize data
-    let surahs = [];
+  async getSurahs() {
     try {
-        loader.style.display = 'block';
-        surahs = await getSurahData();
-        loader.style.display = 'none';
-        showSurahs(0, 15, surahs);
-        generateJuzzList();
+      const db = await this.initDB();
+      const surahs = await db.getAll('surahs');
+      
+      if (surahs.length) {
+        return surahs.map((surah, index) => ({
+          ...surah,
+          number: index + 1,
+        }));
+      }
+      
+      const response = await fetch(`${API_BASE_URL}/surah`);
+      const data = await response.json();
+      
+      const tx = db.transaction('surahs', 'readwrite');
+      for (const surah of data.data) {
+        await tx.store.put(surah);
+      }
+      await tx.done;
+      
+      return data.data;
     } catch (error) {
-        loader.style.display = 'none';
-        console.error('Error fetching Surahs:', error);
+      ErrorHandler.handle(error, 'DatabaseService.getSurahs');
+      return [];
+    }
+  }
+};
+
+// UI Service
+const UIService = {
+  lastScrollTop: 0,
+  scrollTimeout: null,
+
+  createSurahElement(surah) {
+    const div = document.createElement('div');
+    div.classList.add('surah');
+    div.dataset.number = surah.number;
+    
+    const numberSpan = document.createElement('span');
+    numberSpan.textContent = surah.number;
+    
+    const nameText = document.createTextNode(` ${surah.englishName} `);
+    
+    const arabicName = document.createElement('div');
+    arabicName.classList.add('arabic-name');
+    arabicName.textContent = surah.name;
+    
+    div.append(numberSpan, nameText, arabicName);
+    return div;
+  },
+
+  async showSurahs(start, end, surahs) {
+    const fragment = document.createDocumentFragment();
+    
+    surahs.slice(start, end).forEach(surah => {
+      const surahElement = this.createSurahElement(surah);
+      fragment.appendChild(surahElement);
+    });
+    
+    Elements.surahList.innerHTML = '';
+    Elements.surahList.appendChild(fragment);
+    
+    this.addNavigationButtons(start, end, surahs);
+  },
+
+  addNavigationButtons(start, end, surahs) {
+    if (end < surahs.length) {
+      const showMoreButton = document.createElement('button');
+      showMoreButton.id = 'show-more-button';
+      showMoreButton.textContent = 'Show More';
+      showMoreButton.addEventListener('click', () => {
+        this.showSurahs(start + 15, end + 15, surahs);
+      });
+      Elements.surahList.appendChild(showMoreButton);
     }
 
-    // Event Listeners
-    surahBtn.addEventListener('click', () => {
-        surahBtn.classList.add('active');
-        juzzBtn.classList.remove('active');
-        surahList.style.display = 'grid';
-        juzzList.style.display = 'none';
-        if (searchInput) searchInput.value = '';
+    if (start > 0) {
+      const showLessButton = document.createElement('button');
+      showLessButton.id = 'show-less-button';
+      showLessButton.textContent = 'Show Less';
+      showLessButton.addEventListener('click', () => {
+        this.showSurahs(0, 15, surahs);
+      });
+      Elements.surahList.appendChild(showLessButton);
+    }
+  },
+
+  generateJuzzList(juzzData) {
+    const fragment = document.createDocumentFragment();
+    
+    juzzData.forEach(juzz => {
+      const div = document.createElement('div');
+      div.classList.add('juzz-item');
+      div.setAttribute('role', 'button');
+      div.setAttribute('tabindex', '0');
+      
+      const numberDiv = document.createElement('div');
+      numberDiv.classList.add('juzz-number');
+      numberDiv.textContent = `Juzz ${juzz.number}`;
+      
+      const nameDiv = document.createElement('div');
+      nameDiv.classList.add('juzz-name');
+      nameDiv.textContent = juzz.name;
+      
+      const rangeDiv = document.createElement('div');
+      rangeDiv.classList.add('juzz-range');
+      rangeDiv.textContent = juzz.range;
+      
+      div.append(numberDiv, nameDiv, rangeDiv);
+      div.addEventListener('click', () => {
+        window.location.href = `juzz.html?juzz=${juzz.number}`;
+      });
+      
+      fragment.appendChild(div);
+    });
+    
+    Elements.juzzList.innerHTML = '';
+    Elements.juzzList.appendChild(fragment);
+  },
+
+  updateProfileIcon() {
+    const userAvatar = localStorage.getItem('userAvatar');
+    const { defaultIcon, userPic, link } = Elements.profileElements;
+    
+    if (userAvatar) {
+      defaultIcon.style.display = 'none';
+      userPic.src = userAvatar;
+      userPic.style.display = 'block';
+      link.href = 'profile.html';
+    } else {
+      defaultIcon.style.display = 'block';
+      userPic.style.display = 'none';
+      link.href = 'login.html';
+    }
+  },
+
+  updateCalendar() {
+    if (!Elements.calendarDiv) return;
+
+    const options = {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    };
+
+    const hijriDate = new Intl.DateTimeFormat('en-TN-u-ca-islamic', options).format(new Date());
+    const hijriDateArabic = new Intl.DateTimeFormat('ar-TN-u-ca-islamic', options).format(new Date());
+
+    const hijriElement = document.createElement('p');
+    hijriElement.id = 'hijri-date';
+    hijriElement.textContent = hijriDate;
+
+    const hijriArabicElement = document.createElement('p');
+    hijriArabicElement.id = 'hijri-date-arabic';
+    hijriArabicElement.textContent = hijriDateArabic;
+
+    Elements.calendarDiv.innerHTML = '';
+    Elements.calendarDiv.append(hijriElement, hijriArabicElement);
+  },
+
+  handleScroll() {
+    const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+    if (currentScrollTop > this.lastScrollTop) {
+      Elements.header.classList.remove('header-visible');
+      Elements.header.classList.add('header-hidden');
+      Elements.sidebar.classList.add('blur-effect');
+    } else {
+      Elements.header.classList.remove('header-hidden');
+      Elements.header.classList.add('header-visible');
+      Elements.sidebar.classList.remove('blur-effect');
+    }
+
+    this.lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
+
+    clearTimeout(this.scrollTimeout);
+    this.scrollTimeout = setTimeout(() => {
+      Elements.header.classList.remove('header-hidden');
+      Elements.header.classList.add('header-visible');
+      Elements.sidebar.classList.remove('blur-effect');
+    }, 200);
+  }
+};
+
+// Event Handlers
+const EventHandlers = {
+  init() {
+    // Navigation Events
+    Elements.navigationButtons.surah.addEventListener('click', () => {
+      this.switchView('surah');
     });
 
-    juzzBtn.addEventListener('click', () => {
-        juzzBtn.classList.add('active');
-        surahBtn.classList.remove('active');
-        surahList.style.display = 'none';
-        juzzList.style.display = 'grid';
-        if (searchInput) searchInput.value = '';
+    Elements.navigationButtons.juzz.addEventListener('click', () => {
+      this.switchView('juzz');
     });
 
-    // Search functionality
-    const searchInput = document.getElementById('search-input');
-    const searchButton = document.getElementById('search-button');
+    // Search Events
+    Elements.searchButton?.addEventListener('click', () => this.performSearch());
+    Elements.searchInput?.addEventListener('keypress', (event) => {
+      if (event.key === 'Enter') this.performSearch();
+    });
 
-    function performSearch() {
-        const searchTerm = searchInput.value.toLowerCase();
-        
-        if (surahList.style.display !== 'none') {
-            // Search in surah list
-            const surahElements = surahList.querySelectorAll('.surah');
-            surahElements.forEach(surah => {
-                surah.style.display = surah.innerText.toLowerCase().includes(searchTerm) ? 'block' : 'none';
-            });
-        } else {
-            // Search in juzz list
-            const juzzElements = juzzList.querySelectorAll('.juzz-item');
-            juzzElements.forEach(juzz => {
-                juzz.style.display = juzz.innerText.toLowerCase().includes(searchTerm) ? 'block' : 'none';
-            });
-        }
+    // Sidebar Events
+    Elements.openSidebarBtn.addEventListener('click', () => this.toggleSidebar(true));
+    Elements.closeSidebarBtn.addEventListener('click', () => this.toggleSidebar(false));
+    Elements.sidebarOverlay.addEventListener('click', () => this.toggleSidebar(false));
+
+    // Other Events
+    Elements.darkModeToggle.addEventListener('click', () => this.toggleDarkMode());
+    window.addEventListener('scroll', () => UIService.handleScroll());
+    
+    // Hash Navigation
+    window.addEventListener('load', this.handleHashNavigation);
+  },
+
+  switchView(view) {
+    const { surah, juzz } = Elements.navigationButtons;
+    
+    if (view === 'surah') {
+      surah.classList.add('active');
+      juzz.classList.remove('active');
+      Elements.surahList.style.display = 'grid';
+      Elements.juzzList.style.display = 'none';
+    } else {
+      juzz.classList.add('active');
+      surah.classList.remove('active');
+      Elements.surahList.style.display = 'none';
+      Elements.juzzList.style.display = 'grid';
     }
+    
+    if (Elements.searchInput) Elements.searchInput.value = '';
+  },
 
-    if (searchButton) {
-        searchButton.addEventListener('click', performSearch);
+  performSearch() {
+    const searchTerm = Elements.searchInput.value.toLowerCase();
+    const isSearchingSurahs = Elements.surahList.style.display !== 'none';
+    
+    const elements = isSearchingSurahs ? 
+      Elements.surahList.querySelectorAll('.surah') : 
+      Elements.juzzList.querySelectorAll('.juzz-item');
+    
+    elements.forEach(element => {
+      const shouldDisplay = element.innerText.toLowerCase().includes(searchTerm);
+      element.style.display = shouldDisplay ? 'block' : 'none';
+    });
+  },
+
+  toggleSidebar(show) {
+    Elements.sidebar.classList.toggle('open', show);
+    Elements.sidebarOverlay.classList.toggle('active', show);
+  },
+
+  toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+  },
+
+  handleHashNavigation() {
+    const hash = window.location.hash;
+    if (hash) {
+      const element = document.querySelector(hash);
+      element?.scrollIntoView();
     }
+  },
 
-    if (searchInput) {
-        searchInput.addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') {
-                performSearch();
-            }
-        });
+  async handleLogout() {
+    try {
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userEmail');
+      localStorage.removeItem('userAvatar');
+      UIService.updateProfileIcon();
+      
+      await auth.signOut();
+      window.location.href = 'login.html';
+    } catch (error) {
+      ErrorHandler.handle(error, 'handleLogout');
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Error signing out. Please try again!',
+      });
     }
+  }
+};
 
-    // Service Worker Registration
+// Error Handler
+const ErrorHandler = {
+  handle(error, context = '') {
+    console.error(`Error in ${context}:`, error);
+    // Add your error tracking service here
+    // Show user-friendly error message if needed
+  }
+};
+
+// Loading Service
+const LoadingService = {
+  show() {
+    Elements.loader.style.display = 'block';
+  },
+
+  hide() {
+    Elements.loader.style.display = 'none';
+  },
+
+  async loadContent() {
+    this.show();
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    this.hide();
+  }
+};
+
+// Service Worker Registration
+const ServiceWorkerManager = {
+  async register() {
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/service-worker.js')
-            .then(function(registration) {
-                console.log('Service Worker registered with scope:', registration.scope);
-            }).catch(function(error) {
-                console.log('Service Worker registration failed:', error);
-            });
+      try {
+        const registration = await navigator.serviceWorker.register('/service-worker.js');
+        console.log('Service Worker registered with scope:', registration.scope);
+      } catch (error) {
+        ErrorHandler.handle(error, 'ServiceWorkerManager.register');
+      }
     }
+  }
+};
 
-    // Scroll Effects
-    let lastScrollTop = 0;
-    const header = document.querySelector('header');
-    const sidebar = document.getElementById('mySidebar');
-    let scrollTimeout;
-
-    function applyScrollEffects() {
-        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-        if (currentScrollTop > lastScrollTop) {
-            header.classList.remove('header-visible');
-            header.classList.add('header-hidden');
-            sidebar.classList.add('blur-effect');
-        } else {
-            header.classList.remove('header-hidden');
-            header.classList.add('header-visible');
-            sidebar.classList.remove('blur-effect');
-        }
-
-        lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
-
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            header.classList.remove('header-hidden');
-            header.classList.add('header-visible');
-            sidebar.classList.remove('blur-effect');
-        }, 200);
+// App Initialization
+async function initializeApp() {
+  try {
+    // Initialize DOM elements
+    Elements.init();
+    
+    // Register event handlers
+    EventHandlers.init();
+    
+    // Register service worker
+    await ServiceWorkerManager.register();
+    
+    // Show loading screen
+    await LoadingService.loadContent();
+    
+    // Initialize UI
+    UIService.updateProfileIcon();
+    UIService.updateCalendar();
+    
+    // Load dark mode preference
+    const darkMode = localStorage.getItem('darkMode') === 'true';
+    if (darkMode) {
+      document.body.classList.add('dark-mode');
     }
+    
+    // Load Surah data
+    const surahs = await DatabaseService.getSurahs();
+    await UIService.showSurahs(0, 15, surahs);
+    
+    // Generate Juzz list
+    UIService.generateJuzzList(JUZZ_DATA);
+    
+  } catch (error) {
+    ErrorHandler.handle(error, 'initializeApp');
+    LoadingService.hide();
+  }
+}
 
-    function checkScroll() {
-        const sections = document.querySelectorAll('.section');
-        sections.forEach(section => {
-            const rect = section.getBoundingClientRect();
-            if (rect.top < window.innerHeight && rect.bottom >= 0) {
-                section.classList.add('blur');
-            } else {
-                section.classList.remove('blur');
-            }
-        });
-    }
+// Initialize the application when DOM is ready
+document.addEventListener('DOMContentLoaded', initializeApp);
 
-    window.addEventListener('scroll', () => {
-        applyScrollEffects();
-        checkScroll();
-    });
-
-    // Initial setup
-    updateProfileIcon();
-    document.getElementById('openSidebarBtn').addEventListener('click', openNav);
-    document.getElementById('closeSidebarBtn').addEventListener('click', closeNav);
-    document.getElementById('sidebarOverlay').addEventListener('click', closeNav);
-    document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
-
-    // Handle logout
-    function handleLogout() {
-        localStorage.removeItem('userName');
-        localStorage.removeItem('userEmail');
-        localStorage.removeItem('userAvatar');
-        updateProfileIcon();
-        
-        auth.signOut().then(() => {
-            window.location.href = 'login.html';
-        }).catch((error) => {
-            console.error('Error signing out:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Error signing out. Please try again!',
-            });
-        });
-    }
-
-    // Attach logout handler
-    document.getElementById('logout-button').addEventListener('click', handleLogout);
-
-    // Hijri Calendar
-    const hijriDate = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    }).format(new Date());
-
-    const hijriDateArabic = new Intl.DateTimeFormat('ar-TN-u-ca-islamic', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    }).format(new Date());
-
-    const calendarDiv = document.getElementById('calendar');
-    if (calendarDiv) {
-        calendarDiv.innerHTML = `
-            <p id="hijri-date">${hijriDate}</p>
-            <p id="hijri-date-arabic">${hijriDateArabic}</p>
-        `;
-    }
-
-    // Handle hash-based navigation
-    window.addEventListener('load', () => {
-        const hash = window.location.hash;
-        if (hash) {
-            const element = document.querySelector(hash);
-            if (element) {
-                element.scrollIntoView();
-            }
-        }
-    });
-
-    // Loading screen
-    function showLoader() {
-        const loader = document.getElementById('loader');
-        if (loader) {
-            loader.style.display = 'block';
-        }
-    }
-
-    function hideLoader() {
-        const loader = document.getElementById('loader');
-        if (loader) {
-            loader.style.display = 'none';
-        }
-    }
-
-    function loadContent() {
-        showLoader();
-        setTimeout(hideLoader, 2000);
-    }
-
-    // Initialize content loading
-    loadContent();
-});
+// Export for testing
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    UIService,
+    DatabaseService,
+    EventHandlers,
+    ErrorHandler,
+    LoadingService,
+    ServiceWorkerManager
+  };
+}
  </script>
 </body>
 </html>
