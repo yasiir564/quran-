@@ -233,44 +233,67 @@
 
 /* Search Container */
 .search-container {
-    margin: 10px 0;
+    margin: 20px 0;
     display: flex;
-    align-items: center;
     justify-content: center;
     position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .search-container input {
-    padding: 10px;
-    font-size: 1em;
-    width: 70%;
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 1rem;
     border: 2px solid #ddd;
-    border-radius: 25px;
+    border-radius: 50px;
     outline: none;
-    padding-left: 20px;
-    transition: all 0.3s;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .search-container input:focus {
     border-color: #2575fc;
+    box-shadow: 0 4px 12px rgba(37, 117, 252, 0.3);
 }
 
 .search-container button {
-    padding: 10px;
-    font-size: 1em;
-    border: none;
-    cursor: pointer;
-    border-radius: 50%;
-    background-color: #2575fc;
-    color: #fff;
     position: absolute;
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
+    width: 45px;
+    height: 45px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2575fc, #6a11cb);
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
+.search-container button:hover {
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 12px rgba(37, 117, 252, 0.4);
+}
+
+.search-container button:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+/* Optional Icon Style for Button */
+.search-container button svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
 
 /* Dark Mode */
 #dark-mode-toggle {
