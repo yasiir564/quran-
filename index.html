@@ -1634,6 +1634,11 @@ const UIService = {
     arabicName.classList.add('arabic-name');
     arabicName.textContent = surah.name;
     
+    // Add an event listener to open surah.html when clicked
+    div.addEventListener('click', () => {
+      window.location.href = `surah.html?number=${surah.number}`;
+    });
+    
     div.append(numberSpan, nameText, arabicName);
     return div;
   },
@@ -1673,6 +1678,7 @@ const UIService = {
       Elements.surahList.appendChild(showLessButton);
     }
   },
+};
 
   generateJuzzList(juzzData) {
     const fragment = document.createDocumentFragment();
@@ -1697,7 +1703,7 @@ const UIService = {
       
       div.append(numberDiv, nameDiv, rangeDiv);
       div.addEventListener('click', () => {
-        window.location.href = `juzz.html?juzz=${juzz.number}`;
+        window.location.href = `juzz_detail.html?juzz=${juzz.number}`;
       });
       
       fragment.appendChild(div);
