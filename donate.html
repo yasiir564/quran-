@@ -63,6 +63,25 @@
     0% { background-position: -1000px 0; }
     100% { background-position: 1000px 0; }
 }
+        /* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--scroll-track);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scroll-thumb);
+    border-radius: 5px;
+    transition: var(--transition-speed);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
 
 /* Base Styles */
 * {
