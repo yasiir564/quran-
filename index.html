@@ -803,106 +803,98 @@ body.dark-mode h1 {
 .mobile-cards {
     display: flex;
     justify-content: space-around;
-    margin: 60px auto;
+    margin: 40px auto;
     flex-wrap: wrap;
     position: relative;
-    perspective: 1500px;
-    gap: 25px;
-    padding: 20px;
-    max-width: 1400px;
+    perspective: 2000px;
+    gap: 20px;
+    padding: 15px;
+    max-width: 1200px;
 }
 
 .card {
-    padding: 25px;
-    border-radius: 24px;
+    padding: 20px;
+    border-radius: 16px;
     box-shadow: 
-        0 10px 40px rgba(0, 0, 0, 0.2),
-        0 0 100px rgba(0, 0, 0, 0.1);
+        0 8px 32px rgba(0, 0, 0, 0.15),
+        0 2px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
     color: white;
     position: relative;
-    width: 300px;
-    height: 400px;
+    width: 260px;  /* Reduced from 300px */
+    height: 340px; /* Reduced from 400px */
     display: flex;
     align-items: flex-end;
     justify-content: center;
     overflow: hidden;
     background-size: cover;
     background-position: center;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
     transform-style: preserve-3d;
     cursor: pointer;
+    backdrop-filter: blur(5px);
 }
 
 .card::before {
     content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 24px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 
-        0 0 0 4px rgba(255, 255, 255, 0.1),
-        inset 0 0 40px rgba(255, 255, 255, 0.2);
-    z-index: 1;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 0, 0, 0.4) 100%
+    );
+    border-radius: 16px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
 }
 
 .card::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: -2px;
     background: linear-gradient(
         45deg,
-        transparent 0%,
-        rgba(255, 255, 255, 0.15) 45%,
-        rgba(255, 255, 255, 0.3) 50%,
-        rgba(255, 255, 255, 0.15) 55%,
-        transparent 100%
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0.2),
+        rgba(255, 255, 255, 0.1)
     );
-    transform: translateX(-100%);
-    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 2;
+    border-radius: 16px;
+    mask: linear-gradient(black, black) content-box,
+          linear-gradient(black, black);
+    mask-composite: exclude;
+    padding: 2px;
+    pointer-events: none;
 }
 
 .card:hover {
-    transform: scale(1.05) translateY(-15px) rotateX(8deg);
+    transform: scale(1.03) translateY(-10px) rotateX(5deg);
     box-shadow: 
-        0 30px 60px rgba(0, 0, 0, 0.25),
-        0 20px 30px rgba(0, 0, 0, 0.2);
-}
-
-.card:hover::after {
-    transform: translateX(100%);
+        0 20px 40px rgba(0, 0, 0, 0.2),
+        0 15px 20px rgba(0, 0, 0, 0.15);
 }
 
 .card:hover::before {
-    border-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 
-        0 0 50px 8px rgba(255, 255, 255, 0.3),
-        inset 0 0 60px rgba(255, 255, 255, 0.2);
+    opacity: 1;
 }
 
+/* Modern glassmorphism effect */
 .card p {
-    background: rgba(0, 0, 0, 0.75);
-    padding: 15px 20px;
-    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 12px 16px;
+    border-radius: 10px;
     margin: 0;
     position: relative;
     z-index: 3;
     transform: translateY(100%);
     opacity: 0;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(8px);
-    font-size: 1.1rem;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    font-size: 0.95rem;
     font-weight: 500;
-    letter-spacing: 0.5px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.3px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     max-width: 85%;
 }
 
@@ -914,13 +906,13 @@ body.dark-mode h1 {
 /* Enhanced Mobile Responsiveness */
 @media (max-width: 1024px) {
     .mobile-cards {
-        gap: 20px;
-        padding: 15px;
+        gap: 15px;
+        padding: 12px;
     }
     
     .card {
-        width: 250px;
-        height: 350px;
+        width: 220px;
+        height: 300px;
     }
 }
 
@@ -928,77 +920,66 @@ body.dark-mode h1 {
     .mobile-cards {
         flex-wrap: nowrap;
         overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        margin-top: 40px;
-        padding: 30px 15px;
-        gap: 20px;
         scroll-snap-type: x mandatory;
-        scroll-behavior: smooth;
+        scroll-padding: 15px;
+        padding: 20px 15px;
+        gap: 15px;
     }
 
     .card {
-        flex: 0 0 auto;
-        width: 280px;
-        height: 380px;
+        width: 240px;
+        height: 320px;
         scroll-snap-align: center;
-        margin: 10px 5px;
+        margin: 8px 4px;
     }
 
     .mobile-cards::-webkit-scrollbar {
-        height: 8px;
-        background: rgba(255, 255, 255, 0.15);
-        border-radius: 4px;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 3px;
     }
 
     .mobile-cards::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.3);
-        border-radius: 4px;
-        transition: background 0.3s ease;
-    }
-
-    .mobile-cards::-webkit-scrollbar-thumb:hover {
-        background: rgba(255, 255, 255, 0.4);
-    }
-
-    .scroll-arrow {
-        display: block;
-        position: absolute;
-        right: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 2.5em;
-        color: #2575fc;
-        z-index: 10;
-        animation: float 2.5s ease-in-out infinite;
-        cursor: pointer;
-        text-shadow: 
-            0 0 15px rgba(37, 117, 252, 0.6),
-            0 0 30px rgba(37, 117, 252, 0.4);
-    }
-
-    @keyframes float {
-        0%, 100% {
-            transform: translateY(-50%) translateX(0);
-            filter: brightness(1);
-        }
-        50% {
-            transform: translateY(-50%) translateX(12px);
-            filter: brightness(1.4);
-        }
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+        transition: background 0.2s ease;
     }
 }
 
 @media (max-width: 480px) {
     .card {
-        width: 240px;
-        height: 320px;
+        width: 200px;
+        height: 280px;
     }
     
     .card p {
-        font-size: 1rem;
-        padding: 12px 16px;
+        font-size: 0.9rem;
+        padding: 10px 14px;
     }
 }
+
+/* Add smooth card entrance animation */
+@keyframes cardEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: cardEntrance 0.8s ease-out;
+    animation-fill-mode: backwards;
+}
+
+/* Add staggered delay for each card */
+.card:nth-child(1) { animation-delay: 0.1s; }
+.card:nth-child(2) { animation-delay: 0.2s; }
+.card:nth-child(3) { animation-delay: 0.3s; }
+.card:nth-child(4) { animation-delay: 0.4s; }
 /* 3. ANNOUNCEMENT BAR STYLES */
 .announcement-bar {
     background: rgba(255, 255, 255, 0.8);
