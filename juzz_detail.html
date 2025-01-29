@@ -12,7 +12,7 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1850217813586802"
      crossorigin="anonymous"></script>
     <style>
-/* CSS Reset and Base Styles */
+/* CSS Variables */
 :root {
   --primary-color: #497dbd;
   --primary-dark: #3a6ca8;
@@ -22,9 +22,11 @@
   --white-transparent: rgba(255, 255, 255, 0.85);
   --shadow-color: rgba(73, 125, 189, 0.1);
   --transition-standard: all 0.3s ease;
+  --sidebar-gradient: linear-gradient(135deg, #2196F3, #ffffff);
 }
 
-* {
+/* Reset and Base Styles */
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -37,6 +39,18 @@ body {
   scroll-behavior: smooth;
   overflow-x: hidden;
   color: var(--text-color);
+  position: relative;
+}
+
+/* Particles Container */
+#particles-js {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  pointer-events: none;
 }
 
 /* Scrollbar Styles */
@@ -60,9 +74,9 @@ body {
   background: rgba(73, 125, 189, 0.4);
 }
 
-/* Layout Components */
+/* Main Container */
 .container {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
   position: relative;
@@ -71,6 +85,7 @@ body {
   backdrop-filter: blur(10px);
   border-radius: 20px;
   box-shadow: 0 8px 32px var(--shadow-color);
+  margin-left: 280px;
 }
 
 /* Header Styles */
@@ -144,7 +159,11 @@ h1:hover {
   box-shadow: 0 6px 20px rgba(73, 125, 189, 0.2);
 }
 
-/* Ayah and Translation Components */
+.btn i {
+  font-size: 1.2rem;
+}
+
+/* Ayah Components */
 .ayah {
   font-size: clamp(1.5rem, 3vw, 1.8rem);
   line-height: 2.5;
@@ -181,6 +200,7 @@ h1:hover {
   box-shadow: 0 8px 25px rgba(73, 125, 189, 0.15);
 }
 
+/* Translation Styles */
 .translation {
   font-size: 1.1rem;
   line-height: 1.8;
@@ -198,6 +218,57 @@ h1:hover {
   transform: translateX(5px);
 }
 
+/* Audio Player Styles */
+.audio-player {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+.audio-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.play-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-standard);
+}
+
+.play-btn:hover {
+  background: var(--primary-dark);
+  transform: scale(1.1);
+}
+
+.progress-bar {
+  flex-grow: 1;
+  height: 4px;
+  background: rgba(73, 125, 189, 0.2);
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+}
+
+.progress {
+  height: 100%;
+  background: var(--primary-color);
+  border-radius: 2px;
+  transition: width 0.1s linear;
+}
+
 /* Sidebar Components */
 .header {
   position: fixed;
@@ -205,7 +276,7 @@ h1:hover {
   top: 0;
   height: 100vh;
   width: 280px;
-  background: linear-gradient(135deg, #2196F3, #ffffff);
+  background: var(--sidebar-gradient);
   padding: 20px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   transition: var(--transition-standard);
@@ -229,6 +300,67 @@ h1:hover {
   font-size: 1rem;
   color: #1a237e;
   opacity: 0.8;
+}
+
+/* Reading Options */
+.reading-options {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 2rem;
+}
+
+.reading-option-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition-standard);
+  width: 100%;
+  text-align: left;
+}
+
+.reading-option-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateX(5px);
+}
+
+.reading-option-btn i {
+  font-size: 18px;
+  color: #1a237e;
+}
+
+/* Font Selector */
+.font-selector {
+  margin-top: 2rem;
+}
+
+.font-selector select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: white;
+  cursor: pointer;
+}
+
+/* Mobile Menu Toggle */
+.mobile-menu-toggle {
+  display: none;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
 }
 
 /* Loading Animation */
@@ -272,11 +404,43 @@ body.dark-mode .translation {
   color: #c3cfe2;
 }
 
+body.dark-mode .audio-player {
+  background: rgba(28, 39, 53, 0.9);
+}
+
+body.dark-mode .progress-bar {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode .header {
+  background: linear-gradient(135deg, #1a237e, #2c3e50);
+}
+
+body.dark-mode .reading-option-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f5f7fa;
+}
+
+body.dark-mode .reading-option-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode .sidebar-logo,
+body.dark-mode .sidebar-subtitle {
+  color: #f5f7fa;
+}
+
 /* Media Queries */
+@media (max-width: 1024px) {
+  .container {
+    margin-left: 0;
+    margin: 1rem;
+  }
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 1rem;
-    margin: 10px;
   }
 
   .search-container {
@@ -297,6 +461,14 @@ body.dark-mode .translation {
   .header.active {
     transform: translateX(0);
   }
+
+  .mobile-menu-toggle {
+    display: block;
+  }
+
+  .audio-controls {
+    flex-wrap: wrap;
+  }
 }
 
 @media (max-width: 480px) {
@@ -306,13 +478,46 @@ body.dark-mode .translation {
 
   .ayah {
     padding: 1rem;
+    font-size: 1.2rem;
   }
 
   .translation {
     padding: 1rem;
     font-size: 1rem;
   }
+
+  .sidebar-logo {
+    font-size: 1.2rem;
+  }
+
+  .sidebar-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .reading-option-btn {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
 }
+
+/* Utility Classes */
+.hide {
+  display: none !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
     </style>
 </head>
 <body>
