@@ -434,6 +434,153 @@ body.dark-mode .buttons button:hover {
     text-align: center;
     margin-right: 10px;
 }
+        /* Sidebar Base Styles */
+.header {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 280px;
+    background: linear-gradient(135deg, #2196F3, #ffffff);
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.sidebar-logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1a237e;
+    margin-bottom: 5px;
+}
+
+.sidebar-subtitle {
+    font-size: 16px;
+    color: #1a237e;
+    opacity: 0.8;
+}
+
+/* Reading Options Styles */
+.reading-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.reading-option-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    text-align: left;
+}
+
+.reading-option-btn:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: translateX(5px);
+}
+
+.reading-option-btn i {
+    font-size: 18px;
+    color: #1a237e;
+}
+
+/* Mobile Menu Toggle */
+.mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    background: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+/* Font Selector */
+.font-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Back Button */
+.back-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.back-button:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: translateX(5px);
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+    .header {
+        transform: translateX(-100%);
+        width: 250px;
+        z-index: 999;
+    }
+
+    .mobile-menu-toggle {
+        display: block;
+    }
+
+    /* When sidebar is active */
+    .header.active {
+        transform: translateX(0);
+    }
+
+    .sidebar-logo {
+        font-size: 20px;
+    }
+
+    .sidebar-subtitle {
+        font-size: 14px;
+    }
+
+    .reading-option-btn {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+}
+
+/* Extra small devices */
+@media screen and (max-width: 480px) {
+    .header {
+        width: 100%;
+    }
+
+    .reading-option-btn {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+}
     </style>
 </head>
 <body>
