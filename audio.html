@@ -25,459 +25,538 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1850217813586802"
      crossorigin="anonymous"></script>
    <style>
+:root {
+  --primary-dark: #2a2d64;
+  --primary: #4754a3;
+  --primary-light: #8b94dd;
+  --accent: #6c63ff;
+  --white: #ffffff;
+  --gray-light: #f5f7fa;
+  --gray: #e1e5ee;
+  --text-dark: #2c3e50;
+}
+
+/* Base Styles */
+html {
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gray-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
 body {
-    background: #abbaab;
-    background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
-    background: linear-gradient(to right, #ffffff, #abbaab);
-    font-family: 'Amiri', serif;
-    margin: 0;
-    padding: 0;
-    position: relative;
-    scroll-behavior: smooth; /* Added for smooth scrolling */
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  color: var(--white);
+  overflow-x: hidden;
+  min-height: 100vh;
 }
 
 .container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  opacity: 0;
+  animation: fadeIn 0.8s ease-out forwards;
 }
 
-header {
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-.sidebar {
-    height: 100%;
-    width: 250px;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: -250px;
-    background: linear-gradient(to top, #a8edea, #fed6e3);
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-    margin-bottom: 10px;
-}
-
-.sidebar a {
-    padding: 10px 15px;
-    text-decoration: none;
-    font-size: 18px;
-    color: #111;
-    display: block;
-    transition: 0.3s;
-}
-
-.sidebar a:hover {
-    color: #fff;
-    background-color: #2575fc;
-}
-
-.sidebar .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-}
-
-#main {
-    transition: margin-left .5s;
-    padding: 16px;
-}
-
-@media screen and (max-height: 450px) {
-    .sidebar { padding-top: 15px; }
-    .sidebar a { font-size: 18px; }
-}
-
-.openbtn {
-    font-size: 20px;
-    cursor: pointer;
-    background-color: #2575fc;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    position: fixed;
-    top: 20px;
-    left: 15px;
-    z-index: 1000;
-}
-
-.openbtn:hover {
-    background-color: #0056b3;
-}
-
+/* Typography */
 h1 {
-    font-family: 'Lato', sans-serif;
-    font-size: 2.5em;
-    color: #2c3e50;
-    margin-bottom: 20px;
-    margin-top: 40px;
-}
-
-.search-container {
-    margin: 10px 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-.search-container input {
-    padding: 10px;
-    font-size: 1em;
-    width: 70%;
-    border: 2px solid #ddd;
-    border-radius: 25px;
-    outline: none;
-    padding-left: 20px;
-    transition: all 0.3s;
-}
-
-.search-container input:focus {
-    border-color: #2575fc;
-}
-
-.search-container button {
-    padding: 10px;
-    font-size: 1em;
-    border: none;
-    cursor: pointer;
-    border-radius: 50%;
-    background-color: #2575fc;
-    color: #fff;
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  font-family: 'Lato', sans-serif;
+  font-size: 2.5em;
+  color: var(--white);
+  margin-bottom: 20px;
+  margin-top: 40px;
+  text-align: center;
+  letter-spacing: 1px;
+  animation: slideDown 0.8s ease-out forwards;
 }
 
 .featured-title {
-    font-size: 1.8em;
-    text-align: center;
-    margin: 40px 0 20px;
-    color: #2c3e50;
+  font-size: 1.8em;
+  text-align: center;
+  margin: 40px 0 20px;
+  color: var(--white);
+  font-weight: 600;
+  opacity: 0;
+  animation: fadeIn 0.8s ease-out forwards 0.2s;
 }
 
-.featured-reciters {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    gap: 10px;
-    padding: 20px 0;
-    width: 100%;
+/* Header */
+header {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  margin-bottom: 40px;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+  transform: translateY(-20px);
+  opacity: 0;
+  animation: slideDown 0.8s ease-out forwards;
 }
 
-.reciter-card {
-    background: rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(15px);
-    border: 1px solid #ddd;
-    padding: 15px;
-    border-radius: 5px;
-    min-width: 200px;
-    text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
-    flex: 0 0 auto;
-    position: relative;
+/* Sidebar */
+.sidebar {
+  height: 100%;
+  width: 280px;
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: -280px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-top: 60px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
 }
 
-.reciter-card img {
-    border-radius: 50%;
-    width: 100px;
-    height: 100px;
+.sidebar.active {
+  left: 0;
+  animation: slideIn 0.5s ease-out;
 }
 
-.reciter-card:hover {
-    transform: rotate(360deg);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+.sidebar a {
+  padding: 15px 25px;
+  text-decoration: none;
+  font-size: 16px;
+  color: var(--white);
+  display: block;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
 }
 
-.reciter-card h3 {
-    padding: 10px;
-    margin: 0;
-    font-size: 1em;
-    text-align: center;
+.sidebar a::before {
+  content: '';
+  position: absolute;
+  left: -100%;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: 0.5s;
 }
 
-.rating {
-    text-align: center;
-    padding-bottom: 10px;
+.sidebar a:hover::before {
+  left: 100%;
 }
 
-.rating i {
-    color: #f1c40f;
-    font-size: 1.2em;
+.sidebar .closebtn {
+  position: absolute;
+  top: 10px;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+  color: var(--white);
+  text-decoration: none;
+  transition: all 0.3s;
 }
 
-.surah-list {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    padding: 20px 0;
+.sidebar .closebtn:hover {
+  color: var(--accent);
+  transform: rotate(90deg);
 }
 
-.surah {
-    background: white;
-    border: 1px solid #ddd;
-    padding: 15px;
-    margin: 10px;
-    cursor: pointer;
-    text-align: center;
-    border-radius: 5px;
-    transition: transform 0.3s, background-color 0.3s, color 0.3s;
-    color: black;
-    font-size: 1.2em;
-    position: relative;
+/* Buttons */
+.openbtn {
+  font-size: 20px;
+  cursor: pointer;
+  background-color: var(--accent);
+  color: var(--white);
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(108, 99, 255, 0.2);
 }
 
-.surah:hover {
-    transform: scale(1.05);
-    background-color: #2575fc;
-    color: white;
-}
-
-.surah span {
-    font-size: 0.8em;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: black;
-    border-radius: 10px;
-    padding: 5px;
-    clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
-    transition: transform 0.3s;
-    color: white;
-}
-
-.surah span:hover {
-    transform: rotate(360deg);
-}
-
-.surah .arabic-name {
-    font-size: 0.8em;
-    color: black;
-    margin-top: 5px;
-}
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-    .surah-list {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-@media (max-width: 900px) {
-    .surah-list {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 600px) {
-    .surah-list {
-        grid-template-columns: 1fr;
-    }
-    
-    .surah {
-        margin: 5px 0;
-    }
+.openbtn:hover {
+  background-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(108, 99, 255, 0.3);
 }
 
 .show-more-btn {
-    display: block;
-    width: 200px;
-    margin: 40px auto;
-    padding: 15px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 30px;
-    font-size: 1em;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  display: block;
+  width: 200px;
+  margin: 40px auto;
+  padding: 15px 30px;
+  background-color: var(--accent);
+  color: var(--white);
+  border: none;
+  border-radius: 30px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(108, 99, 255, 0.2);
 }
 
 .show-more-btn:hover {
-    background-color: #2980b9;
+  background-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(108, 99, 255, 0.3);
 }
 
+/* Search Container */
+.search-container {
+  position: relative;
+  margin: 20px 0;
+  transform: translateY(-10px);
+  opacity: 0;
+  animation: slideUp 0.8s ease-out forwards 0.3s;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 15px 20px;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: var(--white);
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+}
+
+.search-container input:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(108, 99, 255, 0.2);
+  outline: none;
+}
+
+.search-container button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--accent);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+}
+
+.search-container button:hover {
+  background: var(--primary);
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* Featured Reciters */
+.featured-reciters {
+  display: flex;
+  gap: 20px;
+  padding: 20px 0;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  position: relative;
+}
+
+.reciter-card {
+  flex: 0 0 250px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border-radius: 15px;
+  padding: 20px;
+  scroll-snap-align: start;
+  transition: all 0.3s ease;
+  transform: scale(0.95);
+  opacity: 0;
+  animation: scaleIn 0.8s ease-out forwards;
+}
+
+.reciter-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.reciter-card img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid var(--accent);
+  transition: transform 0.5s ease;
+}
+
+.reciter-card:hover img {
+  transform: rotate(360deg);
+}
+
+.reciter-card h3 {
+  margin: 15px 0;
+  color: var(--white);
+  font-size: 1.2em;
+}
+
+/* Rating Stars */
+.rating {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.rating i {
+  color: #ffd700;
+  font-size: 1.2em;
+  margin: 0 2px;
+  transition: all 0.3s ease;
+}
+
+.rating i:hover {
+  transform: scale(1.2);
+}
+
+/* Surah List */
+.surah-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.surah {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border-radius: 15px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+.surah::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: 0.5s;
+}
+
+.surah:hover::before {
+  transform: translateX(100%);
+}
+
+.surah:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.surah span {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--accent);
+  color: var(--white);
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-size: 0.8em;
+  transition: all 0.3s ease;
+}
+
+.surah .arabic-name {
+  font-size: 1.2em;
+  color: var(--white);
+  margin-top: 10px;
+  font-family: 'Amiri', serif;
+}
+
+/* Navigation Arrows */
 .arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 2em;
-    color: #3498db;
-    cursor: pointer;
-    z-index: 10;
-    background-color: rgba(255, 255, 255, 0.7);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s ease;
-}
-
-.arrow:hover {
-    background-color: rgba(255, 255, 255, 0.9);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background: var(--accent);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
 }
 
 #prev-arrow {
-    left: 10px;
+  left: 10px;
 }
 
 #next-arrow {
-    right: 10px;
+  right: 10px;
 }
 
-.dark-mode-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    font-size: 1.5em;
-    background: none;
-    border: none;
-    color: #2c3e50;
-    cursor: pointer;
-    transition: color 0.3s ease;
+.arrow:hover {
+  background: var(--primary);
+  transform: translateY(-50%) scale(1.1);
 }
 
-.dark-mode-btn:hover {
-    color: #3498db;
+/* Dark Mode Switch */
+.switch {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
 }
 
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: relative;
+  display: block;
+  width: 60px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  border-radius: 34px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.slider:before {
+  content: '';
+  position: absolute;
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background: var(--white);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+input:checked + .slider {
+  background: var(--accent);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+/* Dark Mode Styles */
 .dark-mode {
-    background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
-    color: #f5f7fa;
+  background: linear-gradient(135deg, #1a1b4b 0%, #4754a3 100%);
 }
 
 .dark-mode .surah,
 .dark-mode .reciter-card {
-    background-color: #34495e;
-    color: #f5f7fa;
+  background: rgba(0, 0, 0, 0.2);
 }
 
-.dark-mode .search-container input {
-    background-color: #34495e;
-    color: #f5f7fa;
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.dark-mode .show-more-btn {
-    background-color: #2980b9;
-}
-
-.dark-mode .show-more-btn:hover {
-    background-color: #3498db;
-}
-
-@media (max-width: 768px) {
-    .surah-list {
-        grid-template-columns: 1fr;
-    }
-
-    .reciter-card {
-        width: 150px;
-    }
-
-    .container {
-        padding: 10px;
-    }
-
-    h1 {
-        font-size: 2em;
-    }
-
-    .featured-title {
-        font-size: 1.5em;
-    }
-}
-
-@media (max-width: 480px) {
-    .surah-list {
-        grid-template-columns: 1fr;
-    }
-
-    .reciter-card {
-        width: 120px;
-    }
-
-    h1 {
-        font-size: 1.8em;
-    }
-
-    .featured-title {
-        font-size: 1.3em;
-    }
-
-    .search-container input {
-        padding: 10px 15px;
-    }
-
-    .show-more-btn {
-        width: 150px;
-        padding: 10px;
-    }
-}
-
-.switch {
-    position: fixed;
-    top: 20px;
-    right: 30px;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
-}
-
-.switch input {
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
     opacity: 0;
-    width: 0;
-    height: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .4s;
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-input:checked + .slider {
-    background-color: #2196F3;
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
 }
 
-input:checked + .slider:before {
-    transform: translateX(26px);
+/* Loading Animation */
+.loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-dark);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  animation: fadeOut 1s ease-out forwards 2s;
 }
 
-.slider.round {
-    border-radius: 34px;
+.loading::after {
+  content: '';
+  width: 50px;
+  height: 50px;
+  border: 5px solid var(--gray);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
-.slider.round:before {
-    border-radius: 50%;
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
 </style>
 
 </head>
