@@ -247,116 +247,145 @@ input:checked + .slider:before {
     box-shadow: var(--shadow-md);
 }
 
-/* Main Counter Component */
-.tasbih-counter {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%;
-    max-width: 300px;
-    height: 220px;
-    background: var(--light-bg);
-    border-radius: 20px;
-    box-shadow: var(--shadow-lg);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    z-index: 100;
-    backdrop-filter: blur(10px);
-}
+  .tasbih-counter {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-width: 300px;
+        height: 220px;
+        background-color: #fff;
+        border: 2px solid #000;
+        border-radius: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        z-index: 100;
+    }
 
-.screen {
-    width: 120px;
-    height: 50px;
-    background: var(--primary-gradient);
-    color: #fff;
-    font-size: 1.8em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 15px;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow-md);
-}
+    .screen {
+        width: 100px;
+        height: 40px;
+        background-color: #000;
+        color: #fff;
+        font-size: 1.5em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
 
-.buttons {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-}
+    .buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
 
-.button {
-    width: 60px;
-    height: 60px;
-    background: var(--primary-gradient);
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: var(--shadow-md);
-    font-size: 1.2em;
-}
+    .button {
+        width: 50px;
+        height: 50px;
+        background-color: #000;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        margin: 5px 0;
+    }
 
-.button:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-}
+    .reset-button {
+        background-color: red;
+        width: 40px;
+        height: 40px;
+        margin-top: 5px;
+    }
 
-.button:active {
-    transform: scale(0.95);
-    box-shadow: var(--shadow-sm);
-}
+    .count-button {
+        width: 60px;
+        height: 60px;
+    }
 
-.reset-button {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    width: 40px;
-    height: 40px;
-    font-size: 0.9em;
-}
+    .button:active {
+        background-color: #444;
+    }
 
-.count-button {
-    width: 70px;
-    height: 70px;
-    font-size: 1.4em;
-}
+    .label {
+        font-size: 0.8em;
+        position: absolute;
+        top: 10px;
+    }
 
-/* Bottom Navigation */
-.bottom-buttons {
-    position: fixed;
-    bottom: 20px;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    padding: 0 20px;
-    z-index: 90;
-}
+    .label-left {
+        left: 10px;
+    }
 
-.bottom-buttons button {
-    background: var(--primary-gradient);
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    padding: 12px 24px;
-    font-size: 1em;
-    cursor: pointer;
-    transition: var(--transition-base);
-    box-shadow: var(--shadow-md);
-}
+    .label-right {
+        right: 10px;
+    }
 
-.bottom-buttons button:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-}
+    .bottom-buttons {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        position: fixed;
+        bottom: 20px;
+        left: 0;
+    }
+
+    .bottom-buttons button {
+        background-color: #000;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 20px;
+        font-size: 1em;
+        margin: 5px;
+        cursor: pointer;
+    }
+
+    .bottom-buttons button:hover {
+        background-color: #444;
+    }
+
+    body.dark-mode {
+        background: linear-gradient(to right, #0f0f0f, #434343);
+        color: #ddd;
+    }
+
+    body.dark-mode .tasbih-counter {
+        background-color: #333;
+        border-color: #444;
+    }
+
+    body.dark-mode .screen {
+        background-color: #444;
+    }
+
+    body.dark-mode .button {
+        background-color: #555;
+        color: #ddd;
+    }
+
+    body.dark-mode .button:active {
+        background-color: #666;
+    }
+
+    body.dark-mode .bottom-buttons button {
+        background-color: #444;
+        color: #ddd;
+    }
+
+    body.dark-mode .bottom-buttons button:hover {
+        background-color: #555;
+    }
 
 /* Smart Notification */
 #smart-notification {
