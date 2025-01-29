@@ -490,6 +490,165 @@ body.dark-mode .copy-text input {
         transition: none !important;
     }
 }
+        /* Quran Pro Button Container */
+.quran-pro-container {
+    text-align: center;
+    margin: 2rem 0;
+    padding: 1rem;
+}
+
+/* Base Button Style */
+.quran-pro-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(99, 102, 241, 0.2);
+}
+
+/* Pro Badge */
+.quran-pro-button::before {
+    content: 'PRO';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: linear-gradient(135deg, #ef4444, #f59e0b);
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    border-radius: 12px;
+    font-weight: 700;
+    transform: rotate(15deg);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover Effects */
+.quran-pro-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(99, 102, 241, 0.3);
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+}
+
+/* Click Effect */
+.quran-pro-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);
+}
+
+/* Shine Effect */
+.quran-pro-button::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: rotate(45deg);
+    transition: all 0.3s ease;
+    opacity: 0;
+}
+
+.quran-pro-button:hover::after {
+    opacity: 1;
+    animation: shine 1.5s ease-out infinite;
+}
+
+/* Icon Style */
+.quran-pro-icon {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+/* Shine Animation */
+@keyframes shine {
+    0% {
+        transform: rotate(45deg) translateX(-200%);
+    }
+    100% {
+        transform: rotate(45deg) translateX(200%);
+    }
+}
+
+/* Disabled State */
+.quran-pro-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background: linear-gradient(135deg, #9ca3af, #6b7280);
+}
+
+/* Loading State */
+.quran-pro-button.loading {
+    cursor: wait;
+    position: relative;
+}
+
+.quran-pro-button.loading::after {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ffffff;
+    border-top-color: transparent;
+    border-radius: 50%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .quran-pro-button {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .quran-pro-button::before {
+        font-size: 0.7rem;
+        padding: 3px 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .quran-pro-button {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .quran-pro-button {
+        background: linear-gradient(135deg, #9333ea, #4f46e5);
+    }
+    
+    .quran-pro-button:hover {
+        background: linear-gradient(135deg, #7c3aed, #4338ca);
+    }
+}
     </style>
 </head>
 <body>
