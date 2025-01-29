@@ -303,6 +303,115 @@
         .playing {
             background: rgba(73, 125, 189, 0.1);
         }
+        /* Bismillah Styling */
+.bismillah {
+    font-size: 2rem;
+    text-align: center;
+    padding: 2rem 1rem;
+    color: #27ae60;
+    font-weight: 500;
+    margin: 1rem 0;
+}
+
+/* Surah Header */
+.surah-header {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.surah-header h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+/* Surah End Marker */
+.surah-end {
+    text-align: center;
+    padding: 2rem 0;
+    margin: 2rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.end-marker {
+    font-size: 1.5rem;
+    color: #27ae60;
+    padding: 1rem;
+    display: inline-block;
+}
+
+/* Ayah Wrapper and Markers */
+.ayah-wrapper {
+    position: relative;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.ayah-number {
+    display: inline-block;
+    background: #27ae60;
+    color: white;
+    width: 2rem;
+    height: 2rem;
+    line-height: 2rem;
+    text-align: center;
+    border-radius: 50%;
+    margin-right: 0.8rem;
+    font-size: 0.9rem;
+}
+
+.ayah-end-symbol {
+    display: inline-block;
+    color: #27ae60;
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+    padding: 0 0.5rem;
+}
+
+/* Dark Mode Adjustments */
+.dark-mode .surah-header {
+    background: #2c3e50;
+}
+
+.dark-mode .surah-header h2 {
+    color: #fff;
+}
+
+.dark-mode .ayah-wrapper {
+    background: #1a1a1a;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .surah-end {
+    border-bottom-color: #333;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .bismillah {
+        font-size: 1.5rem;
+        padding: 1.5rem 0.5rem;
+    }
+
+    .surah-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .end-marker {
+        font-size: 1.2rem;
+    }
+
+    .ayah-wrapper {
+        padding: 1rem;
+    }
+}
     </style>
 </head>
 <body>
