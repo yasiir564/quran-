@@ -479,7 +479,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.js"></script>
     <script>
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     const state = {
         currentJuzz: parseInt(new URLSearchParams(window.location.search).get('juzz')) || 1,
         currentReciter: 'ar.alafasy',
@@ -490,7 +490,7 @@ document.addEventListener('DOMContentLoaded', function () {
         autoScroll: true,
         scrollSpeed: 40,
         isScrolling: false,
-        lastScrollPosition: 0,
+        lastScrollPosition: 0
     };
 
     // DOM Elements
@@ -505,26 +505,63 @@ document.addEventListener('DOMContentLoaded', function () {
     const nextJuzzBtn = document.getElementById('nextJuzz');
     const repeatJuzzBtn = document.getElementById('repeatJuzz');
     const reciterSelect = document.getElementById('reciterSelect');
-    const autoScrollToggle = document.getElementById('autoScrollToggle');
-    const scrollSpeedInput = document.getElementById('scrollSpeed');
-    const progressBar = document.querySelector('.progress .progress-bar');
-    const darkModeToggle = document.getElementById('darkModeToggle');
 
+    // Constants
+    const BISMILLAH = 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ';
+    const SURAH_END = '❁ صَدَقَ اللهُ العَظيم ❁';
+
+    // Create and append auto-scroll controls
+    const controlsContainer = document.createElement('div');
+    controlsContainer.className = 'scroll-controls';
+    
+    const autoScrollToggle = document.createElement('button');
+    autoScrollToggle.id = 'autoScrollToggle';
+    autoScrollToggle.className = 'control-btn';
+    autoScrollToggle.innerHTML = '<i class="fas fa-scroll"></i> Auto-Scroll';
+    
+    const speedControl = document.createElement('div');
+    speedControl.className = 'speed-control';
+    speedControl.innerHTML = `
+        <label for="scrollSpeed">Reading Speed</label>
+        <input type="range" id="scrollSpeed" min="20" max="100" value="${state.scrollSpeed}">
+        <span class="speed-value">${state.scrollSpeed} WPM</span>
+    `;
+
+    const progressBar = document.createElement('div');
+    progressBar.className = 'progress-bar';
+    progressBar.innerHTML = '<div class="progress"></div>';
+
+    controlsContainer.appendChild(autoScrollToggle);
+    controlsContainer.appendChild(speedControl);
+    controlsContainer.appendChild(progressBar);
+    document.querySelector('.controls').appendChild(controlsContainer);
+
+    // Auto-scroll functionality
     let scrollInterval;
     let currentAyahIndex = 0;
+    let lastScrollTime = Date.now();
 
     function startAutoScroll() {
         if (!state.isScrolling) {
             state.isScrolling = true;
             autoScrollToggle.classList.add('active');
             scrollToNextAyah();
+            updateProgressBar();
         }
     }
 
     function stopAutoScroll() {
         state.isScrolling = false;
         autoScrollToggle.classList.remove('active');
-        clearInterval(scrollInterval);
+        if (scrollInterval) {
+            clearInterval(scrollInterval);
+        }
+    }
+
+    function updateProgressBar() {
+        const ayahs = document.querySelectorAll('.ayah-container');
+        const progress = (currentAyahIndex / ayahs.length) * 100;
+        document.querySelector('.progress').style.width = `${progress}%`;
     }
 
     function scrollToNextAyah() {
@@ -532,32 +569,48 @@ document.addEventListener('DOMContentLoaded', function () {
         if (currentAyahIndex < ayahs.length) {
             const ayah = ayahs[currentAyahIndex];
             const offset = window.innerHeight / 3;
-
+            
+            const targetPosition = ayah.offsetTop - offset;
             window.scrollTo({
-                top: ayah.offsetTop - offset,
-                behavior: 'smooth',
+                top: targetPosition,
+                behavior: 'smooth'
             });
 
-            document.querySelectorAll('.ayah-container').forEach((a) => a.classList.remove('current-ayah'));
+            // Highlight current ayah
+            document.querySelectorAll('.ayah-container').forEach(a => {
+                a.classList.remove('current-ayah');
+                a.classList.remove('previous-ayah');
+            });
             ayah.classList.add('current-ayah');
+            if (currentAyahIndex > 0) {
+                ayahs[currentAyahIndex - 1].classList.add('previous-ayah');
+            }
 
+            // Calculate scroll timing
             const words = ayah.textContent.trim().split(/\s+/).length;
-            const scrollTime = (words / state.scrollSpeed) * 60000;
+            const scrollTime = (words / state.scrollSpeed) * 60 * 1000;
+
+            if (scrollInterval) {
+                clearInterval(scrollInterval);
+            }
 
             scrollInterval = setTimeout(() => {
                 if (state.isScrolling) {
                     currentAyahIndex++;
                     if (currentAyahIndex < ayahs.length) {
                         scrollToNextAyah();
+                        updateProgressBar();
                     } else {
                         stopAutoScroll();
                         currentAyahIndex = 0;
+                        updateProgressBar();
                     }
                 }
             }, scrollTime);
         }
     }
 
+    // Load Juzz Content
     async function loadJuzzContent(juzzNumber) {
         loader.style.display = 'block';
         juzzContent.innerHTML = '';
@@ -567,16 +620,43 @@ document.addEventListener('DOMContentLoaded', function () {
             const [quranResponse, translationResponse, audioResponse] = await Promise.all([
                 fetch(`https://api.alquran.cloud/v1/juz/${juzzNumber}`),
                 fetch(`https://api.alquran.cloud/v1/juz/${juzzNumber}/en.sahih`),
-                fetch(`https://api.alquran.cloud/v1/juz/${juzzNumber}/${state.currentReciter}`),
+                fetch(`https://api.alquran.cloud/v1/juz/${juzzNumber}/${state.currentReciter}`)
             ]);
 
             const [quranData, translationData, audioData] = await Promise.all([
                 quranResponse.json(),
                 translationResponse.json(),
-                audioResponse.json(),
+                audioResponse.json()
             ]);
 
+            let currentSurah = null;
+            let firstAyahOfSurah = true;
+
             quranData.data.ayahs.forEach((ayah, index) => {
+                // Check for new Surah
+                if (currentSurah !== ayah.surah.number) {
+                    if (currentSurah !== null) {
+                        // Add Surah ending
+                        const endContainer = document.createElement('div');
+                        endContainer.className = 'surah-end';
+                        endContainer.innerHTML = `<div class="end-marker">${SURAH_END}</div>`;
+                        juzzContent.appendChild(endContainer);
+                    }
+
+                    // Add new Surah header
+                    const surahHeader = document.createElement('div');
+                    surahHeader.className = 'surah-header';
+                    surahHeader.innerHTML = `
+                        <h2>سورة ${ayah.surah.name}</h2>
+                        <div class="bismillah">${BISMILLAH}</div>
+                    `;
+                    juzzContent.appendChild(surahHeader);
+                    
+                    currentSurah = ayah.surah.number;
+                    firstAyahOfSurah = true;
+                }
+
+                // Add Ayah content
                 const container = document.createElement('div');
                 container.className = 'ayah-container';
                 container.innerHTML = `
@@ -590,49 +670,172 @@ document.addEventListener('DOMContentLoaded', function () {
                         <audio class="audio-player" data-index="${index}">
                             <source src="${audioData.data.ayahs[index].audio}" type="audio/mp3">
                         </audio>
-                        <button class="play-btn"><i class="fas fa-play"></i></button>
+                        <div class="ayah-controls">
+                            <button class="play-btn"><i class="fas fa-play"></i></button>
+                            <div class="audio-progress">
+                                <div class="progress-bar"></div>
+                            </div>
+                        </div>
                     </div>
                 `;
                 juzzContent.appendChild(container);
+
+                firstAyahOfSurah = false;
             });
 
+            // Add final Surah ending if needed
+            const lastAyah = quranData.data.ayahs[quranData.data.ayahs.length - 1];
+            if (lastAyah.numberInSurah === lastAyah.surah.numberOfAyahs) {
+                const endContainer = document.createElement('div');
+                endContainer.className = 'surah-end';
+                endContainer.innerHTML = `<div class="end-marker">${SURAH_END}</div>`;
+                juzzContent.appendChild(endContainer);
+            }
+
+            // Update navigation and URL
             prevJuzzBtn.disabled = juzzNumber <= 1;
             nextJuzzBtn.disabled = juzzNumber >= 30;
             history.pushState(null, '', `?juzz=${juzzNumber}`);
             state.currentJuzz = juzzNumber;
+
             setupAudioHandlers();
+            currentAyahIndex = 0;
+            updateProgressBar();
+
         } catch (error) {
             console.error('Error loading Juzz:', error);
-            alert('Failed to load content. Please try again.');
+            Swal.fire({
+                title: 'Error',
+                text: 'Failed to load content. Please try again.',
+                icon: 'error'
+            });
         } finally {
             loader.style.display = 'none';
         }
     }
 
+    // Audio Handlers
     function setupAudioHandlers() {
-        document.querySelectorAll('.play-btn').forEach((btn) => {
-            btn.addEventListener('click', function () {
-                const audio = this.previousElementSibling;
-                if (audio.paused) {
-                    audio.play();
-                    this.innerHTML = '<i class="fas fa-pause"></i>';
+        const audioPlayers = document.querySelectorAll('.audio-player');
+        let currentlyPlaying = null;
+
+        audioPlayers.forEach((player, index) => {
+            const playBtn = player.parentElement.querySelector('.play-btn');
+            const progressBar = player.parentElement.querySelector('.audio-progress .progress-bar');
+
+            player.addEventListener('play', () => {
+                if (currentlyPlaying && currentlyPlaying !== player) {
+                    currentlyPlaying.pause();
+                }
+                currentlyPlaying = player;
+                playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                
+                // Sync with auto-scroll
+                currentAyahIndex = parseInt(player.dataset.index);
+                scrollToNextAyah();
+                
+                player.closest('.ayah-container').classList.add('playing');
+            });
+
+            player.addEventListener('pause', () => {
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                player.closest('.ayah-container').classList.remove('playing');
+            });
+
+            player.addEventListener('ended', () => {
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                player.closest('.ayah-container').classList.remove('playing');
+                
+                if (state.autoPlay) {
+                    const nextPlayer = audioPlayers[index + 1];
+                    if (nextPlayer) {
+                        nextPlayer.play();
+                    }
+                }
+            });
+
+            player.addEventListener('timeupdate', () => {
+                const progress = (player.currentTime / player.duration) * 100;
+                progressBar.style.width = `${progress}%`;
+            });
+
+            playBtn.addEventListener('click', () => {
+                if (player.paused) {
+                    player.play();
                 } else {
-                    audio.pause();
-                    this.innerHTML = '<i class="fas fa-play"></i>';
+                    player.pause();
                 }
             });
         });
     }
 
-    toggleSidebar.addEventListener('click', () => {
-        sidebar.classList.toggle('open');
+    // Event Listeners
+    autoScrollToggle.addEventListener('click', () => {
+        if (state.isScrolling) {
+            stopAutoScroll();
+        } else {
+            startAutoScroll();
+        }
     });
 
-    darkModeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        state.darkMode = !state.darkMode;
+    document.getElementById('scrollSpeed').addEventListener('input', (e) => {
+        state.scrollSpeed = parseInt(e.target.value);
+        document.querySelector('.speed-value').textContent = `${state.scrollSpeed} WPM`;
+        if (state.isScrolling) {
+            scrollToNextAyah();
+        }
     });
 
+    // Keyboard Controls
+    document.addEventListener('keydown', (e) => {
+        switch (e.key) {
+            case ' ':
+                e.preventDefault();
+                if (state.isScrolling) {
+                    stopAutoScroll();
+                } else {
+                    startAutoScroll();
+                }
+                break;
+            case 'ArrowUp':
+                if (state.isScrolling) {
+                    state.scrollSpeed = Math.min(100, state.scrollSpeed + 5);
+                    document.getElementById('scrollSpeed').value = state.scrollSpeed;
+                    document.querySelector('.speed-value').textContent = `${state.scrollSpeed} WPM`;
+                }
+                break;
+            case 'ArrowDown':
+                if (state.isScrolling) {
+                    state.scrollSpeed = Math.max(20, state.scrollSpeed - 5);
+                    document.getElementById('scrollSpeed').value = state.scrollSpeed;
+                    document.querySelector('.speed-value').textContent = `${state.scrollSpeed} WPM`;
+                }
+                break;
+            case 'Escape':
+                stopAutoScroll();
+                break;
+        }
+    });
+
+    // Scroll detection
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+        if (state.isScrolling) {
+            const currentPosition = window.pageYOffset;
+            if (Math.abs(currentPosition - state.lastScrollPosition) > 50) {
+                stopAutoScroll();
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    if (state.autoScroll) {
+                        startAutoScroll();
+                    }
+                }, 1000);
+            }
+            state.lastScrollPosition = currentPosition;
+        }
+    });
+
+    // Navigation Controls
     prevJuzzBtn.addEventListener('click', () => {
         if (state.currentJuzz > 1) {
             loadJuzzContent(state.currentJuzz - 1);
@@ -649,12 +852,193 @@ document.addEventListener('DOMContentLoaded', function () {
         loadJuzzContent(state.currentJuzz);
     });
 
-    reciterSelect.addEventListener('change', () => {
-        state.currentReciter = reciterSelect.value;
+    // Search Functionality
+    searchBtn.addEventListener('click', performSearch);
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            performSearch();
+        }
+    });
+
+    async function performSearch() {
+        const searchTerm = searchInput.value.trim();
+        if (!searchTerm) return;
+
+        try {
+            loader.style.display = 'block';
+            stopAutoScroll();
+            
+            const response = await fetch(`https://api.alquran.cloud/v1/search/${searchTerm}/all/en`);
+            const data = await response.json();
+
+            if (data.data.matches.length > 0) {
+                juzzContent.innerHTML = '';
+                data.data.matches.forEach(match => {
+                    const container = document.createElement('div');
+                    container.className = 'ayah-container search-result';
+                    container.innerHTML = `
+                        <div class="ayah-wrapper">
+                            <div class="translation-text">${match.text}</div>
+                            <div class="ayah-info">Surah ${match.surah.number}, Ayah ${match.numberInSurah}</div>
+                        </div>
+                    `;
+                    juzzContent.appendChild(container);
+                });
+            } else {
+                Swal.fire({
+                    title: 'No Results',
+                    text: 'No matches found for your search term.',
+                    icon: 'info'
+                });
+            }
+        } catch (error) {
+            console.error('Search error:', error);
+            Swal.fire({
+                title: 'Error',
+                text: 'Failed to perform search. Please try again.',
+                icon: 'error'
+            });
+        } finally {
+            loader.style.display = 'none';
+        }
+    }
+
+    // Reciter Selection
+    reciterSelect.addEventListener('change', (e) => {
+        state.currentReciter = e.target.value;
         loadJuzzContent(state.currentJuzz);
     });
 
-    loadJuzzContent(state.currentJuzz);
+    // Scroll to Top Button
+    window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+            scrollTop.classList.add('visible');
+        } else {
+            scrollTop.classList.remove('visible');
+        }
+    });
+
+    scrollTop.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+
+    // Theme Toggle
+    document.getElementById('toggleTheme').addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        state.darkMode = !state.darkMode;
+        const themeIcon = document.querySelector('#toggleTheme i');
+        themeIcon.classList.toggle('fa-moon');
+        themeIcon.classList.toggle('fa-sun');
+        
+        // Save theme preference
+        localStorage.setItem('theme', state.darkMode ? 'dark' : 'light');
+    });
+
+    // Font Change
+    document.getElementById('changeFont').addEventListener('click', () => {
+        state.currentFontIndex = (state.currentFontIndex + 1) % state.fonts.length;
+        document.body.style.fontFamily = state.fonts[state.currentFontIndex];
+        localStorage.setItem('fontIndex', state.currentFontIndex);
+        
+        Swal.fire({
+            title: 'Font Changed',
+            text: `Current font: ${state.fonts[state.currentFontIndex]}`,
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false
+        });
+    });
+
+    // Audio Feature Toggle
+    document.getElementById('quranOnly').addEventListener('click', () => {
+        const audioControls = document.querySelectorAll('.ayah-controls');
+        audioControls.forEach(control => {
+            control.style.display = 'none';
+        });
+        state.autoPlay = false;
+        localStorage.setItem('audioEnabled', 'false');
+    });
+
+    document.getElementById('quranAudio').addEventListener('click', () => {
+        const audioControls = document.querySelectorAll('.ayah-controls');
+        audioControls.forEach(control => {
+            control.style.display = 'block';
+        });
+        state.autoPlay = true;
+        localStorage.setItem('audioEnabled', 'true');
+    });
+
+    // Window Resize Handler
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            sidebar.classList.remove('closed');
+        }
+    });
+
+    // Save Reading Progress
+    function saveProgress() {
+        const progress = {
+            juzz: state.currentJuzz,
+            ayahIndex: currentAyahIndex,
+            scrollPosition: window.pageYOffset
+        };
+        localStorage.setItem('readingProgress', JSON.stringify(progress));
+    }
+
+    // Load Reading Progress
+    function loadProgress() {
+        const savedProgress = localStorage.getItem('readingProgress');
+        if (savedProgress) {
+            const progress = JSON.parse(savedProgress);
+            state.currentJuzz = progress.juzz;
+            currentAyahIndex = progress.ayahIndex;
+            loadJuzzContent(state.currentJuzz).then(() => {
+                window.scrollTo(0, progress.scrollPosition);
+            });
+        }
+    }
+
+    // Save progress periodically
+    setInterval(saveProgress, 30000); // Save every 30 seconds
+
+    // Save progress when leaving the page
+    window.addEventListener('beforeunload', saveProgress);
+
+    // Initialize settings from localStorage
+    function initializeSettings() {
+        // Load theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            state.darkMode = true;
+            document.querySelector('#toggleTheme i').classList.replace('fa-moon', 'fa-sun');
+        }
+
+        // Load font preference
+        const savedFontIndex = localStorage.getItem('fontIndex');
+        if (savedFontIndex !== null) {
+            state.currentFontIndex = parseInt(savedFontIndex);
+            document.body.style.fontFamily = state.fonts[state.currentFontIndex];
+        }
+
+        // Load audio preference
+        const audioEnabled = localStorage.getItem('audioEnabled');
+        if (audioEnabled === 'false') {
+            document.getElementById('quranOnly').click();
+        }
+
+        // Load reading progress
+        loadProgress();
+    }
+
+    // Initialize the application
+    initializeSettings();
+    if (!localStorage.getItem('readingProgress')) {
+        loadJuzzContent(state.currentJuzz);
+    }
 });
 
 </script>
