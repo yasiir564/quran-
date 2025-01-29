@@ -505,11 +505,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const nextJuzzBtn = document.getElementById('nextJuzz');
     const repeatJuzzBtn = document.getElementById('repeatJuzz');
     const reciterSelect = document.getElementById('reciterSelect');
-
-    // Auto-scroll controls
     const autoScrollToggle = document.getElementById('autoScrollToggle');
     const scrollSpeedInput = document.getElementById('scrollSpeed');
     const progressBar = document.querySelector('.progress .progress-bar');
+    const darkModeToggle = document.getElementById('darkModeToggle');
 
     let scrollInterval;
     let currentAyahIndex = 0;
@@ -559,7 +558,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Load Juzz Content
     async function loadJuzzContent(juzzNumber) {
         loader.style.display = 'block';
         juzzContent.innerHTML = '';
@@ -626,18 +624,13 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Event Listeners
     toggleSidebar.addEventListener('click', () => {
         sidebar.classList.toggle('open');
     });
 
-    autoScrollToggle.addEventListener('click', () => {
-        state.isScrolling ? stopAutoScroll() : startAutoScroll();
-    });
-
-    scrollSpeedInput.addEventListener('input', (e) => {
-        state.scrollSpeed = e.target.value;
-        document.querySelector('.speed-value').textContent = `${state.scrollSpeed} WPM`;
+    darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        state.darkMode = !state.darkMode;
     });
 
     prevJuzzBtn.addEventListener('click', () => {
@@ -661,9 +654,9 @@ document.addEventListener('DOMContentLoaded', function () {
         loadJuzzContent(state.currentJuzz);
     });
 
-    // Initial Load
     loadJuzzContent(state.currentJuzz);
 });
+
 </script>
 </body>
 </html>
