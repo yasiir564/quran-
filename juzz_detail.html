@@ -13,6 +13,7 @@
 
     <style>
        <style>
+   <style>
     :root {
         --primary-color: #6a11cb; /* Purple */
         --secondary-color: #2575fc; /* Blue */
@@ -25,6 +26,7 @@
         --transition: all 0.3s ease;
         --background-color: #f5f7fa;
         --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --green-accent: #27ae60; /* For Bismillah and other accents */
     }
 
     /* Custom Scrollbar */
@@ -273,6 +275,96 @@
         visibility: visible;
     }
 
+    /* Bismillah Styling */
+    .bismillah {
+        font-size: 2rem;
+        text-align: center;
+        padding: 2rem 1rem;
+        color: var(--green-accent);
+        font-weight: 500;
+        margin: 1rem 0;
+    }
+
+    /* Surah Header */
+    .surah-header {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        text-align: center;
+        box-shadow: var(--box-shadow);
+    }
+
+    .surah-header h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+    }
+
+    /* Surah End Marker */
+    .surah-end {
+        text-align: center;
+        padding: 2rem 0;
+        margin: 2rem 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .end-marker {
+        font-size: 1.5rem;
+        color: var(--green-accent);
+        padding: 1rem;
+        display: inline-block;
+    }
+
+    /* Ayah Wrapper and Markers */
+    .ayah-wrapper {
+        position: relative;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        background: var(--white);
+        border-radius: 8px;
+        box-shadow: var(--box-shadow);
+    }
+
+    .ayah-number {
+        display: inline-block;
+        background: var(--green-accent);
+        color: var(--white);
+        width: 2rem;
+        height: 2rem;
+        line-height: 2rem;
+        text-align: center;
+        border-radius: 50%;
+        margin-right: 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .ayah-end-symbol {
+        display: inline-block;
+        color: var(--green-accent);
+        margin-right: 0.5rem;
+        font-size: 1.2rem;
+        padding: 0 0.5rem;
+    }
+
+    /* Dark Mode Adjustments */
+    .dark-mode .surah-header {
+        background: #2c3e50;
+    }
+
+    .dark-mode .surah-header h2 {
+        color: var(--white);
+    }
+
+    .dark-mode .ayah-wrapper {
+        background: #2d2d2d;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .dark-mode .surah-end {
+        border-bottom-color: #333;
+    }
+
     /* Responsive Design */
     @media (max-width: 768px) {
         .sidebar {
@@ -304,94 +396,25 @@
         .navigation-controls {
             flex-wrap: wrap;
         }
-    }
 
-    /* Additional Styling */
-    .bismillah {
-        font-size: 2rem;
-        text-align: center;
-        padding: 2rem 1rem;
-        color: var(--primary-color);
-        font-weight: 500;
-        margin: 1rem 0;
-    }
+        .bismillah {
+            font-size: 1.5rem;
+            padding: 1.5rem 0.5rem;
+        }
 
-    .surah-header {
-        background: #f8f9fa;
-        border-radius: 12px;
-        padding: 1.5rem;
-        margin: 2rem 0;
-        text-align: center;
-        box-shadow: var(--box-shadow);
-    }
+        .surah-header h2 {
+            font-size: 1.5rem;
+        }
 
-    .surah-header h2 {
-        font-size: 1.8rem;
-        margin-bottom: 1rem;
-        color: var(--text-color);
-    }
+        .end-marker {
+            font-size: 1.2rem;
+        }
 
-    .surah-end {
-        text-align: center;
-        padding: 2rem 0;
-        margin: 2rem 0;
-        border-bottom: 1px solid #eee;
+        .ayah-wrapper {
+            padding: 1rem;
+        }
     }
-
-    .end-marker {
-        font-size: 1.5rem;
-        color: var(--primary-color);
-        padding: 1rem;
-        display: inline-block;
-    }
-
-    .ayah-wrapper {
-        position: relative;
-        padding: 1.5rem;
-        margin: 1rem 0;
-        background: var(--white);
-        border-radius: 8px;
-        box-shadow: var(--box-shadow);
-    }
-
-    .ayah-number {
-        display: inline-block;
-        background: var(--primary-color);
-        color: var(--white);
-        width: 2rem;
-        height: 2rem;
-        line-height: 2rem;
-        text-align: center;
-        border-radius: 50%;
-        margin-right: 0.8rem;
-        font-size: 0.9rem;
-    }
-
-    .ayah-end-symbol {
-        display: inline-block;
-        color: var(--primary-color);
-        margin-right: 0.5rem;
-        font-size: 1.2rem;
-        padding: 0 0.5rem;
-    }
-
-    /* Dark Mode Adjustments */
-    .dark-mode .surah-header {
-        background: #2c3e50;
-    }
-
-    .dark-mode .surah-header h2 {
-        color: var(--white);
-    }
-
-    .dark-mode .ayah-wrapper {
-        background: #2d2d2d;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    .dark-mode .surah-end {
-        border-bottom-color: #333;
-    }
+</style>
 </style>
     </style>
 </head>
