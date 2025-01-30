@@ -374,6 +374,296 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+        /* Previous CSS remains the same until media queries */
+
+/* Responsive Breakpoints */
+/* Large Tablets and Small Desktops */
+@media (max-width: 1200px) {
+    .sidebar {
+        width: 240px;
+    }
+
+    .main-content {
+        margin-left: 240px;
+    }
+
+    .ayah-container {
+        max-width: 800px;
+        padding: 2rem;
+    }
+
+    .bismillah {
+        font-size: 2.2rem;
+    }
+
+    .surah-header h2 {
+        font-size: 1.8rem;
+    }
+}
+
+/* Tablets */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 220px;
+    }
+
+    .main-content {
+        margin-left: 220px;
+        padding: 2rem;
+    }
+
+    .search-container {
+        max-width: 600px;
+    }
+
+    .ayah-text {
+        font-size: 1.5rem;
+    }
+
+    .translation-text {
+        font-size: 1.1rem;
+    }
+
+    .nav-btn {
+        padding: 0.875rem 1.75rem;
+    }
+
+    .sidebar-btn {
+        padding: 0.875rem 1rem;
+    }
+}
+
+/* Small Tablets */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        transform: translateX(-100%);
+        position: fixed;
+        z-index: 1100;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 1.5rem;
+    }
+
+    .toggle-sidebar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 45px;
+        height: 45px;
+    }
+
+    .search-container {
+        flex-direction: column;
+        gap: 1rem;
+        margin: 1.5rem auto;
+    }
+
+    .search-input,
+    .search-btn {
+        width: 100%;
+    }
+
+    .ayah-container {
+        margin: 1.5rem 0;
+        padding: 1.5rem;
+    }
+
+    .navigation-controls {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .nav-btn {
+        flex: 1;
+        min-width: 140px;
+        justify-content: center;
+    }
+
+    .bismillah {
+        font-size: 2rem;
+        padding: 2rem 1rem;
+    }
+
+    .surah-header {
+        padding: 1.5rem;
+        margin: 2rem 0;
+    }
+}
+
+/* Large Phones */
+@media (max-width: 576px) {
+    .main-content {
+        padding: 1rem;
+    }
+
+    .ayah-text {
+        font-size: 1.3rem;
+        line-height: 2;
+    }
+
+    .translation-text {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .bismillah {
+        font-size: 1.75rem;
+        padding: 1.5rem 0.75rem;
+    }
+
+    .surah-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .ayah-number {
+        width: 1.75rem;
+        height: 1.75rem;
+        line-height: 1.75rem;
+        font-size: 0.8rem;
+    }
+
+    .nav-btn {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.9rem;
+    }
+
+    .scroll-top {
+        bottom: 1.5rem;
+        right: 1.5rem;
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* Small Phones */
+@media (max-width: 375px) {
+    .ayah-text {
+        font-size: 1.2rem;
+    }
+
+    .translation-text {
+        font-size: 0.95rem;
+    }
+
+    .bismillah {
+        font-size: 1.5rem;
+    }
+
+    .nav-btn {
+        min-width: 120px;
+        padding: 0.75rem 1rem;
+    }
+
+    .sidebar-btn {
+        padding: 0.75rem 0.875rem;
+        font-size: 0.9rem;
+    }
+
+    .search-input {
+        padding: 0.875rem;
+    }
+}
+
+/* Handle Landscape Mode */
+@media (max-height: 500px) and (orientation: landscape) {
+    .sidebar {
+        padding: 1rem;
+    }
+
+    .sidebar-header {
+        padding: 1rem 0;
+    }
+
+    .sidebar-btn {
+        padding: 0.625rem 1rem;
+        margin: 0.25rem 0;
+    }
+
+    .bismillah {
+        padding: 1.5rem 0.75rem;
+    }
+
+    .surah-header {
+        padding: 1rem;
+        margin: 1.5rem 0;
+    }
+
+    .ayah-container {
+        padding: 1.25rem;
+        margin: 1.25rem 0;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .sidebar,
+    .scroll-top,
+    .toggle-sidebar,
+    .navigation-controls,
+    .audio-player {
+        display: none !important;
+    }
+
+    .main-content {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .ayah-container {
+        box-shadow: none;
+        padding: 1rem 0;
+        margin: 1rem 0;
+        break-inside: avoid;
+    }
+
+    .ayah-text,
+    .translation-text {
+        color: #000 !important;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    :root {
+        --gradient-start: #4a0099;
+        --gradient-end: #0044cc;
+        --text-color: #000000;
+        --background: #ffffff;
+    }
+
+    .sidebar,
+    .search-btn,
+    .nav-btn {
+        background: var(--gradient-start) !important;
+    }
+
+    .ayah-container {
+        background: #ffffff;
+        border: 2px solid var(--gradient-start);
+    }
+}
+
+/* Reduced Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .sidebar-btn:hover,
+    .search-btn:hover,
+    .nav-btn:hover,
+    .scroll-top:hover {
+        transform: none !important;
+    }
+}
     </style>
 </head>
 <body>
