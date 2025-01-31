@@ -306,6 +306,24 @@
     </div>
 
     <script>
+         const sidebar = document.getElementById('mySidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const openBtn = document.getElementById('openSidebarBtn');
+        const closeBtn = document.getElementById('closeSidebarBtn');
+
+        function openSidebar() {
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        openBtn.addEventListener('click', openSidebar);
+        closeBtn.addEventListener('click', closeSidebar);
+        overlay.addEventListener('click', closeSidebar);
         const juzzNames = [
             { en: 'Alif Lam Meem', ar: 'الم', surahStart: 1, surahEnd: 5 },
             { en: 'Sayaqul', ar: 'سيقول', surahStart: 6, surahEnd: 10 },
@@ -361,15 +379,7 @@
                 juzzGrid.appendChild(juzzCard);
             });
         }
-        function openNav() {
-                document.getElementById("mySidebar").classList.add("open");
-                document.getElementById("sidebarOverlay").classList.add("active");
-            }
 
-            function closeNav() {
-                document.getElementById("mySidebar").classList.remove("open");
-                document.getElementById("sidebarOverlay").classList.remove("active");
-            }
 
         searchInput.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
