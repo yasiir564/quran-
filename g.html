@@ -184,69 +184,62 @@
     </div>
 
     <script>
-     // Configuration
+    // Configuration
 const config = {
-    apiKey: 'AIzaSyCmRATd4Ve1_brUATzY4KB0gRgVgacQROU', // Replace with secure method
+    apiKey: 'AIzaSyCmRATd4Ve1_brUATzY4KB0gRgVgacQROU',
     apiEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent'
 };
 
-// Helper function to construct the prompt for Gemini
+// Construct Prompt
 function constructPrompt(context) {
-    return `As an Islamic recommendation system, provide a daily Quran recommendation.
-    Current context:
+    return `Provide a Quran recommendation. Context:
     - Day: ${context.dayName}
     - Date: ${context.date}
 
-    Please provide a recommendation in the following JSON format:
+    JSON Format:
     {
-        "type": "Type of recommendation (e.g., Friday Special, Daily Wisdom)",
-        "surah": "Name of recommended Surah",
-        "arabicText": "Key verse in Arabic",
-        "translation": "English translation of the verse",
-        "benefits": ["benefit 1", "benefit 2", "benefit 3"]
+        "type": "Recommendation Type",
+        "surah": "Surah Name",
+        "arabicText": "Verse in Arabic",
+        "translation": "English Translation",
+        "benefits": ["Benefit 1", "Benefit 2"]
     }
 
-    If the day is Friday, specifically recommend Surah Al-Kahf.
-    Ensure response is in valid JSON format only.`;
+    Friday recommendation: Surah Al-Kahf.`;
 }
 
-// Rate limiting and retry mechanism
-const fetchWithRetry = async (url, options, maxRetries = 3) => {
+// Rate-Limited API Fetch
+async function fetchWithRetry(url, options, maxRetries = 3) {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
             const response = await fetch(url, options);
             
             if (response.status === 429) {
-                const waitTime = Math.pow(2, attempt) * 1000; // Exponential backoff
-                console.warn(`Rate limit hit. Waiting ${waitTime/1000} seconds.`);
+                const waitTime = Math.pow(2, attempt) * 1000;
+                console.warn(`Rate limit. Waiting ${waitTime/1000} seconds.`);
                 await new Promise(resolve => setTimeout(resolve, waitTime));
                 continue;
             }
 
-            if (!response.ok) {
-                throw new Error(`API request failed: ${response.statusText}`);
-            }
-
+            if (!response.ok) throw new Error(`API failed: ${response.statusText}`);
             return response;
         } catch (error) {
             if (attempt === maxRetries) throw error;
         }
     }
-};
+}
 
-// Function to fetch recommendations from Gemini API
+// Fetch Recommendation
 async function fetchRecommendation() {
     const loadingIndicator = document.getElementById('loadingIndicator');
     const errorMessage = document.getElementById('errorMessage');
     const mainContent = document.getElementById('mainContent');
 
     try {
-        // Show loading state
         loadingIndicator.style.display = 'block';
         mainContent.style.display = 'none';
         errorMessage.style.display = 'none';
 
-        // Prepare context
         const today = new Date();
         const context = {
             date: today.toLocaleDateString('en-US', { 
@@ -257,19 +250,14 @@ async function fetchRecommendation() {
             dayName: today.toLocaleDateString('en-US', { weekday: 'long' })
         };
 
-        // Try to use cached data first if API fails
         let recommendation;
         try {
             const response = await fetchWithRetry(`${config.apiEndpoint}?key=${config.apiKey}`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     contents: [{
-                        parts: [{
-                            text: constructPrompt(context)
-                        }]
+                        parts: [{ text: constructPrompt(context) }]
                     }]
                 })
             });
@@ -278,24 +266,19 @@ async function fetchRecommendation() {
             const recommendationText = apiResponse.candidates[0].content.parts[0].text;
             const jsonMatch = recommendationText.match(/\{[\s\S]*\}/);
             
-            if (!jsonMatch) {
-                throw new Error('Invalid response format from API');
-            }
+            if (!jsonMatch) throw new Error('Invalid response');
             
             recommendation = JSON.parse(jsonMatch[0]);
         } catch (error) {
             console.error('API Error:', error);
-            recommendation = loadCachedRecommendation();
-            if (!recommendation) {
-                throw error;
-            }
+            recommendation = loadCachedRecommendation() || getDefaultRecommendation();
         }
 
         await updateCardContent(recommendation);
 
     } catch (error) {
-        console.error('Error:', error);
-        errorMessage.textContent = 'Unable to load recommendation. Please try again later.';
+        console.error('Fetch Error:', error);
+        errorMessage.textContent = 'Unable to load recommendation.';
         errorMessage.style.display = 'block';
     } finally {
         loadingIndicator.style.display = 'none';
@@ -303,13 +286,10 @@ async function fetchRecommendation() {
     }
 }
 
-// Function to update card content with recommendation data
+// Update Card Content
 async function updateCardContent(data) {
     document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
     });
     
     document.getElementById('recommendationType').textContent = data.type;
@@ -331,37 +311,44 @@ async function updateCardContent(data) {
             data: data
         }));
     } catch (error) {
-        console.error('Error saving to localStorage:', error);
+        console.error('localStorage Error:', error);
     }
 }
 
-// Function to load cached recommendation
+// Load Cached Recommendation
 function loadCachedRecommendation() {
     try {
         const cached = localStorage.getItem('lastRecommendation');
         if (cached) {
             const { timestamp, data } = JSON.parse(cached);
             const cacheAge = new Date() - new Date(timestamp);
-            if (cacheAge < 24 * 60 * 60 * 1000) {
-                return data;
-            }
+            return cacheAge < 24 * 60 * 60 * 1000 ? data : null;
         }
     } catch (error) {
-        console.error('Error loading from cache:', error);
+        console.error('Cache Error:', error);
     }
     return null;
 }
 
-// Action button handlers
+// Default Recommendation
+function getDefaultRecommendation() {
+    return {
+        type: "Daily Wisdom",
+        surah: "Al-Fatihah",
+        arabicText: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+        translation: "In the name of Allah, the Most Gracious, the Most Merciful",
+        benefits: [
+            "Spiritual guidance",
+            "Divine connection",
+            "Blessing and protection"
+        ]
+    };
+}
+
+// Action Handlers
 function readMore() {
     const surahTitle = document.getElementById('surahTitle').textContent;
-    try {
-        localStorage.setItem('lastReadSurah', surahTitle);
-        console.log(`Navigating to full surah: ${surahTitle}`);
-        // Implement navigation logic here
-    } catch (error) {
-        console.error('Error saving reading state:', error);
-    }
+    localStorage.setItem('lastReadSurah', surahTitle);
 }
 
 function saveForLater() {
@@ -375,17 +362,14 @@ function saveForLater() {
         const savedItems = JSON.parse(localStorage.getItem('savedRecommendations') || '[]');
         savedItems.push(currentRecommendation);
         localStorage.setItem('savedRecommendations', JSON.stringify(savedItems));
-
-        console.log('Recommendation saved successfully');
     } catch (error) {
-        console.error('Error saving recommendation:', error);
+        console.error('Save Error:', error);
     }
 }
 
-// Initialize the card when the page loads
+// Initialize
 document.addEventListener('DOMContentLoaded', fetchRecommendation);
 
-// Refresh functionality
 function refreshRecommendation() {
     fetchRecommendation();
 }
