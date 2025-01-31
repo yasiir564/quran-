@@ -306,25 +306,39 @@
     </div>
 
     <script>
-         const sidebar = document.getElementById('mySidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        const openBtn = document.getElementById('openSidebarBtn');
-        const closeBtn = document.getElementById('closeSidebarBtn');
+        // DOM Elements
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+const openBtn = document.getElementById('openBtn');
+const closeBtn = document.getElementById('closeBtn');
+const juzzGrid = document.getElementById('juzz-grid');
+const searchInput = document.getElementById('search-input');
 
-        function openSidebar() {
-            sidebar.classList.add('active');
-            overlay.classList.add('active');
-        }
+// Sidebar functions
+function openSidebar() {
+    sidebar.classList.add('open');
+    overlay.style.display = 'block';
+    setTimeout(() => overlay.style.opacity = '1', 10);
+    document.body.style.overflow = 'hidden';
+}
 
-        function closeSidebar() {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-        }
+function closeSidebar() {
+    sidebar.classList.remove('open');
+    overlay.style.opacity = '0';
+    setTimeout(() => overlay.style.display = 'none', 300);
+    document.body.style.overflow = 'auto';
+}
 
-        openBtn.addEventListener('click', openSidebar);
-        closeBtn.addEventListener('click', closeSidebar);
-        overlay.addEventListener('click', closeSidebar);
-        const juzzNames = [
+// Event listeners for sidebar
+openBtn?.addEventListener('click', openSidebar);
+closeBtn?.addEventListener('click', closeSidebar);
+overlay?.addEventListener('click', closeSidebar);
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeSidebar();
+});
+
+// Juzz data and functionality
+ const juzzNames = [
             { en: 'Alif Lam Meem', ar: 'الم', surahStart: 1, surahEnd: 5 },
             { en: 'Sayaqul', ar: 'سيقول', surahStart: 6, surahEnd: 10 },
             { en: 'Tilkar Rusul', ar: 'تلك الرسل', surahStart: 11, surahEnd: 15 },
@@ -357,41 +371,42 @@
             { en: 'Amma Yatasa\'alun', ar: 'عم يتساءلون', surahStart: 146, surahEnd: 150 }
         ];
 
-        const juzzGrid = document.getElementById('juzz-grid');
-        const searchInput = document.getElementById('search-input');
-
-        function renderJuzzList(data) {
-            juzzGrid.innerHTML = '';
-            data.forEach((juzz, index) => {
-                const juzzCard = document.createElement('div');
-                juzzCard.classList.add('juzz-card');
-                juzzCard.setAttribute('data-number', (index + 1).toString().padStart(2, '0'));
-                juzzCard.innerHTML = `
-                    <div class="juzz-number">Juzz ${index + 1}</div>
-                    <div class="juzz-name-en">${juzz.en}</div>
-                    <div class="juzz-name-ar">${juzz.ar}</div>
-                `;
-                
-                juzzCard.addEventListener('click', () => {
-                    window.location.href = `juzz_detail.html?juzz=${index + 1}&start=${juzz.surahStart}&end=${juzz.surahEnd}`;
-                });
-
-                juzzGrid.appendChild(juzzCard);
-            });
-        }
-
-
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const filteredJuzz = juzzNames.filter(juzz => 
-                juzz.en.toLowerCase().includes(searchTerm) || 
-                juzz.ar.toLowerCase().includes(searchTerm)
-            );
-            renderJuzzList(filteredJuzz);
+function renderJuzzList(data) {
+    if (!juzzGrid) return;
+    
+    juzzGrid.innerHTML = '';
+    data.forEach((juzz, index) => {
+        const juzzCard = document.createElement('div');
+        juzzCard.classList.add('juzz-card');
+        juzzCard.setAttribute('data-number', (index + 1).toString().padStart(2, '0'));
+        juzzCard.innerHTML = `
+            <div class="juzz-number">Juzz ${index + 1}</div>
+            <div class="juzz-name-en">${juzz.en}</div>
+            <div class="juzz-name-ar">${juzz.ar}</div>
+        `;
+        
+        juzzCard.addEventListener('click', () => {
+            window.location.href = `juzz_detail.html?juzz=${index + 1}&start=${juzz.surahStart}&end=${juzz.surahEnd}`;
         });
 
-        // Initial render
-        renderJuzzList(juzzNames);
+        juzzGrid.appendChild(juzzCard);
+    });
+}
+
+// Search functionality
+searchInput?.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const filteredJuzz = juzzNames.filter(juzz => 
+        juzz.en.toLowerCase().includes(searchTerm) || 
+        juzz.ar.includes(searchTerm)
+    );
+    renderJuzzList(filteredJuzz);
+});
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    renderJuzzList(juzzNames);
+});
     </script>
 </body>
 </html>
