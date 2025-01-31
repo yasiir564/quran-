@@ -263,31 +263,23 @@
                 padding: 10px 20px;
             }
         }
-        .scroll-btn {
-    background: var(--card-bg);
-    border: none;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-}
+        /* Modern Scroll Bar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
 
-.scroll-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-}
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
 
-.scroll-btn i {
-    font-size: 20px;
-    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+        }
     </style>
 </head>
 <body>
