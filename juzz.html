@@ -17,7 +17,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Amiri', serif;
         }
 
         body {
@@ -132,12 +132,171 @@
                 width: 100%;
             }
         }
+        /* 2. SIDEBAR STYLES */
+.sidebar {
+    height: 100vh;
+    width: 280px;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: -280px;
+    background: linear-gradient(135deg, #7f1bf2, #9543f5);
+    overflow-x: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding-top: 85px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar.open {
+    left: 0;
+    box-shadow: 0 0 50px rgba(127, 27, 242, 0.3);
+}
+
+.sidebar a {
+    padding: 14px 24px;
+    text-decoration: none;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s ease;
+    border-radius: 0 25px 25px 0;
+    margin: 4px 0;
+    margin-right: 16px;
+    font-weight: 500;
+}
+
+.sidebar a:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(8px);
+}
+
+.sidebar a.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+.sidebar .closebtn {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    font-size: 28px;
+    color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar .closebtn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: rotate(90deg);
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 999;
+    backdrop-filter: blur(3px);
+    transition: all 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
+.openbtn {
+    font-size: 18px;
+    cursor: pointer;
+    background-color: #7f1bf2;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    position: fixed;
+    top: 40px;
+    left: 20px;
+    z-index: 1000;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(127, 27, 242, 0.3);
+}
+
+.openbtn:hover {
+    background-color: #6813d0;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(127, 27, 242, 0.4);
+}
+
+#main {
+    transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 20px;
+}
+
+@media screen and (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        left: -100%;
+    }
+    
+    .openbtn {
+        top: 20px;
+        left: 20px;
+    }
+}
+
+@media screen and (max-height: 450px) {
+    .sidebar {
+        padding-top: 60px;
+    }
+    
+    .sidebar a {
+        font-size: 16px;
+        padding: 10px 20px;
+    }
+}
+
     </style>
 </head>
 <body>
     <div class="container">
         <header class="header">
-            <h1 class="header-title">Quranic Juzz Navigator</h1>
+            <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
+        <a href="index.html">
+            <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
+        </a>
+        <a href="juzz.html">
+            <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read in Juzz
+        </a>
+        <a href="tracks.html">
+            <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Listen to Quran
+        </a>
+        <a href="prayer-times.html">
+            <lord-icon src="https://cdn.lordicon.com/tftaqjwp.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> prayer Time
+        </a>
+        <a href="donate.html">
+            <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Donate with love
+        </a>
+    </div>
+
+    <div id="main">
+        <button class="openbtn" id="openSidebarBtn">&#9776; Quran Pro</button>
             <div class="search-container">
                 <input type="text" placeholder="Search Juzz..." id="search-input">
             </div>
