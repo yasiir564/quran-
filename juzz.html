@@ -361,6 +361,15 @@
                 juzzGrid.appendChild(juzzCard);
             });
         }
+        function openNav() {
+                document.getElementById("mySidebar").classList.add("open");
+                document.getElementById("sidebarOverlay").classList.add("active");
+            }
+
+            function closeNav() {
+                document.getElementById("mySidebar").classList.remove("open");
+                document.getElementById("sidebarOverlay").classList.remove("active");
+            }
 
         searchInput.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
