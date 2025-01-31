@@ -190,43 +190,67 @@ const config = {
     apiEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent'
 };
 
-// Construct Prompt
+// Enhanced Prompt Construction
 function constructPrompt(context) {
-    return `Provide a Quran recommendation. Context:
-    - Day: ${context.dayName}
-    - Date: ${context.date}
+    const personalizedPrompts = {
+        morning: "Provide a morning inspiration from Quran focusing on hope and new beginnings.",
+        afternoon: "Recommend a Quranic verse about perseverance and midday reflection.",
+        evening: "Select a Quranic verse for evening meditation and gratitude.",
+        night: "Choose a verse for night-time tranquility and spiritual connection.",
+        weekend: "Highlight a Quranic guidance relevant to weekend spiritual reflection.",
+        weekday: "Recommend a verse for daily life challenges and professional conduct."
+    };
+
+    const timeCategory = context.timeOfDay;
+    const dayCategory = context.isWeekend ? 'weekend' : 'weekday';
+
+    return `Provide a personalized Quran recommendation:
+    - Time of Day: ${timeCategory}
+    - Day Type: ${dayCategory}
+    - Special Context: ${context.specialContext}
+
+    Guidance: ${personalizedPrompts[timeCategory] || personalizedPrompts[dayCategory]}
 
     JSON Format:
     {
-        "type": "Recommendation Type",
+        "type": "Personalized Recommendation",
         "surah": "Surah Name",
         "arabicText": "Verse in Arabic",
         "translation": "English Translation",
-        "benefits": ["Benefit 1", "Benefit 2"]
-    }
-
-    Friday recommendation: Surah Al-Kahf.`;
+        "benefits": ["Contextual Benefit 1", "Contextual Benefit 2"],
+        "specialInsight": "Personalized Reflection"
+    }`;
 }
 
-// Rate-Limited API Fetch
-async function fetchWithRetry(url, options, maxRetries = 3) {
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-        try {
-            const response = await fetch(url, options);
-            
-            if (response.status === 429) {
-                const waitTime = Math.pow(2, attempt) * 1000;
-                console.warn(`Rate limit. Waiting ${waitTime/1000} seconds.`);
-                await new Promise(resolve => setTimeout(resolve, waitTime));
-                continue;
-            }
+// Determine Context
+function determineContext() {
+    const now = new Date();
+    const hour = now.getHours();
+    const day = now.getDay();
 
-            if (!response.ok) throw new Error(`API failed: ${response.statusText}`);
-            return response;
-        } catch (error) {
-            if (attempt === maxRetries) throw error;
-        }
-    }
+    let timeOfDay, specialContext = '';
+    if (hour >= 5 && hour < 10) timeOfDay = 'morning';
+    else if (hour >= 10 && hour < 15) timeOfDay = 'afternoon';
+    else if (hour >= 15 && hour < 19) timeOfDay = 'evening';
+    else timeOfDay = 'night';
+
+    const isWeekend = [0, 6].includes(day);
+
+    // Add special contexts
+    if (isWeekend) specialContext += 'Weekend Reflection ';
+    if (now.getDate() === 1) specialContext += 'Month Beginning ';
+    
+    return {
+        date: now.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        }),
+        dayName: now.toLocaleDateString('en-US', { weekday: 'long' }),
+        timeOfDay,
+        isWeekend,
+        specialContext: specialContext.trim() || 'Daily Guidance'
+    };
 }
 
 // Fetch Recommendation
@@ -240,44 +264,29 @@ async function fetchRecommendation() {
         mainContent.style.display = 'none';
         errorMessage.style.display = 'none';
 
-        const today = new Date();
-        const context = {
-            date: today.toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            }),
-            dayName: today.toLocaleDateString('en-US', { weekday: 'long' })
-        };
+        const context = determineContext();
 
-        let recommendation;
-        try {
-            const response = await fetchWithRetry(`${config.apiEndpoint}?key=${config.apiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{ text: constructPrompt(context) }]
-                    }]
-                })
-            });
+        const response = await fetch(`${config.apiEndpoint}?key=${config.apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{ text: constructPrompt(context) }]
+                }]
+            })
+        });
 
-            const apiResponse = await response.json();
-            const recommendationText = apiResponse.candidates[0].content.parts[0].text;
-            const jsonMatch = recommendationText.match(/\{[\s\S]*\}/);
-            
-            if (!jsonMatch) throw new Error('Invalid response');
-            
-            recommendation = JSON.parse(jsonMatch[0]);
-        } catch (error) {
-            console.error('API Error:', error);
-            recommendation = loadCachedRecommendation() || getDefaultRecommendation();
-        }
-
-        await updateCardContent(recommendation);
+        const apiResponse = await response.json();
+        const recommendationText = apiResponse.candidates[0].content.parts[0].text;
+        const jsonMatch = recommendationText.match(/\{[\s\S]*\}/);
+        
+        if (!jsonMatch) throw new Error('Invalid response');
+        
+        const recommendation = JSON.parse(jsonMatch[0]);
+        await updateCardContent(recommendation, context);
 
     } catch (error) {
-        console.error('Fetch Error:', error);
+        console.error('Recommendation Error:', error);
         errorMessage.textContent = 'Unable to load recommendation.';
         errorMessage.style.display = 'block';
     } finally {
@@ -287,12 +296,9 @@ async function fetchRecommendation() {
 }
 
 // Update Card Content
-async function updateCardContent(data) {
-    document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-    });
-    
-    document.getElementById('recommendationType').textContent = data.type;
+async function updateCardContent(data, context) {
+    document.getElementById('currentDate').textContent = `${context.dayName}, ${context.date}`;
+    document.getElementById('recommendationType').textContent = `${context.timeOfDay} | ${context.specialContext}`;
     document.getElementById('surahTitle').textContent = data.surah;
     document.getElementById('arabicText').textContent = data.arabicText;
     document.getElementById('translation').textContent = data.translation;
@@ -305,44 +311,13 @@ async function updateCardContent(data) {
         benefitsList.appendChild(li);
     });
 
-    try {
-        localStorage.setItem('lastRecommendation', JSON.stringify({
-            timestamp: new Date().toISOString(),
-            data: data
-        }));
-    } catch (error) {
-        console.error('localStorage Error:', error);
+    // Optional: Add special insight
+    if (data.specialInsight) {
+        const insightElem = document.createElement('div');
+        insightElem.classList.add('special-insight');
+        insightElem.textContent = data.specialInsight;
+        benefitsList.parentNode.appendChild(insightElem);
     }
-}
-
-// Load Cached Recommendation
-function loadCachedRecommendation() {
-    try {
-        const cached = localStorage.getItem('lastRecommendation');
-        if (cached) {
-            const { timestamp, data } = JSON.parse(cached);
-            const cacheAge = new Date() - new Date(timestamp);
-            return cacheAge < 24 * 60 * 60 * 1000 ? data : null;
-        }
-    } catch (error) {
-        console.error('Cache Error:', error);
-    }
-    return null;
-}
-
-// Default Recommendation
-function getDefaultRecommendation() {
-    return {
-        type: "Daily Wisdom",
-        surah: "Al-Fatihah",
-        arabicText: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
-        translation: "In the name of Allah, the Most Gracious, the Most Merciful",
-        benefits: [
-            "Spiritual guidance",
-            "Divine connection",
-            "Blessing and protection"
-        ]
-    };
 }
 
 // Action Handlers
@@ -352,19 +327,15 @@ function readMore() {
 }
 
 function saveForLater() {
-    try {
-        const currentRecommendation = {
-            date: new Date().toISOString(),
-            surah: document.getElementById('surahTitle').textContent,
-            type: document.getElementById('recommendationType').textContent
-        };
+    const currentRecommendation = {
+        date: new Date().toISOString(),
+        surah: document.getElementById('surahTitle').textContent,
+        type: document.getElementById('recommendationType').textContent
+    };
 
-        const savedItems = JSON.parse(localStorage.getItem('savedRecommendations') || '[]');
-        savedItems.push(currentRecommendation);
-        localStorage.setItem('savedRecommendations', JSON.stringify(savedItems));
-    } catch (error) {
-        console.error('Save Error:', error);
-    }
+    const savedItems = JSON.parse(localStorage.getItem('savedRecommendations') || '[]');
+    savedItems.push(currentRecommendation);
+    localStorage.setItem('savedRecommendations', JSON.stringify(savedItems));
 }
 
 // Initialize
