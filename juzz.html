@@ -17,7 +17,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Amiri', serif;
+            font-family: 'Poppins', sans-serif;
         }
 
         body {
@@ -33,11 +33,11 @@
 
         .header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
             margin-bottom: 30px;
             border-bottom: 2px solid var(--primary-color);
             padding-bottom: 15px;
+            padding-top: 60px;
         }
 
         .header-title {
@@ -53,12 +53,16 @@
             border: 2px solid var(--primary-color);
             border-radius: 30px;
             padding: 10px 15px;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
         }
 
         .search-container input {
             border: none;
             outline: none;
-            width: 300px;
+            width: 100%;
+            font-size: 16px;
             color: var(--text-dark);
         }
 
@@ -117,7 +121,117 @@
             z-index: 2;
         }
 
-        @media (max-width: 768px) {
+        /* Sidebar Styles */
+        .sidebar {
+            height: 100vh;
+            width: 280px;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: -280px;
+            background: linear-gradient(135deg, #7f1bf2, #9543f5);
+            overflow-x: hidden;
+            transition: all 0.4s ease;
+            padding-top: 85px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar.open {
+            left: 0;
+            box-shadow: 0 0 50px rgba(127, 27, 242, 0.3);
+        }
+
+        .sidebar a {
+            padding: 14px 24px;
+            text-decoration: none;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            border-radius: 0 25px 25px 0;
+            margin: 4px 0;
+            margin-right: 16px;
+            font-weight: 500;
+        }
+
+        .sidebar a:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(8px);
+        }
+
+        .sidebar a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .sidebar .closebtn {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 28px;
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar .closebtn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 999;
+            backdrop-filter: blur(3px);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        .openbtn {
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #7f1bf2;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(127, 27, 242, 0.3);
+        }
+
+        .openbtn:hover {
+            background-color: #6813d0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(127, 27, 242, 0.4);
+        }
+
+        @media screen and (max-width: 768px) {
             .header {
                 flex-direction: column;
                 text-align: center;
@@ -128,156 +242,33 @@
                 margin-top: 15px;
             }
 
-            .search-container input {
+            .sidebar {
                 width: 100%;
+                left: -100%;
+            }
+
+            .openbtn {
+                top: 20px;
+                left: 20px;
             }
         }
-        /* 2. SIDEBAR STYLES */
-.sidebar {
-    height: 100vh;
-    width: 280px;
-    position: fixed;
-    z-index: 1000;
-    top: 0;
-    left: -280px;
-    background: linear-gradient(135deg, #7f1bf2, #9543f5);
-    overflow-x: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    padding-top: 85px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-}
 
-.sidebar.open {
-    left: 0;
-    box-shadow: 0 0 50px rgba(127, 27, 242, 0.3);
-}
-
-.sidebar a {
-    padding: 14px 24px;
-    text-decoration: none;
-    font-size: 16px;
-    color: rgba(255, 255, 255, 0.9);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: all 0.3s ease;
-    border-radius: 0 25px 25px 0;
-    margin: 4px 0;
-    margin-right: 16px;
-    font-weight: 500;
-}
-
-.sidebar a:hover {
-    color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: translateX(8px);
-}
-
-.sidebar a.active {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
-}
-
-.sidebar .closebtn {
-    position: absolute;
-    top: 20px;
-    right: 25px;
-    font-size: 28px;
-    color: rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    margin: 0;
-    padding: 0;
-}
-
-.sidebar .closebtn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: rotate(90deg);
-}
-
-.sidebar-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6);
-    z-index: 999;
-    backdrop-filter: blur(3px);
-    transition: all 0.3s ease;
-}
-
-.sidebar-overlay.active {
-    display: block;
-}
-
-.openbtn {
-    font-size: 18px;
-    cursor: pointer;
-    background-color: #7f1bf2;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    position: fixed;
-    top: 40px;
-    left: 20px;
-    z-index: 1000;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(127, 27, 242, 0.3);
-}
-
-.openbtn:hover {
-    background-color: #6813d0;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(127, 27, 242, 0.4);
-}
-
-#main {
-    transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    padding: 20px;
-}
-
-@media screen and (max-width: 768px) {
-    .sidebar {
-        width: 100%;
-        left: -100%;
-    }
-    
-    .openbtn {
-        top: 20px;
-        left: 20px;
-    }
-}
-
-@media screen and (max-height: 450px) {
-    .sidebar {
-        padding-top: 60px;
-    }
-    
-    .sidebar a {
-        font-size: 16px;
-        padding: 10px 20px;
-    }
-}
-
+        @media screen and (max-height: 450px) {
+            .sidebar {
+                padding-top: 60px;
+            }
+            
+            .sidebar a {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div id="mySidebar" class="sidebar">
-        <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
+        <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">&times;</a>
         <a href="index.html">
             <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
         </a>
@@ -288,15 +279,17 @@
             <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Listen to Quran
         </a>
         <a href="prayer-times.html">
-            <lord-icon src="https://cdn.lordicon.com/tftaqjwp.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> prayer Time
+            <lord-icon src="https://cdn.lordicon.com/tftaqjwp.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Prayer Time
         </a>
         <a href="donate.html">
             <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Donate with love
         </a>
     </div>
 
-    <div id="main">
-        <button class="openbtn" id="openSidebarBtn">&#9776; Quran Pro</button>
+    <button class="openbtn" onclick="openSidebar()">&#9776; Quran Pro</button>
+
+    <div class="container">
+        <header class="header">
             <div class="search-container">
                 <input type="text" placeholder="Search Juzz..." id="search-input">
             </div>
@@ -305,40 +298,33 @@
         <div id="juzz-grid" class="juzz-grid"></div>
     </div>
 
+    <script src="https://cdn.lordicon.com/xdjxvujz.js"></script>
     <script>
-        // DOM Elements
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('overlay');
-const openBtn = document.getElementById('openBtn');
-const closeBtn = document.getElementById('closeBtn');
-const juzzGrid = document.getElementById('juzz-grid');
-const searchInput = document.getElementById('search-input');
+        // Sidebar functionality
+        function openSidebar() {
+            document.getElementById("mySidebar").classList.add("open");
+            document.getElementById("sidebarOverlay").classList.add("active");
+            document.body.style.overflow = 'hidden';
+        }
 
-// Sidebar functions
-function openSidebar() {
-    sidebar.classList.add('open');
-    overlay.style.display = 'block';
-    setTimeout(() => overlay.style.opacity = '1', 10);
-    document.body.style.overflow = 'hidden';
-}
+        function closeSidebar() {
+            document.getElementById("mySidebar").classList.remove("open");
+            document.getElementById("sidebarOverlay").classList.remove("active");
+            document.body.style.overflow = 'auto';
+        }
 
-function closeSidebar() {
-    sidebar.classList.remove('open');
-    overlay.style.opacity = '0';
-    setTimeout(() => overlay.style.display = 'none', 300);
-    document.body.style.overflow = 'auto';
-}
+        // Close sidebar when clicking overlay
+        document.getElementById("sidebarOverlay").addEventListener("click", closeSidebar);
 
-// Event listeners for sidebar
-openBtn?.addEventListener('click', openSidebar);
-closeBtn?.addEventListener('click', closeSidebar);
-overlay?.addEventListener('click', closeSidebar);
-window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeSidebar();
-});
+        // Close sidebar when pressing Escape key
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "Escape") {
+                closeSidebar();
+            }
+        });
 
-// Juzz data and functionality
- const juzzNames = [
+        // Juzz data
+        const juzzNames = [
             { en: 'Alif Lam Meem', ar: 'الم', surahStart: 1, surahEnd: 5 },
             { en: 'Sayaqul', ar: 'سيقول', surahStart: 6, surahEnd: 10 },
             { en: 'Tilkar Rusul', ar: 'تلك الرسل', surahStart: 11, surahEnd: 15 },
@@ -371,42 +357,46 @@ window.addEventListener('keydown', (e) => {
             { en: 'Amma Yatasa\'alun', ar: 'عم يتساءلون', surahStart: 146, surahEnd: 150 }
         ];
 
-function renderJuzzList(data) {
-    if (!juzzGrid) return;
-    
-    juzzGrid.innerHTML = '';
-    data.forEach((juzz, index) => {
-        const juzzCard = document.createElement('div');
-        juzzCard.classList.add('juzz-card');
-        juzzCard.setAttribute('data-number', (index + 1).toString().padStart(2, '0'));
-        juzzCard.innerHTML = `
-            <div class="juzz-number">Juzz ${index + 1}</div>
-            <div class="juzz-name-en">${juzz.en}</div>
-            <div class="juzz-name-ar">${juzz.ar}</div>
-        `;
-        
-        juzzCard.addEventListener('click', () => {
-            window.location.href = `juzz_detail.html?juzz=${index + 1}&start=${juzz.surahStart}&end=${juzz.surahEnd}`;
+        function renderJuzzList(data) {
+            const juzzGrid = document.getElementById('juzz-grid');
+            if (!juzzGrid) return;
+            
+            juzzGrid.innerHTML = '';
+            data.forEach((juzz, index) => {
+                const juzzCard = document.createElement('div');
+                juzzCard.classList.add('juzz-card');
+                juzzCard.setAttribute('data-number', (index + 1).toString().padStart(2, '0'));
+                juzzCard.innerHTML = `
+                    <div class="juzz-number">Juzz ${index + 1}</div>
+                    <div class="juzz-name-en">${juzz.en}</div>
+                    <div class="juzz-name-ar">${juzz.ar}</div>
+                `;
+                
+                juzzCard.addEventListener('click', () => {
+                    window.location.href = `juzz_detail.html?juzz=${index + 1}&start=${juzz.surahStart}&end=${juzz.surahEnd}`;
+                });
+
+                juzzGrid.appendChild(juzzCard);
+            });
+        }
+
+        // Search functionality
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredJuzz = juzzNames.filter(juzz => 
+                    juzz.en.toLowerCase().includes(searchTerm) || 
+                    juzz.ar.includes(searchTerm)
+                );
+                renderJuzzList(filteredJuzz);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderJuzzList(juzzNames);
         });
-
-        juzzGrid.appendChild(juzzCard);
-    });
-}
-
-// Search functionality
-searchInput?.addEventListener('input', (e) => {
-    const searchTerm = e.target.value.toLowerCase();
-    const filteredJuzz = juzzNames.filter(juzz => 
-        juzz.en.toLowerCase().includes(searchTerm) || 
-        juzz.ar.includes(searchTerm)
-    );
-    renderJuzzList(filteredJuzz);
-});
-
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    renderJuzzList(juzzNames);
-});
     </script>
 </body>
 </html>
