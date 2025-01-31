@@ -306,94 +306,82 @@
     </div>
 
     <script>
-       document.addEventListener("DOMContentLoaded", () => {
-    const juzzNames = [
-        { en: 'Alif Lam Meem', ar: 'الم', surahStart: 1, surahEnd: 5 },
-        { en: 'Sayaqul', ar: 'سيقول', surahStart: 6, surahEnd: 10 },
-        { en: 'Tilkar Rusul', ar: 'تلك الرسل', surahStart: 11, surahEnd: 15 },
-        { en: 'Lan Tanalul Birr', ar: 'لن تنالوا البر', surahStart: 16, surahEnd: 20 },
-        { en: 'Wal Muhsanat', ar: 'والمحصنات', surahStart: 21, surahEnd: 25 },
-        { en: 'La Yuhibbullah', ar: 'لا يحب الله', surahStart: 26, surahEnd: 30 },
-        { en: 'Wa Iza Samiu', ar: 'وإذا سمعوا', surahStart: 31, surahEnd: 35 },
-        { en: 'Wa Lau Annana', ar: 'ولو أننا', surahStart: 36, surahEnd: 40 },
-        { en: 'Qalal Malau', ar: 'قال الملأ', surahStart: 41, surahEnd: 45 },
-        { en: 'Wa A\'lamu', ar: 'واعلموا', surahStart: 46, surahEnd: 50 },
-        { en: 'Yatadhiroon', ar: 'يعتذرون', surahStart: 51, surahEnd: 55 },
-        { en: 'Wa Ma Min Dabbah', ar: 'وما من دابة', surahStart: 56, surahEnd: 60 },
-        { en: 'Wa Ma Ubarri\'u', ar: 'وما أبرئ', surahStart: 61, surahEnd: 65 },
-        { en: 'Rubama', ar: 'ربما', surahStart: 66, surahEnd: 70 },
-        { en: 'Subhanallazi', ar: 'سبحان الذي', surahStart: 71, surahEnd: 75 },
-        { en: 'Qal Alam', ar: 'قال ألم', surahStart: 76, surahEnd: 80 },
-        { en: 'Iqtaraba Linnas', ar: 'اقترب للناس', surahStart: 81, surahEnd: 85 },
-        { en: 'Qad Aflaha', ar: 'قد أفلح', surahStart: 86, surahEnd: 90 },
-        { en: 'Wa Qalallazina', ar: 'وقال الذين', surahStart: 91, surahEnd: 95 },
-        { en: 'A\'man Khalaq', ar: 'أمن خلق', surahStart: 96, surahEnd: 100 },
-        { en: 'Utlu Ma Uhiya', ar: 'اتل ما أوحي', surahStart: 101, surahEnd: 105 },
-        { en: 'Wa Man Yaqnut', ar: 'ومن يقنت', surahStart: 106, surahEnd: 110 },
-        { en: 'Wa Mali', ar: 'وما لي', surahStart: 111, surahEnd: 115 },
-        { en: 'Faman Azlam', ar: 'فمن أظلم', surahStart: 116, surahEnd: 120 },
-        { en: 'Ilaihi Yuraddu', ar: 'إليه يرد', surahStart: 121, surahEnd: 125 },
-        { en: 'Ha Meem', ar: 'حم', surahStart: 126, surahEnd: 130 },
-        { en: 'Qala Fama Khatbukum', ar: 'قال فما خطبكم', surahStart: 131, surahEnd: 135 },
-        { en: 'Qad Sami Allah', ar: 'قد سمع الله', surahStart: 136, surahEnd: 140 },
-        { en: 'Tabarakallazi', ar: 'تبارك الذي', surahStart: 141, surahEnd: 145 },
-        { en: 'Amma Yatasa\'alun', ar: 'عم يتساءلون', surahStart: 146, surahEnd: 150 }
-    ];
+        const juzzNames = [
+            { en: 'Alif Lam Meem', ar: 'الم', surahStart: 1, surahEnd: 5 },
+            { en: 'Sayaqul', ar: 'سيقول', surahStart: 6, surahEnd: 10 },
+            { en: 'Tilkar Rusul', ar: 'تلك الرسل', surahStart: 11, surahEnd: 15 },
+            { en: 'Lan Tanalul Birr', ar: 'لن تنالوا البر', surahStart: 16, surahEnd: 20 },
+            { en: 'Wal Muhsanat', ar: 'والمحصنات', surahStart: 21, surahEnd: 25 },
+            { en: 'La Yuhibbullah', ar: 'لا يحب الله', surahStart: 26, surahEnd: 30 },
+            { en: 'Wa Iza Samiu', ar: 'وإذا سمعوا', surahStart: 31, surahEnd: 35 },
+            { en: 'Wa Lau Annana', ar: 'ولو أننا', surahStart: 36, surahEnd: 40 },
+            { en: 'Qalal Malau', ar: 'قال الملأ', surahStart: 41, surahEnd: 45 },
+            { en: 'Wa A\'lamu', ar: 'واعلموا', surahStart: 46, surahEnd: 50 },
+            { en: 'Yatadhiroon', ar: 'يعتذرون', surahStart: 51, surahEnd: 55 },
+            { en: 'Wa Ma Min Dabbah', ar: 'وما من دابة', surahStart: 56, surahEnd: 60 },
+            { en: 'Wa Ma Ubarri\'u', ar: 'وما أبرئ', surahStart: 61, surahEnd: 65 },
+            { en: 'Rubama', ar: 'ربما', surahStart: 66, surahEnd: 70 },
+            { en: 'Subhanallazi', ar: 'سبحان الذي', surahStart: 71, surahEnd: 75 },
+            { en: 'Qal Alam', ar: 'قال ألم', surahStart: 76, surahEnd: 80 },
+            { en: 'Iqtaraba Linnas', ar: 'اقترب للناس', surahStart: 81, surahEnd: 85 },
+            { en: 'Qad Aflaha', ar: 'قد أفلح', surahStart: 86, surahEnd: 90 },
+            { en: 'Wa Qalallazina', ar: 'وقال الذين', surahStart: 91, surahEnd: 95 },
+            { en: 'A\'man Khalaq', ar: 'أمن خلق', surahStart: 96, surahEnd: 100 },
+            { en: 'Utlu Ma Uhiya', ar: 'اتل ما أوحي', surahStart: 101, surahEnd: 105 },
+            { en: 'Wa Man Yaqnut', ar: 'ومن يقنت', surahStart: 106, surahEnd: 110 },
+            { en: 'Wa Mali', ar: 'وما لي', surahStart: 111, surahEnd: 115 },
+            { en: 'Faman Azlam', ar: 'فمن أظلم', surahStart: 116, surahEnd: 120 },
+            { en: 'Ilaihi Yuraddu', ar: 'إليه يرد', surahStart: 121, surahEnd: 125 },
+            { en: 'Ha Meem', ar: 'حم', surahStart: 126, surahEnd: 130 },
+            { en: 'Qala Fama Khatbukum', ar: 'قال فما خطبكم', surahStart: 131, surahEnd: 135 },
+            { en: 'Qad Sami Allah', ar: 'قد سمع الله', surahStart: 136, surahEnd: 140 },
+            { en: 'Tabarakallazi', ar: 'تبارك الذي', surahStart: 141, surahEnd: 145 },
+            { en: 'Amma Yatasa\'alun', ar: 'عم يتساءلون', surahStart: 146, surahEnd: 150 }
+        ];
 
-    const juzzGrid = document.getElementById('juzz-grid');
-    const searchInput = document.getElementById('search-input');
-    const sidebar = document.getElementById('mySidebar');
-    const sidebarOverlay = document.getElementById('sidebarOverlay');
-    const openNavButton = document.getElementById('openNavButton');
-    const closeNavButton = document.getElementById('closeNavButton');
+        const juzzGrid = document.getElementById('juzz-grid');
+        const searchInput = document.getElementById('search-input');
 
-    function renderJuzzList(data) {
-        juzzGrid.innerHTML = '';
-        data.forEach((juzz, index) => {
-            const juzzCard = document.createElement('div');
-            juzzCard.classList.add('juzz-card');
-            juzzCard.setAttribute('data-number', (index + 1).toString().padStart(2, '0'));
-            juzzCard.innerHTML = `
-                <div class="juzz-number">Juzz ${index + 1}</div>
-                <div class="juzz-name-en">${juzz.en}</div>
-                <div class="juzz-name-ar">${juzz.ar}</div>
-            `;
-            
-            juzzCard.addEventListener('click', () => {
-                window.location.href = `juzz_detail.html?juzz=${index + 1}&start=${juzz.surahStart}&end=${juzz.surahEnd}`;
+        function renderJuzzList(data) {
+            juzzGrid.innerHTML = '';
+            data.forEach((juzz, index) => {
+                const juzzCard = document.createElement('div');
+                juzzCard.classList.add('juzz-card');
+                juzzCard.setAttribute('data-number', (index + 1).toString().padStart(2, '0'));
+                juzzCard.innerHTML = 
+                    <div class="juzz-number">Juzz ${index + 1}</div>
+                    <div class="juzz-name-en">${juzz.en}</div>
+                    <div class="juzz-name-ar">${juzz.ar}</div>
+                ;
+                
+                juzzCard.addEventListener('click', () => {
+                    window.location.href = juzz_detail.html?juzz=${index + 1}&start=${juzz.surahStart}&end=${juzz.surahEnd};
+                });
+
+                juzzGrid.appendChild(juzzCard);
             });
+        }
+        function openNav() {
+                document.getElementById("mySidebar").classList.add("open");
+                document.getElementById("sidebarOverlay").classList.add("active");
+            }
 
-            juzzGrid.appendChild(juzzCard);
+            function closeNav() {
+                document.getElementById("mySidebar").classList.remove("open");
+                document.getElementById("sidebarOverlay").classList.remove("active");
+            }
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredJuzz = juzzNames.filter(juzz => 
+                juzz.en.toLowerCase().includes(searchTerm) || 
+                juzz.ar.toLowerCase().includes(searchTerm)
+            );
+            renderJuzzList(filteredJuzz);
         });
-    }
 
-    function openNav() {
-        sidebar.classList.add('open');
-        sidebarOverlay.classList.add('active');
-    }
-
-    function closeNav() {
-        sidebar.classList.remove('open');
-        sidebarOverlay.classList.remove('active');
-    }
-
-    searchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        const filteredJuzz = juzzNames.filter(juzz => 
-            juzz.en.toLowerCase().includes(searchTerm) || 
-            juzz.ar.toLowerCase().includes(searchTerm)
-        );
-        renderJuzzList(filteredJuzz);
-    });
-
-    openNavButton.addEventListener('click', openNav);
-    closeNavButton.addEventListener('click', closeNav);
-    sidebarOverlay.addEventListener('click', closeNav);
-
-    // Initial render
-    renderJuzzList(juzzNames);
-});
-
+        // Initial render
+        renderJuzzList(juzzNames);
     </script>
 </body>
 </html>
