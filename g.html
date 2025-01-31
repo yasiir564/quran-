@@ -184,190 +184,190 @@
     </div>
 
     <script>
-        // Configuration object for Gemini API
-        const config = {
-            apiKey: 'AIzaSyB3pkExmoGi55reR2ogSAdv66G4QGYCvfg',
-            apiEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent'
+       // Configuration
+const config = {
+    apiKey: 'AIzaSyCmRATd4Ve1_brUATzY4KB0gRgVgacQROU', // Replace with secure method of storing API key
+    apiEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent'
+};
+
+// Helper function to construct the prompt for Gemini
+function constructPrompt(context) {
+    return `As an Islamic recommendation system, provide a daily Quran recommendation.
+    Current context:
+    - Day: ${context.dayName}
+    - Date: ${context.date}
+
+    Please provide a recommendation in the following JSON format:
+    {
+        "type": "Type of recommendation (e.g., Friday Special, Daily Wisdom)",
+        "surah": "Name of recommended Surah",
+        "arabicText": "Key verse in Arabic",
+        "translation": "English translation of the verse",
+        "benefits": ["benefit 1", "benefit 2", "benefit 3"]
+    }
+
+    If the day is Friday, specifically recommend Surah Al-Kahf.
+    Ensure response is in valid JSON format only.`;
+}
+
+// Function to fetch recommendations from Gemini API
+async function fetchRecommendation() {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const errorMessage = document.getElementById('errorMessage');
+    const mainContent = document.getElementById('mainContent');
+
+    try {
+        // Show loading state
+        loadingIndicator.style.display = 'block';
+        mainContent.style.display = 'none';
+        errorMessage.style.display = 'none';
+
+        // Prepare context
+        const today = new Date();
+        const context = {
+            date: today.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            }),
+            dayName: today.toLocaleDateString('en-US', { weekday: 'long' })
         };
 
-        // Helper function to construct the prompt for Gemini
-        function constructPrompt(context) {
-            return {
-                contents: [{
-                    parts: [{
-                        text: `As an Islamic recommendation system, provide a daily Quran recommendation.
-                        Current context:
-                        - Day: ${context.dayName}
-                        - Date: ${context.date}
-
-                        Please provide a recommendation in the following JSON format:
-                        {
-                            "type": "Type of recommendation (e.g., Friday Special, Daily Wisdom)",
-                            "surah": "Name of recommended Surah",
-                            "arabicText": "Key verse in Arabic",
-                            "translation": "English translation of the verse",
-                            "benefits": ["benefit 1", "benefit 2", "benefit 3"]
-                        }
-
-                        If the day is Friday, specifically recommend Surah Al-Kahf.
-                        Ensure response is in valid JSON format only.`
+        // Try to use cached data first if API fails
+        let recommendation;
+        try {
+            const response = await fetch(`${config.apiEndpoint}?key=${config.apiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: constructPrompt(context)
+                        }]
                     }]
-                }]
-            };
-        }
-
-        // Function to fetch recommendations from Gemini API
-        async function fetchRecommendation() {
-            const loadingIndicator = document.getElementById('loadingIndicator');
-            const errorMessage = document.getElementById('errorMessage');
-            const mainContent = document.getElementById('mainContent');
-
-            try {
-                // Show loading state
-                loadingIndicator.style.display = 'block';
-                mainContent.style.display = 'none';
-                errorMessage.style.display = 'none';
-
-                // Prepare context
-                const today = new Date();
-                const context = {
-                    date: today.toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                    }),
-                    dayName: today.toLocaleDateString('en-US', { weekday: 'long' })
-                };
-
-                // Try to use cached data first if API fails
-                let recommendation;
-                try {
-                    const response = await fetch(`${config.apiEndpoint}?key=${config.apiKey}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(constructPrompt(context))
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`API request failed: ${response.statusText}`);
-                    }
-
-                    const apiResponse = await response.json();
-                    const recommendationText = apiResponse.candidates[0].content.parts[0].text;
-                    const jsonMatch = recommendationText.match(/\{[\s\S]*\}/);
-                    
-                    if (!jsonMatch) {
-                        throw new Error('Invalid response format from API');
-                    }
-                    
-                    recommendation = JSON.parse(jsonMatch[0]);
-                } catch (error) {
-                    console.error('API Error:', error);
-                    recommendation = loadCachedRecommendation();
-                    if (!recommendation) {
-                        throw error;
-                    }
-                }
-
-                await updateCardContent(recommendation);
-
-            } catch (error) {
-                console.error('Error:', error);
-                errorMessage.textContent = 'Unable to load recommendation. Please try again later.';
-                errorMessage.style.display = 'block';
-            } finally {
-                loadingIndicator.style.display = 'none';
-                mainContent.style.display = 'block';
-            }
-        }
-
-        // Function to update card content with recommendation data
-        async function updateCardContent(data) {
-            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+                })
             });
+
+            if (!response.ok) {
+                throw new Error(`API request failed: ${response.statusText}`);
+            }
+
+            const apiResponse = await response.json();
+            const recommendationText = apiResponse.candidates[0].content.parts[0].text;
+            const jsonMatch = recommendationText.match(/\{[\s\S]*\}/);
             
-            document.getElementById('recommendationType').textContent = data.type;
-            document.getElementById('surahTitle').textContent = data.surah;
-            document.getElementById('arabicText').textContent = data.arabicText;
-            document.getElementById('translation').textContent = data.translation;
-
-            const benefitsList = document.getElementById('benefitsList');
-            benefitsList.innerHTML = '';
-            data.benefits.forEach(benefit => {
-                const li = document.createElement('li');
-                li.textContent = benefit;
-                benefitsList.appendChild(li);
-            });
-
-            try {
-                localStorage.setItem('lastRecommendation', JSON.stringify({
-                    timestamp: new Date().toISOString(),
-                    data: data
-                }));
-            } catch (error) {
-                console.error('Error saving to localStorage:', error);
+            if (!jsonMatch) {
+                throw new Error('Invalid response format from API');
+            }
+            
+            recommendation = JSON.parse(jsonMatch[0]);
+        } catch (error) {
+            console.error('API Error:', error);
+            recommendation = loadCachedRecommendation();
+            if (!recommendation) {
+                throw error;
             }
         }
 
-        // Function to load cached recommendation
-        function loadCachedRecommendation() {
-            try {
-                const cached = localStorage.getItem('lastRecommendation');
-                if (cached) {
-                    const { timestamp, data } = JSON.parse(cached);
-                    const cacheAge = new Date() - new Date(timestamp);
-                    if (cacheAge < 24 * 60 * 60 * 1000) {
-                        return data;
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading from cache:', error);
+        await updateCardContent(recommendation);
+
+    } catch (error) {
+        console.error('Error:', error);
+        errorMessage.textContent = 'Unable to load recommendation. Please try again later.';
+        errorMessage.style.display = 'block';
+    } finally {
+        loadingIndicator.style.display = 'none';
+        mainContent.style.display = 'block';
+    }
+}
+
+// Function to update card content with recommendation data
+async function updateCardContent(data) {
+    document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    
+    document.getElementById('recommendationType').textContent = data.type;
+    document.getElementById('surahTitle').textContent = data.surah;
+    document.getElementById('arabicText').textContent = data.arabicText;
+    document.getElementById('translation').textContent = data.translation;
+
+    const benefitsList = document.getElementById('benefitsList');
+    benefitsList.innerHTML = '';
+    data.benefits.forEach(benefit => {
+        const li = document.createElement('li');
+        li.textContent = benefit;
+        benefitsList.appendChild(li);
+    });
+
+    try {
+        localStorage.setItem('lastRecommendation', JSON.stringify({
+            timestamp: new Date().toISOString(),
+            data: data
+        }));
+    } catch (error) {
+        console.error('Error saving to localStorage:', error);
+    }
+}
+
+// Function to load cached recommendation
+function loadCachedRecommendation() {
+    try {
+        const cached = localStorage.getItem('lastRecommendation');
+        if (cached) {
+            const { timestamp, data } = JSON.parse(cached);
+            const cacheAge = new Date() - new Date(timestamp);
+            if (cacheAge < 24 * 60 * 60 * 1000) {
+                return data;
             }
-            return null;
         }
+    } catch (error) {
+        console.error('Error loading from cache:', error);
+    }
+    return null;
+}
 
-        // Action button handlers
-        async function readMore() {
-            const surahTitle = document.getElementById('surahTitle').textContent;
-            try {
-                localStorage.setItem('lastReadSurah', surahTitle);
-            } catch (error) {
-                console.error('Error saving reading state:', error);
-            }
-            console.log(`Navigating to full surah: ${surahTitle}`);
-        }
+// Action button handlers
+async function readMore() {
+    const surahTitle = document.getElementById('surahTitle').textContent;
+    try {
+        localStorage.setItem('lastReadSurah', surahTitle);
+    } catch (error) {
+        console.error('Error saving reading state:', error);
+    }
+    console.log(`Navigating to full surah: ${surahTitle}`);
+}
 
-        async function saveForLater() {
-            try {
-                const currentRecommendation = {
-                    date: new Date().toISOString(),
-                    surah: document.getElementById('surahTitle').textContent,
-                    type: document.getElementById('recommendationType').textContent
-                };
+async function saveForLater() {
+    try {
+        const currentRecommendation = {
+            date: new Date().toISOString(),
+            surah: document.getElementById('surahTitle').textContent,
+            type: document.getElementById('recommendationType').textContent
+        };
 
-                const savedItems = JSON.parse(localStorage.getItem('savedRecommendations') || '[]');
-                savedItems.push(currentRecommendation);
-                localStorage.setItem('savedRecommendations', JSON.stringify(savedItems));
+        const savedItems = JSON.parse(localStorage.getItem('savedRecommendations') || '[]');
+        savedItems.push(currentRecommendation);
+        localStorage.setItem('savedRecommendations', JSON.stringify(savedItems));
 
-                console.log('Recommendation saved successfully');
-            } catch (error) {
-                console.error('Error saving recommendation:', error);
-            }
-        }
+        console.log('Recommendation saved successfully');
+    } catch (error) {
+        console.error('Error saving recommendation:', error);
+    }
+}
 
-        // Initialize the card when the page loads
-        document.addEventListener('DOMContentLoaded', fetchRecommendation);
+// Initialize the card when the page loads
+document.addEventListener('DOMContentLoaded', fetchRecommendation);
 
-        // Refresh functionality
-        function refreshRecommendation() {
-            fetchRecommendation();
-        }
+// Refresh functionality
+function refreshRecommendation() {
+    fetchRecommendation();
+}
     </script>
 </body>
 </html>
