@@ -184,9 +184,9 @@
     </div>
 
     <script>
-       // Configuration
+     // Configuration
 const config = {
-    apiKey: 'AIzaSyCmRATd4Ve1_brUATzY4KB0gRgVgacQROU', // Replace with secure method of storing API key
+    apiKey: 'AIzaSyCmRATd4Ve1_brUATzY4KB0gRgVgacQROU', // Replace with secure method
     apiEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent'
 };
 
@@ -209,6 +209,30 @@ function constructPrompt(context) {
     If the day is Friday, specifically recommend Surah Al-Kahf.
     Ensure response is in valid JSON format only.`;
 }
+
+// Rate limiting and retry mechanism
+const fetchWithRetry = async (url, options, maxRetries = 3) => {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            const response = await fetch(url, options);
+            
+            if (response.status === 429) {
+                const waitTime = Math.pow(2, attempt) * 1000; // Exponential backoff
+                console.warn(`Rate limit hit. Waiting ${waitTime/1000} seconds.`);
+                await new Promise(resolve => setTimeout(resolve, waitTime));
+                continue;
+            }
+
+            if (!response.ok) {
+                throw new Error(`API request failed: ${response.statusText}`);
+            }
+
+            return response;
+        } catch (error) {
+            if (attempt === maxRetries) throw error;
+        }
+    }
+};
 
 // Function to fetch recommendations from Gemini API
 async function fetchRecommendation() {
@@ -236,7 +260,7 @@ async function fetchRecommendation() {
         // Try to use cached data first if API fails
         let recommendation;
         try {
-            const response = await fetch(`${config.apiEndpoint}?key=${config.apiKey}`, {
+            const response = await fetchWithRetry(`${config.apiEndpoint}?key=${config.apiKey}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -249,10 +273,6 @@ async function fetchRecommendation() {
                     }]
                 })
             });
-
-            if (!response.ok) {
-                throw new Error(`API request failed: ${response.statusText}`);
-            }
 
             const apiResponse = await response.json();
             const recommendationText = apiResponse.candidates[0].content.parts[0].text;
@@ -333,17 +353,18 @@ function loadCachedRecommendation() {
 }
 
 // Action button handlers
-async function readMore() {
+function readMore() {
     const surahTitle = document.getElementById('surahTitle').textContent;
     try {
         localStorage.setItem('lastReadSurah', surahTitle);
+        console.log(`Navigating to full surah: ${surahTitle}`);
+        // Implement navigation logic here
     } catch (error) {
         console.error('Error saving reading state:', error);
     }
-    console.log(`Navigating to full surah: ${surahTitle}`);
 }
 
-async function saveForLater() {
+function saveForLater() {
     try {
         const currentRecommendation = {
             date: new Date().toISOString(),
