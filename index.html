@@ -89,6 +89,9 @@
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
     padding: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .header-hidden {
@@ -98,6 +101,59 @@
 
 .header-visible {
     transform: translateY(0);
+}
+
+.header-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.language-selector {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #7f1bf2, #9543f5);
+    border-radius: 12px;
+    padding: 10px 15px;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(127, 27, 242, 0.2);
+}
+
+.language-selector:hover {
+    box-shadow: 0 6px 20px rgba(127, 27, 242, 0.3);
+    transform: translateY(-2px);
+}
+
+.language-selector .current-language {
+    margin-right: 10px;
+    font-weight: 600;
+}
+
+.language-selector svg {
+    width: 20px;
+    height: 20px;
+    stroke: white;
+}
+
+.sign-in-link {
+    background: linear-gradient(135deg, #7f1bf2, #9543f5);
+    border-radius: 12px;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(127, 27, 242, 0.2);
+}
+
+.sign-in-link:hover {
+    box-shadow: 0 6px 20px rgba(127, 27, 242, 0.3);
+    transform: translateY(-2px);
 }
 
 .header-icons {
@@ -110,132 +166,7 @@
     z-index: 101;
 }
 
-.header-icons a {
-    color: #7f1bf2;
-    text-decoration: none;
-    font-size: 1em;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-.header-icons a:hover {
-    transform: translateY(-2px);
-}
-
-.header-icons a .icon-container {
-    background: linear-gradient(135deg, #7f1bf2, #9543f5);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(127, 27, 242, 0.2);
-    position: relative;
-    overflow: hidden;
-}
-
-.header-icons a .icon-container:hover {
-    box-shadow: 0 6px 20px rgba(127, 27, 242, 0.3);
-    transform: translateY(-2px);
-}
-
-.header-icons a .icon-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
-    border-radius: inherit;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.header-icons a .icon-container:hover::before {
-    opacity: 1;
-}
-
-.header-icons a lord-icon {
-    width: 28px;
-    height: 28px;
-    color: white;
-    position: relative;
-    z-index: 1;
-}
-
-.blur-effect {
-    filter: blur(5px);
-    transition: filter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.icon-container {
-    position: relative;
-    width: 44px;
-    height: 44px;
-}
-
-#user-profile-pic {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 12px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-}
-
-/* Notification badge */
-.icon-container .notification-badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background-color: #ff3366;
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid white;
-    font-weight: 600;
-}
-
-/* Active state for icons */
-.header-icons a.active .icon-container {
-    background: linear-gradient(135deg, #6813d0, #7f1bf2);
-    box-shadow: 0 4px 15px rgba(127, 27, 242, 0.4);
-}
-
-/* Responsive design */
-@media screen and (max-width: 768px) {
-    .header-icons {
-        top: 15px;
-        right: 20px;
-        gap: 15px;
-    }
-    .header-icons a .icon-container {
-        width: 40px;
-        height: 40px;
-    }
-    .header-icons a lord-icon {
-        width: 24px;
-        height: 24px;
-    }
-}
-
-/* Touch device optimization */
-@media (hover: none) {
-    .header-icons a .icon-container:active {
-        transform: scale(0.95);
-        box-shadow: 0 2px 10px rgba(127, 27, 242, 0.2);
-    }
-}
+/* Rest of the previous CSS remains the same... */
 
 /* Search Container */
 .search-container {
@@ -1650,39 +1581,21 @@ footer ul li a:hover::after {
 </style>
 </head>
 <body>
-    <header>
-        <div class="announcement-bar">
-            <p>Welcome To Quran Pro.</p>
+   <header>
+    <div class="header-container">
+        <div class="header-left">
+            <button id="languageSelector" class="language-btn">
+                <span class="current-language">EN</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </button>
         </div>
-        <div class="header-icons">
-            <a href="login.html" title="Login">
-                <div class="icon-container">
-                    <lord-icon
-                        src="https://cdn.lordicon.com/dxjqoygy.json"
-                        trigger="hover"
-                        colors="primary:#ffc3a0"
-                        style="width:40px;height:40px;">
-                    </lord-icon>
-                </div>
-            </a>
-            <a href="profile.html" title="User Profile" id="profile-link">
-                <div class="icon-container">
-                    <lord-icon
-                        src="https://cdn.lordicon.com/rivoakkk.json"
-                        trigger="hover"
-                        colors="primary:#ffc3a0"
-                        style="width:40px;height:40px;"
-                        id="default-profile-icon">
-                    </lord-icon>
-                    <img src="" id="user-profile-pic" alt="User Profile Picture" style="display: none; width:40px; height:40px; border-radius: 50%;">
-                </div>
-            </a>
+        <div class="header-right">
+            <a href="login.html" class="sign-in-link">Sign In</a>
         </div>
-	    <div class="icon-container">
-    <lord-icon>...</lord-icon>
-    <span class="notification-badge">3</span>
-</div>
-    </header>
+    </div>
+</header>
 	 <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div id="mySidebar" class="sidebar">
         <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
