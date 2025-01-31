@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6366f1, #4f46e5);
+            --secondary-gradient: linear-gradient(135deg, #f5f3ff, #ede9fe);
+            --text-primary: #1e1b4b;
+            --text-secondary: #4c1d95;
+            --accent-color: #6d28d9;
+        }
+
+        .quran-card {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--secondary-gradient);
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(99, 102, 241, 0.15);
+            padding: 24px;
+            max-width: 480px;
+            margin: 20px auto;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .quran-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.25);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .date-badge {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .recommendation-type {
+            color: var(--accent-color);
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .main-content {
+            margin: 24px 0;
+        }
+
+        .surah-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .arabic-text {
+            font-size: 28px;
+            text-align: right;
+            margin: 16px 0;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        .translation {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .benefits {
+            background: rgba(99, 102, 241, 0.1);
+            border-left: 4px solid #6366f1;
+            padding: 16px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .benefits-title {
+            color: var(--accent-color);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .benefits-list {
+            color: var(--text-primary);
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent-color);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: var(--accent-color);
+        }
+
+        .error-message {
+            display: none;
+            color: #dc2626;
+            background: #fee2e2;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 16px 0;
+        }
+
+        @media (max-width: 480px) {
+            .quran-card {
+                margin: 20px 16px;
+                padding: 16px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .arabic-text {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quran-card" id="dailyCard">
+        <div class="card-header">
+            <span class="date-badge" id="currentDate"></span>
+            <span class="recommendation-type" id="recommendationType"></span>
+        </div>
+        <div class="loading" id="loadingIndicator">
+            Loading recommendation...
+        </div>
+        <div class="error-message" id="errorMessage"></div>
+        <div class="main-content" id="mainContent">
+            <h2 class="surah-title" id="surahTitle"></h2>
+            <div class="arabic-text" id="arabicText"></div>
+            <div class="translation" id="translation"></div>
+            <div class="benefits">
+                <div class="benefits-title">Benefits & Virtues</div>
+                <ul class="benefits-list" id="benefitsList"></ul>
+            </div>
+        </div>
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="readMore()">Read Full Surah</button>
+            <button class="btn btn-secondary" onclick="saveForLater()">Save for Later</button>
+        </div>
+    </div>
+
+    <script>
+        // Configuration object for Gemini API
+        const config = {
+            apiKey: 'AIzaSyB3pkExmoGi55reR2ogSAdv66G4QGYCvfg',
+            apiEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent'
+        };
+
+        // Helper function to construct the prompt for Gemini
+        function constructPrompt(context) {
+            return {
+                contents: [{
+                    parts: [{
+                        text: `As an Islamic recommendation system, provide a daily Quran recommendation.
+                        Current context:
+                        - Day: ${context.dayName}
+                        - Date: ${context.date}
+
+                        Please provide a recommendation in the following JSON format:
+                        {
+                            "type": "Type of recommendation (e.g., Friday Special, Daily Wisdom)",
+                            "surah": "Name of recommended Surah",
+                            "arabicText": "Key verse in Arabic",
+                            "translation": "English translation of the verse",
+                            "benefits": ["benefit 1", "benefit 2", "benefit 3"]
+                        }
+
+                        If the day is Friday, specifically recommend Surah Al-Kahf.
+                        Ensure response is in valid JSON format only.`
+                    }]
+                }]
+            };
+        }
+
+        // Function to fetch recommendations from Gemini API
+        async function fetchRecommendation() {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const errorMessage = document.getElementById('errorMessage');
+            const mainContent = document.getElementById('mainContent');
+
+            try {
+                // Show loading state
+                loadingIndicator.style.display = 'block';
+                mainContent.style.display = 'none';
+                errorMessage.style.display = 'none';
+
+                // Prepare context
+                const today = new Date();
+                const context = {
+                    date: today.toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    }),
+                    dayName: today.toLocaleDateString('en-US', { weekday: 'long' })
+                };
+
+                // Try to use cached data first if API fails
+                let recommendation;
+                try {
+                    const response = await fetch(`${config.apiEndpoint}?key=${config.apiKey}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(constructPrompt(context))
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API request failed: ${response.statusText}`);
+                    }
+
+                    const apiResponse = await response.json();
+                    const recommendationText = apiResponse.candidates[0].content.parts[0].text;
+                    const jsonMatch = recommendationText.match(/\{[\s\S]*\}/);
+                    
+                    if (!jsonMatch) {
+                        throw new Error('Invalid response format from API');
+                    }
+                    
+                    recommendation = JSON.parse(jsonMatch[0]);
+                } catch (error) {
+                    console.error('API Error:', error);
+                    recommendation = loadCachedRecommendation();
+                    if (!recommendation) {
+                        throw error;
+                    }
+                }
+
+                await updateCardContent(recommendation);
+
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.textContent = 'Unable to load recommendation. Please try again later.';
+                errorMessage.style.display = 'block';
+            } finally {
+                loadingIndicator.style.display = 'none';
+                mainContent.style.display = 'block';
+            }
+        }
+
+        // Function to update card content with recommendation data
+        async function updateCardContent(data) {
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            document.getElementById('recommendationType').textContent = data.type;
+            document.getElementById('surahTitle').textContent = data.surah;
+            document.getElementById('arabicText').textContent = data.arabicText;
+            document.getElementById('translation').textContent = data.translation;
+
+            const benefitsList = document.getElementById('benefitsList');
+            benefitsList.innerHTML = '';
+            data.benefits.forEach(benefit => {
+                const li = document.createElement('li');
+                li.textContent = benefit;
+                benefitsList.appendChild(li);
+            });
+
+            try {
+                localStorage.setItem('lastRecommendation', JSON.stringify({
+                    timestamp: new Date().toISOString(),
+                    data: data
+                }));
+            } catch (error) {
+                console.error('Error saving to localStorage:', error);
+            }
+        }
+
+        // Function to load cached recommendation
+        function loadCachedRecommendation() {
+            try {
+                const cached = localStorage.getItem('lastRecommendation');
+                if (cached) {
+                    const { timestamp, data } = JSON.parse(cached);
+                    const cacheAge = new Date() - new Date(timestamp);
+                    if (cacheAge < 24 * 60 * 60 * 1000) {
+                        return data;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading from cache:', error);
+            }
+            return null;
+        }
+
+        // Action button handlers
+        async function readMore() {
+            const surahTitle = document.getElementById('surahTitle').textContent;
+            try {
+                localStorage.setItem('lastReadSurah', surahTitle);
+            } catch (error) {
+                console.error('Error saving reading state:', error);
+            }
+            console.log(`Navigating to full surah: ${surahTitle}`);
+        }
+
+        async function saveForLater() {
+            try {
+                const currentRecommendation = {
+                    date: new Date().toISOString(),
+                    surah: document.getElementById('surahTitle').textContent,
+                    type: document.getElementById('recommendationType').textContent
+                };
+
+                const savedItems = JSON.parse(localStorage.getItem('savedRecommendations') || '[]');
+                savedItems.push(currentRecommendation);
+                localStorage.setItem('savedRecommendations', JSON.stringify(savedItems));
+
+                console.log('Recommendation saved successfully');
+            } catch (error) {
+                console.error('Error saving recommendation:', error);
+            }
+        }
+
+        // Initialize the card when the page loads
+        document.addEventListener('DOMContentLoaded', fetchRecommendation);
+
+        // Refresh functionality
+        function refreshRecommendation() {
+            fetchRecommendation();
+        }
+    </script>
+</body>
+</html>
