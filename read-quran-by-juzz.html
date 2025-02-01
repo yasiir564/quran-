@@ -322,30 +322,30 @@
 
     <script src="https://cdn.lordicon.com/xdjxvujz.js"></script>
     <script>
-        // Sidebar functionality
-        function openSidebar() {
-            document.getElementById("mySidebar").classList.add("open");
-            document.getElementById("sidebarOverlay").classList.add("active");
-            document.body.style.overflow = 'hidden';
-        }
+// Sidebar functionality
+function openSidebar() {
+    document.getElementById("mySidebar").classList.add("open");
+    document.getElementById("sidebarOverlay").classList.add("active");
+    document.body.style.overflow = 'hidden';
+}
 
-        function closeSidebar() {
-            document.getElementById("mySidebar").classList.remove("open");
-            document.getElementById("sidebarOverlay").classList.remove("active");
-            document.body.style.overflow = 'auto';
-        }
+function closeSidebar() {
+    document.getElementById("mySidebar").classList.remove("open");
+    document.getElementById("sidebarOverlay").classList.remove("active");
+    document.body.style.overflow = 'auto';
+}
 
-        // Close sidebar when clicking overlay
-        document.getElementById("sidebarOverlay").addEventListener("click", closeSidebar);
+// Close sidebar when clicking overlay
+document.getElementById("sidebarOverlay").addEventListener("click", closeSidebar);
 
-        // Close sidebar when pressing Escape key
-        document.addEventListener("keydown", function(event) {
-            if (event.key === "Escape") {
-                closeSidebar();
-            }
-        });
+// Close sidebar when pressing Escape key
+document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape") {
+        closeSidebar();
+    }
+});
 
-       // Juzz data
+// Juzz data
 const juzzNames = [
     { en: 'Alif Lam Meem', ar: 'الم', surahStart: 1, surahEnd: 5 },
     { en: 'Sayaqul', ar: 'سيقول', surahStart: 6, surahEnd: 10 },
@@ -379,6 +379,99 @@ const juzzNames = [
     { en: 'Amma Yatasa\'alun', ar: 'عم يتساءلون', surahStart: 146, surahEnd: 150 }
 ];
 
+// Function to get URL parameters for juzz_detail.html
+function getUrlParameters() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return {
+        juzzNumber: parseInt(urlParams.get('juzz')),
+        surahStart: parseInt(urlParams.get('start')),
+        surahEnd: parseInt(urlParams.get('end'))
+    };
+}
+
+// Function to get Juzz details by number
+function getJuzzDetails(juzzNumber) {
+    const index = juzzNumber - 1;
+    if (index >= 0 && index < juzzNames.length) {
+        return juzzNames[index];
+    }
+    return null;
+}
+
+// Function to display Juzz details on juzz_detail.html
+function displayJuzzDetails() {
+    const params = getUrlParameters();
+    
+    // Get the Juzz details
+    const juzzDetails = getJuzzDetails(params.juzzNumber);
+    
+    if (!juzzDetails) {
+        console.error('Juzz not found');
+        handleError();
+        return;
+    }
+
+    // Update the page content with Juzz details
+    const elements = {
+        title: document.getElementById('juzz-title'),
+        arabicName: document.getElementById('juzz-arabic-name'),
+        englishName: document.getElementById('juzz-english-name'),
+        surahRange: document.getElementById('surah-range')
+    };
+
+    if (elements.title) {
+        elements.title.textContent = `Juzz ${params.juzzNumber}`;
+    }
+    if (elements.arabicName) {
+        elements.arabicName.textContent = juzzDetails.ar;
+    }
+    if (elements.englishName) {
+        elements.englishName.textContent = juzzDetails.en;
+    }
+    if (elements.surahRange) {
+        elements.surahRange.textContent = `Surah ${juzzDetails.surahStart} - ${juzzDetails.surahEnd}`;
+    }
+
+    // Setup navigation between Juzz
+    setupNavigation(params.juzzNumber);
+}
+
+// Setup navigation between Juzz
+function setupNavigation(currentJuzzNumber) {
+    const prevButton = document.getElementById('prev-juzz');
+    const nextButton = document.getElementById('next-juzz');
+
+    if (prevButton) {
+        prevButton.disabled = currentJuzzNumber <= 1;
+        prevButton.addEventListener('click', () => {
+            if (currentJuzzNumber > 1) {
+                const prevJuzz = getJuzzDetails(currentJuzzNumber - 1);
+                window.location.href = `juzz_detail.html?juzz=${currentJuzzNumber - 1}&start=${prevJuzz.surahStart}&end=${prevJuzz.surahEnd}`;
+            }
+        });
+    }
+
+    if (nextButton) {
+        nextButton.disabled = currentJuzzNumber >= juzzNames.length;
+        nextButton.addEventListener('click', () => {
+            if (currentJuzzNumber < juzzNames.length) {
+                const nextJuzz = getJuzzDetails(currentJuzzNumber + 1);
+                window.location.href = `juzz_detail.html?juzz=${currentJuzzNumber + 1}&start=${nextJuzz.surahStart}&end=${nextJuzz.surahEnd}`;
+            }
+        });
+    }
+}
+
+// Handle errors in URL parameters
+function handleError() {
+    const errorDiv = document.getElementById('error-message');
+    if (errorDiv) {
+        errorDiv.textContent = 'Invalid Juzz selection. Please return to the home page.';
+        errorDiv.style.display = 'block';
+    }
+}
+
+// Function to render Juzz grid on main page
 function renderJuzzList(data) {
     const juzzGrid = document.getElementById('juzz-grid');
     if (!juzzGrid) return;
@@ -389,13 +482,14 @@ function renderJuzzList(data) {
         juzzCard.classList.add('juzz-card');
         const juzzNumber = index + 1;
         juzzCard.setAttribute('data-number', juzzNumber.toString().padStart(2, '0'));
+        
         juzzCard.innerHTML = `
             <div class="juzz-number">Juzz ${juzzNumber}</div>
             <div class="juzz-name-en">${juzz.en}</div>
             <div class="juzz-name-ar">${juzz.ar}</div>
         `;
         
-        // Updated click handler to ensure correct parameters are passed
+        // Click handler for Juzz selection
         juzzCard.addEventListener('click', () => {
             const selectedJuzz = juzzNames[index];
             window.location.href = `juzz_detail.html?juzz=${juzzNumber}&start=${selectedJuzz.surahStart}&end=${selectedJuzz.surahEnd}`;
@@ -404,23 +498,38 @@ function renderJuzzList(data) {
         juzzGrid.appendChild(juzzCard);
     });
 }
-        // Search functionality
-        const searchInput = document.getElementById('search-input');
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                const searchTerm = e.target.value.toLowerCase();
-                const filteredJuzz = juzzNames.filter(juzz => 
-                    juzz.en.toLowerCase().includes(searchTerm) || 
-                    juzz.ar.includes(searchTerm)
-                );
-                renderJuzzList(filteredJuzz);
-            });
-        }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            renderJuzzList(juzzNames);
-        });
+// Search functionality
+const searchInput = document.getElementById('search-input');
+if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredJuzz = juzzNames.filter(juzz => 
+            juzz.en.toLowerCase().includes(searchTerm) || 
+            juzz.ar.includes(searchTerm)
+        );
+        renderJuzzList(filteredJuzz);
+    });
+}
+
+// Initialize based on current page
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if we're on the main page or detail page
+    const isDetailPage = window.location.pathname.includes('juzz_detail.html');
+    
+    if (isDetailPage) {
+        const params = getUrlParameters();
+        if (!params.juzzNumber || isNaN(params.juzzNumber) || 
+            params.juzzNumber < 1 || params.juzzNumber > juzzNames.length) {
+            handleError();
+            return;
+        }
+        displayJuzzDetails();
+    } else {
+        // Main page initialization
+        renderJuzzList(juzzNames);
+    }
+});
     </script>
 </body>
 </html>
