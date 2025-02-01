@@ -702,186 +702,159 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.js"></script>
     <script>
-   document.addEventListener('DOMContentLoaded', function() {
-    // Get parameters from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    
-    // State Management
+document.addEventListener('DOMContentLoaded', function() {
+    // Enhanced State Management with default values
     const state = {
-        currentJuz: parseInt(urlParams.get('juzz')) || 1,
-        surahStart: parseInt(urlParams.get('start')) || 1,
-        surahEnd: parseInt(urlParams.get('end')) || 5,
-        juzzNameEn: urlParams.get('name_en') || '',
-        juzzNameAr: urlParams.get('name_ar') || '',
+        currentJuz: 1,
+        surahStart: 1,
+        surahEnd: 5,
+        juzzNameEn: '',
+        juzzNameAr: '',
         currentReciter: 'ar.alafasy',
-        darkMode: false,
+        darkMode: localStorage.getItem('darkMode') === 'true',
         fonts: ['Amiri', 'Scheherazade New', 'Noto Naskh Arabic'],
-        currentFontIndex: 0,
+        currentFontIndex: parseInt(localStorage.getItem('fontIndex')) || 0,
         autoScroll: true,
-        isPlaying: false
+        isPlaying: false,
+        cache: new Map(), // Cache for API responses
     };
 
-    // DOM Elements
-    const sidebar = document.querySelector('.sidebar');
-    const mobileToggle = document.querySelector('.mobile-menu-toggle');
-    const backdrop = document.querySelector('.mobile-menu-backdrop');
-    const loader = document.querySelector('.loader');
-    const quranContent = document.getElementById('quranContent');
-    const scrollTop = document.getElementById('scrollTop');
-    const searchInput = document.querySelector('.search-input');
-    const searchBtn = document.querySelector('.search-btn');
-    const juzzTitle = document.getElementById('juzzTitle');
+    // Initialize state from URL parameters
+    const initializeState = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        state.currentJuz = parseInt(urlParams.get('juzz')) || 1;
+        state.surahStart = parseInt(urlParams.get('start')) || 1;
+        state.surahEnd = parseInt(urlParams.get('end')) || 5;
+        state.juzzNameEn = urlParams.get('name_en') || '';
+        state.juzzNameAr = urlParams.get('name_ar') || '';
+    };
+
+    // DOM Elements with null checks
+    const elements = {
+        sidebar: document.querySelector('.sidebar'),
+        mobileToggle: document.querySelector('.mobile-menu-toggle'),
+        backdrop: document.querySelector('.mobile-menu-backdrop'),
+        loader: document.querySelector('.loader'),
+        quranContent: document.getElementById('quranContent'),
+        scrollTop: document.getElementById('scrollTop'),
+        searchInput: document.querySelector('.search-input'),
+        searchBtn: document.querySelector('.search-btn'),
+        juzzTitle: document.getElementById('juzzTitle'),
+        themeToggle: document.getElementById('toggleTheme'),
+        fontChange: document.getElementById('changeFont'),
+        reciterSelect: document.getElementById('reciterSelect'),
+        prevJuzBtn: document.getElementById('prevJuz'),
+        nextJuzBtn: document.getElementById('nextJuz'),
+        quranOnlyBtn: document.getElementById('quranOnly'),
+        quranAudioBtn: document.getElementById('quranAudio')
+    };
 
     // Constants
-    const BISMILLAH = 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ';
-    const SURAH_END = '❁ صَدَقَ اللهُ العَظيم ❁';
+    const CONSTANTS = {
+        BISMILLAH: 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
+        SURAH_END: '❁ صَدَقَ اللهُ العَظيم ❁',
+        API_BASE_URL: 'https://api.alquran.cloud/v1',
+        CACHE_DURATION: 1000 * 60 * 60 // 1 hour
+    };
 
-    // Update page title and header
-    function updatePageHeader() {
-        if (juzzTitle) {
-            juzzTitle.innerHTML = `
-                <h1>Juzz ${state.currentJuz}</h1>
-                <h2>${state.juzzNameEn} (${state.juzzNameAr})</h2>
-                <div class="surah-range">Surahs ${state.surahStart} - ${state.surahEnd}</div>
-            `;
+    // API Fetching with caching and error handling
+    const fetchWithCache = async (url) => {
+        const cachedData = state.cache.get(url);
+        if (cachedData && (Date.now() - cachedData.timestamp < CONSTANTS.CACHE_DURATION)) {
+            return cachedData.data;
         }
-        document.title = `Juzz ${state.currentJuz} - ${state.juzzNameEn}`;
-    }
-
-    // Mobile Menu Handling
-    function toggleMobileMenu() {
-        sidebar.classList.toggle('active');
-        backdrop.classList.toggle('active');
-        document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
-    }
-
-    mobileToggle?.addEventListener('click', toggleMobileMenu);
-    backdrop?.addEventListener('click', toggleMobileMenu);
-
-    // Theme Toggle
-    document.getElementById('toggleTheme')?.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        state.darkMode = !state.darkMode;
-        const themeIcon = document.querySelector('#toggleTheme i');
-        themeIcon.classList.toggle('fa-moon');
-        themeIcon.classList.toggle('fa-sun');
-    });
-
-    // Font Change
-    document.getElementById('changeFont')?.addEventListener('click', () => {
-        state.currentFontIndex = (state.currentFontIndex + 1) % state.fonts.length;
-        document.body.style.fontFamily = state.fonts[state.currentFontIndex];
-        Swal.fire({
-            title: 'Font Changed',
-            text: `Current font: ${state.fonts[state.currentFontIndex]}`,
-            icon: 'success',
-            timer: 1500,
-            showConfirmButton: false
-        });
-    });
-
-    // Load Quran Content
-    async function loadJuzContent(juzNumber) {
-        loader.style.display = 'block';
-        quranContent.innerHTML = '';
 
         try {
-            const [quranResponse, translationResponse, audioResponse] = await Promise.all([
-                fetch(`https://api.alquran.cloud/v1/juz/${juzNumber}`),
-                fetch(`https://api.alquran.cloud/v1/juz/${juzNumber}/en.sahih`),
-                fetch(`https://api.alquran.cloud/v1/juz/${juzNumber}/${state.currentReciter}`)
-            ]);
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const data = await response.json();
+            state.cache.set(url, { data, timestamp: Date.now() });
+            return data;
+        } catch (error) {
+            console.error('Fetch error:', error);
+            throw error;
+        }
+    };
 
+    // Create Ayah HTML with proper closing tags
+    const createAyahHTML = (ayah, translation, audio) => {
+        return `
+            <div class="ayah-container" data-ayah-number="${ayah.numberInSurah}">
+                <div class="ayah-text">
+                    <span class="ayah-number">${ayah.numberInSurah}</span>
+                    <span class="arabic-text">${ayah.text}</span>
+                </div>
+                <div class="translation-text">${translation.text}</div>
+                <div class="audio-container">
+                    <audio class="audio-player" preload="none">
+                        <source src="${audio.audio}" type="audio/mp3" />
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>`;
+    };
+
+    // Create Surah Header
+    const createSurahHeader = (surahName) => {
+        return `
+            <div class="surah-header">
+                <h2>سورة ${surahName}</h2>
+                <div class="bismillah">${CONSTANTS.BISMILLAH}</div>
+            </div>`;
+    };
+
+    // Load Quran Content with optimized fetching
+    const loadJuzContent = async (juzNumber) => {
+        if (elements.loader) elements.loader.style.display = 'block';
+        if (elements.quranContent) elements.quranContent.innerHTML = '';
+
+        try {
             const [quranData, translationData, audioData] = await Promise.all([
-                quranResponse.json(),
-                translationResponse.json(),
-                audioResponse.json()
+                fetchWithCache(`${CONSTANTS.API_BASE_URL}/juz/${juzNumber}`),
+                fetchWithCache(`${CONSTANTS.API_BASE_URL}/juz/${juzNumber}/en.sahih`),
+                fetchWithCache(`${CONSTANTS.API_BASE_URL}/juz/${juzNumber}/${state.currentReciter}`)
             ]);
 
             let currentSurah = null;
-            
+            let contentHTML = '';
+
             quranData.data.ayahs.forEach((ayah, index) => {
                 if (currentSurah !== ayah.surah.number) {
                     if (currentSurah !== null) {
-                        const endContainer = document.createElement('div');
-                        endContainer.className = 'surah-end';
-                        endContainer.innerHTML = `<div class="end-marker">${SURAH_END}</div>`;
-                        quranContent.appendChild(endContainer);
+                        contentHTML += `<div class="surah-end"><div class="end-marker">${CONSTANTS.SURAH_END}</div></div>`;
                     }
-
-                    const surahHeader = document.createElement('div');
-                    surahHeader.className = 'surah-header';
-                    surahHeader.innerHTML = `
-                        <h2>سورة ${ayah.surah.name}</h2>
-                        <div class="bismillah">${BISMILLAH}</div>
-                    `;
-                    quranContent.appendChild(surahHeader);
+                    contentHTML += createSurahHeader(ayah.surah.name);
                     currentSurah = ayah.surah.number;
                 }
 
-                const container = document.createElement('div');
-                container.className = 'ayah-container';
-                container.innerHTML = `
-                    <div class="ayah-text">
-                        <span class="ayah-number">${ayah.numberInSurah}</span>
-                        ${ayah.text}
-                    </div>
-                    <div class="translation-text">${translationData.data.ayahs[index].text}</div>
-                    <audio class="audio-player" controls>
-                        <source src="${audioData.data.ayahs[index].audio}" type="audio/mp3">
-                    </audio>
-                `;
-                quranContent.appendChild(container);
+                contentHTML += createAyahHTML(
+                    ayah,
+                    translationData.data.ayahs[index],
+                    audioData.data.ayahs[index]
+                );
             });
 
-            // Update navigation
-            const prevJuzBtn = document.getElementById('prevJuz');
-            const nextJuzBtn = document.getElementById('nextJuz');
-            
-            if (prevJuzBtn) {
-                prevJuzBtn.disabled = juzNumber <= 1;
-            }
-            if (nextJuzBtn) {
-                nextJuzBtn.disabled = juzNumber >= 30;
+            if (elements.quranContent) {
+                elements.quranContent.innerHTML = contentHTML;
+                setupAudioPlayers();
+                updateNavigation(juzNumber);
             }
 
-            setupAudioPlayers();
         } catch (error) {
-            console.error('Error loading Juz:', error);
-            Swal.fire({
-                title: 'Error',
-                text: 'Failed to load content. Please try again.',
-                icon: 'error'
-            });
+            showError('Failed to load content. Please try again.');
         } finally {
-            loader.style.display = 'none';
+            if (elements.loader) elements.loader.style.display = 'none';
         }
-    }
+    };
 
-    // Navigation Functions
-    function navigateToJuz(juzNumber) {
-        // Get the juz data from the juzzNames array (defined in the previous script)
-        const juzData = window.juzzNames?.[juzNumber - 1];
-        if (juzData) {
-            const params = new URLSearchParams({
-                juzz: juzNumber,
-                start: juzData.surahStart,
-                end: juzData.surahEnd,
-                name_en: juzData.en,
-                name_ar: juzData.ar
-            });
-            window.location.href = `juzz_detail.html?${params.toString()}`;
-        } else {
-            loadJuzContent(juzNumber);
-        }
-    }
-
-    // Setup audio players
-    function setupAudioPlayers() {
+    // Setup Audio Players with improved handling
+    const setupAudioPlayers = () => {
         const audioPlayers = document.querySelectorAll('.audio-player');
         let currentPlayer = null;
 
         audioPlayers.forEach((player, index) => {
+            const container = player.closest('.ayah-container');
+
             player.addEventListener('play', () => {
                 if (currentPlayer && currentPlayer !== player) {
                     currentPlayer.pause();
@@ -889,78 +862,145 @@
                 currentPlayer = player;
                 state.isPlaying = true;
 
-                const ayahContainer = player.closest('.ayah-container');
-                ayahContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Remove playing class from all containers
+                document.querySelectorAll('.ayah-container').forEach(c => c.classList.remove('playing'));
+                container.classList.add('playing');
+
+                if (state.autoScroll) {
+                    container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
             });
 
             player.addEventListener('ended', () => {
-                const ayahContainer = player.closest('.ayah-container');
-                ayahContainer.classList.remove('playing');
-
+                container.classList.remove('playing');
                 if (state.autoScroll && index < audioPlayers.length - 1) {
-                    audioPlayers[index + 1].play();
+                    audioPlayers[index + 1].play().catch(console.error);
                 }
             });
+
+            // Add error handling for audio
+            player.addEventListener('error', (e) => {
+                console.error('Audio playback error:', e);
+                showError('Audio playback failed. Please try again.');
+            });
         });
-    }
+    };
+
+    // Update Navigation
+    const updateNavigation = (juzNumber) => {
+        if (elements.prevJuzBtn) {
+            elements.prevJuzBtn.disabled = juzNumber <= 1;
+        }
+        if (elements.nextJuzBtn) {
+            elements.nextJuzBtn.disabled = juzNumber >= 30;
+        }
+    };
+
+    // Show Error using SweetAlert
+    const showError = (message) => {
+        Swal.fire({
+            title: 'Error',
+            text: message,
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    };
 
     // Event Listeners
-    document.getElementById('prevJuz')?.addEventListener('click', () => {
-        if (state.currentJuz > 1) {
-            navigateToJuz(state.currentJuz - 1);
-        }
-    });
+    const setupEventListeners = () => {
+        // Mobile Menu Toggle
+        elements.mobileToggle?.addEventListener('click', () => {
+            elements.sidebar?.classList.toggle('active');
+            elements.backdrop?.classList.toggle('active');
+            document.body.style.overflow = elements.sidebar?.classList.contains('active') ? 'hidden' : '';
+        });
 
-    document.getElementById('nextJuz')?.addEventListener('click', () => {
-        if (state.currentJuz < 30) {
-            navigateToJuz(state.currentJuz + 1);
-        }
-    });
+        // Theme Toggle
+        elements.themeToggle?.addEventListener('click', () => {
+            state.darkMode = !state.darkMode;
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', state.darkMode);
+            const themeIcon = elements.themeToggle.querySelector('i');
+            themeIcon?.classList.toggle('fa-moon');
+            themeIcon?.classList.toggle('fa-sun');
+        });
 
-    // Reciter Change
-    document.getElementById('reciterSelect')?.addEventListener('change', (e) => {
-        state.currentReciter = e.target.value;
+        // Font Change
+        elements.fontChange?.addEventListener('click', () => {
+            state.currentFontIndex = (state.currentFontIndex + 1) % state.fonts.length;
+            document.body.style.fontFamily = state.fonts[state.currentFontIndex];
+            localStorage.setItem('fontIndex', state.currentFontIndex.toString());
+            Swal.fire({
+                title: 'Font Changed',
+                text: `Current font: ${state.fonts[state.currentFontIndex]}`,
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        });
+
+        // Navigation
+        elements.prevJuzBtn?.addEventListener('click', () => {
+            if (state.currentJuz > 1) navigateToJuz(state.currentJuz - 1);
+        });
+
+        elements.nextJuzBtn?.addEventListener('click', () => {
+            if (state.currentJuz < 30) navigateToJuz(state.currentJuz + 1);
+        });
+
+        // Reciter Change
+        elements.reciterSelect?.addEventListener('change', (e) => {
+            state.currentReciter = e.target.value;
+            loadJuzContent(state.currentJuz);
+        });
+
+        // Audio Display Toggle
+        elements.quranOnlyBtn?.addEventListener('click', () => {
+            document.querySelectorAll('.audio-container').forEach(container => {
+                container.style.display = 'none';
+            });
+            state.autoScroll = false;
+        });
+
+        elements.quranAudioBtn?.addEventListener('click', () => {
+            document.querySelectorAll('.audio-container').forEach(container => {
+                container.style.display = 'block';
+            });
+            state.autoScroll = true;
+        });
+
+        // Scroll to Top
+        window.addEventListener('scroll', () => {
+            if (elements.scrollTop) {
+                elements.scrollTop.classList.toggle('visible', window.pageYOffset > 300);
+            }
+        });
+
+        elements.scrollTop?.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Window Resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                elements.sidebar?.classList.remove('active');
+                elements.backdrop?.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+    };
+
+    // Initialize the application
+    const initialize = () => {
+        initializeState();
+        setupEventListeners();
+        if (state.darkMode) document.body.classList.add('dark-mode');
+        document.body.style.fontFamily = state.fonts[state.currentFontIndex];
         loadJuzContent(state.currentJuz);
-    });
+    };
 
-    // Audio Toggle
-    document.getElementById('quranOnly')?.addEventListener('click', () => {
-        document.querySelectorAll('.audio-player').forEach(player => {
-            player.style.display = 'none';
-        });
-        state.autoScroll = false;
-    });
-
-    document.getElementById('quranAudio')?.addEventListener('click', () => {
-        document.querySelectorAll('.audio-player').forEach(player => {
-            player.style.display = 'block';
-        });
-        state.autoScroll = true;
-    });
-
-    // Scroll to Top functionality
-    window.addEventListener('scroll', () => {
-        if (scrollTop) {
-            scrollTop.classList.toggle('visible', window.pageYOffset > 300);
-        }
-    });
-
-    scrollTop?.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-
-    // Handle window resize
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 768) {
-            sidebar?.classList.remove('active');
-            backdrop?.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-    });
-
-    // Initialize
-    updatePageHeader();
-    loadJuzContent(state.currentJuz);
+    // Start the application
+    initialize();
 });
     </script>
 </body>
