@@ -346,141 +346,64 @@ document.addEventListener("keydown", function(event) {
 });
 
 // Juzz data
-const juzzNames = [
-    { en: 'Alif Lam Meem', ar: 'الم', surahStart: 1, surahEnd: 5 },
-    { en: 'Sayaqul', ar: 'سيقول', surahStart: 6, surahEnd: 10 },
-    { en: 'Tilkar Rusul', ar: 'تلك الرسل', surahStart: 11, surahEnd: 15 },
-    { en: 'Lan Tanalul Birr', ar: 'لن تنالوا البر', surahStart: 16, surahEnd: 20 },
-    { en: 'Wal Muhsanat', ar: 'والمحصنات', surahStart: 21, surahEnd: 25 },
-    { en: 'La Yuhibbullah', ar: 'لا يحب الله', surahStart: 26, surahEnd: 30 },
-    { en: 'Wa Iza Samiu', ar: 'وإذا سمعوا', surahStart: 31, surahEnd: 35 },
-    { en: 'Wa Lau Annana', ar: 'ولو أننا', surahStart: 36, surahEnd: 40 },
-    { en: 'Qalal Malau', ar: 'قال الملأ', surahStart: 41, surahEnd: 45 },
-    { en: 'Wa A\'lamu', ar: 'واعلموا', surahStart: 46, surahEnd: 50 },
-    { en: 'Yatadhiroon', ar: 'يعتذرون', surahStart: 51, surahEnd: 55 },
-    { en: 'Wa Ma Min Dabbah', ar: 'وما من دابة', surahStart: 56, surahEnd: 60 },
-    { en: 'Wa Ma Ubarri\'u', ar: 'وما أبرئ', surahStart: 61, surahEnd: 65 },
-    { en: 'Rubama', ar: 'ربما', surahStart: 66, surahEnd: 70 },
-    { en: 'Subhanallazi', ar: 'سبحان الذي', surahStart: 71, surahEnd: 75 },
-    { en: 'Qal Alam', ar: 'قال ألم', surahStart: 76, surahEnd: 80 },
-    { en: 'Iqtaraba Linnas', ar: 'اقترب للناس', surahStart: 81, surahEnd: 85 },
-    { en: 'Qad Aflaha', ar: 'قد أفلح', surahStart: 86, surahEnd: 90 },
-    { en: 'Wa Qalallazina', ar: 'وقال الذين', surahStart: 91, surahEnd: 95 },
-    { en: 'A\'man Khalaq', ar: 'أمن خلق', surahStart: 96, surahEnd: 100 },
-    { en: 'Utlu Ma Uhiya', ar: 'اتل ما أوحي', surahStart: 101, surahEnd: 105 },
-    { en: 'Wa Man Yaqnut', ar: 'ومن يقنت', surahStart: 106, surahEnd: 110 },
-    { en: 'Wa Mali', ar: 'وما لي', surahStart: 111, surahEnd: 115 },
-    { en: 'Faman Azlam', ar: 'فمن أظلم', surahStart: 116, surahEnd: 120 },
-    { en: 'Ilaihi Yuraddu', ar: 'إليه يرد', surahStart: 121, surahEnd: 125 },
-    { en: 'Ha Meem', ar: 'حم', surahStart: 126, surahEnd: 130 },
-    { en: 'Qala Fama Khatbukum', ar: 'قال فما خطبكم', surahStart: 131, surahEnd: 135 },
-    { en: 'Qad Sami Allah', ar: 'قد سمع الله', surahStart: 136, surahEnd: 140 },
-    { en: 'Tabarakallazi', ar: 'تبارك الذي', surahStart: 141, surahEnd: 145 },
-    { en: 'Amma Yatasa\'alun', ar: 'عم يتساءلون', surahStart: 146, surahEnd: 150 }
-];
+        const juzzNames = [
+            { en: 'Alif Lam Meem', ar: 'الم', surahStart: 1, surahEnd: 5 },
+            { en: 'Sayaqul', ar: 'سيقول', surahStart: 6, surahEnd: 10 },
+            { en: 'Tilkar Rusul', ar: 'تلك الرسل', surahStart: 11, surahEnd: 15 },
+            { en: 'Lan Tanalul Birr', ar: 'لن تنالوا البر', surahStart: 16, surahEnd: 20 },
+            { en: 'Wal Muhsanat', ar: 'والمحصنات', surahStart: 21, surahEnd: 25 },
+            { en: 'La Yuhibbullah', ar: 'لا يحب الله', surahStart: 26, surahEnd: 30 },
+            { en: 'Wa Iza Samiu', ar: 'وإذا سمعوا', surahStart: 31, surahEnd: 35 },
+            { en: 'Wa Lau Annana', ar: 'ولو أننا', surahStart: 36, surahEnd: 40 },
+            { en: 'Qalal Malau', ar: 'قال الملأ', surahStart: 41, surahEnd: 45 },
+            { en: 'Wa A\'lamu', ar: 'واعلموا', surahStart: 46, surahEnd: 50 },
+            { en: 'Yatadhiroon', ar: 'يعتذرون', surahStart: 51, surahEnd: 55 },
+            { en: 'Wa Ma Min Dabbah', ar: 'وما من دابة', surahStart: 56, surahEnd: 60 },
+            { en: 'Wa Ma Ubarri\'u', ar: 'وما أبرئ', surahStart: 61, surahEnd: 65 },
+            { en: 'Rubama', ar: 'ربما', surahStart: 66, surahEnd: 70 },
+            { en: 'Subhanallazi', ar: 'سبحان الذي', surahStart: 71, surahEnd: 75 },
+            { en: 'Qal Alam', ar: 'قال ألم', surahStart: 76, surahEnd: 80 },
+            { en: 'Iqtaraba Linnas', ar: 'اقترب للناس', surahStart: 81, surahEnd: 85 },
+            { en: 'Qad Aflaha', ar: 'قد أفلح', surahStart: 86, surahEnd: 90 },
+            { en: 'Wa Qalallazina', ar: 'وقال الذين', surahStart: 91, surahEnd: 95 },
+            { en: 'A\'man Khalaq', ar: 'أمن خلق', surahStart: 96, surahEnd: 100 },
+            { en: 'Utlu Ma Uhiya', ar: 'اتل ما أوحي', surahStart: 101, surahEnd: 105 },
+            { en: 'Wa Man Yaqnut', ar: 'ومن يقنت', surahStart: 106, surahEnd: 110 },
+            { en: 'Wa Mali', ar: 'وما لي', surahStart: 111, surahEnd: 115 },
+            { en: 'Faman Azlam', ar: 'فمن أظلم', surahStart: 116, surahEnd: 120 },
+            { en: 'Ilaihi Yuraddu', ar: 'إليه يرد', surahStart: 121, surahEnd: 125 },
+            { en: 'Ha Meem', ar: 'حم', surahStart: 126, surahEnd: 130 },
+            { en: 'Qala Fama Khatbukum', ar: 'قال فما خطبكم', surahStart: 131, surahEnd: 135 },
+            { en: 'Qad Sami Allah', ar: 'قد سمع الله', surahStart: 136, surahEnd: 140 },
+            { en: 'Tabarakallazi', ar: 'تبارك الذي', surahStart: 141, surahEnd: 145 },
+            { en: 'Amma Yatasa\'alun', ar: 'عم يتساءلون', surahStart: 146, surahEnd: 150 }
+        ];
 
-// Function to get URL parameters for juzz_detail.html
-function getUrlParameters() {
-    const urlParams = new URLSearchParams(window.location.search);
-    return {
-        juzzNumber: parseInt(urlParams.get('juzz')),
-        surahStart: parseInt(urlParams.get('start')),
-        surahEnd: parseInt(urlParams.get('end'))
-    };
-}
 
-// Function to get Juzz details by number
-function getJuzzDetails(juzzNumber) {
-    const index = juzzNumber - 1;
-    if (index >= 0 && index < juzzNames.length) {
-        return juzzNames[index];
-    }
-    return null;
-}
 
-// Function to display Juzz details on juzz_detail.html
-function displayJuzzDetails() {
-    const params = getUrlParameters();
+function navigateToJuzzDetail(juzzNumber, juzzData) {
+    // Create URL with all necessary parameters
+    const params = new URLSearchParams({
+        juzz: juzzNumber,
+        start: juzzData.surahStart,
+        end: juzzData.surahEnd,
+        name_en: juzzData.en,
+        name_ar: juzzData.ar
+    });
     
-    // Get the Juzz details
-    const juzzDetails = getJuzzDetails(params.juzzNumber);
-    
-    if (!juzzDetails) {
-        console.error('Juzz not found');
-        handleError();
-        return;
-    }
-
-    // Update the page content with Juzz details
-    const elements = {
-        title: document.getElementById('juzz-title'),
-        arabicName: document.getElementById('juzz-arabic-name'),
-        englishName: document.getElementById('juzz-english-name'),
-        surahRange: document.getElementById('surah-range')
-    };
-
-    if (elements.title) {
-        elements.title.textContent = `Juzz ${params.juzzNumber}`;
-    }
-    if (elements.arabicName) {
-        elements.arabicName.textContent = juzzDetails.ar;
-    }
-    if (elements.englishName) {
-        elements.englishName.textContent = juzzDetails.en;
-    }
-    if (elements.surahRange) {
-        elements.surahRange.textContent = `Surah ${juzzDetails.surahStart} - ${juzzDetails.surahEnd}`;
-    }
-
-    // Setup navigation between Juzz
-    setupNavigation(params.juzzNumber);
+    // Redirect to the detail page with parameters
+    window.location.href = `juzz_detail.html?${params.toString()}`;
 }
 
-// Setup navigation between Juzz
-function setupNavigation(currentJuzzNumber) {
-    const prevButton = document.getElementById('prev-juzz');
-    const nextButton = document.getElementById('next-juzz');
-
-    if (prevButton) {
-        prevButton.disabled = currentJuzzNumber <= 1;
-        prevButton.addEventListener('click', () => {
-            if (currentJuzzNumber > 1) {
-                const prevJuzz = getJuzzDetails(currentJuzzNumber - 1);
-                window.location.href = `juzz_detail.html?juzz=${currentJuzzNumber - 1}&start=${prevJuzz.surahStart}&end=${prevJuzz.surahEnd}`;
-            }
-        });
-    }
-
-    if (nextButton) {
-        nextButton.disabled = currentJuzzNumber >= juzzNames.length;
-        nextButton.addEventListener('click', () => {
-            if (currentJuzzNumber < juzzNames.length) {
-                const nextJuzz = getJuzzDetails(currentJuzzNumber + 1);
-                window.location.href = `juzz_detail.html?juzz=${currentJuzzNumber + 1}&start=${nextJuzz.surahStart}&end=${nextJuzz.surahEnd}`;
-            }
-        });
-    }
-}
-
-// Handle errors in URL parameters
-function handleError() {
-    const errorDiv = document.getElementById('error-message');
-    if (errorDiv) {
-        errorDiv.textContent = 'Invalid Juzz selection. Please return to the home page.';
-        errorDiv.style.display = 'block';
-    }
-}
-
-// Function to render Juzz grid on main page
 function renderJuzzList(data) {
     const juzzGrid = document.getElementById('juzz-grid');
     if (!juzzGrid) return;
     
     juzzGrid.innerHTML = '';
     data.forEach((juzz, index) => {
+        const juzzNumber = index + 1;
         const juzzCard = document.createElement('div');
         juzzCard.classList.add('juzz-card');
-        const juzzNumber = index + 1;
         juzzCard.setAttribute('data-number', juzzNumber.toString().padStart(2, '0'));
         
         juzzCard.innerHTML = `
@@ -489,10 +412,9 @@ function renderJuzzList(data) {
             <div class="juzz-name-ar">${juzz.ar}</div>
         `;
         
-        // Click handler for Juzz selection
+        // Add click event with enhanced navigation
         juzzCard.addEventListener('click', () => {
-            const selectedJuzz = juzzNames[index];
-            window.location.href = `juzz_detail.html?juzz=${juzzNumber}&start=${selectedJuzz.surahStart}&end=${selectedJuzz.surahEnd}`;
+            navigateToJuzzDetail(juzzNumber, juzz);
         });
 
         juzzGrid.appendChild(juzzCard);
@@ -512,21 +434,30 @@ if (searchInput) {
     });
 }
 
-// Initialize based on current page
+// Helper function to get URL parameters on the detail page
+function getJuzzParameters() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return {
+        juzzNumber: urlParams.get('juzz'),
+        surahStart: urlParams.get('start'),
+        surahEnd: urlParams.get('end'),
+        nameEn: urlParams.get('name_en'),
+        nameAr: urlParams.get('name_ar')
+    };
+}
+
+// Initialize
 document.addEventListener('DOMContentLoaded', () => {
     // Check if we're on the main page or detail page
     const isDetailPage = window.location.pathname.includes('juzz_detail.html');
     
     if (isDetailPage) {
-        const params = getUrlParameters();
-        if (!params.juzzNumber || isNaN(params.juzzNumber) || 
-            params.juzzNumber < 1 || params.juzzNumber > juzzNames.length) {
-            handleError();
-            return;
-        }
-        displayJuzzDetails();
+        // Get and use the parameters on the detail page
+        const params = getJuzzParameters();
+        // You can use these parameters to populate your detail page
+        console.log('Juzz Details:', params);
     } else {
-        // Main page initialization
+        // Render the juzz list on the main page
         renderJuzzList(juzzNames);
     }
 });
