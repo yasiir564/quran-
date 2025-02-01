@@ -112,24 +112,39 @@
         color: var(--primary);
     }
 
-    /* Reciter Select */
-    .reciter-select {
-        width: 100%;
-        padding: 1rem;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 0.75rem;
-        color: white;
-        font-size: 1rem;
-        margin-top: 1rem;
-        cursor: pointer;
-        appearance: none;
-    }
+   .reciter-select {
+    width: 100%;
+    padding: 1.25rem 1.5rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.12);
+    border-radius: 1rem;
+    color: white;
+    font-size: 1rem;
+    margin-top: 1rem;
+    cursor: pointer;
+    appearance: none;
+    transition: all 0.2s ease-in-out;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
-    .reciter-select option {
-        background: var(--surface);
-        color: var(--text-primary);
-    }
+.reciter-select:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.reciter-select:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.reciter-select option {
+    background: var(--surface);
+    color: var(--text-primary);
+    padding: 1rem;
+}
 
     /* Mobile Menu */
     .mobile-menu-toggle {
