@@ -847,13 +847,32 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Setup Audio Players with improved handling
+    // Enhanced Audio Players Setup with Listen & Read feature
     const setupAudioPlayers = () => {
         const audioPlayers = document.querySelectorAll('.audio-player');
         let currentPlayer = null;
 
+        const highlightAyah = (ayahContainer) => {
+            // Remove highlight from all ayahs
+            document.querySelectorAll('.ayah-container').forEach(container => {
+                container.querySelector('.arabic-text')?.style.removeProperty('background-color');
+                container.querySelector('.translation-text')?.style.removeProperty('background-color');
+            });
+
+            // Add highlight to current ayah
+            if (state.listenAndRead.active) {
+                const arabicText = ayahContainer.querySelector('.arabic-text');
+                const translationText = ayahContainer.querySelector('.translation-text');
+                if (arabicText) arabicText.style.backgroundColor = state.listenAndRead.highlightColor;
+                if (translationText) translationText.style.backgroundColor = state.listenAndRead.highlightColor;
+            }
+        };
+
         audioPlayers.forEach((player, index) => {
             const container = player.closest('.ayah-container');
+
+            // Set playback speed
+            player.playbackRate = state.listenAndRead.speed;
 
             player.addEventListener('play', () => {
                 if (currentPlayer && currentPlayer !== player) {
@@ -861,13 +880,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 currentPlayer = player;
                 state.isPlaying = true;
+                state.listenAndRead.currentAyahIndex = index;
 
                 // Remove playing class from all containers
                 document.querySelectorAll('.ayah-container').forEach(c => c.classList.remove('playing'));
                 container.classList.add('playing');
 
+                highlightAyah(container);
+
                 if (state.autoScroll) {
-                    container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    container.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center'
+                    });
                 }
             });
 
@@ -878,12 +903,108 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
-            // Add error handling for audio
+            // Add timeupdate event for more precise highlighting
+            player.addEventListener('timeupdate', () => {
+                if (state.listenAndRead.active) {
+                    highlightAyah(container);
+                }
+            });
+
             player.addEventListener('error', (e) => {
                 console.error('Audio playback error:', e);
                 showError('Audio playback failed. Please try again.');
             });
         });
+    };
+
+    // Add Listen & Read Controls
+    const createListenReadControls = () => {
+        const controlsHTML = `
+            <div class="listen-read-controls">
+                <button id="toggleListenRead" class="btn">
+                    <i class="fas fa-book-reader"></i>
+                    Listen & Read
+                </button>
+                <div class="speed-controls">
+                    <button id="decreaseSpeed" class="btn">0.75x</button>
+                    <button id="normalSpeed" class="btn">1x</button>
+                    <button id="increaseSpeed" class="btn">1.25x</button>
+                </div>
+                <button id="autoScrollToggle" class="btn">
+                    <i class="fas fa-scroll"></i>
+                    Auto Scroll
+                </button>
+            </div>
+        `;
+
+        const controlsContainer = document.createElement('div');
+        controlsContainer.innerHTML = controlsHTML;
+        elements.quranContent?.parentNode.insertBefore(
+            controlsContainer, 
+            elements.quranContent
+        );
+
+        // Setup Listen & Read Controls
+        setupListenReadControls();
+    };
+
+    // Setup Listen & Read Control Events
+    const setupListenReadControls = () => {
+        const toggleBtn = document.getElementById('toggleListenRead');
+        const decreaseSpeedBtn = document.getElementById('decreaseSpeed');
+        const normalSpeedBtn = document.getElementById('normalSpeed');
+        const increaseSpeedBtn = document.getElementById('increaseSpeed');
+        const autoScrollToggleBtn = document.getElementById('autoScrollToggle');
+
+        toggleBtn?.addEventListener('click', () => {
+            state.listenAndRead.active = !state.listenAndRead.active;
+            toggleBtn.classList.toggle('active');
+            
+            if (!state.listenAndRead.active) {
+                // Remove all highlights
+                document.querySelectorAll('.ayah-container').forEach(container => {
+                    container.querySelector('.arabic-text')?.style.removeProperty('background-color');
+                    container.querySelector('.translation-text')?.style.removeProperty('background-color');
+                });
+            }
+        });
+
+        // Speed control handlers
+        decreaseSpeedBtn?.addEventListener('click', () => {
+            state.listenAndRead.speed = 0.75;
+            document.querySelectorAll('.audio-player').forEach(player => {
+                player.playbackRate = 0.75;
+            });
+        });
+
+        normalSpeedBtn?.addEventListener('click', () => {
+            state.listenAndRead.speed = 1.0;
+            document.querySelectorAll('.audio-player').forEach(player => {
+                player.playbackRate = 1.0;
+            });
+        });
+
+        increaseSpeedBtn?.addEventListener('click', () => {
+            state.listenAndRead.speed = 1.25;
+            document.querySelectorAll('.audio-player').forEach(player => {
+                player.playbackRate = 1.25;
+            });
+        });
+
+        autoScrollToggleBtn?.addEventListener('click', () => {
+            state.autoScroll = !state.autoScroll;
+            autoScrollToggleBtn.classList.toggle('active');
+        });
+    };
+
+    // Add to the initialize function
+    const initialize = () => {
+        initializeState();
+        setupEventListeners();
+        createListenReadControls(); // Add this line
+        if (state.darkMode) document.body.classList.add('dark-mode');
+        document.body.style.fontFamily = state.fonts[state.currentFontIndex];
+        loadJuzContent(state.currentJuz);
     };
 
     // Update Navigation
