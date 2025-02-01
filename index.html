@@ -1646,6 +1646,94 @@ footer ul li a:hover::after {
     margin: 0 auto;
     padding: 0 15px;
 }
+	    .suggestions-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 0 40px;
+}
+
+.suggestions-wrapper {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    border-radius: 15px;
+}
+
+.suggestions-track {
+    display: flex;
+    transition: transform 0.5s ease;
+}
+
+.suggestion-card {
+    flex: 0 0 100%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 10px;
+    color: #fff;
+    opacity: 0.7;
+    transform: scale(0.9);
+    transition: all 0.3s ease;
+}
+
+.suggestion-card.active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.suggestion-card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+.suggestion-card p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+}
+
+.nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.nav-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.prev-button {
+    left: 0;
+}
+
+.next-button {
+    right: 0;
+}
+
+@media (max-width: 768px) {
+    .suggestions-container {
+        padding: 0 30px;
+    }
+    
+    .suggestion-card h2 {
+        font-size: 1.5rem;
+    }
+    
+    .suggestion-card p {
+        font-size: 1rem;
+    }
+}
 
 </style>
 </head>
@@ -1709,6 +1797,16 @@ footer ul li a:hover::after {
                 <input type="text" id="search-input" placeholder="Search for a Surah...">
                 <button id="search-button"><i class="fas fa-search"></i></button>
             </div>
+	    <!-- Add this where you want the suggestions to appear in your page -->
+<div class="suggestions-container">
+    <div class="suggestions-wrapper">
+        <div class="suggestions-track">
+            <!-- Cards will be dynamically inserted here -->
+        </div>
+    </div>
+    <button class="nav-button prev-button" aria-label="Previous suggestion">❮</button>
+    <button class="nav-button next-button" aria-label="Next suggestion">❯</button>
+</div>
 
         
         <div class="container">
@@ -2077,6 +2175,132 @@ footer ul li a:hover::after {
 
     // Example: Attach the handleLogout function to a logout button
     document.getElementById('logout-button').addEventListener('click', handleLogout);
+});
+	    class SuggestionCarousel {
+    constructor() {
+        this.GEMINI_API_KEY = "AIzaSyBeq0iO4vonUPBWOUiz2tu9m7FzW1mKKwc";
+        this.GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${this.GEMINI_API_KEY}`;
+        
+        this.track = document.querySelector('.suggestions-track');
+        this.cards = [];
+        this.currentIndex = 0;
+        
+        this.setupNavigation();
+        this.initialize();
+    }
+    
+    async initialize() {
+        // Generate multiple suggestions
+        const contexts = this.generateMultipleContexts();
+        for (const context of contexts) {
+            const suggestion = await this.getAISuggestion(this.generateUserInput(context));
+            this.addCard(suggestion);
+        }
+        
+        this.updateActiveCard();
+    }
+    
+    generateMultipleContexts() {
+        const baseContext = this.getUserContext();
+        // Generate different contexts for variety
+        return [
+            baseContext,
+            { ...baseContext, timeOfDay: 'morning' },
+            { ...baseContext, timeOfDay: 'afternoon' },
+            { ...baseContext, timeOfDay: 'evening' }
+        ];
+    }
+    
+    getUserContext() {
+        const now = new Date();
+        return {
+            day: now.toLocaleString("en-US", { weekday: "long" }),
+            month: now.toLocaleString("en-US", { month: "long" }),
+            timeOfDay: this.getTimeOfDay(now.getHours())
+        };
+    }
+    
+    getTimeOfDay(hour) {
+        if (hour < 12) return 'morning';
+        if (hour < 18) return 'afternoon';
+        return 'evening';
+    }
+    
+    generateUserInput(context) {
+        return `It is currently ${context.timeOfDay} on a ${context.day} in ${context.month}. Suggest an Islamic Dua, Quranic verse, or Adkar based on this context. For example, if it's Friday morning, suggest reading Surah Al-Kahf. If it's night, suggest night Adkar before sleeping. Provide a detailed explanation.`;
+    }
+    
+    async getAISuggestion(userInput) {
+        try {
+            const response = await fetch(this.GEMINI_API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{
+                        role: "user",
+                        parts: [{ text: userInput }]
+                    }]
+                })
+            });
+            
+            const data = await response.json();
+            return data.candidates[0].content.parts[0].text;
+        } catch (error) {
+            console.error("Error fetching AI suggestion:", error);
+            return "An error occurred. Please try again later.";
+        }
+    }
+    
+    addCard(suggestion) {
+        const card = document.createElement('div');
+        card.className = 'suggestion-card';
+        card.innerHTML = `
+            <h2>Spiritual Guidance</h2>
+            <p>${suggestion}</p>
+        `;
+        
+        this.track.appendChild(card);
+        this.cards.push(card);
+    }
+    
+    setupNavigation() {
+        document.querySelector('.prev-button').addEventListener('click', () => this.navigate(-1));
+        document.querySelector('.next-button').addEventListener('click', () => this.navigate(1));
+        
+        // Add touch support
+        let startX, moveX;
+        this.track.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        });
+        
+        this.track.addEventListener('touchmove', (e) => {
+            moveX = e.touches[0].clientX;
+        });
+        
+        this.track.addEventListener('touchend', () => {
+            if (startX - moveX > 50) this.navigate(1);
+            if (startX - moveX < -50) this.navigate(-1);
+        });
+    }
+    
+    navigate(direction) {
+        this.currentIndex = Math.max(0, Math.min(this.currentIndex + direction, this.cards.length - 1));
+        this.updateActiveCard();
+    }
+    
+    updateActiveCard() {
+        const offset = -this.currentIndex * 100;
+        this.track.style.transform = `translateX(${offset}%)`;
+        
+        this.cards.forEach((card, index) => {
+            card.classList.toggle('active', index === this.currentIndex);
+        });
+    }
+}
+
+// Initialize the carousel when the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new SuggestionCarousel();
 });
  </script>
 </body>
