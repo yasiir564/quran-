@@ -3,126 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Powered Dua and Quran Suggestion Tool</title>
+    <title>Daily Islamic Reminders</title>
     <style>
-        /* General Styles */
         body {
             font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #1e3c72, #2a5298);
             color: #fff;
             margin: 0;
-            padding: 0;
+            padding: 20px;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
         }
 
         .container {
-            text-align: center;
             max-width: 600px;
-            width: 90%;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
+            width: 100%;
         }
 
         .card {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
             padding: 20px;
-            margin: 20px 0;
+            margin: 10px 0;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            animation: fadeIn 1s ease-in-out;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .suggestion-type {
+            font-size: 0.9rem;
+            color: #aad4ff;
+            margin-bottom: 5px;
         }
 
-        .card h2 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-        }
-
-        .card p {
+        .arabic {
             font-size: 1.2rem;
-            line-height: 1.6;
+            margin: 10px 0;
+            direction: rtl;
         }
 
-        .loading {
-            font-size: 1.5rem;
-            color: #ccc;
+        .translation {
+            font-size: 1rem;
+            margin: 10px 0;
         }
 
-        .error {
-            color: #ff6b6b;
-            font-size: 1.2rem;
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .category-buttons {
+            margin: 15px 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>AI-Powered Dua & Quran Suggestion Tool</h1>
-        <div id="suggestion" class="card">
-            <div class="loading">Loading suggestion...</div>
+        <div class="category-buttons">
+            <button onclick="changeCategory('dua')">Dua</button>
+            <button onclick="changeCategory('quran')">Quran</button>
+            <button onclick="changeCategory('dhikr')">Dhikr</button>
         </div>
+        <div id="suggestion" class="card"></div>
+        <button onclick="getNewSuggestion()" style="width: 100%; margin-top: 10px;">New Suggestion</button>
     </div>
 
     <script>
     const GEMINI_API_KEY = "AIzaSyBeq0iO4vonUPBWOUiz2tu9m7FzW1mKKwc";
     const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
 
-    async function getAISuggestion(userInput) {
-        try {
-            const response = await fetch(GEMINI_API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: userInput }] }] }),
-            });
-            const data = await response.json();
-            return data.candidates[0].content.parts[0].text || "No suggestion found.";
-        } catch (error) {
-            console.error("Error fetching AI suggestion:", error);
-            return "An error occurred. Please try again later.";
-        }
+    let currentCategory = 'dua';
+
+    function changeCategory(category) {
+        currentCategory = category;
+        getNewSuggestion();
+    }
+
+    function generatePrompt() {
+        const context = getUserContext();
+        const prompts = {
+            dua: `Provide a short daily dua for ${context.timeOfDay} in exactly two lines: 1) Arabic text 2) English translation. Format: ARABIC: (arabic text) TRANSLATION: (english text)`,
+            quran: `Provide a relevant Quranic verse for ${context.timeOfDay} in exactly two lines: 1) Arabic text 2) English translation. Format: ARABIC: (arabic text) TRANSLATION: (english text)`,
+            dhikr: `Provide a short dhikr for ${context.timeOfDay} in exactly two lines: 1) Arabic text 2) English translation. Format: ARABIC: (arabic text) TRANSLATION: (english text)`
+        };
+        return prompts[currentCategory];
     }
 
     function getUserContext() {
         const now = new Date();
-        const day = now.toLocaleString("en-US", { weekday: "long" });
-        const month = now.toLocaleString("en-US", { month: "long" });
         const hour = now.getHours();
         const timeOfDay = hour < 12 ? "morning" : hour < 18 ? "afternoon" : "evening";
-        return { day, month, timeOfDay };
+        return { timeOfDay };
     }
 
-    function generateUserInput(context) {
-        return `It is ${context.timeOfDay} on a ${context.day} in ${context.month}. Suggest an Islamic Dua, Quranic verse, or Adkar with a brief explanation.`;
+    async function getNewSuggestion() {
+        try {
+            document.getElementById('suggestion').innerHTML = '<p>Loading...</p>';
+            const response = await fetch(GEMINI_API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{ role: "user", parts: [{ text: generatePrompt() }] }]
+                }),
+            });
+            const data = await response.json();
+            const text = data.candidates[0].content.parts[0].text;
+            
+            const arabicMatch = text.match(/ARABIC: (.*?)(?=TRANSLATION:|$)/s);
+            const translationMatch = text.match(/TRANSLATION: (.*?)$/s);
+            
+            const arabic = arabicMatch ? arabicMatch[1].trim() : '';
+            const translation = translationMatch ? translationMatch[1].trim() : '';
+
+            document.getElementById('suggestion').innerHTML = `
+                <div class="suggestion-type">${currentCategory.toUpperCase()}</div>
+                <div class="arabic">${arabic}</div>
+                <div class="translation">${translation}</div>
+            `;
+        } catch (error) {
+            document.getElementById('suggestion').innerHTML = '<p>An error occurred. Please try again.</p>';
+        }
     }
 
-    function displaySuggestion(suggestion) {
-        const suggestionElement = document.getElementById("suggestion");
-        suggestionElement.innerHTML = `<h2>Your Suggestion</h2><p>${suggestion}</p>`;
-    }
-
-    function showLoading() {
-        document.getElementById("suggestion").innerHTML = "<p>Loading...</p>";
-    }
-
-    async function runTool() {
-        showLoading();
-        const context = getUserContext();
-        const userInput = generateUserInput(context);
-        const suggestion = await getAISuggestion(userInput);
-        displaySuggestion(suggestion);
-    }
-
-    runTool();
-</script>
+    getNewSuggestion();
+    </script>
 </body>
 </html>
