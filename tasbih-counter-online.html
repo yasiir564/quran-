@@ -8,659 +8,348 @@
     <meta name="keywords" content="Tasbih Counter, Digital Tasbih, Dhikr Counter, Prayer Beads, Adhkar Counter, Online Tasbih">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link rel="icon" href="/tinywow_Quran pro_62044384.png" type="image/x-icon">
-    <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
-     crossorigin="anonymous"></script>    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-KKV0H53Z9L"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  gtag('config', 'G-KKV0H53Z9L');
-</script>
- <style>
-/* Base Reset and Global Defaults */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #a855f7;
+            --primary-gradient: linear-gradient(135deg, #6366f1, #a855f7);
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
 
-/* Root Variables */
-:root {
-    --primary-color: #6366f1;
-    --secondary-color: #a855f7;
-    --primary-gradient: linear-gradient(135deg, #6366f1, #a855f7);
-    --dark-gradient: linear-gradient(135deg, #1e1b4b, #4c1d95);
-    --light-bg: rgba(255, 255, 255, 0.9);
-    --dark-bg: rgba(30, 27, 75, 0.9);
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 15px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.1);
-    --transition-base: all 0.3s ease;
-}
+        body {
+            font-family: 'Amiri', serif;
+            min-height: 100vh;
+            background: var(--primary-gradient);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding-top: 60px;
+        }
 
-/* Scrollbar Styles */
-::-webkit-scrollbar {
-    width: 12px;
-}
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
 
-::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-}
+        /* Main Content Container */
+        .main-container {
+            flex: 1;
+            display: flex;
+            position: relative;
+            margin-top: 90px; /* Space for top ad */
+            margin-bottom: 90px; /* Space for bottom ad */
+            padding: 0 180px; /* Space for side ads */
+        }
 
-::-webkit-scrollbar-thumb {
-    background: var(--primary-gradient);
-    border-radius: 10px;
-    border: 3px solid transparent;
-    background-clip: content-box;
-}
+        /* Ad Containers */
+        .ad-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+        }
 
-::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(45deg, #4f46e5, #9333ea);
-    background-clip: content-box;
-}
+        .ad-top {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 728px;
+            height: 90px;
+            z-index: 900;
+        }
 
-/* Document and Body */
-html, body {
-    height: 100%;
-    overflow-y: auto;
-    scroll-behavior: smooth;
-    font-family: 'Amiri', serif;
-    line-height: 1.5;
-}
+        .ad-bottom {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 728px;
+            height: 90px;
+            z-index: 900;
+        }
 
-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding-top: 60px;
-    background: var(--primary-gradient);
-    color: #333;
-    transition: var(--transition-base);
-    position: relative;
-    font-size: 16px;
-    letter-spacing: 0.5px;
-}
+        .ad-sidebar {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 160px;
+            height: 600px;
+            z-index: 900;
+        }
 
-/* Header */
-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 60px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-}
+        .ad-sidebar-left {
+            left: 10px;
+        }
 
-/* Ad Containers */
-.ad-container {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    box-shadow: var(--shadow-md);
-    padding: 16px;
-    position: relative;
-    transition: var(--transition-base);
-    z-index: 100;
-}
+        .ad-sidebar-right {
+            right: 10px;
+        }
 
-.ad-container-top {
-    width: 100%;
-    max-width: 728px;
-    height: 90px;
-    margin: 20px auto;
-    position: fixed;
-    top: 70px;
-    left: 50%;
-    transform: translateX(-50%);
-}
+        /* Tasbih Counter */
+        .tasbih-counter {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: var(--shadow-lg);
+            z-index: 800;
+        }
 
-.ad-container-bottom {
-    width: 100%;
-    max-width: 728px;
-    height: 90px;
-    margin: 20px auto;
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-}
+        .screen {
+            width: 100%;
+            height: 60px;
+            background: #000;
+            color: #fff;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
 
-.ad-sidebar {
-    width: 160px;
-    height: 600px;
-    position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 99;
-}
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
 
-.ad-sidebar-left {
-    left: 20px;
-}
+        .button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            background: #000;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
 
-.ad-sidebar-right {
-    right: 20px;
-}
-     /* Header Styles */
-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 60px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-}
+        .button:active {
+            transform: scale(0.95);
+        }
 
+        .reset-button {
+            background: #dc2626;
+            width: 50px;
+            height: 50px;
+        }
 
+        /* Bottom Navigation */
+        .bottom-buttons {
+            position: fixed;
+            bottom: 120px; /* Positioned above bottom ad */
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 800;
+        }
 
-/* Sidebar Navigation */
-.sidebar {
-    height: 100%;
-    width: 250px;
-    position: fixed;
-    z-index: 1001;
-    top: 0;
-    left: -250px;
-    background: var(--primary-gradient);
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-    box-shadow: var(--shadow-md);
-}
+        .bottom-buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #000;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
 
-.sidebar a {
-    padding: 12px 20px;
-    text-decoration: none;
-    font-size: 18px;
-    color: #fff;
-    display: block;
-    transition: var(--transition-base);
-    border-radius: 0 50px 50px 0;
-    margin: 5px 0;
-}
+        .bottom-buttons button:hover {
+            transform: translateY(-2px);
+        }
 
-.sidebar a:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    transform: translateX(10px);
-}
+        /* Sidebar Navigation */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            height: 100%;
+            width: 250px;
+            background: var(--primary-gradient);
+            padding-top: 60px;
+            transition: 0.3s;
+            z-index: 1000;
+        }
 
-.sidebar .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-}
+        .sidebar.active {
+            left: 0;
+        }
 
-.openbtn {
-    font-size: 20px;
-    cursor: pointer;
-    background: var(--primary-gradient);
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    position: fixed;
-    top: 30px;
-    left: 10px;
-    z-index: 1000;
-    border-radius: 8px;
-    box-shadow: var(--shadow-sm);
-}
+        .sidebar a {
+            padding: 15px 20px;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-.openbtn:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
+        .openbtn {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1001;
+            padding: 10px 15px;
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+        }
 
-/* Tasbih Counter */
-.tasbih-counter {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%;
-    max-width: 300px;
-    height: 220px;
-    background-color: #fff;
-    border: 2px solid #000;
-    border-radius: 20px;
-    box-shadow: var(--shadow-lg);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    z-index: 200;
-}
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .main-container {
+                padding: 0 140px;
+            }
+            
+            .ad-sidebar {
+                width: 120px;
+            }
+        }
 
-.screen {
-    width: 100px;
-    height: 40px;
-    background-color: #000;
-    color: #fff;
-    font-size: 1.5em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    margin-bottom: 10px;
-}
+        @media (max-width: 992px) {
+            .ad-top, .ad-bottom {
+                width: 468px;
+                height: 60px;
+            }
+            
+            .ad-sidebar {
+                display: none;
+            }
+            
+            .main-container {
+                padding: 0 20px;
+            }
+        }
 
-.buttons {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-}
-
-.button {
-    width: 50px;
-    height: 50px;
-    background-color: #000;
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    margin: 5px 0;
-}
-
-.reset-button {
-    background-color: red;
-    width: 40px;
-    height: 40px;
-    margin-top: 5px;
-}
-
-.count-button {
-    width: 60px;
-    height: 60px;
-}
-
-.button:active {
-    background-color: #444;
-}
-
-/* Labels */
-.label {
-    font-size: 0.8em;
-    position: absolute;
-    top: 10px;
-}
-
-.label-left {
-    left: 10px;
-}
-
-.label-right {
-    right: 10px;
-}
-
-/* Bottom Navigation */
-.bottom-buttons {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    position: fixed;
-    bottom: 20px;
-    left: 0;
-    z-index: 150;
-}
-
-.bottom-buttons button {
-    background-color: #000;
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    padding: 10px 20px;
-    font-size: 1em;
-    margin: 5px;
-    cursor: pointer;
-}
-
-.bottom-buttons button:hover {
-    background-color: #444;
-}
-
-/* Smart Notification */
-#smart-notification {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: var(--light-bg);
-    border-radius: 12px;
-    box-shadow: var(--shadow-lg);
-    padding: 15px;
-    max-width: 300px;
-    z-index: 9999;
-    display: none;
-    transition: var(--transition-base);
-    backdrop-filter: blur(10px);
-}
-
-#smart-notification.show {
-    display: block;
-    animation: slideIn 0.3s ease-out;
-}
-
-.notification-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.notification-text {
-    flex-grow: 1;
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    color: #888;
-    transition: var(--transition-base);
-}
-
-.close-btn:hover {
-    color: #333;
-    transform: scale(1.1);
-}
-
-/* Content Wrapper */
-.content-wrapper {
-    max-width: calc(100% - 360px);
-    margin: 0 auto;
-    padding-top: 180px;
-    padding-bottom: 130px;
-}
-
-/* Animations */
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-@keyframes loading {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}
-
-/* Loading States */
-.ad-loading {
-    background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: loading 1.5s infinite;
-}
-
-/* Dark Mode */
-body.dark-mode {
-    --primary-color: #8b5cf6;
-    --secondary-color: #d946ef;
-}
-
-body.dark-mode .ad-container {
-    background-color: var(--dark-bg);
-    border-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-    .ad-sidebar {
-        width: 120px;
-    }
-    
-    .content-wrapper {
-        max-width: calc(100% - 280px);
-    }
-}
-
-@media (max-width: 992px) {
-    .ad-container-top,
-    .ad-container-bottom {
-        max-width: 468px;
-        height: 60px;
-    }
-    
-    .content-wrapper {
-        padding-top: 150px;
-        padding-bottom: 100px;
-    }
-}
-
-@media (max-width: 768px) {
-    body {
-        font-size: 14px;
-    }
-
-    .ad-sidebar {
-        display: none;
-    }
-    
-    .content-wrapper {
-        max-width: 100%;
-        padding: 120px 20px 90px;
-    }
-    
-    .tasbih-counter {
-        width: 90%;
-        max-width: 280px;
-    }
-    
-    .ad-container-top,
-    .ad-container-bottom {
-        max-width: 320px;
-        height: 50px;
-    }
-
-    .bottom-buttons {
-        flex-wrap: wrap;
-    }
-
-    #smart-notification {
-        left: 20px;
-        right: 20px;
-        max-width: none;
-    }
-}
-
-@media (max-width: 480px) {
-    .screen {
-        width: 100px;
-        height: 45px;
-        font-size: 1.6em;
-    }
-
-    .buttons button {
-        width: 50px;
-        height: 50px;
-    }
-}
-
-/* Print Styles */
-@media print {
-    .ad-container,
-    .ad-sidebar,
-    .ad-container-top,
-    .ad-container-bottom,
-    .dark-mode-toggle,
-    .sidebar,
-    .openbtn,
-    .bottom-buttons,
-    #smart-notification {
-        display: none !important;
-    }
-    
-    .content-wrapper {
-        padding: 0;
-        max-width: 100%;
-    }
-    
-    .tasbih-counter {
-        position: static;
-        transform: none;
-        margin: 20px auto;
-        box-shadow: none;
-    }
-    
-    body {
-        background: none;
-        padding: 0;
-    }
-}
-
-/* Accessibility */
-*:focus {
-    outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
-}
-
-/* Utility Classes */
-.text-gradient {
-    background: var(--primary-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.shadow-hover {
-    transition: box-shadow 0.3s ease;
-}
-
-.shadow-hover:hover {
-    box-shadow: var(--shadow-lg);
-}
-
-.frosted-glass {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
+        @media (max-width: 576px) {
+            .ad-top, .ad-bottom {
+                width: 320px;
+                height: 50px;
+            }
+            
+            .tasbih-counter {
+                width: 280px;
+            }
+            
+            .bottom-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Top Ad Container -->
-    <div class="ad-container ad-top ad-placeholder">
-        <div id="top-ad">
-            <!-- Google AdSense Ad Slot -->
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-1850217813586802"
-                 data-ad-slot="3972952911"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
+    <header>
+        <button class="openbtn">☰ Quran Pro</button>
+    </header>
+
+    <div class="ad-container ad-top">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-1850217813586802"
+             data-ad-slot="3972952911"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+    </div>
+
+    <div class="ad-container ad-sidebar ad-sidebar-left">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-1850217813586802"
+             data-ad-slot="8495749332"
+             data-ad-format="vertical"
+             data-full-width-responsive="false"></ins>
+    </div>
+
+    <div class="ad-container ad-sidebar ad-sidebar-right">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-1850217813586802"
+             data-ad-slot="7936248658"
+             data-ad-format="vertical"
+             data-full-width-responsive="false"></ins>
+    </div>
+
+    <div class="main-container">
+        <div class="tasbih-counter">
+            <div class="screen">0000</div>
+            <div class="buttons">
+                <button class="button count-button">+</button>
+                <button class="button reset-button">↻</button>
+            </div>
         </div>
-    </div>
-
-    <!-- Left Sidebar Ad Container -->
-    <div class="ad-container ad-sidebar ad-sidebar-left ad-placeholder">
-        <div id="sidebar-left-ad">
-            <!-- Google AdSense Ad Slot -->
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-1850217813586802"
-                 data-ad-slot="8495749332"
-                 data-ad-format="vertical"
-                 data-full-width-responsive="false"></ins>
-        </div>
-    </div>
-
-    <!-- Right Sidebar Ad Container -->
-    <div class="ad-container ad-sidebar ad-sidebar-right ad-placeholder">
-        <div id="sidebar-right-ad">
-            <!-- Google AdSense Ad Slot -->
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-1850217813586802"
-                 data-ad-slot="7936248658"
-                 data-ad-format="vertical"
-                 data-full-width-responsive="false"></ins>
-        </div>
-    </div>
-   
-
-    <div id="mySidebar" class="sidebar">
-        <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
-        <a href="index.html">
-            <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
-        </a>
-        <a href="juzz.html">
-            <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read in Juzz
-        </a>
-        <a href="audio.html">
-            <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Listen to Quran
-        </a>
-        <a href="prayer.html">
-            <lord-icon src="https://cdn.lordicon.com/tftaqjwp.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Prayer Time
-        </a>
-        <a href="donate.html">
-            <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Donate with Love
-        </a>
-    </div>
-
-    <div id="main">
-        <button class="openbtn" onclick="openNav()">&#9776; Quran Pro</button>
-    </div>
-
-    <div class="tasbih-counter">
-        <div class="label label-left">Quran pro</div>
-        <div class="screen" id="countDisplay">0000</div>
-        <div class="buttons">
-            <button class="button count-button" id="countButton"></button>
-            <button class="button reset-button" id="resetButton"></button>
-        </div>
-        <div class="label label-right">LED</div>
     </div>
 
     <div class="bottom-buttons">
         <button id="saveTasbih">Save</button>
         <button id="viewSavedTasbih">Saved Tasbih</button>
     </div>
-    <!-- Bottom Ad Container -->
-    <div class="ad-container ad-bottom ad-placeholder">
-        <div id="bottom-ad">
-            <!-- Google AdSense Ad Slot -->
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-1850217813586802"
-                 data-ad-slot="1454600783"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-        </div>
+
+    <div class="ad-container ad-bottom">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-1850217813586802"
+             data-ad-slot="1454600783"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
     </div>
-    </section>
-    <div id="smart-notification">
-        <div class="notification-content">
-            <div class="notification-text"></div>
-            <button class="close-btn">&times;</button>
-        </div>
-    </div>
+
+    <nav class="sidebar">
+        <a href="index.html">
+            <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon>
+            Read Quran
+        </a>
+        <a href="juzz.html">
+            <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon>
+            Read in Juzz
+        </a>
+        <a href="audio.html">
+            <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon>
+            Listen to Quran
+        </a>
+        <a href="prayer.html">
+            <lord-icon src="https://cdn.lordicon.com/tftaqjwp.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon>
+            Prayer Time
+        </a>
+        <a href="donate.html">
+            <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon>
+            Donate with Love
+        </a>
+    </nav>
+
+    <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1850217813586802" crossorigin="anonymous"></script
 
     <audio id="clickSound" src="https://hayatinitiative.org/wp-content/uploads/2024/07/mixkit-arcade-game-jump-coin-216.wav"></audio>
 
