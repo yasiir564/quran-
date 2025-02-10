@@ -8,457 +8,674 @@
     <meta name="keywords" content="Tasbih Counter, Digital Tasbih, Dhikr Counter, Prayer Beads, Adhkar Counter, Online Tasbih">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="icon" href="/tinywow_Quran pro_62044384.png" type="image/x-icon">
+    <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1850217813586802"
+     crossorigin="anonymous"></script>    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KKV0H53Z9L"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-KKV0H53Z9L');
+</script>
     <style>
-        /* Base Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+/* Base Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        /* Variables */
-        :root {
-            --primary-color: #6366f1;
-            --secondary-color: #a855f7;
-            --primary-gradient: linear-gradient(135deg, #6366f1, #a855f7);
-            --dark-gradient: linear-gradient(135deg, #1e1b4b, #4c1d95);
-            --light-bg: rgba(255, 255, 255, 0.9);
-            --dark-bg: rgba(30, 27, 75, 0.9);
-            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-            --shadow-md: 0 4px 15px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
+/* Modern Scrollbar */
+::-webkit-scrollbar {
+    width: 12px;
+}
 
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 12px;
-        }
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
 
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #6366f1, #a855f7);
+    border-radius: 10px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+}
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary-gradient);
-            border-radius: 10px;
-            border: 3px solid transparent;
-            background-clip: content-box;
-        }
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #4f46e5, #9333ea);
+    background-clip: content-box;
+}
 
-        /* Base Layout */
-        body {
-            font-family: 'Amiri', serif;
-            min-height: 100vh;
-            background: var(--primary-gradient);
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            padding-top: 60px;
-        }
+/* Root Variables */
+:root {
+    --primary-gradient: linear-gradient(135deg, #6366f1, #a855f7);
+    --dark-gradient: linear-gradient(135deg, #1e1b4b, #4c1d95);
+    --light-bg: rgba(255, 255, 255, 0.9);
+    --dark-bg: rgba(30, 27, 75, 0.9);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 15px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.1);
+    --transition-base: all 0.3s ease;
+}
 
-        /* Header */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-        }
+/* Document Setup */
+html, body {
+    height: 100%;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    font-family: 'Amiri', serif;
+    line-height: 1.5;
+}
 
-        /* Main Container */
-        .main-container {
-            flex: 1;
-            display: flex;
-            position: relative;
-            margin-top: 90px;
-            margin-bottom: 90px;
-            padding: 0 180px;
-        }
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 60px;
+    background: var(--primary-gradient);
+    color: #333;
+    transition: var(--transition-base);
+    position: relative;
+}
 
-        /* Ad Containers */
-        .ad-container {
-            background: var(--light-bg);
-            border-radius: 12px;
-            padding: 10px;
-            box-shadow: var(--shadow-md);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+/* Header Styles */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
 
-        .ad-top {
-            position: fixed;
-            top: 70px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 728px;
-            height: 90px;
-            z-index: 900;
-        }
+/* Advertisement Containers */
+.ad-container {
+    width: 100%;
+    max-width: 728px;
+    margin: 20px auto;
+    min-height: 90px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.6);
+}
 
-        .ad-bottom {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 728px;
-            height: 90px;
-            z-index: 900;
-        }
+.ad-sidebar {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    width: 160px;
+    height: 600px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
 
-        .ad-sidebar {
-            position: fixed;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 160px;
-            height: 600px;
-            z-index: 900;
-        }
+.ad-mobile {
+    width: 320px;
+    height: 50px;
+    margin: 10px auto;
+    display: none;
+}
 
-        .ad-sidebar-left {
-            left: 10px;
-        }
+/* Dark Mode Toggle */
+.dark-mode-toggle {
+    position: fixed;
+    top: 15px; /* Moved to top */
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 1010; /* Increased z-index to stay above header */
+    padding: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    box-shadow: var(--shadow-sm);
+}
 
-        .ad-sidebar-right {
-            right: 10px;
-        }
+.dark-mode-toggle label {
+    color: #fff;
+    font-size: 14px;
+    user-select: none;
+}
 
-        /* Tasbih Counter */
-        .tasbih-counter {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 300px;
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: var(--shadow-lg);
-            z-index: 800;
-        }
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 52px; /* Slightly smaller */
+    height: 28px; /* Slightly smaller */
+    margin: 0;
+}
 
-        .screen {
-            width: 100%;
-            height: 60px;
-            background: #000;
-            color: #fff;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
 
-        .buttons {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--primary-gradient);
+    transition: all 0.3s ease;
+    border-radius: 28px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
 
-        .button {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: none;
-            background: #000;
-            color: #fff;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px; /* Adjusted for new switch size */
+    width: 20px; /* Adjusted for new switch size */
+    left: 4px;
+    bottom: 2px;
+    background-color: white;
+    transition: all 0.3s ease;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
 
-        .button:active {
-            transform: scale(0.95);
-        }
+input:checked + .slider {
+    background: var(--dark-gradient);
+}
 
-        .reset-button {
-            background: #dc2626;
-            width: 50px;
-            height: 50px;
-        }
+input:checked + .slider:before {
+    transform: translateX(23px); /* Adjusted for new switch size */
+}
 
-        /* Bottom Navigation */
-        .bottom-buttons {
-            position: fixed;
-            bottom: 120px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            z-index: 800;
-        }
+/* Hover effect */
+.switch:hover .slider:before {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
 
-        .bottom-buttons button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            background: #000;
-            color: #fff;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
+/* Media Query for smaller screens */
+@media (max-width: 480px) {
+    .dark-mode-toggle {
+        top: 10px;
+        right: 10px;
+        padding: 3px;
+    }
 
-        .bottom-buttons button:hover {
-            transform: translateY(-2px);
-        }
+    .switch {
+        width: 46px;
+        height: 24px;
+    }
 
-        /* Sidebar */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -250px;
-            height: 100%;
-            width: 250px;
-            background: var(--primary-gradient);
-            padding-top: 60px;
-            transition: 0.3s;
-            z-index: 1000;
-            box-shadow: var(--shadow-lg);
-        }
+    .slider:before {
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 1px;
+    }
 
-        .sidebar.active {
-            left: 0;
-        }
+    input:checked + .slider:before {
+        transform: translateX(21px);
+    }
+}
 
-        .sidebar a {
-            padding: 15px 20px;
-            text-decoration: none;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: 0.3s;
-        }
+/* Sidebar Navigation */
+.sidebar {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1001;
+    top: 0;
+    left: -250px;
+    background: var(--primary-gradient);
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    box-shadow: var(--shadow-md);
+}
 
-        .sidebar a:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
+.sidebar a {
+    padding: 12px 20px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #fff;
+    display: block;
+    transition: var(--transition-base);
+    border-radius: 0 50px 50px 0;
+    margin: 5px 0;
+}
 
-        .closebtn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: white;
-            font-size: 30px;
-            cursor: pointer;
-            border: none;
-            background: none;
-        }
+.sidebar a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateX(10px);
+}
 
-        /* Smart Notification */
-        #smart-notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--light-bg);
-            border-radius: 12px;
-            box-shadow: var(--shadow-lg);
-            padding: 15px;
-            max-width: 300px;
-            z-index: 1100;
-            display: none;
-            backdrop-filter: blur(10px);
-        }
+.sidebar .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
 
-        #smart-notification.show {
-            display: block;
-            animation: slideIn 0.3s ease-out;
-        }
+.openbtn {
+    font-size: 20px;
+    cursor: pointer;
+    background: var(--primary-gradient);
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    position: fixed;
+    top: 30px;
+    left: 10px;
+    z-index: 1000;
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+}
 
-        .notification-content {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+.openbtn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
 
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            color: #888;
-        }
+  .tasbih-counter {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-width: 300px;
+        height: 220px;
+        background-color: #fff;
+        border: 2px solid #000;
+        border-radius: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        z-index: 100;
+    }
 
-        /* Animations */
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
+    .screen {
+        width: 100px;
+        height: 40px;
+        background-color: #000;
+        color: #fff;
+        font-size: 1.5em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
 
-        /* Menu Button */
-        .openbtn {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            z-index: 1001;
-            padding: 10px 15px;
-            background: var(--primary-gradient);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            cursor: pointer;
-            box-shadow: var(--shadow-sm);
-            transition: transform 0.2s;
-        }
+    .buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
 
-        .openbtn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
+    .button {
+        width: 50px;
+        height: 50px;
+        background-color: #000;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        margin: 5px 0;
+    }
 
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .main-container {
-                padding: 0 140px;
-            }
-            
-            .ad-sidebar {
-                width: 120px;
-            }
-        }
+    .reset-button {
+        background-color: red;
+        width: 40px;
+        height: 40px;
+        margin-top: 5px;
+    }
 
-        @media (max-width: 992px) {
-            .ad-top, .ad-bottom {
-                width: 468px;
-                height: 60px;
-            }
-            
-            .ad-sidebar {
-                display: none;
-            }
-            
-            .main-container {
-                padding: 0 20px;
-            }
-        }
+    .count-button {
+        width: 60px;
+        height: 60px;
+    }
 
-        @media (max-width: 576px) {
-            .ad-top, .ad-bottom {
-                width: 320px;
-                height: 50px;
-            }
-            
-            .tasbih-counter {
-                width: 280px;
-            }
-            
-            .bottom-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
+    .button:active {
+        background-color: #444;
+    }
 
-            #smart-notification {
-                left: 20px;
-                right: 20px;
-                max-width: none;
-            }
-        }
+    .label {
+        font-size: 0.8em;
+        position: absolute;
+        top: 10px;
+    }
+
+    .label-left {
+        left: 10px;
+    }
+
+    .label-right {
+        right: 10px;
+    }
+
+    .bottom-buttons {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        position: fixed;
+        bottom: 20px;
+        left: 0;
+    }
+
+    .bottom-buttons button {
+        background-color: #000;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 20px;
+        font-size: 1em;
+        margin: 5px;
+        cursor: pointer;
+    }
+
+    .bottom-buttons button:hover {
+        background-color: #444;
+    }
+
+    body.dark-mode {
+        background: linear-gradient(to right, #0f0f0f, #434343);
+        color: #ddd;
+    }
+
+    body.dark-mode .tasbih-counter {
+        background-color: #333;
+        border-color: #444;
+    }
+
+    body.dark-mode .screen {
+        background-color: #444;
+    }
+
+    body.dark-mode .button {
+        background-color: #555;
+        color: #ddd;
+    }
+
+    body.dark-mode .button:active {
+        background-color: #666;
+    }
+
+    body.dark-mode .bottom-buttons button {
+        background-color: #444;
+        color: #ddd;
+    }
+
+    body.dark-mode .bottom-buttons button:hover {
+        background-color: #555;
+    }
+
+/* Smart Notification */
+#smart-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--light-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    padding: 15px;
+    max-width: 300px;
+    z-index: 9999;
+    display: none;
+    transition: var(--transition-base);
+    backdrop-filter: blur(10px);
+}
+
+#smart-notification.show {
+    display: block;
+    animation: slideIn 0.3s ease-out;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.notification-text {
+    flex-grow: 1;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #888;
+    transition: var(--transition-base);
+}
+
+.close-btn:hover {
+    color: #333;
+    transform: scale(1.1);
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+    background: var(--dark-gradient);
+    color: #fff;
+}
+
+body.dark-mode .tasbih-counter {
+    background: var(--dark-bg);
+    color: #fff;
+}
+
+body.dark-mode .screen {
+    background: var(--dark-gradient);
+}
+
+body.dark-mode .button {
+    background: var(--dark-gradient);
+}
+
+body.dark-mode .ad-container,
+body.dark-mode .ad-sidebar {
+    background: rgba(30, 27, 75, 0.2);
+}
+
+body.dark-mode #smart-notification {
+    background: var(--dark-bg);
+    color: #fff;
+}
+
+body.dark-mode .close-btn {
+    color: #ccc;
+}
+
+body.dark-mode .close-btn:hover {
+    color: #fff;
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Media Queries */
+@media (max-width: 1200px) {
+    .ad-sidebar {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .ad-container {
+        max-width: 320px;
+        min-height: 50px;
+    }
+    
+    .ad-mobile {
+        display: block;
+    }
+    
+    .tasbih-counter {
+        width: 90%;
+        max-width: 280px;
+    }
+    
+    .bottom-buttons {
+        flex-wrap: wrap;
+    }
+    
+    .bottom-buttons button {
+        font-size: 0.9em;
+        padding: 10px 20px;
+    }
+    
+    #smart-notification {
+        left: 20px;
+        right: 20px;
+        max-width: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .openbtn {
+        top: 20px;
+        left: 10px;
+        padding: 8px 12px;
+        font-size: 16px;
+    }
+    
+    .dark-mode-toggle {
+        top: 20px;
+        right: 10px;
+    }
+    
+    .screen {
+        width: 100px;
+        height: 45px;
+        font-size: 1.6em;
+    }
+    
+    .button {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .count-button {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .ad-container,
+    .ad-sidebar,
+    .ad-mobile,
+    .dark-mode-toggle,
+    .sidebar,
+    .openbtn,
+    .bottom-buttons,
+    #smart-notification {
+        display: none !important;
+    }
+    
+    .tasbih-counter {
+        position: static;
+        transform: none;
+        margin: 20px auto;
+        box-shadow: none;
+    }
+    
+    body {
+        background: none;
+        padding: 0;
+    }
+}
     </style>
 </head>
 <body>
-    <header>
-        <button class="openbtn" onclick="openNav()">☰ Quran Pro</button>
-    </header>
+    <label class="switch dark-mode-toggle">
+        <input type="checkbox" id="dark-mode-toggle">
+        <span class="slider"></span>
+    </label>
 
-    <!-- Top Ad -->
-    <div class="ad-container ad-top">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-1850217813586802"
-             data-ad-slot="3972952911"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
+    <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
+        <a href="index.html">
+            <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
+        </a>
+        <a href="juzz.html">
+            <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read in Juzz
+        </a>
+        <a href="audio.html">
+            <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Listen to Quran
+        </a>
+        <a href="prayer.html">
+            <lord-icon src="https://cdn.lordicon.com/tftaqjwp.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Prayer Time
+        </a>
+        <a href="donate.html">
+            <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Donate with Love
+        </a>
     </div>
 
-    <!-- Left Sidebar Ad -->
-    <div class="ad-container ad-sidebar ad-sidebar-left">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-1850217813586802"
-             data-ad-slot="8495749332"
-             data-ad-format="vertical"
-             data-full-width-responsive="false"></ins>
+    <div id="main">
+        <button class="openbtn" onclick="openNav()">&#9776; Quran Pro</button>
     </div>
 
-    <!-- Right Sidebar Ad -->
-    <div class="ad-container ad-sidebar ad-sidebar-right">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-1850217813586802"
-             data-ad-slot="7936248658"
-             data-ad-format="vertical"
-             data-full-width-responsive="false"></ins>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-container">
-        <div class="tasbih-counter">
-            <div class="screen" id="countDisplay">0000</div>
-            <div class="buttons">
-                <button class="button count-button" id="countButton">+</button>
-                <button class="button reset-button" id="resetButton">↻</button>
-            </div>
+    <div class="tasbih-counter">
+        <div class="label label-left">Quran pro</div>
+        <div class="screen" id="countDisplay">0000</div>
+        <div class="buttons">
+            <button class="button count-button" id="countButton"></button>
+            <button class="button reset-button" id="resetButton"></button>
         </div>
+        <div class="label label-right">LED</div>
     </div>
 
-    <!-- Bottom Buttons -->
     <div class="bottom-buttons">
         <button id="saveTasbih">Save</button>
         <button id="viewSavedTasbih">Saved Tasbih</button>
     </div>
 
-    <!-- Bottom Ad -->
-    <div class="ad-container ad-bottom">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-1850217813586802"
-             data-ad-slot="1454600783"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-    </div>
-
-    <!-- Sidebar Navigation -->
-    <nav id="mySidebar" class="sidebar">
-        <button class="closebtn" onclick="closeNav()">&times;</button>
-        <a href="index.html">
-            <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon>
-            Read Quran
-        </a>
-        <a href="juzz.html">
-            <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon>
-            Read in Juzz
-        </a>
-        <a href="audio.html">
-            <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon>
-            Listen to Quran
-        </a>
-        <a href="prayer.html">
-            <lord-icon src="https://cdn.lordicon.com/tftaqjwp.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon>
-            Prayer Time
-        </a>
-        <a href="donate.html">
-            <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon>
-            Donate with Love
-        </a>
-    </nav>
-
-    <!-- Smart Notification -->
     <div id="smart-notification">
         <div class="notification-content">
             <div class="notification-text"></div>
@@ -466,9 +683,9 @@
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1850217813586802" crossorigin="anonymous"></script>
+    <audio id="clickSound" src="https://hayatinitiative.org/wp-content/uploads/2024/07/mixkit-arcade-game-jump-coin-216.wav"></audio>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script>
    document.addEventListener('DOMContentLoaded', function () {
     const countDisplay = document.getElementById('countDisplay');
@@ -601,10 +818,6 @@
     // Call the function to load header and footer
     loadHeaderFooter();
 });
-         // Lazy load ads
-        document.addEventListener('DOMContentLoaded', function() {
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        });
     </script>
 </body>
 </html>
