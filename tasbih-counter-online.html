@@ -134,20 +134,19 @@ header {
     display: none;
 }
 
-/* Dark Mode Toggle */
 .dark-mode-toggle {
     position: fixed;
-    top: 15px; /* Moved to top */
+    top: 20px;
     right: 20px;
     display: flex;
     align-items: center;
     gap: 10px;
-    z-index: 1010; /* Increased z-index to stay above header */
-    padding: 5px;
+    z-index: 1000;
+    padding: 10px;
     background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(8px);
-    border-radius: 20px;
-    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(10px);
+    border-radius: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .dark-mode-toggle label {
@@ -159,9 +158,8 @@ header {
 .switch {
     position: relative;
     display: inline-block;
-    width: 52px; /* Slightly smaller */
-    height: 28px; /* Slightly smaller */
-    margin: 0;
+    width: 60px;
+    height: 34px;
 }
 
 .switch input {
@@ -177,60 +175,53 @@ header {
     left: 0;
     right: 0;
     bottom: 0;
-    background: var(--primary-gradient);
-    transition: all 0.3s ease;
-    border-radius: 28px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    transition: 0.4s;
+    border-radius: 34px;
 }
 
 .slider:before {
     position: absolute;
     content: "";
-    height: 20px; /* Adjusted for new switch size */
-    width: 20px; /* Adjusted for new switch size */
+    height: 26px;
+    width: 26px;
     left: 4px;
-    bottom: 2px;
+    bottom: 4px;
     background-color: white;
-    transition: all 0.3s ease;
+    transition: 0.4s;
     border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 input:checked + .slider {
-    background: var(--dark-gradient);
+    background: linear-gradient(135deg, #ff6a00 0%, #ee0979 100%);
 }
 
 input:checked + .slider:before {
-    transform: translateX(23px); /* Adjusted for new switch size */
+    transform: translateX(26px);
 }
 
-/* Hover effect */
-.switch:hover .slider:before {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-/* Media Query for smaller screens */
 @media (max-width: 480px) {
     .dark-mode-toggle {
         top: 10px;
         right: 10px;
-        padding: 3px;
+        padding: 5px;
+        gap: 5px;
     }
 
     .switch {
-        width: 46px;
-        height: 24px;
+        width: 50px;
+        height: 28px;
     }
 
     .slider:before {
-        height: 18px;
-        width: 18px;
-        left: 3px;
-        bottom: 1px;
+        height: 20px;
+        width: 20px;
+        left: 4px;
+        bottom: 4px;
     }
 
     input:checked + .slider:before {
-        transform: translateX(21px);
+        transform: translateX(22px);
     }
 }
 
