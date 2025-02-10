@@ -105,8 +105,8 @@ header {
 /* Dark Mode Toggle */
 .dark-mode-toggle {
     position: fixed;
-    top: 0;
-    right: -700px;
+    top: 10px;
+    right: 10px;
     z-index: 1001;
     display: flex;
     align-items: center;
@@ -216,7 +216,7 @@ input:checked + .slider:before {
     padding: 10px 15px;
     border: none;
     position: fixed;
-    top: 30px;
+    top: 10px;
     left: 10px;
     z-index: 1000;
     border-radius: 8px;
@@ -383,6 +383,54 @@ input:checked + .slider:before {
     transform: scale(1.1);
 }
 
+/* Advertisement Containers */
+.ad-container {
+    width: 100%;
+    max-width: 300px;
+    margin: 20px auto;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 
+        0 4px 6px rgba(0, 0, 0, 0.05),
+        0 1px 3px rgba(0, 0, 0, 0.1);
+    min-height: 250px;
+    transition: all 0.3s ease;
+}
+
+.ad-sidebar {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 120px;
+    z-index: 10;
+}
+
+.ad-sidebar-left {
+    left: 10px;
+}
+
+.ad-sidebar-right {
+    right: 10px;
+}
+
+.ad-placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: placeholderLoading 1.5s infinite;
+    border-radius: 8px;
+}
+
 /* Tools Section */
 .tools-section {
     padding: 50px;
@@ -416,61 +464,23 @@ input:checked + .slider:before {
     overflow: hidden;
 }
 
-.tool-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--primary-gradient);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 0;
-}
-
-.tool-card:hover {
-    transform: translateY(-10px);
-    box-shadow: var(--shadow-lg);
-}
-
-.tool-card:hover::before {
-    opacity: 0.1;
-}
-
 .tool-icon {
     font-size: 48px;
     margin-bottom: 20px;
     background: var(--primary-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    position: relative;
-    z-index: 1;
-}
-
-.tool-card::after {
-    content: '→';
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 24px;
-    opacity: 0;
-    transition: all 0.3s ease;
-    background: var(--primary-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.tool-card:hover::after {
-    opacity: 1;
-    right: 15px;
 }
 
 /* Dark Mode Styles */
 body.dark-mode {
     background: var(--dark-gradient);
     color: #fff;
+}
+
+body.dark-mode .ad-container {
+    background-color: rgba(30, 27, 75, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 body.dark-mode .tasbih-counter {
@@ -496,14 +506,6 @@ body.dark-mode .tool-card {
     background: rgba(30, 27, 75, 0.2);
 }
 
-body.dark-mode .close-btn {
-    color: #ccc;
-}
-
-body.dark-mode .close-btn:hover {
-    color: #fff;
-}
-
 /* Animations */
 @keyframes slideIn {
     from {
@@ -516,12 +518,12 @@ body.dark-mode .close-btn:hover {
     }
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
+@keyframes placeholderLoading {
+    0% {
+        background-position: -200% 0;
     }
-    to {
-        opacity: 1;
+    100% {
+        background-position: 200% 0;
     }
 }
 
@@ -567,6 +569,10 @@ body.dark-mode .close-btn:hover {
         right: 20px;
         max-width: none;
     }
+
+    .ad-sidebar {
+        display: none;
+    }
 }
 
 @media (max-width: 480px) {
@@ -584,8 +590,7 @@ body.dark-mode .close-btn:hover {
 
     .dark-mode-toggle {
         top: 20px;
-        right: 10px;
-    }
+        right: 10}
 
     .screen {
         width: 100px;
@@ -597,6 +602,13 @@ body.dark-mode .close-btn:hover {
         width: 50px;
         height: 50px;
     }
+
+    .ad-container {
+        max-width: 90%;
+        margin: 10px auto;
+        min-height: 180px;
+        padding: 10px;
+    }
 }
 
 /* Print Styles */
@@ -605,7 +617,9 @@ body.dark-mode .close-btn:hover {
     .sidebar,
     .openbtn,
     .bottom-buttons,
-   notification {
+    #smart-notification,
+    .ad-container,
+    .ad-sidebar {
         display: none !important;
     }
     
@@ -628,6 +642,13 @@ body.dark-mode .close-btn:hover {
     outline-offset: 2px;
 }
 
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
 /* Typography Adjustments */
 body {
     font-size: 16px;
@@ -643,7 +664,7 @@ p {
     margin-bottom: 15px;
 }
 
-/* Additional Utility Classes */
+/* Utility Classes */
 .text-gradient {
     background: var(--primary-gradient);
     -webkit-background-clip: text;
@@ -658,24 +679,15 @@ p {
     box-shadow: var(--shadow-lg);
 }
 
-/* Responsive Typography */
-@media (max-width: 768px) {
-    body {
-        font-size: 14px;
-    }
-
-    .section-title {
-        font-size: 26px;
-    }
-}
-
-/* Performance Optimization */
+/* Performance and Optimization */
 img, video {
     max-width: 100%;
     height: auto;
+    user-select: none;
+    -webkit-user-drag: none;
 }
 
-/* Enhanced Interactivity */
+/* Interactive Elements */
 .interactive-element {
     cursor: pointer;
     user-select: none;
@@ -687,34 +699,14 @@ img, video {
     opacity: 0.8;
 }
 
-/* Global Backdrop Filter for Frosted Effects */
+/* Global Backdrop Filter */
 .frosted-glass {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Color Scheme Transitions */
-body {
-    transition: 
-        background 0.5s ease, 
-        color 0.5s ease;
-}
-
-/* Additional Dark Mode Refinements */
-body.dark-mode {
-    --primary-color: #8b5cf6;
-    --secondary-color: #d946ef;
-}
-
-/* Final Responsive Touch */
-@media (max-width: 480px) {
-    .frosted-glass {
-        background: rgba(255, 255, 255, 0.05);
-    }
-}
-
-/* Optional: Subtle Gradient Background */
+/* Background Subtle Gradient */
 body::before {
     content: "";
     position: fixed;
@@ -731,46 +723,75 @@ body::before {
 body.dark-mode::before {
     background: var(--dark-gradient);
 }
-          /* Ad container styles */
-        .ad-container {
-            width: 100%;
-            max-width: 300px;
-            margin: 10px auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            min-height: 250px;
-        }
 
-        .ad-sidebar {
-            position: fixed;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 120px;
-            z-index: 10;
-        }
+/* Enhanced Keyboard Navigation */
+@media (min-width: 768px) {
+    .sidebar a:focus {
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: translateX(10px);
+    }
 
-        .ad-sidebar-left {
-            left: 10px;
-        }
+    .tool-card:focus {
+        outline: 3px solid var(--primary-color);
+        outline-offset: 4px;
+    }
+}
 
-        .ad-sidebar-right {
-            right: 10px;
-        }
+/* High Contrast Mode Support */
+@media (forced-colors: active) {
+    body {
+        background: Canvas;
+        color: CanvasText;
+    }
 
-        /* Lazy load placeholder */
-        .ad-placeholder {
-            opacity: 0.5;
-            transition: opacity 0.3s ease;
-        }
+    .tool-card {
+        border: 2px solid CanvasText;
+    }
 
-        .ad-placeholder:hover {
-            opacity: 1;
-        }
+    .button {
+        border: 2px solid CanvasText;
+    }
+}
+
+/* Screen Reader Specific Styles */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Final Responsive Adjustments */
+@media (max-width: 375px) {
+    body {
+        font-size: 14px;
+    }
+
+    .tasbih-counter {
+        width: 95%;
+        max-width: 250px;
+    }
+
+    .section-title {
+        font-size: 22px;
+    }
+}
+
+/* Smooth Scroll Behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Additional Performance Hints */
+body {
+    contain: layout;
+    will-change: background, color;
+}
     </style>
 </head>
 <body>
