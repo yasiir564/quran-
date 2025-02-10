@@ -629,6 +629,35 @@ body.dark-mode .close-btn:hover {
         padding: 0;
     }
 }
+        /* Ad Placeholder Styling */
+        .ad-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            color: #888;
+            font-size: 14px;
+            height: 250px;
+            text-align: center;
+            margin: 10px auto;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        /* Right Sidebar Ad */
+        .right-sidebar-ad {
+            position: fixed;
+            right: 0;
+            top: 50px;
+            width: 300px;
+            height: auto;
+        }
+
+        /* Ad Fade-in Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
        
     </style>
 </head>
@@ -638,6 +667,7 @@ body.dark-mode .close-btn:hover {
         crossorigin="anonymous"></script>
 
     <!-- First Ad (Below Dark Mode Toggle) -->
+    <div class="ad-placeholder">Loading Ad...</div>
     <ins class="adsbygoogle"
         style="display:block"
         data-ad-client="ca-pub-1850217813586802"
@@ -676,8 +706,9 @@ body.dark-mode .close-btn:hover {
         <button class="openbtn" onclick="openNav()">&#9776; Quran Pro</button>
     </div>
 
-    <!-- Second Ad (Right Sidebar Ad) -->
-    <div style="position:fixed; right:0; top:50px; width:300px; height:auto;">
+   <!-- Second Ad (Right Sidebar Ad) -->
+    <div class="right-sidebar-ad">
+        <div class="ad-placeholder">Loading Ad...</div>
         <ins class="adsbygoogle"
             style="display:block"
             data-ad-client="ca-pub-1850217813586802"
@@ -705,6 +736,7 @@ body.dark-mode .close-btn:hover {
     </div>
 
     <!-- Third Ad (Below Saved Tasbih Button) -->
+    <div class="ad-placeholder">Loading Ad...</div>
     <ins class="adsbygoogle"
         style="display:block"
         data-ad-client="ca-pub-1850217813586802"
