@@ -731,9 +731,87 @@ body::before {
 body.dark-mode::before {
     background: var(--dark-gradient);
 }
+          /* Ad container styles */
+        .ad-container {
+            width: 100%;
+            max-width: 300px;
+            margin: 10px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            min-height: 250px;
+        }
+
+        .ad-sidebar {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 120px;
+            z-index: 10;
+        }
+
+        .ad-sidebar-left {
+            left: 10px;
+        }
+
+        .ad-sidebar-right {
+            right: 10px;
+        }
+
+        /* Lazy load placeholder */
+        .ad-placeholder {
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+
+        .ad-placeholder:hover {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
+    <!-- Top Ad Container -->
+    <div class="ad-container ad-top ad-placeholder">
+        <div id="top-ad">
+            <!-- Google AdSense Ad Slot -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-1850217813586802"
+                 data-ad-slot="3972952911"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+        </div>
+    </div>
+
+    <!-- Left Sidebar Ad Container -->
+    <div class="ad-container ad-sidebar ad-sidebar-left ad-placeholder">
+        <div id="sidebar-left-ad">
+            <!-- Google AdSense Ad Slot -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-1850217813586802"
+                 data-ad-slot="8495749332"
+                 data-ad-format="vertical"
+                 data-full-width-responsive="false"></ins>
+        </div>
+    </div>
+
+    <!-- Right Sidebar Ad Container -->
+    <div class="ad-container ad-sidebar ad-sidebar-right ad-placeholder">
+        <div id="sidebar-right-ad">
+            <!-- Google AdSense Ad Slot -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-1850217813586802"
+                 data-ad-slot="7936248658"
+                 data-ad-format="vertical"
+                 data-full-width-responsive="false"></ins>
+        </div>
+    </div>
     <label class="switch dark-mode-toggle">
         <input type="checkbox" id="dark-mode-toggle">
         <span class="slider"></span>
@@ -776,6 +854,18 @@ body.dark-mode::before {
         <button id="saveTasbih">Save</button>
         <button id="viewSavedTasbih">Saved Tasbih</button>
     </div>
+    <!-- Bottom Ad Container -->
+    <div class="ad-container ad-bottom ad-placeholder">
+        <div id="bottom-ad">
+            <!-- Google AdSense Ad Slot -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-1850217813586802"
+                 data-ad-slot="1454600783"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+        </div>
+    </div>
     </section>
     <div id="smart-notification">
         <div class="notification-content">
@@ -787,6 +877,7 @@ body.dark-mode::before {
     <audio id="clickSound" src="https://hayatinitiative.org/wp-content/uploads/2024/07/mixkit-arcade-game-jump-coin-216.wav"></audio>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script>
    document.addEventListener('DOMContentLoaded', function () {
     const countDisplay = document.getElementById('countDisplay');
@@ -919,6 +1010,10 @@ body.dark-mode::before {
     // Call the function to load header and footer
     loadHeaderFooter();
 });
+         // Lazy load ads
+        document.addEventListener('DOMContentLoaded', function() {
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        });
     </script>
 </body>
 </html>
