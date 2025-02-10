@@ -100,40 +100,6 @@ header {
     padding: 0 20px;
 }
 
-/* Advertisement Containers */
-.ad-container {
-    width: 100%;
-    max-width: 728px;
-    margin: 20px auto;
-    min-height: 90px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    backdrop-filter: blur(10px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: rgba(255, 255, 255, 0.6);
-}
-
-.ad-sidebar {
-    position: fixed;
-    top: 50%;
-    right: 20px;
-    transform: translateY(-50%);
-    width: 160px;
-    height: 600px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    backdrop-filter: blur(10px);
-}
-
-.ad-mobile {
-    width: 320px;
-    height: 50px;
-    margin: 10px auto;
-    display: none;
-}
-
 .dark-mode-toggle {
     position: fixed;
     top: 0px;
@@ -141,7 +107,7 @@ header {
     z-index: 1001;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap:  0px;
     padding: 10px;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
@@ -621,6 +587,163 @@ body.dark-mode .close-btn:hover {
         padding: 0;
     }
 }
+          /* Tools Section */
+.tools-section {
+    padding: 50px;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 36px;
+    margin-bottom: 50px;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 20px;
+}
+
+.tool-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.tool-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+}
+
+.tool-card:hover {
+    transform: translateY(-10px);
+}
+
+.tool-card:hover::before {
+    opacity: 0.1;
+}
+
+.tool-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+    z-index: 1;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+    .tools-section {
+        padding: 40px;
+    }
+
+    .section-title {
+        font-size: 32px;
+        margin-bottom: 40px;
+    }
+
+    .tools-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    .tool-card {
+        padding: 25px;
+    }
+
+    .tool-icon {
+        font-size: 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .tools-section {
+        padding: 30px;
+    }
+
+    .section-title {
+        font-size: 28px;
+        margin-bottom: 30px;
+    }
+
+    .tools-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .tool-card {
+        padding: 20px;
+    }
+
+    .tool-icon {
+        font-size: 36px;
+    }
+}
+    .tool-card {
+    position: relative;
+    padding-right: 45px !important; /* Make space for the arrow */
+}
+
+.tool-card::after {
+    content: '→';
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.tool-card:hover::after {
+    opacity: 1;
+    right: 15px;
+}
+
+@media (max-width: 480px) {
+    .tools-section {
+        padding: 20px;
+    }
+
+    .section-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .tools-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .tool-card {
+        padding: 15px;
+    }
+
+    .tool-icon {
+        font-size: 30px;
+    }
+}
     </style>
 </head>
 <body>
@@ -666,7 +789,31 @@ body.dark-mode .close-btn:hover {
         <button id="saveTasbih">Save</button>
         <button id="viewSavedTasbih">Saved Tasbih</button>
     </div>
-
+<!-- Tools Section -->
+    <section class="tools-section">
+        <h2 class="section-title">Our Tools</h2>
+        <div class="tools-grid">
+            <div class="tool-card" onclick="window.location.href='/mosque.html'">
+                <i class="fas fa-mosque tool-icon"></i>
+                <h3>Listen To Quran </h3>
+                <p>Find nearby mosques with prayer times and community reviews</p>
+            </div>
+            <div class="tool-card" onclick="window.location.href='/restrant.html'">
+                <i class="fas fa-utensils tool-icon"></i>
+                <h3>Halal Restaurants</h3>
+                <p>Discover halal restaurants in your area with user ratings</p>
+            </div>
+            <div class="tool-card" onclick="window.location.href='/prayer.html'">
+                <i class="fas fa-clock tool-icon"></i>
+                <h3>Prayer Times</h3>
+                <p>Get accurate prayer times and Adhan notifications</p>
+            </div>
+            <div class="tool-card" onclick="window.location.href='/qibla.html'">
+                <i class="fas fa-compass tool-icon"></i>
+                <h3>Qibla Directions</h3>
+                <p>Find the accurate direction of the Kaaba for prayers, anywhere in the world</p>
+            </div>
+    </section>
     <div id="smart-notification">
         <div class="notification-content">
             <div class="notification-text"></div>
