@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="icon" href="/tinywow_Quran pro_62044384.png" type="image/x-icon">
     <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1850217813586802"
      crossorigin="anonymous"></script>    <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KKV0H53Z9L"></script>
 <script>
@@ -21,7 +20,7 @@
 
   gtag('config', 'G-KKV0H53Z9L');
 </script>
-    <style>
+ <style>
 /* Base Reset and Global Defaults */
 * {
     margin: 0;
@@ -102,72 +101,7 @@ header {
     padding: 0 20px;
 }
 
-/* Dark Mode Toggle */
-.dark-mode-toggle {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    z-index: 1001;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 25px;
-    box-shadow: var(--shadow-sm);
-}
 
-.dark-mode-toggle label {
-    color: #fff;
-    font-size: 14px;
-    user-select: none;
-}
-
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-    transition: 0.4s;
-    border-radius: 34px;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: 0.4s;
-    border-radius: 50%;
-}
-
-input:checked + .slider {
-    background: linear-gradient(135deg, #ff6a00 0%, #ee0979 100%);
-}
-
-input:checked + .slider:before {
-    transform: translateX(26px);
-}
 
 /* Sidebar Navigation */
 .sidebar {
@@ -216,7 +150,7 @@ input:checked + .slider:before {
     padding: 10px 15px;
     border: none;
     position: fixed;
-    top: 10px;
+    top: 30px;
     left: 10px;
     z-index: 1000;
     border-radius: 8px;
@@ -383,128 +317,7 @@ input:checked + .slider:before {
     transform: scale(1.1);
 }
 
-/* Advertisement Containers */
-.ad-container {
-    width: 100%;
-    max-width: 300px;
-    margin: 20px auto;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    box-shadow: 
-        0 4px 6px rgba(0, 0, 0, 0.05),
-        0 1px 3px rgba(0, 0, 0, 0.1);
-    min-height: 250px;
-    transition: all 0.3s ease;
-}
 
-.ad-sidebar {
-    position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 120px;
-    z-index: 10;
-}
-
-.ad-sidebar-left {
-    left: 10px;
-}
-
-.ad-sidebar-right {
-    right: 10px;
-}
-
-.ad-placeholder {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: placeholderLoading 1.5s infinite;
-    border-radius: 8px;
-}
-
-/* Tools Section */
-.tools-section {
-    padding: 50px;
-}
-
-.section-title {
-    text-align: center;
-    font-size: 36px;
-    margin-bottom: 50px;
-    background: var(--primary-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.tools-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    padding: 20px;
-}
-
-.tool-card {
-    background: var(--light-bg);
-    border-radius: 20px;
-    padding: 30px;
-    text-align: center;
-    transition: all 0.3s ease;
-    box-shadow: var(--shadow-md);
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-}
-
-.tool-icon {
-    font-size: 48px;
-    margin-bottom: 20px;
-    background: var(--primary-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-/* Dark Mode Styles */
-body.dark-mode {
-    background: var(--dark-gradient);
-    color: #fff;
-}
-
-body.dark-mode .ad-container {
-    background-color: rgba(30, 27, 75, 0.2);
-    border-color: rgba(255, 255, 255, 0.1);
-}
-
-body.dark-mode .tasbih-counter {
-    background: var(--dark-bg);
-    color: #fff;
-    border-color: #444;
-}
-
-body.dark-mode .screen {
-    background: var(--dark-gradient);
-}
-
-body.dark-mode .button {
-    background: var(--dark-gradient);
-}
-
-body.dark-mode #smart-notification {
-    background: var(--dark-bg);
-    color: #fff;
-}
-
-body.dark-mode .tool-card {
-    background: rgba(30, 27, 75, 0.2);
-}
 
 /* Animations */
 @keyframes slideIn {
@@ -518,12 +331,12 @@ body.dark-mode .tool-card {
     }
 }
 
-@keyframes placeholderLoading {
-    0% {
-        background-position: -200% 0;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
     }
-    100% {
-        background-position: 200% 0;
+    to {
+        opacity: 1;
     }
 }
 
@@ -569,10 +382,6 @@ body.dark-mode .tool-card {
         right: 20px;
         max-width: none;
     }
-
-    .ad-sidebar {
-        display: none;
-    }
 }
 
 @media (max-width: 480px) {
@@ -590,7 +399,8 @@ body.dark-mode .tool-card {
 
     .dark-mode-toggle {
         top: 20px;
-        right: 10}
+        right: 10px;
+    }
 
     .screen {
         width: 100px;
@@ -602,13 +412,6 @@ body.dark-mode .tool-card {
         width: 50px;
         height: 50px;
     }
-
-    .ad-container {
-        max-width: 90%;
-        margin: 10px auto;
-        min-height: 180px;
-        padding: 10px;
-    }
 }
 
 /* Print Styles */
@@ -617,9 +420,7 @@ body.dark-mode .tool-card {
     .sidebar,
     .openbtn,
     .bottom-buttons,
-    #smart-notification,
-    .ad-container,
-    .ad-sidebar {
+   notification {
         display: none !important;
     }
     
@@ -642,13 +443,6 @@ body.dark-mode .tool-card {
     outline-offset: 2px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-    * {
-        animation: none !important;
-        transition: none !important;
-    }
-}
-
 /* Typography Adjustments */
 body {
     font-size: 16px;
@@ -664,7 +458,7 @@ p {
     margin-bottom: 15px;
 }
 
-/* Utility Classes */
+/* Additional Utility Classes */
 .text-gradient {
     background: var(--primary-gradient);
     -webkit-background-clip: text;
@@ -679,15 +473,24 @@ p {
     box-shadow: var(--shadow-lg);
 }
 
-/* Performance and Optimization */
+/* Responsive Typography */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+
+    .section-title {
+        font-size: 26px;
+    }
+}
+
+/* Performance Optimization */
 img, video {
     max-width: 100%;
     height: auto;
-    user-select: none;
-    -webkit-user-drag: none;
 }
 
-/* Interactive Elements */
+/* Enhanced Interactivity */
 .interactive-element {
     cursor: pointer;
     user-select: none;
@@ -699,14 +502,34 @@ img, video {
     opacity: 0.8;
 }
 
-/* Global Backdrop Filter */
+/* Global Backdrop Filter for Frosted Effects */
 .frosted-glass {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Background Subtle Gradient */
+/* Color Scheme Transitions */
+body {
+    transition: 
+        background 0.5s ease, 
+        color 0.5s ease;
+}
+
+/* Additional Dark Mode Refinements */
+body.dark-mode {
+    --primary-color: #8b5cf6;
+    --secondary-color: #d946ef;
+}
+
+/* Final Responsive Touch */
+@media (max-width: 480px) {
+    .frosted-glass {
+        background: rgba(255, 255, 255, 0.05);
+    }
+}
+
+/* Optional: Subtle Gradient Background */
 body::before {
     content: "";
     position: fixed;
@@ -723,74 +546,99 @@ body::before {
 body.dark-mode::before {
     background: var(--dark-gradient);
 }
-
-/* Enhanced Keyboard Navigation */
-@media (min-width: 768px) {
-    .sidebar a:focus {
-        background-color: rgba(255, 255, 255, 0.3);
-        transform: translateX(10px);
-    }
-
-    .tool-card:focus {
-        outline: 3px solid var(--primary-color);
-        outline-offset: 4px;
-    }
+        /* Ad container base styles */
+.ad-container {
+    width: 100%;
+    max-width: 300px;
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    min-height: 250px;
+    padding: 16px;
+    position: relative;
+    isolation: isolate; /* Creates stacking context */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* High Contrast Mode Support */
-@media (forced-colors: active) {
-    body {
-        background: Canvas;
-        color: CanvasText;
-    }
-
-    .tool-card {
-        border: 2px solid CanvasText;
-    }
-
-    .button {
-        border: 2px solid CanvasText;
-    }
+.ad-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
 }
 
-/* Screen Reader Specific Styles */
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
+/* Sidebar ads */
+.ad-sidebar {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: clamp(120px, 15vw, 160px); /* Responsive width */
+    z-index: 10;
+    opacity: 1;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.ad-sidebar-left {
+    left: max(10px, 2vw); /* Responsive spacing */
+}
+
+.ad-sidebar-right {
+    right: max(10px, 2vw); /* Responsive spacing */
+}
+
+/* Lazy load placeholder with skeleton loading */
+.ad-placeholder {
+    position: relative;
+    background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: inherit;
     overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
 }
 
-/* Final Responsive Adjustments */
-@media (max-width: 375px) {
-    body {
-        font-size: 14px;
-    }
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
 
-    .tasbih-counter {
-        width: 95%;
-        max-width: 250px;
-    }
-
-    .section-title {
-        font-size: 22px;
+/* Responsive breakpoints */
+@media (max-width: 1200px) {
+    .ad-sidebar {
+        width: 100px;
     }
 }
 
-/* Smooth Scroll Behavior */
-html {
-    scroll-behavior: smooth;
+@media (max-width: 768px) {
+    .ad-sidebar {
+        display: none; /* Hide sidebars on mobile */
+    }
+    
+    .ad-container {
+        margin: 16px auto;
+        max-width: calc(100% - 32px); /* Full width with padding */
+    }
 }
 
-/* Additional Performance Hints */
-body {
-    contain: layout;
-    will-change: background, color;
+/* Ensure ads don't overlap with main content */
+@media (min-width: 769px) {
+    main, .main-content {
+        max-width: calc(100% - 340px); /* Adjust based on sidebar width */
+        margin: 0 auto;
+    }
+}
+
+/* Prevent ad conflicts with other elements */
+.ad-container * {
+    box-sizing: border-box;
+}
+
+/* Accessibility improvements */
+.ad-container:focus-within {
+    outline: 2px solid #4a90e2;
+    outline-offset: 2px;
 }
     </style>
 </head>
