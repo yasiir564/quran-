@@ -153,6 +153,82 @@ header {
 .ad-sidebar-right {
     right: 20px;
 }
+     /* Header Styles */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+
+
+/* Sidebar Navigation */
+.sidebar {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1001;
+    top: 0;
+    left: -250px;
+    background: var(--primary-gradient);
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    box-shadow: var(--shadow-md);
+}
+
+.sidebar a {
+    padding: 12px 20px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #fff;
+    display: block;
+    transition: var(--transition-base);
+    border-radius: 0 50px 50px 0;
+    margin: 5px 0;
+}
+
+.sidebar a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateX(10px);
+}
+
+.sidebar .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+.openbtn {
+    font-size: 20px;
+    cursor: pointer;
+    background: var(--primary-gradient);
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    position: fixed;
+    top: 30px;
+    left: 10px;
+    z-index: 1000;
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+}
+
+.openbtn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
 
 /* Tasbih Counter */
 .tasbih-counter {
