@@ -629,47 +629,49 @@ body.dark-mode .close-btn:hover {
         padding: 0;
     }
 }
-        /* Common Ad Styles */
+       /* Common Ad Styles */
 .ad-placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(241, 241, 241, 0.7);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(221, 221, 221, 0.3);
-    color: #666;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #444;
     font-size: 0.875rem;
-    height: 250px;
+    height: 200px;
     text-align: center;
-    margin: 20px auto;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
+    margin: 1.5rem auto;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
+    backdrop-filter: blur(12px);
+    max-width: 90%;
 }
 
 /* Close Button */
 .ad-placeholder::after {
     content: '×';
     position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 24px;
-    height: 24px;
-    background: rgba(255, 255, 255, 0.9);
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 18px;
-    color: #555;
+    font-size: 20px;
+    color: #444;
     transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
 }
 
 .ad-placeholder::after:hover {
-    background: rgba(255, 255, 255, 1);
-    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
 }
 
 /* Sidebar Ads */
@@ -678,31 +680,32 @@ body.dark-mode .close-btn:hover {
     position: fixed;
     top: 50%;
     transform: translateY(-50%);
-    width: 300px;
-    max-height: 80vh;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    overflow-y: auto;
-    scrollbar-width: thin;
-    transition: all 0.3s ease;
+    width: 280px;
+    height: auto;
+    max-height: 70vh;
+    padding: 1.5rem;
+    background: transparent;
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
 }
 
 .left-sidebar-ad {
-    left: 20px;
+    left: 2rem;
 }
 
 .right-sidebar-ad {
-    right: 20px;
+    right: 2rem;
 }
 
 /* Smooth Animation */
 @keyframes fadeIn {
     from { 
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(20px);
     }
     to { 
         opacity: 1;
@@ -711,52 +714,32 @@ body.dark-mode .close-btn:hover {
 }
 
 .ad-placeholder {
-    animation: fadeIn 0.5s ease-out;
+    animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Hover Effects */
 .ad-placeholder:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.12);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 /* Mobile Responsive Design */
 @media (max-width: 768px) {
     .left-sidebar-ad,
     .right-sidebar-ad {
-        position: relative;
-        top: 0;
-        left: 0;
-        right: 0;
+        position: static;
+        width: 90%;
+        max-width: 440px;
+        margin: 1rem auto;
+        padding: 1rem;
         transform: none;
-        width: 100%;
-        max-width: 500px;
-        margin: 20px auto;
-        padding: 15px;
     }
-
+    
     .ad-placeholder {
-        height: 200px;
-        margin: 15px auto;
+        height: 180px;
+        margin: 1rem auto;
     }
-}
-
-/* Custom Scrollbar */
-.left-sidebar-ad::-webkit-scrollbar,
-.right-sidebar-ad::-webkit-scrollbar {
-    width: 6px;
-}
-
-.left-sidebar-ad::-webkit-scrollbar-track,
-.right-sidebar-ad::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 3px;
-}
-
-.left-sidebar-ad::-webkit-scrollbar-thumb,
-.right-sidebar-ad::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 3px;
 }
        
     </style>
@@ -778,10 +761,7 @@ body.dark-mode .close-btn:hover {
         </script>
     </div>
       
-    <label class="switch dark-mode-toggle">
-        <input type="checkbox" id="dark-mode-toggle">
-        <span class="slider"></span>
-    </label>
+    
 
     <div id="mySidebar" class="sidebar">
         <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
