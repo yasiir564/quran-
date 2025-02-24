@@ -15,6 +15,7 @@
             margin: 10px auto;
             padding: 10px;
             width: 80%;
+            max-width: 500px;
         }
         textarea {
             min-height: 100px;
@@ -28,6 +29,10 @@
         button:hover {
             background-color: #218838;
         }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
         #response {
             margin-top: 20px;
             font-weight: bold;
@@ -38,64 +43,92 @@
         .error {
             color: #dc3545;
         }
+        .loading {
+            color: #007bff;
+        }
     </style>
 </head>
 <body>
     <h2>Send Email via Resend API</h2>
     
-    <input type="email" id="to" placeholder="Recipient Email" required>
-    <input type="text" id="subject" placeholder="Subject" required>
-    <textarea id="message" placeholder="Enter your message" required></textarea>
-    <button onclick="sendEmail()">Send Email</button>
+    <form id="emailForm">
+        <input type="email" id="to" placeholder="Recipient Email" required>
+        <input type="text" id="subject" placeholder="Subject" required>
+        <textarea id="message" placeholder="Enter your message" required></textarea>
+        <button type="submit" id="submitButton">Send Email</button>
+    </form>
+    
     <p id="response"></p>
     
     <script>
-        function sendEmail() {
-            const to = document.getElementById("to").value;
-            const subject = document.getElementById("subject").value;
-            const message = document.getElementById("message").value;
-            const responseText = document.getElementById("response");
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('emailForm');
+            const submitButton = document.getElementById('submitButton');
+            const responseText = document.getElementById('response');
             
-            if (!to || !subject || !message) {
-                responseText.innerText = "Please fill in all fields.";
-                responseText.className = "error";
-                return;
-            }
-            
-            responseText.innerText = "Sending email...";
-            
-            fetch("https://denmara.com/wp-json/custom/v1/send-email", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    to: to,
-                    subject: subject,
-                    message: message
-                })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data);
-                responseText.innerText = "Email sent successfully!";
-                responseText.className = "success";
-                // Reset form
-                document.getElementById("to").value = "";
-                document.getElementById("subject").value = "";
-                document.getElementById("message").value = "";
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                responseText.innerText = "Failed to send email. Please try again.";
-                responseText.className = "error";
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                sendEmail();
             });
-        }
+            
+            function sendEmail() {
+                const to = document.getElementById("to").value;
+                const subject = document.getElementById("subject").value;
+                const message = document.getElementById("message").value;
+                
+                if (!to || !subject || !message) {
+                    responseText.innerText = "Please fill in all fields.";
+                    responseText.className = "error";
+                    return;
+                }
+                
+                // Disable the button and show loading state
+                submitButton.disabled = true;
+                responseText.innerText = "Sending email...";
+                responseText.className = "loading";
+                
+                // Use the site's home URL with the REST API endpoint
+                const apiUrl = window.location.origin + '/wp-json/custom/v1/send-email';
+                
+                fetch(apiUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-WP-Nonce": wpApiSettings.nonce // If using WP nonce
+                    },
+                    credentials: 'same-origin', // Important for cookies/session
+                    body: JSON.stringify({
+                        to: to,
+                        subject: subject,
+                        message: message
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.message || 'Network response was not ok');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    responseText.innerText = data.status || "Email sent successfully!";
+                    responseText.className = "success";
+                    // Reset form
+                    form.reset();
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    responseText.innerText = "Failed to send email: " + error.message;
+                    responseText.className = "error";
+                })
+                .finally(() => {
+                    // Re-enable the button
+                    submitButton.disabled = false;
+                });
+            }
+        });
     </script>
 </body>
 </html>
