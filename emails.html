@@ -16,6 +16,9 @@
             padding: 10px;
             width: 80%;
         }
+        textarea {
+            min-height: 100px;
+        }
         button {
             background-color: #28a745;
             color: white;
@@ -25,49 +28,74 @@
         button:hover {
             background-color: #218838;
         }
+        #response {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .success {
+            color: #28a745;
+        }
+        .error {
+            color: #dc3545;
+        }
     </style>
 </head>
 <body>
-
     <h2>Send Email via Resend API</h2>
     
     <input type="email" id="to" placeholder="Recipient Email" required>
     <input type="text" id="subject" placeholder="Subject" required>
-    <textarea id="message" placeholder="Enter your message"></textarea>
+    <textarea id="message" placeholder="Enter your message" required></textarea>
     <button onclick="sendEmail()">Send Email</button>
-
     <p id="response"></p>
-
+    
     <script>
         function sendEmail() {
             const to = document.getElementById("to").value;
             const subject = document.getElementById("subject").value;
             const message = document.getElementById("message").value;
             const responseText = document.getElementById("response");
-
+            
             if (!to || !subject || !message) {
                 responseText.innerText = "Please fill in all fields.";
+                responseText.className = "error";
                 return;
             }
-
-    fetch("https://denmara.com/wp-json/custom/v1/send-email", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        to: "recipient@example.com",
-        subject: "Test Email",
-        message: "Hello from Resend!"
-    })
-})
-.then(response => response.json())
-.then(data => console.log(data))
-.catch(error => console.error("Error:", error));
-
+            
+            responseText.innerText = "Sending email...";
+            
+            fetch("https://denmara.com/wp-json/custom/v1/send-email", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    to: to,
+                    subject: subject,
+                    message: message
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                responseText.innerText = "Email sent successfully!";
+                responseText.className = "success";
+                // Reset form
+                document.getElementById("to").value = "";
+                document.getElementById("subject").value = "";
+                document.getElementById("message").value = "";
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                responseText.innerText = "Failed to send email. Please try again.";
+                responseText.className = "error";
             });
         }
     </script>
-
 </body>
 </html>
