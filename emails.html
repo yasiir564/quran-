@@ -3,204 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send Email via Resend API</title>
+    <title>Send Email via Resend</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         .container {
-            background-color: white;
+            background: #fff;
+            padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            margin-top: 40px;
-        }
-        h2 {
-            color: #333;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
             text-align: center;
-            margin-bottom: 30px;
         }
-        input, textarea, button {
-            display: block;
+        input, textarea {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-        textarea {
-            min-height: 150px;
-            resize: vertical;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
         button {
-            background-color: #28a745;
+            background: #28a745;
             color: white;
             border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
             cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s;
         }
         button:hover {
-            background-color: #218838;
+            background: #218838;
         }
-        button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-        #response {
-            margin-top: 20px;
-            text-align: center;
+        .message {
+            margin-top: 10px;
             font-weight: bold;
-            min-height: 24px;
-            padding: 10px;
-        }
-        .success {
-            color: #28a745;
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-            border-radius: 4px;
-        }
-        .error {
-            color: #dc3545;
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            border-radius: 4px;
-        }
-        .loading {
-            color: #007bff;
-            background-color: #cce5ff;
-            border: 1px solid #b8daff;
-            border-radius: 4px;
-        }
-        .label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #555;
-        }
-        .hidden {
-            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Send Email via Resend API</h2>
-        
-        <form id="emailForm">
-            <div>
-                <label class="label" for="to">Recipient Email</label>
-                <input type="email" id="to" placeholder="Enter recipient email address" required>
-            </div>
-            
-            <div>
-                <label class="label" for="subject">Subject</label>
-                <input type="text" id="subject" placeholder="Enter email subject" required>
-            </div>
-            
-            <div>
-                <label class="label" for="message">Message</label>
-                <textarea id="message" placeholder="Enter your message" required></textarea>
-            </div>
-            
-            <button type="submit" id="submitButton">Send Email</button>
-        </form>
-        
-        <p id="response" class="hidden"></p>
-    </div>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('emailForm');
-            const submitButton = document.getElementById('submitButton');
-            const responseText = document.getElementById('response');
-            
-            form.addEventListener('submit', function(event) {
-                event.preventDefault();
-                sendEmail();
-            });
-            
-            function sendEmail() {
-                const to = document.getElementById("to").value;
-                const subject = document.getElementById("subject").value;
-                const message = document.getElementById("message").value;
-                
-                if (!to || !subject || !message) {
-                    showResponse("Please fill in all fields.", "error");
-                    return;
-                }
-                
-                // Validate email format
-                if (!isValidEmail(to)) {
-                    showResponse("Please enter a valid email address.", "error");
-                    return;
-                }
-                
-                // Disable the button and show loading state
-                submitButton.disabled = true;
-                showResponse("Sending email...", "loading");
-                
-                // Use the correct API endpoint
-                // If you're embedding this in WordPress, use the root URL dynamically
-                // Otherwise, use the full URL to your WordPress site
-                const apiUrl = 'https://denmara.com';
-                
-                fetch(apiUrl, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    credentials: 'same-origin', // Important for cookies/session
-                    body: JSON.stringify({
-                        to: to,
-                        subject: subject,
-                        message: message
-                    })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => {
-                            throw new Error(err.message || 'Network response was not ok');
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log("Success:", data);
-                    showResponse(data.status || "Email sent successfully!", "success");
-                    // Reset form
-                    form.reset();
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    showResponse("Failed to send email: " + error.message, "error");
-                })
-                .finally(() => {
-                    // Re-enable the button
-                    submitButton.disabled = false;
-                });
+
+<div class="container">
+    <h2>Send Email</h2>
+    <input type="email" id="email" placeholder="Recipient Email" required>
+    <input type="text" id="subject" placeholder="Subject" required>
+    <textarea id="message" placeholder="Enter your message" required></textarea>
+    <button onclick="sendEmail()">Send Email</button>
+    <p class="message" id="responseMessage"></p>
+</div>
+
+<script>
+    function sendEmail() {
+        const email = document.getElementById("email").value;
+        const subject = document.getElementById("subject").value;
+        const message = document.getElementById("message").value;
+        const responseMessage = document.getElementById("responseMessage");
+
+        if (!email || !subject || !message) {
+            responseMessage.style.color = "red";
+            responseMessage.textContent = "Please fill in all fields.";
+            return;
+        }
+
+        fetch("https://denmara.com/wp-json/custom/v1/send-email", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                to: email,
+                subject: subject,
+                message: message
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                responseMessage.style.color = "green";
+                responseMessage.textContent = "Email sent successfully!";
+            } else {
+                responseMessage.style.color = "red";
+                responseMessage.textContent = "Failed to send email. Try again.";
             }
-            
-            function showResponse(message, type) {
-                responseText.innerText = message;
-                responseText.className = type;
-                responseText.classList.remove("hidden");
-                
-                // Scroll to response if needed
-                responseText.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-            
-            function isValidEmail(email) {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return emailRegex.test(email);
-            }
+        })
+        .catch(error => {
+            responseMessage.style.color = "red";
+            responseMessage.textContent = "Error: " + error.message;
         });
-    </script>
+    }
+</script>
+
 </body>
 </html>
