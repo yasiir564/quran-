@@ -50,18 +50,21 @@
                 return;
             }
 
-            fetch("https://denmara.com/wp-json/", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ to, subject, message })
-            })
-            .then(response => response.json())
-            .then(data => {
-                responseText.innerText = data.status;
-            })
-            .catch(error => {
-                responseText.innerText = "Error sending email.";
-                console.error(error);
+    fetch("https://denmara.com/wp-json/custom/v1/send-email", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        to: "recipient@example.com",
+        subject: "Test Email",
+        message: "Hello from Resend!"
+    })
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error("Error:", error));
+
             });
         }
     </script>
