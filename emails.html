@@ -49,7 +49,6 @@
     </style>
 </head>
 <body>
-
 <div class="container">
     <h2>Send Email</h2>
     <input type="email" id="email" placeholder="Recipient Email" required>
@@ -58,24 +57,30 @@
     <button onclick="sendEmail()">Send Email</button>
     <p class="message" id="responseMessage"></p>
 </div>
-
 <script>
     function sendEmail() {
         const email = document.getElementById("email").value;
         const subject = document.getElementById("subject").value;
         const message = document.getElementById("message").value;
         const responseMessage = document.getElementById("responseMessage");
-
+        
+        // Form validation
         if (!email || !subject || !message) {
             responseMessage.style.color = "red";
             responseMessage.textContent = "Please fill in all fields.";
             return;
         }
-
-        fetch("https://denmara.com", {
+        
+        // Display loading message
+        responseMessage.style.color = "blue";
+        responseMessage.textContent = "Sending email...";
+        
+        // Send request to backend
+        fetch("https://denmara.com/send-email.php", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest"  // Add this header to match our PHP condition
             },
             body: JSON.stringify({
                 to: email,
@@ -85,12 +90,16 @@
         })
         .then(response => response.json())
         .then(data => {
-            if (data.status === "success") {
+            if (data.success) {  // Match the success key from PHP response
                 responseMessage.style.color = "green";
                 responseMessage.textContent = "Email sent successfully!";
+                // Clear form
+                document.getElementById("email").value = "";
+                document.getElementById("subject").value = "";
+                document.getElementById("message").value = "";
             } else {
                 responseMessage.style.color = "red";
-                responseMessage.textContent = "Failed to send email. Try again.";
+                responseMessage.textContent = data.error || "Failed to send email. Try again.";
             }
         })
         .catch(error => {
@@ -99,6 +108,5 @@
         });
     }
 </script>
-
 </body>
 </html>
