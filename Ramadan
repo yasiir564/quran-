@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuranProo - 30-Day Ramadhan Scholar Series</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #663399, #4169E1);
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --text-light: #fff;
+            --accent: #FFD700;
+            --card-hover: linear-gradient(145deg, #663399, #4169E1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: var(--primary-gradient);
+            color: var(--text-light);
+            min-height: 100vh;
+        }
+
+        /* Islamic Decorative Elements */
+        .islamic-pattern {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .star {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: twinkle 2s infinite;
+        }
+
+        .moon {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 20px var(--accent);
+            opacity: 0.3;
+        }
+
+        .lantern {
+            position: absolute;
+            width: 30px;
+            height: 45px;
+            background: var(--accent);
+            border-radius: 5px;
+            box-shadow: 0 0 15px var(--accent);
+            opacity: 0.4;
+            animation: float 3s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 250px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2rem 1rem;
+            transform: translateX(-250px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .menu-toggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: rgba(0, 0, 0, 0.8);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 1rem;
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--card-bg);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 0;
+            padding: 2rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        @media (min-width: 768px) {
+            .sidebar {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 250px;
+            }
+            .menu-toggle {
+                display: none;
+            }
+        }
+
+        /* Header Styles */
+        .header {
+            text-align: center;
+            padding: 2rem 0;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            animation: fadeIn 1s ease;
+        }
+
+        /* Card Grid Styles */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-light);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            background: var(--card-hover);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Newsletter Form Styles */
+        .newsletter {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .newsletter input {
+            padding: 0.8rem;
+            border: none;
+            border-radius: 5px;
+            margin-right: 1rem;
+            width: 300px;
+            max-width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .newsletter button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            background: var(--accent);
+            color: black;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .newsletter button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="islamic-pattern" id="islamic-pattern"></div>
+    <button class="menu-toggle">☰ Menu</button>
+    
+    <nav class="sidebar">
+        <a href="#week1" class="nav-link">Week 1: Pioneers</a>
+        <a href="#week2" class="nav-link">Week 2: Spirituality</a>
+        <a href="#week3" class="nav-link">Week 3: Female Scholars</a>
+        <a href="#final10" class="nav-link">Final 10 Days</a>
+        <a href="#newsletter" class="nav-link">Newsletter</a>
+    </nav>
+
+    <main class="main-content">
+        <header class="header">
+            <h1>📅 30-Day Ramadhan Scholar Series</h1>
+            <p>Journey through knowledge and spirituality this Ramadhan</p>
+        </header>
+
+        <section id="week1" class="card-grid">
+            <a href="pioneers.html" class="card">
+                <h2>Week 1: The Pioneers</h2>
+                <p>Explore the legacy of early Islamic scholars</p>
+            </a>
+            <a href="spirituality.html" class="card">
+                <h2>Week 2: Spirituality</h2>
+                <p>Deep dive into worship and spiritual growth</p>
+            </a>
+            <a href="female-scholars.html" class="card">
+                <h2>Week 3: Female Scholars</h2>
+                <p>Discovering the contributions of Muslim women scholars</p>
+            </a>
+        </section>
+
+        <section id="final10" class="card-grid">
+            <a href="laylatul-qadr.html" class="card">
+                <h2>The Last 10 Nights</h2>
+                <p>Special guidance for Laylatul Qadr</p>
+            </a>
+            <a href="tahajjud-guide.html" class="card">
+                <h2>Tahajjud Guide</h2>
+                <p>Complete guide to night prayers</p>
+            </a>
+        </section>
+
+        <section id="newsletter" class="newsletter">
+            <h2>Stay Updated</h2>
+            <p>Subscribe to receive daily Ramadhan insights</p>
+            <form id="newsletter-form">
+                <input type="email" placeholder="Enter your email" required>
+                <button type="submit">Subscribe</button>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        // Add decorative elements
+        function addDecorativeElements() {
+            const pattern = document.getElementById('islamic-pattern');
+            
+            // Add stars
+            for(let i = 0; i < 20; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 2}s`;
+                pattern.appendChild(star);
+            }
+
+            // Add moons
+            for(let i = 0; i < 3; i++) {
+                const moon = document.createElement('div');
+                moon.className = 'moon';
+                moon.style.left = `${Math.random() * 100}%`;
+                moon.style.top = `${Math.random() * 100}%`;
+                pattern.appendChild(moon);
+            }
+
+            // Add lanterns
+            for(let i = 0; i < 5; i++) {
+                const lantern = document.createElement('div');
+                lantern.className = 'lantern';
+                lantern.style.left = `${Math.random() * 100}%`;
+                lantern.style.top = `${Math.random() * 100}%`;
+                lantern.style.animationDelay = `${Math.random() * 2}s`;
+                pattern.appendChild(lantern);
+            }
+        }
+
+        // Mobile Menu Toggle
+        const menuToggle = document.querySelector('.menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+                if (window.innerWidth < 768) {
+                    sidebar.classList.remove('active');
+                }
+            });
+        });
+
+        // Newsletter Form Submission
+        document.getElementById('newsletter-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = this.querySelector('input[type="email"]').value;
+            
+            // Save email to localStorage (in real application, this would be a server call)
+            let subscribers = JSON.parse(localStorage.getItem('subscribers') || '[]');
+            subscribers.push(email);
+            localStorage.setItem('subscribers', JSON.stringify(subscribers));
+
+            // Show success message
+            swal({
+                title: "Thank you!",
+                text: "You have successfully subscribed to our Ramadhan insights.",
+                icon: "success",
+                button: "Continue",
+            });
+
+            this.reset();
+        });
+
+        // Initialize decorative elements
+        addDecorativeElements();
+
+        // Animate elements on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeIn 1s ease forwards';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
