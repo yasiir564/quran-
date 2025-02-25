@@ -924,542 +924,817 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // DOM elements
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('mainContent');
-            const menuButton = document.getElementById('menuButton');
-            const closeSidebar = document.getElementById('closeSidebar');
-            const themeToggle = document.getElementById('themeToggle');
-            const countBtn = document.getElementById('countBtn');
-            const resetBtn = document.getElementById('resetBtn');
-            const undoBtn = document.getElementById('undoBtn');
-            const saveBtn = document.getElementById('saveBtn');
-            const quickCount = document.getElementById('quickCount');
-            const exportBtn = document.getElementById('exportBtn');
-            const dhikrName = document.getElementById('dhikrName');
-            const presetButtons = document.querySelectorAll('.preset-btn');
-            const customDhikrInput = document.getElementById('customDhikr');
-            const targetCountInput = document.getElementById('targetCount');
-            const soundOption = document.getElementById('soundOption');
-            const vibrateOption = document.getElementById('vibrateOption');
-            const autoResetOption = document.getElementById('autoReset');
-            const counter = document.getElementById('counter');
-            const progressBar = document.getElementById('progressBar');
-            const targetValue = document.getElementById('targetValue');
-            const setsValue = document.getElementById('setsValue');
-            const totalValue = document.getElementById('totalValue');
-            const activityList = document.getElementById('activityList');
-            const tasbihContainer = document.getElementById('tasbihContainer');
-            const soundIndicator = document.getElementById('soundIndicator');
+document.addEventListener('DOMContentLoaded', function() {
+    // DOM elements
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('mainContent');
+    const menuButton = document.getElementById('menuButton');
+    const closeSidebar = document.getElementById('closeSidebar');
+    const themeToggle = document.getElementById('themeToggle');
+    const countBtn = document.getElementById('countBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const undoBtn = document.getElementById('undoBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const quickCount = document.getElementById('quickCount');
+    const exportBtn = document.getElementById('exportBtn');
+    const dhikrName = document.getElementById('dhikrName');
+    const presetButtons = document.querySelectorAll('.preset-btn');
+    const customDhikrInput = document.getElementById('customDhikr');
+    const targetCountInput = document.getElementById('targetCount');
+    const soundOption = document.getElementById('soundOption');
+    const vibrateOption = document.getElementById('vibrateOption');
+    const autoResetOption = document.getElementById('autoReset');
+    const counter = document.getElementById('counter');
+    const progressBar = document.getElementById('progressBar');
+    const targetValue = document.getElementById('targetValue');
+    const setsValue = document.getElementById('setsValue');
+    const totalValue = document.getElementById('totalValue');
+    const activityList = document.getElementById('activityList');
+    const tasbihContainer = document.getElementById('tasbihContainer');
+    const soundIndicator = document.getElementById('soundIndicator');
 
-            // App state
-            let count = 0;
-            let targetCount = 33;
-            let totalCount = 0;
-            let setsCompleted = 0;
-            let countHistory = [];
-            let activities = [];
-            let currentDhikr = "SubhanAllah";
-            let isDarkMode = false;
+    // App state
+    let count = 0;
+    let targetCount = 33;
+    let totalCount = 0;
+    let setsCompleted = 0;
+    let countHistory = [];
+    let activities = [];
+    let currentDhikr = "SubhanAllah";
+    let isDarkMode = false;
+    let isProcessingMotionEvent = false; // Flag to prevent multiple counts from a single motion
 
-            // Audio elements
-            const clickSound = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAAFOwCSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKS//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAQhAAAAAAAABTsZq0DzAAAAAAD/+xDEAAAIIANvtBAAJaRG7vZ4YgIqTrBYkNIEAIAwmCgwx0Jzw8P//y8PD/4eHh+HJ//g8PD4PD8usK/w+D+X///8Hh+Hh+oGAAAAYRhjGtZoMxBgANAWxg+gfMDLGUiOGALxQbFgFhhdgRABOGC8gRMB4CYkHZAAABHDQZ//2//X/9luzSt2QSyNw+ebpMmTJ9PTQz/mNNPIxJm7W7/Z/+xxoAAAAAA=');
-            const beepSound = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAAEbwC1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAWqAAAAAAAABG+uXbfNAAAAAAD/+xDEAAAHbAN/tAAAJZfHjn8zgAA6AMAAIAAYIIKqrAYEBwgCxYkP8vOP/5znP//4f/KOf/8uQ5znOXIcQA5znP+Q5zn/IcoAALBYHg8T8eD5QA8Hg8E/Hg+UHwfD4P//B/8Hg/g+D4fB4Ph8Hg+DwfAPB8Hg+DwfB8qAeD4fB8Hg+VAKoAAAT4Pg+D5PkwfLgGQAAAAA=');
-            const dhikrSound = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAADAAAJhwDMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMz///////////////////////////////////////////////////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJANEAAAAAAAACYew4+YIAAAAAAD/+xDEAAAJcAFn9BAAKViPLP53gCIOCQwMIIBoOAIPBAMBAIfB8H4CQEgJAPgPD4Ph//8Hz//wf/lCEIQhCAuCDgQCHggGAgEDg+DwfB+AgA+D8BICQEgHwHh8Hg//8Hg+H//g//KAuC4LgAKAgGBAEAwIAQDBAdBAMIIDoGDg+AgA+A8BAIAQD4DweD4P//B4Ph//4P/yAYEAQAFAXD8P///w+f/4P/D8P//3/h//+D59AKAAAAGDh+Hz6AYDAYDAZg4fh8+gGA==');
+    // Audio elements - preload='none' to prevent unnecessary resource usage
+    const clickSound = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAAFOwCSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKS//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAQhAAAAAAAABTsZq0DzAAAAAAD/+xDEAAAIIANvtBAAJaRG7vZ4YgIqTrBYkNIEAIAwmCgwx0Jzw8P//y8PD/4eHh+HJ//g8PD4PD8usK/w+D+X///8Hh+Hh+oGAAAAYRhjGtZoMxBgANAWxg+gfMDLGUiOGALxQbFgFhhdgRABOGC8gRMB4CYkHZAAABHDQZ//2//X/9luzSt2QSyNw+ebpMmTJ9PTQz/mNNPIxJm7W7/Z/+xxoAAAAAA=');
+    clickSound.preload = 'none';
+    
+    const beepSound = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAAEbwC1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAWqAAAAAAAABG+uXbfNAAAAAAD/+xDEAAAHbAN/tAAAJZfHjn8zgAA6AMAAIAAYIIKqrAYEBwgCxYkP8vOP/5znP//4f/KOf/8uQ5znOXIcQA5znP+Q5zn/IcoAALBYHg8T8eD5QA8Hg8E/Hg+UHwfD4P//B/8Hg/g+D4fB4Ph8Hg+DwfAPB8Hg+DwfB8qAeD4fB8Hg+VAKoAAAT4Pg+D5PkwfLgGQAAAAA=');
+    beepSound.preload = 'none';
+    
+    const dhikrSound = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAADAAAJhwDMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMz///////////////////////////////////////////////////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJANEAAAAAAAACYew4+YIAAAAAAD/+xDEAAAJcAFn9BAAKViPLP53gCIOCQwMIIBoOAIPBAMBAIfB8H4CQEgJAPgPD4Ph//8Hz//wf/lCEIQhCAuCDgQCHggGAgEDg+DwfB+AgA+D8BICQEgHwHh8Hg//8Hg+H//g//KAuC4LgAKAgGBAEAwIAQDBAdBAMIIDoGDg+AgA+A8BAIAQD4DweD4P//B4Ph//4P/yAYEAQAFAXD8P///w+f/4P/D8P//3/h//+D59AKAAAAGDh+Hz6AYDAYDAZg4fh8+gGA==');
+    dhikrSound.preload = 'none';
 
-            // Initialize
-            loadSettings();
-            updateDisplay();
-            renderActivities();
+    // Initialize
+    loadSettings();
+    updateDisplay();
+    renderActivities();
 
-            // Event Listeners
-            menuButton.addEventListener('click', toggleSidebar);
-            closeSidebar.addEventListener('click', closeSidebarMenu);
-            themeToggle.addEventListener('click', toggleTheme);
-            countBtn.addEventListener('click', incrementCount);
-            resetBtn.addEventListener('click', resetCounter);
-            undoBtn.addEventListener('click', undoCount);
-            saveBtn.addEventListener('click', saveSession);
-            quickCount.addEventListener('click', incrementCount);
-            exportBtn.addEventListener('click', exportHistory);
-            soundIndicator.addEventListener('click', toggleSound);
-
-            presetButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const name = button.getAttribute('data-name');
-                    const target = parseInt(button.getAttribute('data-target'));
-                    
-                    if (name === 'Custom') {
-                        currentDhikr = customDhikrInput.value || 'Custom Dhikr';
-                        targetCount = parseInt(targetCountInput.value) || 33;
-                    } else {
-                        currentDhikr = name;
-                        targetCount = target;
-                        targetCountInput.value = target;
-                    }
-                    
-                    resetCounter();
-                    updateDisplay();
-                    saveSettings();
-                    closeSidebarMenu();
-                });
-            });
-
-            customDhikrInput.addEventListener('input', () => {
-                if (currentDhikr === 'Custom Dhikr' || currentDhikr === 'Custom') {
-                    currentDhikr = customDhikrInput.value || 'Custom Dhikr';
-                    dhikrName.textContent = currentDhikr;
-                    saveSettings();
-                }
-            });
-
-            targetCountInput.addEventListener('change', () => {
-                targetCount = parseInt(targetCountInput.value) || 33;
-                targetValue.textContent = targetCount;
-                updateProgressBar();
-                saveSettings();
-            });
-
-            soundOption.addEventListener('change', saveSettings);
-            vibrateOption.addEventListener('change', saveSettings);
-            autoResetOption.addEventListener('change', saveSettings);
-
-            // Functions
-            function toggleSidebar() {
-                sidebar.classList.toggle('open');
-                mainContent.classList.toggle('sidebar-open');
-            }
-
-            function closeSidebarMenu() {
-                sidebar.classList.remove('open');
-                mainContent.classList.remove('sidebar-open');
-            }
-
-            function toggleTheme() {
-                isDarkMode = !isDarkMode;
-                document.body.classList.toggle('dark-mode', isDarkMode);
-                
-                const icon = themeToggle.querySelector('i');
-                const text = themeToggle.querySelector('span');
-                
-                if (isDarkMode) {
-                    icon.className = 'fas fa-sun';
-                    text.textContent = 'Light Mode';
-                } else {
-                    icon.className = 'fas fa-moon';
-                    text.textContent = 'Dark Mode';
-                }
-                
-                saveSettings();
-            }
-
-            function toggleSound() {
-                const nextOption = {
-                    'off': 'click',
-                    'click': 'beep',
-                    'beep': 'dhikr',
-                    'dhikr': 'off'
-                };
-                
-                soundOption.value = nextOption[soundOption.value];
-                updateSoundIndicator();
-                saveSettings();
-            }
-
-            function updateSoundIndicator() {
-                const icon = soundIndicator.querySelector('i');
-                
-                switch(soundOption.value) {
-                    case 'off':
-                        icon.className = 'fas fa-volume-mute';
-                        break;
-                    case 'click':
-                        icon.className = 'fas fa-volume-down';
-                        break;case 'beep':
-                        icon.className = 'fas fa-volume-up';
-                        break;
-                    case 'dhikr':
-                        icon.className = 'fas fa-pray';
-                        break;
-                }
-            }
-
-            function incrementCount(event) {
-                // Add ripple effect if click event exists
-                if (event && event.type === 'click') {
-                    createRipple(event);
-                }
-                
-                count++;
-                totalCount++;
-                countHistory.push({
-                    dhikr: currentDhikr,
-                    timestamp: new Date().toISOString()
-                });
-                
-                // Play sound based on setting
-                playSound();
-                
-                // Vibrate based on setting
-                vibrate();
-                
-                // Check if target is reached
-                if (count >= targetCount) {
-                    setsCompleted++;
-                    addActivity(`Completed ${targetCount} ${currentDhikr}`);
-                    
-                    // Auto reset if enabled
-                    if (autoResetOption.value === 'on') {
-                        count = 0;
-                    }
-                }
-                
-                updateDisplay();
-                saveSettings();
-            }
-
-            function resetCounter() {
-                if (count > 0) {
-                    addActivity(`Reset counter at ${count} of ${currentDhikr}`);
-                }
-                count = 0;
-                updateDisplay();
-                saveSettings();
-            }
-
-            function undoCount() {
-                if (count > 0) {
-                    count--;
-                    totalCount--;
-                    countHistory.pop();
-                    updateDisplay();
-                    saveSettings();
-                } else {
-                    tasbihContainer.classList.add('vibrate');
-                    setTimeout(() => {
-                        tasbihContainer.classList.remove('vibrate');
-                    }, 300);
-                }
-            }
-
-            function createRipple(event) {
-                const button = event.currentTarget;
-                const rect = button.getBoundingClientRect();
-                
-                const x = event.clientX - rect.left;
-                const y = event.clientY - rect.top;
-                
-                const ripple = document.createElement('span');
-                ripple.classList.add('ripple');
-                ripple.style.top = `${y}px`;
-                ripple.style.left = `${x}px`;
-                
-                button.appendChild(ripple);
-                
-                setTimeout(() => {
-                    ripple.remove();
-                }, 600);
-            }
-
-            function updateDisplay() {
-                counter.textContent = count;
-                targetValue.textContent = targetCount;
-                setsValue.textContent = setsCompleted;
-                totalValue.textContent = totalCount;
-                dhikrName.textContent = currentDhikr;
-                updateProgressBar();
-                updateSoundIndicator();
-            }
-
-            function updateProgressBar() {
-                const percentage = (count / targetCount) * 100;
-                progressBar.style.width = `${Math.min(100, percentage)}%`;
-            }
-
-            function playSound() {
-                switch(soundOption.value) {
-                    case 'click':
-                        clickSound.currentTime = 0;
-                        clickSound.play().catch(e => console.log('Error playing sound:', e));
-                        break;
-                    case 'beep':
-                        beepSound.currentTime = 0;
-                        beepSound.play().catch(e => console.log('Error playing sound:', e));
-                        break;
-                    case 'dhikr':
-                        dhikrSound.currentTime = 0;
-                        dhikrSound.play().catch(e => console.log('Error playing sound:', e));
-                        break;
-                }
-            }
-
-            function vibrate() {
-                if ('vibrate' in navigator) {
-                    switch(vibrateOption.value) {
-                        case 'light':
-                            navigator.vibrate(20);
-                            break;
-                        case 'strong':
-                            navigator.vibrate(50);
-                            break;
-                    }
-                }
-            }
-
-            function saveSession() {
-                if (count > 0 || setsCompleted > 0) {
-                    addActivity(`Saved session: ${currentDhikr} - ${count} count(s), ${setsCompleted} set(s)`);
-                    saveSettings();
-                    
-                    // Display confirmation animation
-                    const saveAnimation = document.createElement('div');
-                    saveAnimation.innerHTML = '<i class="fas fa-check" style="color: var(--secondary-color); font-size: 2rem;"></i>';
-                    saveAnimation.style.position = 'absolute';
-                    saveAnimation.style.top = '50%';
-                    saveAnimation.style.left = '50%';
-                    saveAnimation.style.transform = 'translate(-50%, -50%)';
-                    saveAnimation.style.background = 'rgba(0, 0, 0, 0.7)';
-                    saveAnimation.style.borderRadius = '50%';
-                    saveAnimation.style.width = '80px';
-                    saveAnimation.style.height = '80px';
-                    saveAnimation.style.display = 'flex';
-                    saveAnimation.style.justifyContent = 'center';
-                    saveAnimation.style.alignItems = 'center';
-                    saveAnimation.style.zIndex = '1000';
-                    
-                    tasbihContainer.appendChild(saveAnimation);
-                    
-                    setTimeout(() => {
-                        saveAnimation.remove();
-                    }, 1000);
-                }
-            }
-
-            function addActivity(description) {
-                const now = new Date();
-                const timeStr = now.toLocaleTimeString();
-                const dateStr = now.toLocaleDateString();
-                
-                activities.unshift({
-                    description,
-                    time: timeStr,
-                    date: dateStr,
-                    timestamp: now.getTime()
-                });
-                
-                // Limit to last 10 activities
-                if (activities.length > 10) {
-                    activities.pop();
-                }
-                
-                renderActivities();
-                saveSettings();
-            }
-
-            function renderActivities() {
-                activityList.innerHTML = '';
-                
-                if (activities.length === 0) {
-                    const emptyItem = document.createElement('li');
-                    emptyItem.className = 'activity-item';
-                    emptyItem.textContent = 'No recent activity';
-                    activityList.appendChild(emptyItem);
-                    return;
-                }
-                
-                activities.forEach(activity => {
-                    const item = document.createElement('li');
-                    item.className = 'activity-item';
-                    
-                    const desc = document.createElement('div');
-                    desc.textContent = activity.description;
-                    
-                    const time = document.createElement('div');
-                    time.className = 'activity-date';
-                    time.textContent = `${activity.time} • ${activity.date}`;
-                    
-                    item.appendChild(desc);
-                    item.appendChild(time);
-                    activityList.appendChild(item);
-                });
-            }
-
-            function exportHistory() {
-                // Create CSV content
-                let csvContent = "data:text/csv;charset=utf-8,";
-                csvContent += "Date,Time,Description\n";
-                
-                activities.forEach(activity => {
-                    csvContent += `${activity.date},${activity.time},"${activity.description}"\n`;
-                });
-                
-                // Create download link
-                const encodedUri = encodeURI(csvContent);
-                const link = document.createElement('a');
-                link.setAttribute('href', encodedUri);
-                link.setAttribute('download', `tasbih_history_${new Date().toISOString().slice(0,10)}.csv`);
-                document.body.appendChild(link);
-                
-                // Trigger download
-                link.click();
-                document.body.removeChild(link);
-                
-                // Show notification
-                const notification = document.createElement('div');
-                notification.textContent = 'Export successful!';
-                notification.style.position = 'fixed';
-                notification.style.bottom = '20px';
-                notification.style.left = '50%';
-                notification.style.transform = 'translateX(-50%)';
-                notification.style.background = 'var(--primary-gradient)';
-                notification.style.color = 'white';
-                notification.style.padding = '10px 20px';
-                notification.style.borderRadius = '20px';
-                notification.style.zIndex = '1000';
-                
-                document.body.appendChild(notification);
-                
-                setTimeout(() => {
-                    notification.style.opacity = '0';
-                    notification.style.transition = 'opacity 0.5s';
-                    setTimeout(() => {
-                        document.body.removeChild(notification);
-                    }, 500);
-                }, 2000);
-            }
-
-            function saveSettings() {
-                const settings = {
-                    count,
-                    targetCount,
-                    totalCount,
-                    setsCompleted,
-                    countHistory,
-                    activities,
-                    currentDhikr,
-                    soundSetting: soundOption.value,
-                    vibrateSetting: vibrateOption.value,
-                    autoResetSetting: autoResetOption.value,
-                    isDarkMode
-                };
-                
-                localStorage.setItem('tasbihSettings', JSON.stringify(settings));
-            }
-
-            function loadSettings() {
-                const savedSettings = localStorage.getItem('tasbihSettings');
-                
-                if (savedSettings) {
-                    const settings = JSON.parse(savedSettings);
-                    
-                    count = settings.count || 0;
-                    targetCount = settings.targetCount || 33;
-                    totalCount = settings.totalCount || 0;
-                    setsCompleted = settings.setsCompleted || 0;
-                    countHistory = settings.countHistory || [];
-                    activities = settings.activities || [];
-                    currentDhikr = settings.currentDhikr || 'SubhanAllah';
-                    
-                    // Update form inputs
-                    targetCountInput.value = targetCount;
-                    soundOption.value = settings.soundSetting || 'off';
-                    vibrateOption.value = settings.vibrateSetting || 'off';
-                    autoResetOption.value = settings.autoResetSetting || 'off';
-                    
-                    // Set dark mode if saved
-                    isDarkMode = settings.isDarkMode || false;
-                    if (isDarkMode) {
-                        document.body.classList.add('dark-mode');
-                        themeToggle.querySelector('i').className = 'fas fa-sun';
-                        themeToggle.querySelector('span').textContent = 'Light Mode';
-                    }
-                }
-            }
-
-            // Keyboard shortcuts
-            document.addEventListener('keydown', function(event) {
-                // Space bar to count
-                if (event.code === 'Space') {
-                    incrementCount();
-                    event.preventDefault();
-                }
-                // R key to reset
-                else if (event.code === 'KeyR') {
-                    resetCounter();
-                }
-                // Z key to undo
-                else if (event.code === 'KeyZ') {
-                    undoCount();
-                }
-                // S key to save
-                else if (event.code === 'KeyS') {
-                    saveSession();
-                }
-            });
-
-            // Touch swipe functionality
-            let touchStartX = 0;
-            let touchEndX = 0;
-            
-            document.addEventListener('touchstart', e => {
-                touchStartX = e.changedTouches[0].screenX;
-            }, false);
-            
-            document.addEventListener('touchend', e => {
-                touchEndX = e.changedTouches[0].screenX;
-                handleSwipe();
-            }, false);
-            
-            function handleSwipe() {
-                if (touchEndX < touchStartX - 100) {
-                    // Swipe left - open sidebar
-                    sidebar.classList.add('open');
-                    mainContent.classList.add('sidebar-open');
-                }
-                if (touchEndX > touchStartX + 100 && sidebar.classList.contains('open')) {
-                    // Swipe right - close sidebar
-                    sidebar.classList.remove('open');
-                    mainContent.classList.remove('sidebar-open');
-                }
-            }
-
-            // Add shake to count feature
-            let shakeThreshold = 15;
-            let lastX = 0, lastY = 0, lastZ = 0;
-            let lastUpdate = 0;
-            let shakeTimeout = null;
-            
-            window.addEventListener('devicemotion', function(event) {
-                const currentTime = new Date().getTime();
-                if ((currentTime - lastUpdate) > 100) {
-                    const diffTime = currentTime - lastUpdate;
-                    lastUpdate = currentTime;
-                    
-                    const acceleration = event.accelerationIncludingGravity;
-                    
-                    const x = acceleration.x;
-                    const y = acceleration.y;
-                    const z = acceleration.z;
-                    
-                    const speed = Math.abs(x + y + z - lastX - lastY - lastZ) / diffTime * 10000;
-                    
-                    if (speed > shakeThreshold) {
-                        // Prevent multiple counts from a single shake
-                        if (!shakeTimeout) {
-                            incrementCount();
-                            shakeTimeout = setTimeout(() => {
-                                shakeTimeout = null;
-                            }, 1000);
-                        }
-                    }
-                    
-                    lastX = x;
-                    lastY = y;
-                    lastZ = z;
-                }
-            }, false);
+    // Fix for AdSense: Add a container to prevent ad-induced layout shifts
+    function setupAdContainers() {
+        const adContainers = document.querySelectorAll('.ad-container');
+        adContainers.forEach(container => {
+            // Set fixed dimensions to prevent layout shifts
+            container.style.minHeight = '100px';
+            container.style.overflow = 'hidden';
+            container.style.position = 'relative';
         });
+    }
+    
+    // Call this function to set up ad containers
+    setupAdContainers();
+
+    // Event Listeners with passive option for better performance on mobile
+    menuButton.addEventListener('click', toggleSidebar, { passive: true });
+    closeSidebar.addEventListener('click', closeSidebarMenu, { passive: true });
+    themeToggle.addEventListener('click', toggleTheme, { passive: true });
+    
+    // Use touchstart for faster response on mobile devices
+    countBtn.addEventListener('touchstart', incrementCount, { passive: false });
+    countBtn.addEventListener('click', incrementCount, { passive: false });
+    
+    resetBtn.addEventListener('click', resetCounter, { passive: true });
+    undoBtn.addEventListener('click', undoCount, { passive: true });
+    saveBtn.addEventListener('click', saveSession, { passive: true });
+    
+    quickCount.addEventListener('touchstart', incrementCount, { passive: false });
+    quickCount.addEventListener('click', incrementCount, { passive: false });
+    
+    exportBtn.addEventListener('click', exportHistory, { passive: true });
+    soundIndicator.addEventListener('click', toggleSound, { passive: true });
+
+    presetButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const name = button.getAttribute('data-name');
+            const target = parseInt(button.getAttribute('data-target'));
+            
+            if (name === 'Custom') {
+                currentDhikr = customDhikrInput.value || 'Custom Dhikr';
+                targetCount = parseInt(targetCountInput.value) || 33;
+            } else {
+                currentDhikr = name;
+                targetCount = target;
+                targetCountInput.value = target;
+            }
+            
+            resetCounter();
+            updateDisplay();
+            saveSettings();
+            closeSidebarMenu();
+        }, { passive: true });
+    });
+
+    customDhikrInput.addEventListener('input', () => {
+        if (currentDhikr === 'Custom Dhikr' || currentDhikr === 'Custom') {
+            currentDhikr = customDhikrInput.value || 'Custom Dhikr';
+            dhikrName.textContent = currentDhikr;
+            saveSettings();
+        }
+    }, { passive: true });
+
+    targetCountInput.addEventListener('change', () => {
+        targetCount = parseInt(targetCountInput.value) || 33;
+        targetValue.textContent = targetCount;
+        updateProgressBar();
+        saveSettings();
+    }, { passive: true });
+
+    soundOption.addEventListener('change', saveSettings, { passive: true });
+    vibrateOption.addEventListener('change', saveSettings, { passive: true });
+    autoResetOption.addEventListener('change', saveSettings, { passive: true });
+
+    // Functions
+    function toggleSidebar() {
+        sidebar.classList.toggle('open');
+        mainContent.classList.toggle('sidebar-open');
+    }
+
+    function closeSidebarMenu() {
+        sidebar.classList.remove('open');
+        mainContent.classList.remove('sidebar-open');
+    }
+
+    function toggleTheme() {
+        isDarkMode = !isDarkMode;
+        document.body.classList.toggle('dark-mode', isDarkMode);
+        
+        const icon = themeToggle.querySelector('i');
+        const text = themeToggle.querySelector('span');
+        
+        if (isDarkMode) {
+            icon.className = 'fas fa-sun';
+            text.textContent = 'Light Mode';
+        } else {
+            icon.className = 'fas fa-moon';
+            text.textContent = 'Dark Mode';
+        }
+        
+        saveSettings();
+    }
+
+    function toggleSound() {
+        const nextOption = {
+            'off': 'click',
+            'click': 'beep',
+            'beep': 'dhikr',
+            'dhikr': 'off'
+        };
+        
+        soundOption.value = nextOption[soundOption.value];
+        updateSoundIndicator();
+        saveSettings();
+    }
+
+    function updateSoundIndicator() {
+        const icon = soundIndicator.querySelector('i');
+        
+        switch(soundOption.value) {
+            case 'off':
+                icon.className = 'fas fa-volume-mute';
+                break;
+            case 'click':
+                icon.className = 'fas fa-volume-down';
+                break;
+            case 'beep':
+                icon.className = 'fas fa-volume-up';
+                break;
+            case 'dhikr':
+                icon.className = 'fas fa-pray';
+                break;
+        }
+    }
+
+    function incrementCount(event) {
+        // Prevent default to avoid any scrolling or unexpected behavior
+        if (event) {
+            event.preventDefault();
+        }
+        
+        // Add ripple effect if click event exists
+        if (event && (event.type === 'click' || event.type === 'touchstart')) {
+            createRipple(event);
+        }
+        
+        count++;
+        totalCount++;
+        countHistory.push({
+            dhikr: currentDhikr,
+            timestamp: new Date().toISOString()
+        });
+        
+        // Play sound based on setting
+        playSound();
+        
+        // Vibrate based on setting
+        vibrate();
+        
+        // Check if target is reached
+        if (count >= targetCount) {
+            setsCompleted++;
+            addActivity(`Completed ${targetCount} ${currentDhikr}`);
+            
+            // Auto reset if enabled
+            if (autoResetOption.value === 'on') {
+                count = 0;
+            }
+        }
+        
+        updateDisplay();
+        saveSettings();
+    }
+
+    function resetCounter() {
+        if (count > 0) {
+            addActivity(`Reset counter at ${count} of ${currentDhikr}`);
+        }
+        count = 0;
+        updateDisplay();
+        saveSettings();
+    }
+
+    function undoCount() {
+        if (count > 0) {
+            count--;
+            totalCount--;
+            countHistory.pop();
+            updateDisplay();
+            saveSettings();
+        } else {
+            tasbihContainer.classList.add('vibrate');
+            setTimeout(() => {
+                tasbihContainer.classList.remove('vibrate');
+            }, 300);
+        }
+    }
+
+    function createRipple(event) {
+        const button = event.currentTarget;
+        
+        if (!button) return; // Safety check
+        
+        const rect = button.getBoundingClientRect();
+        
+        // Get touch or click coordinates
+        let x, y;
+        if (event.type === 'touchstart' && event.touches && event.touches[0]) {
+            x = event.touches[0].clientX - rect.left;
+            y = event.touches[0].clientY - rect.top;
+        } else {
+            x = event.clientX - rect.left;
+            y = event.clientY - rect.top;
+        }
+        
+        const ripple = document.createElement('span');
+        ripple.classList.add('ripple');
+        ripple.style.top = `${y}px`;
+        ripple.style.left = `${x}px`;
+        
+        button.appendChild(ripple);
+        
+        setTimeout(() => {
+            ripple.remove();
+        }, 600);
+    }
+
+    function updateDisplay() {
+        if (counter) counter.textContent = count;
+        if (targetValue) targetValue.textContent = targetCount;
+        if (setsValue) setsValue.textContent = setsCompleted;
+        if (totalValue) totalValue.textContent = totalCount;
+        if (dhikrName) dhikrName.textContent = currentDhikr;
+        updateProgressBar();
+        updateSoundIndicator();
+    }
+
+    function updateProgressBar() {
+        if (progressBar) {
+            const percentage = (count / targetCount) * 100;
+            progressBar.style.width = `${Math.min(100, percentage)}%`;
+        }
+    }
+
+    function playSound() {
+        if (!soundOption || !soundOption.value) return;
+        
+        switch(soundOption.value) {
+            case 'click':
+                clickSound.currentTime = 0;
+                clickSound.play().catch(e => console.log('Error playing sound:', e));
+                break;
+            case 'beep':
+                beepSound.currentTime = 0;
+                beepSound.play().catch(e => console.log('Error playing sound:', e));
+                break;
+            case 'dhikr':
+                dhikrSound.currentTime = 0;
+                dhikrSound.play().catch(e => console.log('Error playing sound:', e));
+                break;
+        }
+    }
+
+    function vibrate() {
+        if (!vibrateOption || !vibrateOption.value) return;
+        
+        if ('vibrate' in navigator) {
+            switch(vibrateOption.value) {
+                case 'light':
+                    navigator.vibrate(20);
+                    break;
+                case 'strong':
+                    navigator.vibrate(50);
+                    break;
+            }
+        }
+    }
+
+    function saveSession() {
+        if (count > 0 || setsCompleted > 0) {
+            addActivity(`Saved session: ${currentDhikr} - ${count} count(s), ${setsCompleted} set(s)`);
+            saveSettings();
+            
+            // Display confirmation animation
+            const saveAnimation = document.createElement('div');
+            saveAnimation.innerHTML = '<i class="fas fa-check" style="color: var(--secondary-color); font-size: 2rem;"></i>';
+            saveAnimation.style.position = 'absolute';
+            saveAnimation.style.top = '50%';
+            saveAnimation.style.left = '50%';
+            saveAnimation.style.transform = 'translate(-50%, -50%)';
+            saveAnimation.style.background = 'rgba(0, 0, 0, 0.7)';
+            saveAnimation.style.borderRadius = '50%';
+            saveAnimation.style.width = '80px';
+            saveAnimation.style.height = '80px';
+            saveAnimation.style.display = 'flex';
+            saveAnimation.style.justifyContent = 'center';
+            saveAnimation.style.alignItems = 'center';
+            saveAnimation.style.zIndex = '1000';
+            
+            tasbihContainer.appendChild(saveAnimation);
+            
+            setTimeout(() => {
+                saveAnimation.remove();
+            }, 1000);
+        }
+    }
+
+    function addActivity(description) {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString();
+        const dateStr = now.toLocaleDateString();
+        
+        activities.unshift({
+            description,
+            time: timeStr,
+            date: dateStr,
+            timestamp: now.getTime()
+        });
+        
+        // Limit to last 10 activities
+        if (activities.length > 10) {
+            activities.pop();
+        }
+        
+        renderActivities();
+        saveSettings();
+    }
+
+    function renderActivities() {
+        if (!activityList) return;
+        
+        activityList.innerHTML = '';
+        
+        if (activities.length === 0) {
+            const emptyItem = document.createElement('li');
+            emptyItem.className = 'activity-item';
+            emptyItem.textContent = 'No recent activity';
+            activityList.appendChild(emptyItem);
+            return;
+        }
+        
+        activities.forEach(activity => {
+            const item = document.createElement('li');
+            item.className = 'activity-item';
+            
+            const desc = document.createElement('div');
+            desc.textContent = activity.description;
+            
+            const time = document.createElement('div');
+            time.className = 'activity-date';
+            time.textContent = `${activity.time} • ${activity.date}`;
+            
+            item.appendChild(desc);
+            item.appendChild(time);
+            activityList.appendChild(item);
+        });
+    }
+
+    function exportHistory() {
+        // Create CSV content
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "Date,Time,Description\n";
+        
+        activities.forEach(activity => {
+            csvContent += `${activity.date},${activity.time},"${activity.description}"\n`;
+        });
+        
+        // Create download link
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement('a');
+        link.setAttribute('href', encodedUri);
+        link.setAttribute('download', `tasbih_history_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        
+        // Trigger download
+        link.click();
+        document.body.removeChild(link);
+        
+        // Show notification
+        const notification = document.createElement('div');
+        notification.textContent = 'Export successful!';
+        notification.style.position = 'fixed';
+        notification.style.bottom = '20px';
+        notification.style.left = '50%';
+        notification.style.transform = 'translateX(-50%)';
+        notification.style.background = 'var(--primary-gradient)';
+        notification.style.color = 'white';
+        notification.style.padding = '10px 20px';
+        notification.style.borderRadius = '20px';
+        notification.style.zIndex = '1000';
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transition = 'opacity 0.5s';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 500);
+        }, 2000);
+    }
+
+    function saveSettings() {
+        const settings = {
+            count,
+            targetCount,
+            totalCount,
+            setsCompleted,
+            countHistory,
+            activities,
+            currentDhikr,
+            soundSetting: soundOption ? soundOption.value : 'off',
+            vibrateSetting: vibrateOption ? vibrateOption.value : 'off',
+            autoResetSetting: autoResetOption ? autoResetOption.value : 'off',
+            isDarkMode
+        };
+        
+        localStorage.setItem('tasbihSettings', JSON.stringify(settings));
+    }
+
+    function loadSettings() {
+        const savedSettings = localStorage.getItem('tasbihSettings');
+        
+        if (savedSettings) {
+            try {
+                const settings = JSON.parse(savedSettings);
+                
+                count = settings.count || 0;
+                targetCount = settings.targetCount || 33;
+                totalCount = settings.totalCount || 0;
+                setsCompleted = settings.setsCompleted || 0;
+                countHistory = settings.countHistory || [];
+                activities = settings.activities || [];
+                currentDhikr = settings.currentDhikr || 'SubhanAllah';
+                
+                // Update form inputs if they exist
+                if (targetCountInput) targetCountInput.value = targetCount;
+                if (soundOption) soundOption.value = settings.soundSetting || 'off';
+                if (vibrateOption) vibrateOption.value = settings.vibrateSetting || 'off';
+                if (autoResetOption) autoResetOption.value = settings.autoResetSetting || 'off';
+                
+                // Set dark mode if saved
+                isDarkMode = settings.isDarkMode || false;
+                if (isDarkMode && document.body) {
+                    document.body.classList.add('dark-mode');
+                    if (themeToggle) {
+                        const iconEl = themeToggle.querySelector('i');
+                        const spanEl = themeToggle.querySelector('span');
+                        if (iconEl) iconEl.className = 'fas fa-sun';
+                        if (spanEl) spanEl.textContent = 'Light Mode';
+                    }
+                }
+            } catch (e) {
+                console.error('Error loading settings:', e);
+                // Reset to defaults if there's an error
+                resetToDefaults();
+            }
+        }
+    }
+
+    function resetToDefaults() {
+        count = 0;
+        targetCount = 33;
+        totalCount = 0;
+        setsCompleted = 0;
+        countHistory = [];
+        activities = [];
+        currentDhikr = 'SubhanAllah';
+        isDarkMode = false;
+        
+        // Clear localStorage to start fresh
+        localStorage.removeItem('tasbihSettings');
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(event) {
+        // Space bar to count
+        if (event.code === 'Space') {
+            incrementCount();
+            event.preventDefault();
+        }
+        // R key to reset
+        else if (event.code === 'KeyR') {
+            resetCounter();
+        }
+        // Z key to undo
+        else if (event.code === 'KeyZ') {
+            undoCount();
+        }
+        // S key to save
+        else if (event.code === 'KeyS') {
+            saveSession();
+        }
+    });
+
+    // Touch swipe functionality with improved handling
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let touchStartTime = 0;
+    
+    // Use these elements to prevent swipe detection on them
+    const noSwipeElements = ['countBtn', 'quickCount'];
+    
+    document.addEventListener('touchstart', e => {
+        // Don't process swipes on certain elements
+        if (e.target && noSwipeElements.some(id => e.target.id === id || e.target.closest(`#${id}`))) {
+            return;
+        }
+        
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartTime = new Date().getTime();
+    }, { passive: true });
+    
+    document.addEventListener('touchend', e => {
+        // Don't process swipes on certain elements
+        if (e.target && noSwipeElements.some(id => e.target.id === id || e.target.closest(`#${id}`))) {
+            return;
+        }
+        
+        const touchEndTime = new Date().getTime();
+        const timeDiff = touchEndTime - touchStartTime;
+        
+        // Only process quick swipes (under 300ms) to avoid accidental swipes
+        if (timeDiff > 300) return;
+        
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+    
+    function handleSwipe() {
+        // Minimum distance for a swipe - helps prevent accidental swipes
+        const swipeThreshold = 70;
+        
+        if (touchEndX < touchStartX - swipeThreshold) {
+            // Swipe left - open sidebar
+            sidebar.classList.add('open');
+            mainContent.classList.add('sidebar-open');
+        }
+        if (touchEndX > touchStartX + swipeThreshold && sidebar.classList.contains('open')) {
+            // Swipe right - close sidebar
+            sidebar.classList.remove('open');
+            mainContent.classList.remove('sidebar-open');
+        }
+    }
+
+    // Fixed shake to count feature
+    let shakeThreshold = 15; // Increase threshold to avoid false triggers
+    let lastX = 0, lastY = 0, lastZ = 0;
+    let lastUpdate = 0;
+    let shakeTimeout = null;
+    let shakeDetectionEnabled = true;
+    
+    // Add a button to enable/disable shake detection
+    function addShakeToggle() {
+        const shakeToggle = document.createElement('button');
+        shakeToggle.id = 'shakeToggle';
+        shakeToggle.innerHTML = '<i class="fas fa-mobile-alt"></i>';
+        shakeToggle.title = 'Toggle Shake to Count';
+        shakeToggle.className = 'action-btn';
+        shakeToggle.style.position = 'absolute';
+        shakeToggle.style.bottom = '10px';
+        shakeToggle.style.right = '10px';
+        
+        shakeToggle.addEventListener('click', () => {
+            shakeDetectionEnabled = !shakeDetectionEnabled;
+            shakeToggle.classList.toggle('active', shakeDetectionEnabled);
+            
+            // Save preference
+            localStorage.setItem('shakeDetection', shakeDetectionEnabled ? 'enabled' : 'disabled');
+            
+            // Show notification
+            const message = shakeDetectionEnabled ? 'Shake detection enabled' : 'Shake detection disabled';
+            showNotification(message);
+        }, { passive: true });
+        
+        // Load saved preference
+        const savedShakePreference = localStorage.getItem('shakeDetection');
+        if (savedShakePreference === 'disabled') {
+            shakeDetectionEnabled = false;
+        } else {
+            shakeDetectionEnabled = true;
+        }
+        
+        shakeToggle.classList.toggle('active', shakeDetectionEnabled);
+        
+        // Add to document
+        const container = document.querySelector('.actions-container') || document.body;
+        container.appendChild(shakeToggle);
+    }
+    
+    // Call this to add the shake toggle button
+    try {
+        addShakeToggle();
+    } catch (e) {
+        console.log('Could not add shake toggle button:', e);
+    }
+    
+    // Helper function to show notifications
+    function showNotification(message, duration = 2000) {
+        const notification = document.createElement('div');
+        notification.textContent = message;
+        notification.style.position = 'fixed';
+        notification.style.bottom = '20px';
+        notification.style.left = '50%';
+        notification.style.transform = 'translateX(-50%)';
+        notification.style.background = 'var(--primary-gradient)';
+        notification.style.color = 'white';
+        notification.style.padding = '10px 20px';
+        notification.style.borderRadius = '20px';
+        notification.style.zIndex = '1000';
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transition = 'opacity 0.5s';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 500);
+        }, duration);
+    }
+    
+    // Improved motion detection with debounce
+    window.addEventListener('devicemotion', function(event) {
+        // Skip if shake detection is disabled
+        if (!shakeDetectionEnabled || isProcessingMotionEvent) return;
+        
+        const currentTime = new Date().getTime();
+        
+        // At least 200ms between checks to avoid overly sensitive detection
+        if ((currentTime - lastUpdate) > 200) {
+            const diffTime = currentTime - lastUpdate;
+            lastUpdate = currentTime;
+            
+            const acceleration = event.accelerationIncludingGravity;
+            if (!acceleration) return;
+            
+            const x = acceleration.x || 0;
+            const y = acceleration.y || 0;
+            const z = acceleration.z || 0;
+            
+            // Calculate speed
+            const speed = Math.abs(x + y + z - lastX - lastY - lastZ) / diffTime * 10000;
+            
+            if (speed > shakeThreshold) {
+                // Set flag to prevent multiple triggers
+                isProcessingMotionEvent = true;
+                
+                // Increment after a slight delay to avoid multiple counts
+                incrementCount();
+                
+                // Clear any existing timeout
+                if (shakeTimeout) clearTimeout(shakeTimeout);
+                
+                // Set a timeout to prevent multiple counts from a single shake
+                shakeTimeout = setTimeout(() => {
+                    isProcessingMotionEvent = false;
+                }, 1000);
+            }
+            
+            lastX = x;
+            lastY = y;
+            lastZ = z;
+        }
+    }, { passive: true });
+
+    // Function to fix layout issues with AdSense
+    function preventAdLayoutShifts() {
+        // Add a resize observer to monitor layout shifts
+        if (typeof ResizeObserver !== 'undefined') {
+            const observer = new ResizeObserver(entries => {
+                for (let entry of entries) {
+                    // Check if this is an ad iframe
+                    if (entry.target.tagName === 'IFRAME' && entry.target.src.includes('googleads')) {
+                        // Fix the size
+                        entry.target.style.maxWidth = '100%';
+                        entry.target.style.overflow = 'hidden';
+                    }
+                }
+            });
+            
+            // Observe ad iframes
+            document.querySelectorAll('iframe').forEach(iframe => {
+                if (iframe.src.includes('googleads')) {
+                    observer.observe(iframe);
+                }
+            });
+            
+            // Create a mutation observer to catch new ad iframes
+            const mutationObserver = new MutationObserver(mutations => {
+                mutations.forEach(mutation => {
+                    if (mutation.addedNodes) {
+                        mutation.addedNodes.forEach(node => {
+                            if (node.tagName === 'IFRAME' && node.src && node.src.includes('googleads')) {
+                                observer.observe(node);
+                                node.style.maxWidth = '100%';
+                                node.style.overflow = 'hidden';
+                            }
+                        });
+                    }
+                });
+            });
+            
+            // Start observing the document body
+            mutationObserver.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        }
+    }
+    
+    // Call the function to prevent ad-related layout shifts
+    preventAdLayoutShifts();
+
+    // Add version indicator in the footer
+    function addVersionInfo() {
+        const footerEl = document.querySelector('footer');
+        if (footerEl) {
+            const versionEl = document.createElement('div');
+            versionEl.className = 'version-info';
+            versionEl.textContent = 'v1.0.0'; // Update this with each release
+            footerEl.appendChild(versionEl);
+        }
+    }
+    
+    // Call to add version info
+    addVersionInfo();
+
+    // Check for service worker support and register if available
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').then(registration => {
+                console.log('ServiceWorker registration successful');
+            }).catch(error => {
+                console.log('ServiceWorker registration failed:', error);
+            });
+        });
+    }
+    
+    // Initialize any remaining UI elements
+    function finalUIInitialization() {
+        // Set initial theme based on user preference or system setting
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches && !isDarkMode) {
+            toggleTheme();
+        }
+        
+        // Preload audio files after a short delay to improve initial page load
+        setTimeout(() => {
+            clickSound.load();
+            beepSound.load();
+            dhikrSound.load();
+        }, 2000);
+    }
+    
+    // Call final initialization
+    finalUIInitialization();
+});
     </script>
 </body>
 </html>
