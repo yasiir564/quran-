@@ -3,967 +3,1210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Tasbih Counter</title>
-    <meta name="description" content="Use our free online Tasbih Counter to track your dhikr and prayers. Simple, easy-to-use digital prayer beads for counting adhkar and supplications.">
-    <meta name="keywords" content="Tasbih Counter, Digital Tasbih, Dhikr Counter, Prayer Beads, Adhkar Counter, Online Tasbih">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link rel="icon" href="/tinywow_Quran pro_62044384.png" type="image/x-icon">
-    <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
-     crossorigin="anonymous"></script>    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-KKV0H53Z9L"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1850217813586802"
-        crossorigin="anonymous"></script>
-
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-KKV0H53Z9L');
-</script>
+    <title>Digital Tasbih - Prayer Counter</title>
     <style>
-/* Base Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* Modern Scrollbar */
-::-webkit-scrollbar {
-    width: 12px;
-}
-
-::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: linear-gradient(45deg, #6366f1, #a855f7);
-    border-radius: 10px;
-    border: 3px solid transparent;
-    background-clip: content-box;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(45deg, #4f46e5, #9333ea);
-    background-clip: content-box;
-}
-
-/* Root Variables */
-:root {
-    --primary-gradient: linear-gradient(135deg, #6366f1, #a855f7);
-    --dark-gradient: linear-gradient(135deg, #1e1b4b, #4c1d95);
-    --light-bg: rgba(255, 255, 255, 0.9);
-    --dark-bg: rgba(30, 27, 75, 0.9);
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 15px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.1);
-    --transition-base: all 0.3s ease;
-}
-
-/* Document Setup */
-html, body {
-    height: 100%;
-    overflow-y: auto;
-    scroll-behavior: smooth;
-    font-family: 'Amiri', serif;
-    line-height: 1.5;
-}
-
-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding-top: 60px;
-    background: var(--primary-gradient);
-    color: #333;
-    transition: var(--transition-base);
-    position: relative;
-}
-
-/* Header Styles */
-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 60px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-}
-
-/* Advertisement Containers */
-.ad-container {
-    width: 100%;
-    max-width: 728px;
-    margin: 20px auto;
-    min-height: 90px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    backdrop-filter: blur(10px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: rgba(255, 255, 255, 0.6);
-}
-
-.ad-sidebar {
-    position: fixed;
-    top: 50%;
-    right: 20px;
-    transform: translateY(-50%);
-    width: 160px;
-    height: 600px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    backdrop-filter: blur(10px);
-}
-
-.ad-mobile {
-    width: 320px;
-    height: 50px;
-    margin: 10px auto;
-    display: none;
-}
-
-/* Dark Mode Toggle */
-.dark-mode-toggle {
-    position: fixed;
-    top: 15px; /* Moved to top */
-    right: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    z-index: 1010; /* Increased z-index to stay above header */
-    padding: 5px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(8px);
-    border-radius: 20px;
-    box-shadow: var(--shadow-sm);
-}
-
-.dark-mode-toggle label {
-    color: #fff;
-    font-size: 14px;
-    user-select: none;
-}
-
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 52px; /* Slightly smaller */
-    height: 28px; /* Slightly smaller */
-    margin: 0;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: var(--primary-gradient);
-    transition: all 0.3s ease;
-    border-radius: 28px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 20px; /* Adjusted for new switch size */
-    width: 20px; /* Adjusted for new switch size */
-    left: 4px;
-    bottom: 2px;
-    background-color: white;
-    transition: all 0.3s ease;
-    border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-input:checked + .slider {
-    background: var(--dark-gradient);
-}
-
-input:checked + .slider:before {
-    transform: translateX(23px); /* Adjusted for new switch size */
-}
-
-/* Hover effect */
-.switch:hover .slider:before {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-/* Media Query for smaller screens */
-@media (max-width: 480px) {
-    .dark-mode-toggle {
-        top: 10px;
-        right: 10px;
-        padding: 3px;
-    }
-
-    .switch {
-        width: 46px;
-        height: 24px;
-    }
-
-    .slider:before {
-        height: 18px;
-        width: 18px;
-        left: 3px;
-        bottom: 1px;
-    }
-
-    input:checked + .slider:before {
-        transform: translateX(21px);
-    }
-}
-
-/* Sidebar Navigation */
-.sidebar {
-    height: 100%;
-    width: 250px;
-    position: fixed;
-    z-index: 1001;
-    top: 0;
-    left: -250px;
-    background: var(--primary-gradient);
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-    box-shadow: var(--shadow-md);
-}
-
-.sidebar a {
-    padding: 12px 20px;
-    text-decoration: none;
-    font-size: 18px;
-    color: #fff;
-    display: block;
-    transition: var(--transition-base);
-    border-radius: 0 50px 50px 0;
-    margin: 5px 0;
-}
-
-.sidebar a:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    transform: translateX(10px);
-}
-
-.sidebar .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-}
-
-.openbtn {
-    font-size: 20px;
-    cursor: pointer;
-    background: var(--primary-gradient);
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    position: fixed;
-    top: 30px;
-    left: 10px;
-    z-index: 1000;
-    border-radius: 8px;
-    box-shadow: var(--shadow-sm);
-}
-
-.openbtn:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-  .tasbih-counter {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 80%;
-        max-width: 300px;
-        height: 220px;
-        background-color: #fff;
-        border: 2px solid #000;
-        border-radius: 20px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 10px;
-        z-index: 100;
-    }
-
-    .screen {
-        width: 100px;
-        height: 40px;
-        background-color: #000;
-        color: #fff;
-        font-size: 1.5em;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 10px;
-        margin-bottom: 10px;
-    }
-
-    .buttons {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-    }
-
-    .button {
-        width: 50px;
-        height: 50px;
-        background-color: #000;
-        color: #fff;
-        border: none;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        margin: 5px 0;
-    }
-
-    .reset-button {
-        background-color: red;
-        width: 40px;
-        height: 40px;
-        margin-top: 5px;
-    }
-
-    .count-button {
-        width: 60px;
-        height: 60px;
-    }
-
-    .button:active {
-        background-color: #444;
-    }
-
-    .label {
-        font-size: 0.8em;
-        position: absolute;
-        top: 10px;
-    }
-
-    .label-left {
-        left: 10px;
-    }
-
-    .label-right {
-        right: 10px;
-    }
-
-    .bottom-buttons {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-        position: fixed;
-        bottom: 20px;
-        left: 0;
-    }
-
-    .bottom-buttons button {
-        background-color: #000;
-        color: #fff;
-        border: none;
-        border-radius: 10px;
-        padding: 10px 20px;
-        font-size: 1em;
-        margin: 5px;
-        cursor: pointer;
-    }
-
-    .bottom-buttons button:hover {
-        background-color: #444;
-    }
-
-    body.dark-mode {
-        background: linear-gradient(to right, #0f0f0f, #434343);
-        color: #ddd;
-    }
-
-    body.dark-mode .tasbih-counter {
-        background-color: #333;
-        border-color: #444;
-    }
-
-    body.dark-mode .screen {
-        background-color: #444;
-    }
-
-    body.dark-mode .button {
-        background-color: #555;
-        color: #ddd;
-    }
-
-    body.dark-mode .button:active {
-        background-color: #666;
-    }
-
-    body.dark-mode .bottom-buttons button {
-        background-color: #444;
-        color: #ddd;
-    }
-
-    body.dark-mode .bottom-buttons button:hover {
-        background-color: #555;
-    }
-
-/* Smart Notification */
-#smart-notification {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: var(--light-bg);
-    border-radius: 12px;
-    box-shadow: var(--shadow-lg);
-    padding: 15px;
-    max-width: 300px;
-    z-index: 9999;
-    display: none;
-    transition: var(--transition-base);
-    backdrop-filter: blur(10px);
-}
-
-#smart-notification.show {
-    display: block;
-    animation: slideIn 0.3s ease-out;
-}
-
-.notification-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.notification-text {
-    flex-grow: 1;
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    color: #888;
-    transition: var(--transition-base);
-}
-
-.close-btn:hover {
-    color: #333;
-    transform: scale(1.1);
-}
-
-/* Dark Mode Styles */
-body.dark-mode {
-    background: var(--dark-gradient);
-    color: #fff;
-}
-
-body.dark-mode .tasbih-counter {
-    background: var(--dark-bg);
-    color: #fff;
-}
-
-body.dark-mode .screen {
-    background: var(--dark-gradient);
-}
-
-body.dark-mode .button {
-    background: var(--dark-gradient);
-}
-
-body.dark-mode .ad-container,
-body.dark-mode .ad-sidebar {
-    background: rgba(30, 27, 75, 0.2);
-}
-
-body.dark-mode #smart-notification {
-    background: var(--dark-bg);
-    color: #fff;
-}
-
-body.dark-mode .close-btn {
-    color: #ccc;
-}
-
-body.dark-mode .close-btn:hover {
-    color: #fff;
-}
-
-/* Animations */
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-/* Media Queries */
-@media (max-width: 1200px) {
-    .ad-sidebar {
-        display: none;
-    }
-}
-
-@media (max-width: 768px) {
-    .ad-container {
-        max-width: 320px;
-        min-height: 50px;
-    }
-    
-    .ad-mobile {
-        display: block;
-    }
-    
-    .tasbih-counter {
-        width: 90%;
-        max-width: 280px;
-    }
-    
-    .bottom-buttons {
-        flex-wrap: wrap;
-    }
-    
-    .bottom-buttons button {
-        font-size: 0.9em;
-        padding: 10px 20px;
-    }
-    
-    #smart-notification {
-        left: 20px;
-        right: 20px;
-        max-width: none;
-    }
-}
-
-@media (max-width: 480px) {
-    .openbtn {
-        top: 20px;
-        left: 10px;
-        padding: 8px 12px;
-        font-size: 16px;
-    }
-    
-    .dark-mode-toggle {
-        top: 20px;
-        right: 10px;
-    }
-    
-    .screen {
-        width: 100px;
-        height: 45px;
-        font-size: 1.6em;
-    }
-    
-    .button {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .count-button {
-        width: 60px;
-        height: 60px;
-    }
-}
-
-/* Print Styles */
-@media print {
-    .ad-container,
-    .ad-sidebar,
-    .ad-mobile,
-    .dark-mode-toggle,
-    .sidebar,
-    .openbtn,
-    .bottom-buttons,
-    #smart-notification {
-        display: none !important;
-    }
-    
-    .tasbih-counter {
-        position: static;
-        transform: none;
-        margin: 20px auto;
-        box-shadow: none;
-    }
-    
-    body {
-        background: none;
-        padding: 0;
-    }
-}
-       /* Common Ad Styles */
-.ad-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #444;
-    font-size: 0.875rem;
-    height: 200px;
-    text-align: center;
-    margin: 1.5rem auto;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    backdrop-filter: blur(12px);
-    max-width: 90%;
-}
-
-/* Close Button */
-.ad-placeholder::after {
-    content: '×';
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 28px;
-    height: 28px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 20px;
-    color: #444;
-    transition: all 0.2s ease;
-    backdrop-filter: blur(4px);
-}
-
-.ad-placeholder::after:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: scale(1.05);
-}
-
-/* Sidebar Ads */
-.left-sidebar-ad,
-.right-sidebar-ad {
-    position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 280px;
-    height: auto;
-    max-height: 70vh;
-    padding: 1.5rem;
-    background: transparent;
-    backdrop-filter: blur(12px);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
-}
-
-.left-sidebar-ad {
-    left: 2rem;
-}
-
-.right-sidebar-ad {
-    right: 2rem;
-}
-
-/* Smooth Animation */
-@keyframes fadeIn {
-    from { 
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to { 
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.ad-placeholder {
-    animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Hover Effects */
-.ad-placeholder:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.12);
-    border-color: rgba(255, 255, 255, 0.3);
-}
-
-/* Mobile Responsive Design */
-@media (max-width: 768px) {
-    .left-sidebar-ad,
-    .right-sidebar-ad {
-        position: static;
-        width: 90%;
-        max-width: 440px;
-        margin: 1rem auto;
-        padding: 1rem;
-        transform: none;
-    }
-    
-    .ad-placeholder {
-        height: 180px;
-        margin: 1rem auto;
-    }
-}
-       
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6e45e2 0%, #88d3ce 100%);
+            --primary-color: #6e45e2;
+            --secondary-color: #88d3ce;
+            --text-color: #333;
+            --bg-color: #f9f9f9;
+            --card-bg: white;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --button-hover: #5a36c9;
+            --sidebar-width: 250px;
+        }
+
+        .dark-mode {
+            --primary-gradient: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+            --primary-color: #8b5cf6;
+            --secondary-color: #3b82f6;
+            --text-color: #e0e0e0;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --button-hover: #7c4dff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--card-bg);
+            box-shadow: 2px 0 10px var(--shadow-color);
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+            left: -250px;
+            top: 0;
+            z-index: 999;
+            transition: left 0.3s ease;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar h2 {
+            font-size: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .close-sidebar {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .sidebar-section {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-section h3 {
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .preset-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--primary-color);
+            color: var(--text-color);
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .preset-btn:hover {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .settings-option {
+            margin-bottom: 15px;
+        }
+
+        .settings-option label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .settings-option input,
+        .settings-option select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid var(--secondary-color);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .ad-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 20px;
+            text-align: center;
+            border: 1px dashed var(--secondary-color);
+        }
+
+        .ad-container p {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
+            width: 100%;
+        }
+
+        .sidebar-open .main-content {
+            margin-left: var(--sidebar-width);
+        }
+
+        .header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .theme-toggle {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+
+        .theme-toggle:hover {
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .tasbih-container {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tasbih-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: var(--primary-gradient);
+            opacity: 0.05;
+            border-radius: 40%;
+            transform: rotate(30deg);
+            z-index: 0;
+        }
+
+        .tasbih-title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .counter-display {
+            font-size: 5rem;
+            font-weight: bold;
+            margin: 30px 0;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
+        }
+
+        .dhikr-name {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 5px;
+            background: var(--primary-gradient);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .counter-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-title {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .buttons-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-btn {
+            padding: 15px;
+            border-radius: 15px;
+            border: none;
+            background: var(--primary-gradient);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .main-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .main-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .count-btn {
+            grid-column: span 3;
+            height: 80px;
+            font-size: 1.5rem;
+            border-radius: 20px;
+        }
+
+        .count-btn:active {
+            animation: pulse 0.3s ease;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(0.98);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .vibrate {
+            animation: vibrate 0.3s linear;
+        }
+
+        @keyframes vibrate {
+            0% {
+                transform: translate(0);
+            }
+            20% {
+                transform: translate(-2px, 2px);
+            }
+            40% {
+                transform: translate(-2px, -2px);
+            }
+            60% {
+                transform: translate(2px, 2px);
+            }
+            80% {
+                transform: translate(2px, -2px);
+            }
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        .recent-activities {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 500px;
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+        .activities-title {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-item {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .activity-date {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .export-btn {
+            margin-top: 15px;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .floating-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            z-index: 100;
+            transition: transform 0.3s;
+        }
+
+        .floating-button:hover {
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .tasbih-container {
+                padding: 20px;
+            }
+
+            .counter-display {
+                font-size: 4rem;
+            }
+
+            .buttons-container {
+                gap: 10px;
+            }
+
+            .main-btn {
+                padding: 12px;
+            }
+
+            .count-btn {
+                height: 70px;
+            }
+
+            .floating-button {
+                width: 50px;
+                height: 50px;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+
+        /* Loader animation */
+        .loader {
+            display: inline-block;
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 20px auto;
+        }
+        
+        .loader div {
+            position: absolute;
+            border: 4px solid var(--primary-color);
+            opacity: 1;
+            border-radius: 50%;
+            animation: loader 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+        }
+        
+        .loader div:nth-child(2) {
+            animation-delay: -0.5s;
+        }
+        
+        @keyframes loader {
+            0% {
+                top: 36px;
+                left: 36px;
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+            100% {
+                top: 0px;
+                left: 0px;
+                width: 72px;
+                height: 72px;
+                opacity: 0;
+            }
+        }
+
+        /* For sound indicator */
+        .sound-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            cursor: pointer;
+        }
     </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-   
-
-<div class="left-sidebar-ad">
-        <ins class="adsbygoogle"
-            style="display:block"
-            data-ad-client="ca-pub-1850217813586802"
-            data-ad-slot="7936248658"
-            data-ad-format="auto"
-            data-full-width-responsive="true"></ins>
-        <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-    </div>
-      
-    <label class="switch dark-mode-toggle">
-        <input type="checkbox" id="dark-mode-toggle">
-        <span class="slider"></span>
-    </label>
-
-    <div id="mySidebar" class="sidebar">
-        <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
-        <a href="index.html">
-            <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
-        </a>
-        <a href="juzz.html">
-            <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read in Juzz
-        </a>
-        <a href="audio.html">
-            <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Listen to Quran
-        </a>
-        <a href="prayer.html">
-            <lord-icon src="https://cdn.lordicon.com/tftaqjwp.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Prayer Time
-        </a>
-        <a href="donate.html">
-            <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Donate with Love
-        </a>
-    </div>
-
-    <div id="main">
-        <button class="openbtn" onclick="openNav()">&#9776; Quran Pro</button>
-    </div>
-
-   <!-- Second Ad (Right Sidebar Ad) -->
-    <div class="right-sidebar-ad">
-        <ins class="adsbygoogle"
-            style="display:block"
-            data-ad-client="ca-pub-1850217813586802"
-            data-ad-slot="8495749332"
-            data-ad-format="auto"
-            data-full-width-responsive="true"></ins>
-        <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-    </div>
-
-    <div class="tasbih-counter">
-        <div class="label label-left">Quran pro</div>
-        <div class="screen" id="countDisplay">0000</div>
-        <div class="buttons">
-            <button class="button count-button" id="countButton"></button>
-            <button class="button reset-button" id="resetButton"></button>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Digital Tasbih</h2>
+            <button class="close-sidebar" id="closeSidebar">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        <div class="label label-right">LED</div>
-    </div>
 
-    <div class="bottom-buttons">
-        <button id="saveTasbih">Save</button>
-        <button id="viewSavedTasbih">Saved Tasbih</button>
-    </div>
+        <div class="sidebar-section">
+            <h3>Preset Dhikr</h3>
+            <div class="preset-buttons">
+                <button class="preset-btn" data-name="SubhanAllah" data-target="33">SubhanAllah</button>
+                <button class="preset-btn" data-name="Alhamdulillah" data-target="33">Alhamdulillah</button>
+                <button class="preset-btn" data-name="Allahu Akbar" data-target="33">Allahu Akbar</button>
+                <button class="preset-btn" data-name="La ilaha illallah" data-target="100">La ilaha illallah</button>
+                <button class="preset-btn" data-name="Astaghfirullah" data-target="100">Astaghfirullah</button>
+                <button class="preset-btn" data-name="Salawat" data-target="100">Salawat</button>
+                <button class="preset-btn" data-name="Custom" data-target="0">Custom</button>
+            </div>
+        </div>
 
-    
+        <div class="sidebar-section">
+            <h3>Settings</h3>
+            <div class="settings-option">
+                <label for="customDhikr">Custom Dhikr Name:</label>
+                <input type="text" id="customDhikr" placeholder="Enter dhikr name">
+            </div>
+            <div class="settings-option">
+                <label for="targetCount">Target Count:</label>
+                <input type="number" id="targetCount" min="1" value="33">
+            </div>
+            <div class="settings-option">
+                <label for="vibrateOption">Vibration:</label>
+                <select id="vibrateOption">
+                    <option value="off">Off</option>
+                    <option value="light">Light</option>
+                    <option value="strong">Strong</option>
+                </select>
+            </div>
+            <div class="settings-option">
+                <label for="soundOption">Sound:</label>
+                <select id="soundOption">
+                    <option value="off">Off</option>
+                    <option value="click">Click</option>
+                    <option value="beep">Beep</option>
+                    <option value="dhikr">Dhikr Sound</option>
+                </select>
+            </div>
+            <div class="settings-option">
+                <label for="autoReset">Auto Reset:</label>
+                <select id="autoReset">
+                    <option value="off">Off</option>
+                    <option value="on">On Target Completion</option>
+                </select>
+            </div>
+        </div>
 
-    <div id="smart-notification">
-        <div class="notification-content">
-            <div class="notification-text"></div>
-            <button class="close-btn">&times;</button>
+        <div class="ad-container">
+            <p>Ad Space Available</p>
         </div>
     </div>
-</body>
 
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <div class="header">
+            <button class="menu-button" id="menuButton">
+                <i class="fas fa-bars"></i>
+            </button>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+                <span>Dark Mode</span>
+            </button>
+        </div>
 
-    <audio id="clickSound" src="https://hayatinitiative.org/wp-content/uploads/2024/07/mixkit-arcade-game-jump-coin-216.wav"></audio>
+        <div class="container">
+            <div class="tasbih-container" id="tasbihContainer">
+                <div class="sound-indicator" id="soundIndicator">
+                    <i class="fas fa-volume-mute"></i>
+                </div>
+                <h1 class="tasbih-title">Digital Tasbih</h1>
+                <div class="dhikr-name" id="dhikrName">SubhanAllah</div>
+                <div class="counter-display" id="counter">0</div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <div class="counter-stats">
+                    <div class="stat">
+                        <div class="stat-title">Target</div>
+                        <div class="stat-value" id="targetValue">33</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-title">Sets Completed</div>
+                        <div class="stat-value" id="setsValue">0</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-title">Total</div>
+                        <div class="stat-value" id="totalValue">0</div>
+                    </div>
+                </div>
+                
+                <div class="buttons-container">
+                    <button class="main-btn" id="resetBtn">
+                        <i class="fas fa-redo-alt"></i> Reset
+                    </button>
+                    <button class="main-btn" id="undoBtn">
+                        <i class="fas fa-undo"></i> Undo
+                    </button>
+                    <button class="main-btn" id="saveBtn">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                    <button class="main-btn count-btn" id="countBtn">
+                        Count
+                    </button>
+                </div>
+            </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+            <div class="recent-activities">
+                <h2 class="activities-title">Recent Activities</h2>
+                <ul class="activity-list" id="activityList">
+                    <!-- Activities will be added here dynamically -->
+                </ul>
+                <button class="export-btn" id="exportBtn">
+                    <i class="fas fa-file-export"></i> Export History
+                </button>
+            </div>
+        </div>
+
+        <div class="floating-button" id="quickCount">
+            <i class="fas fa-plus"></i>
+        </div>
+    </div>
+
     <script>
-   document.addEventListener('DOMContentLoaded', function () {
-    const countDisplay = document.getElementById('countDisplay');
-    const countButton = document.getElementById('countButton');
-    const resetButton = document.getElementById('resetButton');
-    const clickSound = document.getElementById('clickSound');
-    const saveTasbihButton = document.getElementById('saveTasbih');
-    const viewSavedTasbihButton = document.getElementById('viewSavedTasbih');
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    const smartNotification = document.getElementById('smart-notification');
-    const notificationText = smartNotification.querySelector('.notification-text');
-    const closeNotificationBtn = smartNotification.querySelector('.close-btn');
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const menuButton = document.getElementById('menuButton');
+            const closeSidebar = document.getElementById('closeSidebar');
+            const themeToggle = document.getElementById('themeToggle');
+            const countBtn = document.getElementById('countBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const undoBtn = document.getElementById('undoBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const quickCount = document.getElementById('quickCount');
+            const exportBtn = document.getElementById('exportBtn');
+            const dhikrName = document.getElementById('dhikrName');
+            const presetButtons = document.querySelectorAll('.preset-btn');
+            const customDhikrInput = document.getElementById('customDhikr');
+            const targetCountInput = document.getElementById('targetCount');
+            const soundOption = document.getElementById('soundOption');
+            const vibrateOption = document.getElementById('vibrateOption');
+            const autoResetOption = document.getElementById('autoReset');
+            const counter = document.getElementById('counter');
+            const progressBar = document.getElementById('progressBar');
+            const targetValue = document.getElementById('targetValue');
+            const setsValue = document.getElementById('setsValue');
+            const totalValue = document.getElementById('totalValue');
+            const activityList = document.getElementById('activityList');
+            const tasbihContainer = document.getElementById('tasbihContainer');
+            const soundIndicator = document.getElementById('soundIndicator');
 
-    let count = 0;
-    let isMuted = false;
+            // App state
+            let count = 0;
+            let targetCount = 33;
+            let totalCount = 0;
+            let setsCompleted = 0;
+            let countHistory = [];
+            let activities = [];
+            let currentDhikr = "SubhanAllah";
+            let isDarkMode = false;
 
-   
+            // Audio elements
+            const clickSound = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAAFOwCSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKS//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAQhAAAAAAAABTsZq0DzAAAAAAD/+xDEAAAIIANvtBAAJaRG7vZ4YgIqTrBYkNIEAIAwmCgwx0Jzw8P//y8PD/4eHh+HJ//g8PD4PD8usK/w+D+X///8Hh+Hh+oGAAAAYRhjGtZoMxBgANAWxg+gfMDLGUiOGALxQbFgFhhdgRABOGC8gRMB4CYkHZAAABHDQZ//2//X/9luzSt2QSyNw+ebpMmTJ9PTQz/mNNPIxJm7W7/Z/+xxoAAAAAA=');
+            const beepSound = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAAEbwC1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1tbW1//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAWqAAAAAAAABG+uXbfNAAAAAAD/+xDEAAAHbAN/tAAAJZfHjn8zgAA6AMAAIAAYIIKqrAYEBwgCxYkP8vOP/5znP//4f/KOf/8uQ5znOXIcQA5znP+Q5zn/IcoAALBYHg8T8eD5QA8Hg8E/Hg+UHwfD4P//B/8Hg/g+D4fB4Ph8Hg+DwfAPB8Hg+DwfB8qAeD4fB8Hg+VAKoAAAT4Pg+D5PkwfLgGQAAAAA=');
+            const dhikrSound = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAADAAAJhwDMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMz///////////////////////////////////////////////////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJANEAAAAAAAACYew4+YIAAAAAAD/+xDEAAAJcAFn9BAAKViPLP53gCIOCQwMIIBoOAIPBAMBAIfB8H4CQEgJAPgPD4Ph//8Hz//wf/lCEIQhCAuCDgQCHggGAgEDg+DwfB+AgA+D8BICQEgHwHh8Hg//8Hg+H//g//KAuC4LgAKAgGBAEAwIAQDBAdBAMIIDoGDg+AgA+A8BAIAQD4DweD4P//B4Ph//4P/yAYEAQAFAXD8P///w+f/4P/D8P//3/h//+D59AKAAAAGDh+Hz6AYDAYDAZg4fh8+gGA==');
 
-    function showNotification(message, duration = 3000) {
-        notificationText.textContent = message;
-        smartNotification.classList.add('show');
-        setTimeout(() => {
-            smartNotification.classList.remove('show');
-        }, duration);
-    }
+            // Initialize
+            loadSettings();
+            updateDisplay();
+            renderActivities();
 
-    closeNotificationBtn.addEventListener('click', () => {
-        smartNotification.classList.remove('show');
-    });
+            // Event Listeners
+            menuButton.addEventListener('click', toggleSidebar);
+            closeSidebar.addEventListener('click', closeSidebarMenu);
+            themeToggle.addEventListener('click', toggleTheme);
+            countBtn.addEventListener('click', incrementCount);
+            resetBtn.addEventListener('click', resetCounter);
+            undoBtn.addEventListener('click', undoCount);
+            saveBtn.addEventListener('click', saveSession);
+            quickCount.addEventListener('click', incrementCount);
+            exportBtn.addEventListener('click', exportHistory);
+            soundIndicator.addEventListener('click', toggleSound);
 
-    countButton.addEventListener('click', () => {
-        count++;
-        countDisplay.textContent = count.toString().padStart(4, '0');
-        if (!isMuted) {
-            clickSound.play();
-        }
-        if (count % 33 === 0) {
-            showNotification(`You've reached ${count} counts!`);
-        }
-    });
+            presetButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const name = button.getAttribute('data-name');
+                    const target = parseInt(button.getAttribute('data-target'));
+                    
+                    if (name === 'Custom') {
+                        currentDhikr = customDhikrInput.value || 'Custom Dhikr';
+                        targetCount = parseInt(targetCountInput.value) || 33;
+                    } else {
+                        currentDhikr = name;
+                        targetCount = target;
+                        targetCountInput.value = target;
+                    }
+                    
+                    resetCounter();
+                    updateDisplay();
+                    saveSettings();
+                    closeSidebarMenu();
+                });
+            });
 
-    resetButton.addEventListener('click', () => {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "Do you want to reset the count?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, reset it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                count = 0;
-                countDisplay.textContent = count.toString().padStart(4, '0');
-                showNotification('Tasbih count has been reset.');
+            customDhikrInput.addEventListener('input', () => {
+                if (currentDhikr === 'Custom Dhikr' || currentDhikr === 'Custom') {
+                    currentDhikr = customDhikrInput.value || 'Custom Dhikr';
+                    dhikrName.textContent = currentDhikr;
+                    saveSettings();
+                }
+            });
+
+            targetCountInput.addEventListener('change', () => {
+                targetCount = parseInt(targetCountInput.value) || 33;
+                targetValue.textContent = targetCount;
+                updateProgressBar();
+                saveSettings();
+            });
+
+            soundOption.addEventListener('change', saveSettings);
+            vibrateOption.addEventListener('change', saveSettings);
+            autoResetOption.addEventListener('change', saveSettings);
+
+            // Functions
+            function toggleSidebar() {
+                sidebar.classList.toggle('open');
+                mainContent.classList.toggle('sidebar-open');
             }
+
+            function closeSidebarMenu() {
+                sidebar.classList.remove('open');
+                mainContent.classList.remove('sidebar-open');
+            }
+
+            function toggleTheme() {
+                isDarkMode = !isDarkMode;
+                document.body.classList.toggle('dark-mode', isDarkMode);
+                
+                const icon = themeToggle.querySelector('i');
+                const text = themeToggle.querySelector('span');
+                
+                if (isDarkMode) {
+                    icon.className = 'fas fa-sun';
+                    text.textContent = 'Light Mode';
+                } else {
+                    icon.className = 'fas fa-moon';
+                    text.textContent = 'Dark Mode';
+                }
+                
+                saveSettings();
+            }
+
+            function toggleSound() {
+                const nextOption = {
+                    'off': 'click',
+                    'click': 'beep',
+                    'beep': 'dhikr',
+                    'dhikr': 'off'
+                };
+                
+                soundOption.value = nextOption[soundOption.value];
+                updateSoundIndicator();
+                saveSettings();
+            }
+
+            function updateSoundIndicator() {
+                const icon = soundIndicator.querySelector('i');
+                
+                switch(soundOption.value) {
+                    case 'off':
+                        icon.className = 'fas fa-volume-mute';
+                        break;
+                    case 'click':
+                        icon.className = 'fas fa-volume-down';
+                        break;case 'beep':
+                        icon.className = 'fas fa-volume-up';
+                        break;
+                    case 'dhikr':
+                        icon.className = 'fas fa-pray';
+                        break;
+                }
+            }
+
+            function incrementCount(event) {
+                // Add ripple effect if click event exists
+                if (event && event.type === 'click') {
+                    createRipple(event);
+                }
+                
+                count++;
+                totalCount++;
+                countHistory.push({
+                    dhikr: currentDhikr,
+                    timestamp: new Date().toISOString()
+                });
+                
+                // Play sound based on setting
+                playSound();
+                
+                // Vibrate based on setting
+                vibrate();
+                
+                // Check if target is reached
+                if (count >= targetCount) {
+                    setsCompleted++;
+                    addActivity(`Completed ${targetCount} ${currentDhikr}`);
+                    
+                    // Auto reset if enabled
+                    if (autoResetOption.value === 'on') {
+                        count = 0;
+                    }
+                }
+                
+                updateDisplay();
+                saveSettings();
+            }
+
+            function resetCounter() {
+                if (count > 0) {
+                    addActivity(`Reset counter at ${count} of ${currentDhikr}`);
+                }
+                count = 0;
+                updateDisplay();
+                saveSettings();
+            }
+
+            function undoCount() {
+                if (count > 0) {
+                    count--;
+                    totalCount--;
+                    countHistory.pop();
+                    updateDisplay();
+                    saveSettings();
+                } else {
+                    tasbihContainer.classList.add('vibrate');
+                    setTimeout(() => {
+                        tasbihContainer.classList.remove('vibrate');
+                    }, 300);
+                }
+            }
+
+            function createRipple(event) {
+                const button = event.currentTarget;
+                const rect = button.getBoundingClientRect();
+                
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                ripple.style.top = `${y}px`;
+                ripple.style.left = `${x}px`;
+                
+                button.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            }
+
+            function updateDisplay() {
+                counter.textContent = count;
+                targetValue.textContent = targetCount;
+                setsValue.textContent = setsCompleted;
+                totalValue.textContent = totalCount;
+                dhikrName.textContent = currentDhikr;
+                updateProgressBar();
+                updateSoundIndicator();
+            }
+
+            function updateProgressBar() {
+                const percentage = (count / targetCount) * 100;
+                progressBar.style.width = `${Math.min(100, percentage)}%`;
+            }
+
+            function playSound() {
+                switch(soundOption.value) {
+                    case 'click':
+                        clickSound.currentTime = 0;
+                        clickSound.play().catch(e => console.log('Error playing sound:', e));
+                        break;
+                    case 'beep':
+                        beepSound.currentTime = 0;
+                        beepSound.play().catch(e => console.log('Error playing sound:', e));
+                        break;
+                    case 'dhikr':
+                        dhikrSound.currentTime = 0;
+                        dhikrSound.play().catch(e => console.log('Error playing sound:', e));
+                        break;
+                }
+            }
+
+            function vibrate() {
+                if ('vibrate' in navigator) {
+                    switch(vibrateOption.value) {
+                        case 'light':
+                            navigator.vibrate(20);
+                            break;
+                        case 'strong':
+                            navigator.vibrate(50);
+                            break;
+                    }
+                }
+            }
+
+            function saveSession() {
+                if (count > 0 || setsCompleted > 0) {
+                    addActivity(`Saved session: ${currentDhikr} - ${count} count(s), ${setsCompleted} set(s)`);
+                    saveSettings();
+                    
+                    // Display confirmation animation
+                    const saveAnimation = document.createElement('div');
+                    saveAnimation.innerHTML = '<i class="fas fa-check" style="color: var(--secondary-color); font-size: 2rem;"></i>';
+                    saveAnimation.style.position = 'absolute';
+                    saveAnimation.style.top = '50%';
+                    saveAnimation.style.left = '50%';
+                    saveAnimation.style.transform = 'translate(-50%, -50%)';
+                    saveAnimation.style.background = 'rgba(0, 0, 0, 0.7)';
+                    saveAnimation.style.borderRadius = '50%';
+                    saveAnimation.style.width = '80px';
+                    saveAnimation.style.height = '80px';
+                    saveAnimation.style.display = 'flex';
+                    saveAnimation.style.justifyContent = 'center';
+                    saveAnimation.style.alignItems = 'center';
+                    saveAnimation.style.zIndex = '1000';
+                    
+                    tasbihContainer.appendChild(saveAnimation);
+                    
+                    setTimeout(() => {
+                        saveAnimation.remove();
+                    }, 1000);
+                }
+            }
+
+            function addActivity(description) {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString();
+                const dateStr = now.toLocaleDateString();
+                
+                activities.unshift({
+                    description,
+                    time: timeStr,
+                    date: dateStr,
+                    timestamp: now.getTime()
+                });
+                
+                // Limit to last 10 activities
+                if (activities.length > 10) {
+                    activities.pop();
+                }
+                
+                renderActivities();
+                saveSettings();
+            }
+
+            function renderActivities() {
+                activityList.innerHTML = '';
+                
+                if (activities.length === 0) {
+                    const emptyItem = document.createElement('li');
+                    emptyItem.className = 'activity-item';
+                    emptyItem.textContent = 'No recent activity';
+                    activityList.appendChild(emptyItem);
+                    return;
+                }
+                
+                activities.forEach(activity => {
+                    const item = document.createElement('li');
+                    item.className = 'activity-item';
+                    
+                    const desc = document.createElement('div');
+                    desc.textContent = activity.description;
+                    
+                    const time = document.createElement('div');
+                    time.className = 'activity-date';
+                    time.textContent = `${activity.time} • ${activity.date}`;
+                    
+                    item.appendChild(desc);
+                    item.appendChild(time);
+                    activityList.appendChild(item);
+                });
+            }
+
+            function exportHistory() {
+                // Create CSV content
+                let csvContent = "data:text/csv;charset=utf-8,";
+                csvContent += "Date,Time,Description\n";
+                
+                activities.forEach(activity => {
+                    csvContent += `${activity.date},${activity.time},"${activity.description}"\n`;
+                });
+                
+                // Create download link
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement('a');
+                link.setAttribute('href', encodedUri);
+                link.setAttribute('download', `tasbih_history_${new Date().toISOString().slice(0,10)}.csv`);
+                document.body.appendChild(link);
+                
+                // Trigger download
+                link.click();
+                document.body.removeChild(link);
+                
+                // Show notification
+                const notification = document.createElement('div');
+                notification.textContent = 'Export successful!';
+                notification.style.position = 'fixed';
+                notification.style.bottom = '20px';
+                notification.style.left = '50%';
+                notification.style.transform = 'translateX(-50%)';
+                notification.style.background = 'var(--primary-gradient)';
+                notification.style.color = 'white';
+                notification.style.padding = '10px 20px';
+                notification.style.borderRadius = '20px';
+                notification.style.zIndex = '1000';
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    notification.style.transition = 'opacity 0.5s';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 500);
+                }, 2000);
+            }
+
+            function saveSettings() {
+                const settings = {
+                    count,
+                    targetCount,
+                    totalCount,
+                    setsCompleted,
+                    countHistory,
+                    activities,
+                    currentDhikr,
+                    soundSetting: soundOption.value,
+                    vibrateSetting: vibrateOption.value,
+                    autoResetSetting: autoResetOption.value,
+                    isDarkMode
+                };
+                
+                localStorage.setItem('tasbihSettings', JSON.stringify(settings));
+            }
+
+            function loadSettings() {
+                const savedSettings = localStorage.getItem('tasbihSettings');
+                
+                if (savedSettings) {
+                    const settings = JSON.parse(savedSettings);
+                    
+                    count = settings.count || 0;
+                    targetCount = settings.targetCount || 33;
+                    totalCount = settings.totalCount || 0;
+                    setsCompleted = settings.setsCompleted || 0;
+                    countHistory = settings.countHistory || [];
+                    activities = settings.activities || [];
+                    currentDhikr = settings.currentDhikr || 'SubhanAllah';
+                    
+                    // Update form inputs
+                    targetCountInput.value = targetCount;
+                    soundOption.value = settings.soundSetting || 'off';
+                    vibrateOption.value = settings.vibrateSetting || 'off';
+                    autoResetOption.value = settings.autoResetSetting || 'off';
+                    
+                    // Set dark mode if saved
+                    isDarkMode = settings.isDarkMode || false;
+                    if (isDarkMode) {
+                        document.body.classList.add('dark-mode');
+                        themeToggle.querySelector('i').className = 'fas fa-sun';
+                        themeToggle.querySelector('span').textContent = 'Light Mode';
+                    }
+                }
+            }
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(event) {
+                // Space bar to count
+                if (event.code === 'Space') {
+                    incrementCount();
+                    event.preventDefault();
+                }
+                // R key to reset
+                else if (event.code === 'KeyR') {
+                    resetCounter();
+                }
+                // Z key to undo
+                else if (event.code === 'KeyZ') {
+                    undoCount();
+                }
+                // S key to save
+                else if (event.code === 'KeyS') {
+                    saveSession();
+                }
+            });
+
+            // Touch swipe functionality
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            document.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, false);
+            
+            document.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, false);
+            
+            function handleSwipe() {
+                if (touchEndX < touchStartX - 100) {
+                    // Swipe left - open sidebar
+                    sidebar.classList.add('open');
+                    mainContent.classList.add('sidebar-open');
+                }
+                if (touchEndX > touchStartX + 100 && sidebar.classList.contains('open')) {
+                    // Swipe right - close sidebar
+                    sidebar.classList.remove('open');
+                    mainContent.classList.remove('sidebar-open');
+                }
+            }
+
+            // Add shake to count feature
+            let shakeThreshold = 15;
+            let lastX = 0, lastY = 0, lastZ = 0;
+            let lastUpdate = 0;
+            let shakeTimeout = null;
+            
+            window.addEventListener('devicemotion', function(event) {
+                const currentTime = new Date().getTime();
+                if ((currentTime - lastUpdate) > 100) {
+                    const diffTime = currentTime - lastUpdate;
+                    lastUpdate = currentTime;
+                    
+                    const acceleration = event.accelerationIncludingGravity;
+                    
+                    const x = acceleration.x;
+                    const y = acceleration.y;
+                    const z = acceleration.z;
+                    
+                    const speed = Math.abs(x + y + z - lastX - lastY - lastZ) / diffTime * 10000;
+                    
+                    if (speed > shakeThreshold) {
+                        // Prevent multiple counts from a single shake
+                        if (!shakeTimeout) {
+                            incrementCount();
+                            shakeTimeout = setTimeout(() => {
+                                shakeTimeout = null;
+                            }, 1000);
+                        }
+                    }
+                    
+                    lastX = x;
+                    lastY = y;
+                    lastZ = z;
+                }
+            }, false);
         });
-    });
-
-    saveTasbihButton.addEventListener('click', () => {
-        if (count === 0) {
-            Swal.fire({
-                title: 'Cannot Save',
-                text: 'Please count at least once before saving.',
-                icon: 'warning',
-                confirmButtonText: 'OK'
-            });
-        } else {
-            const savedCounts = JSON.parse(localStorage.getItem('savedTasbihCounts')) || [];
-            savedCounts.push(count);
-            localStorage.setItem('savedTasbihCounts', JSON.stringify(savedCounts));
-            showNotification(`Tasbih count ${count} has been saved.`);
-        }
-    });
-
-    viewSavedTasbihButton.addEventListener('click', () => {
-        const savedCounts = JSON.parse(localStorage.getItem('savedTasbihCounts')) || [];
-        Swal.fire({
-            title: 'Saved Tasbih Counts',
-            text: savedCounts.length > 0 ? savedCounts.join(', ') : 'No counts saved.',
-            icon: 'info',
-            confirmButtonText: 'OK'
-        });
-    });
-
-    darkModeToggle.addEventListener('change', () => {
-        document.body.classList.toggle('dark-mode');
-        const mode = document.body.classList.contains('dark-mode') ? 'Dark' : 'Light';
-        showNotification(`${mode} mode activated.`);
-    });
-
-    // Sidebar functionality
-    function openNav() {
-        document.getElementById("mySidebar").style.left = "0";
-        document.getElementById("main").style.marginLeft = "250px";
-    }
-
-    function closeNav() {
-        document.getElementById("mySidebar").style.left = "-250px";
-        document.getElementById("main").style.marginLeft = "0";
-    }
-
-    // Event listener for close button
-    document.getElementById("closeSidebarBtn").addEventListener("click", closeNav);
-
-    // Event listener for open button
-    document.querySelector(".openbtn").addEventListener("click", openNav);
-
-    // Function to load header and footer
-    function loadHeaderFooter() {
-        const header = document.querySelector('header');
-        const footer = document.querySelector('footer');
-
-        fetch('header.html')
-            .then(response => response.text())
-            .then(data => {
-                header.innerHTML = data;
-                // Add event listeners for the sidebar after loading the header
-                document.querySelector(".openbtn").addEventListener("click", openNav);
-                document.querySelector(".closebtn").addEventListener("click", closeNav);
-            });
-
-        fetch('footer.html')
-            .then(response => response.text())
-            .then(data => {
-                footer.innerHTML = data;
-            });
-    }
-
-    // Call the function to load header and footer
-    loadHeaderFooter();
-});
     </script>
 </body>
 </html>
