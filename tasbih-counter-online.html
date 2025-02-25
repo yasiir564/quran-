@@ -6,530 +6,616 @@
     <title>Digital Tasbih - Prayer Counter</title>
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #6e45e2 0%, #88d3ce 100%);
-            --primary-color: #6e45e2;
-            --secondary-color: #88d3ce;
-            --text-color: #333;
-            --bg-color: #f9f9f9;
-            --card-bg: white;
-            --shadow-color: rgba(0, 0, 0, 0.1);
-            --button-hover: #5a36c9;
-            --sidebar-width: 250px;
-        }
-
-        .dark-mode {
-            --primary-gradient: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
-            --primary-color: #8b5cf6;
-            --secondary-color: #3b82f6;
-            --text-color: #e0e0e0;
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --shadow-color: rgba(0, 0, 0, 0.5);
-            --button-hover: #7c4dff;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            min-height: 100vh;
-            display: flex;
-            overflow-x: hidden;
-        }
-
-        .sidebar {
-            width: var(--sidebar-width);
-            background: var(--card-bg);
-            box-shadow: 2px 0 10px var(--shadow-color);
-            padding: 20px;
-            position: fixed;
-            height: 100%;
-            left: -250px;
-            top: 0;
-            z-index: 999;
-            transition: left 0.3s ease;
-        }
-
-        .sidebar.open {
-            left: 0;
-        }
-
-        .sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .sidebar h2 {
-            font-size: 1.5rem;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .close-sidebar {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text-color);
-        }
-
-        .sidebar-section {
-            margin-bottom: 20px;
-        }
-
-        .sidebar-section h3 {
-            margin-bottom: 10px;
-            font-size: 1rem;
-        }
-
-        .preset-buttons {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
-
-        .preset-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--primary-color);
-            color: var(--text-color);
-            padding: 5px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .preset-btn:hover {
-            background: var(--primary-gradient);
-            color: white;
-        }
-
-        .settings-option {
-            margin-bottom: 15px;
-        }
-
-        .settings-option label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .settings-option input,
-        .settings-option select {
-            width: 100%;
-            padding: 8px;
-            border-radius: 5px;
-            border: 1px solid var(--secondary-color);
-            background-color: var(--card-bg);
-            color: var(--text-color);
-        }
-
-        .ad-container {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 10px;
-            margin-top: 20px;
-            text-align: center;
-            border: 1px dashed var(--secondary-color);
-        }
-
-        .ad-container p {
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-
-        .main-content {
-            flex: 1;
-            margin-left: 0;
-            transition: margin-left 0.3s ease;
-            width: 100%;
-        }
-
-        .sidebar-open .main-content {
-            margin-left: var(--sidebar-width);
-        }
-
-        .header {
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .menu-button {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text-color);
-        }
-
-        .theme-toggle {
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            border-radius: 20px;
-            padding: 8px 15px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.9rem;
-        }
-
-        .theme-toggle:hover {
-            opacity: 0.9;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .tasbih-container {
-            background-color: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px var(--shadow-color);
-            padding: 30px;
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .tasbih-container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: var(--primary-gradient);
-            opacity: 0.05;
-            border-radius: 40%;
-            transform: rotate(30deg);
-            z-index: 0;
-        }
-
-        .tasbih-title {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .counter-display {
-            font-size: 5rem;
-            font-weight: bold;
-            margin: 30px 0;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            position: relative;
-            z-index: 1;
-        }
-
-        .dhikr-name {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .progress-container {
-            width: 100%;
-            height: 10px;
-            background-color: rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .progress-bar {
-            height: 100%;
-            border-radius: 5px;
-            background: var(--primary-gradient);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .counter-stats {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .stat {
-            text-align: center;
-            flex: 1;
-        }
-
-        .stat-title {
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-
-        .stat-value {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .buttons-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .main-btn {
-            padding: 15px;
-            border-radius: 15px;
-            border: none;
-            background: var(--primary-gradient);
-            color: white;
-            font-size: 1rem;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transition: transform 0.1s, box-shadow 0.1s;
-        }
-
-        .main-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-        }
-
-        .main-btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .count-btn {
-            grid-column: span 3;
-            height: 80px;
-            font-size: 1.5rem;
-            border-radius: 20px;
-        }
-
-        .count-btn:active {
-            animation: pulse 0.3s ease;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(0.98);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.4);
-            transform: scale(0);
-            animation: ripple 0.6s linear;
-            pointer-events: none;
-        }
-
-        @keyframes ripple {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-
-        .vibrate {
-            animation: vibrate 0.3s linear;
-        }
-
-        @keyframes vibrate {
-            0% {
-                transform: translate(0);
-            }
-            20% {
-                transform: translate(-2px, 2px);
-            }
-            40% {
-                transform: translate(-2px, -2px);
-            }
-            60% {
-                transform: translate(2px, 2px);
-            }
-            80% {
-                transform: translate(2px, -2px);
-            }
-            100% {
-                transform: translate(0);
-            }
-        }
-
-        .recent-activities {
-            margin-top: 30px;
-            width: 100%;
-            max-width: 500px;
-            background-color: var(--card-bg);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 10px 30px var(--shadow-color);
-        }
-
-        .activities-title {
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-        }
-
-        .activity-list {
-            list-style: none;
-        }
-
-        .activity-item {
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .activity-date {
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-
-        .export-btn {
-            margin-top: 15px;
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .floating-button {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: var(--primary-gradient);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            z-index: 100;
-            transition: transform 0.3s;
-        }
-
-        .floating-button:hover {
-            transform: scale(1.1);
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-
-            .tasbih-container {
-                padding: 20px;
-            }
-
-            .counter-display {
-                font-size: 4rem;
-            }
-
-            .buttons-container {
-                gap: 10px;
-            }
-
-            .main-btn {
-                padding: 12px;
-            }
-
-            .count-btn {
-                height: 70px;
-            }
-
-            .floating-button {
-                width: 50px;
-                height: 50px;
-                bottom: 20px;
-                right: 20px;
-            }
-        }
-
-        /* Loader animation */
-        .loader {
-            display: inline-block;
-            position: relative;
-            width: 80px;
-            height: 80px;
-            margin: 20px auto;
-        }
-        
-        .loader div {
-            position: absolute;
-            border: 4px solid var(--primary-color);
-            opacity: 1;
-            border-radius: 50%;
-            animation: loader 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
-        }
-        
-        .loader div:nth-child(2) {
-            animation-delay: -0.5s;
-        }
-        
-        @keyframes loader {
-            0% {
-                top: 36px;
-                left: 36px;
-                width: 0;
-                height: 0;
-                opacity: 1;
-            }
-            100% {
-                top: 0px;
-                left: 0px;
-                width: 72px;
-                height: 72px;
-                opacity: 0;
-            }
-        }
-
-        /* For sound indicator */
-        .sound-indicator {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.2rem;
-            opacity: 0.7;
-            cursor: pointer;
-        }
+    --primary-gradient: linear-gradient(135deg, #6e45e2 0%, #88d3ce 100%);
+    --primary-color: #6e45e2;
+    --secondary-color: #88d3ce;
+    --text-color: #333;
+    --bg-color: #f9f9f9;
+    --card-bg: white;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --button-hover: #5a36c9;
+    --sidebar-width: 250px;
+    --counter-bg: #00ff7f;
+    --counter-text: #000;
+}
+
+.dark-mode {
+    --primary-gradient: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+    --primary-color: #8b5cf6;
+    --secondary-color: #3b82f6;
+    --text-color: #e0e0e0;
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+    --button-hover: #7c4dff;
+    --counter-bg: #00aa55;
+    --counter-text: #000;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    overflow-x: hidden;
+}
+
+/* Sidebar Styles - Improved Responsiveness */
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--card-bg);
+    box-shadow: 2px 0 10px var(--shadow-color);
+    padding: 20px;
+    position: fixed;
+    height: 100%;
+    left: -280px; /* Move it further off screen */
+    top: 0;
+    z-index: 999;
+    transition: left 0.3s ease;
+    overflow-y: auto; /* Allow scrolling for smaller screens */
+}
+
+.sidebar.open {
+    left: 0;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.sidebar h2 {
+    font-size: 1.5rem;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.close-sidebar {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.sidebar-section {
+    margin-bottom: 20px;
+}
+
+.sidebar-section h3 {
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+.preset-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns for smaller screens */
+    gap: 8px;
+}
+
+.preset-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--primary-color);
+    color: var(--text-color);
+    padding: 8px 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.preset-btn:hover {
+    background: var(--primary-gradient);
+    color: white;
+}
+
+.settings-option {
+    margin-bottom: 15px;
+}
+
+.settings-option label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.settings-option input,
+.settings-option select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid var(--secondary-color);
+    background-color: var(--card-bg);
+    color: var(--text-color);
+}
+
+.ad-container {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 20px;
+    text-align: center;
+    border: 1px dashed var(--secondary-color);
+}
+
+.ad-container p {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+    width: 100%;
+}
+
+.sidebar-open .main-content {
+    margin-left: var(--sidebar-width);
+}
+
+.header {
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--card-bg);
+    box-shadow: 0 2px 10px var(--shadow-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.menu-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.theme-toggle {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9rem;
+}
+
+.theme-toggle:hover {
+    opacity: 0.9;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Digital Counter Styles */
+.tasbih-container {
+    background-color: #000; /* Black background as in the image */
+    border-radius: 40px; /* Rounded like the device in image */
+    box-shadow: 0 10px 30px var(--shadow-color);
+    padding: 30px;
+    width: 100%;
+    max-width: 350px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border: 3px solid #111;
+}
+
+.tasbih-title {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+    color: white;
+}
+
+.counter-display-container {
+    background-color: var(--counter-bg);
+    border-radius: 8px;
+    padding: 5px;
+    margin: 15px auto;
+    max-width: 220px;
+    border: 2px solid rgba(0, 0, 0, 0.3);
+}
+
+.counter-display {
+    font-family: 'Digital-7', 'LCD', monospace;
+    font-size: 5rem;
+    font-weight: bold;
+    color: var(--counter-text);
+    position: relative;
+    z-index: 1;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    margin: 0;
+    padding: 5px;
+}
+
+.dhikr-name {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+    color: white;
+}
+
+.control-button {
+    width: 30px;
+    height: 30px;
+    background-color: #ccc;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 5px 10px;
+    cursor: pointer;
+    border: 2px solid #999;
+}
+
+.main-button {
+    width: 80px;
+    height: 80px;
+    background-color: #ddd;
+    border-radius: 50%;
+    margin: 15px auto;
+    cursor: pointer;
+    border: 4px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.progress-container {
+    width: 100%;
+    height: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 5px;
+    background: var(--primary-gradient);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.counter-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+    color: white;
+}
+
+.stat {
+    text-align: center;
+    flex: 1;
+}
+
+.stat-title {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--secondary-color);
+}
+
+.buttons-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.main-btn {
+    padding: 15px;
+    border-radius: 15px;
+    border: none;
+    background: var(--primary-gradient);
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.main-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.main-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.count-btn {
+    grid-column: span 3;
+    height: 80px;
+    font-size: 1.5rem;
+    border-radius: 20px;
+}
+
+.count-btn:active {
+    animation: pulse 0.3s ease;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.98);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.4);
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    pointer-events: none;
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+.vibrate {
+    animation: vibrate 0.3s linear;
+}
+
+@keyframes vibrate {
+    0% {
+        transform: translate(0);
+    }
+    20% {
+        transform: translate(-2px, 2px);
+    }
+    40% {
+        transform: translate(-2px, -2px);
+    }
+    60% {
+        transform: translate(2px, 2px);
+    }
+    80% {
+        transform: translate(2px, -2px);
+    }
+    100% {
+        transform: translate(0);
+    }
+}
+
+.recent-activities {
+    margin-top: 30px;
+    width: 100%;
+    max-width: 500px;
+    background-color: var(--card-bg);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 30px var(--shadow-color);
+}
+
+.activities-title {
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.activity-list {
+    list-style: none;
+}
+
+.activity-item {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+    display: flex;
+    justify-content: space-between;
+}
+
+.activity-date {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.export-btn {
+    margin-top: 15px;
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.floating-button {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--primary-gradient);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    z-index: 100;
+    transition: transform 0.3s;
+}
+
+.floating-button:hover {
+    transform: scale(1.1);
+}
+
+/* Sound indicator */
+.sound-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2rem;
+    color: white;
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+/* Responsive styles */
+@media (min-width: 769px) {
+    .preset-buttons {
+        grid-template-columns: repeat(3, 1fr); /* 3 columns for larger screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    .tasbih-container {
+        padding: 20px;
+        border-radius: 30px;
+    }
+
+    .counter-display {
+        font-size: 4rem;
+    }
+
+    .buttons-container {
+        gap: 10px;
+    }
+
+    .main-btn {
+        padding: 12px;
+    }
+
+    .count-btn {
+        height: 70px;
+    }
+
+    .floating-button {
+        width: 50px;
+        height: 50px;
+        bottom: 20px;
+        right: 20px;
+    }
+    
+    /* Prevent sidebar from pushing content when open on mobile */
+    .sidebar-open .main-content {
+        margin-left: 0;
+        opacity: 0.6; /* Dim the main content when sidebar is open */
+    }
+}
+
+@media (max-width: 480px) {
+    .tasbih-container {
+        padding: 15px;
+    }
+    
+    .counter-display {
+        font-size: 3.5rem;
+    }
+    
+    .counter-stats {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .buttons-container {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .count-btn {
+        grid-column: span 2;
+    }
+}
+
+/* Loader animation */
+.loader {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 20px auto;
+}
+
+.loader div {
+    position: absolute;
+    border: 4px solid var(--primary-color);
+    opacity: 1;
+    border-radius: 50%;
+    animation: loader 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+.loader div:nth-child(2) {
+    animation-delay: -0.5s;
+}
+
+@keyframes loader {
+    0% {
+        top: 36px;
+        left: 36px;
+        width: 0;
+        height: 0;
+        opacity: 1;
+    }
+    100% {
+        top: 0px;
+        left: 0px;
+        width: 72px;
+        height: 72px;
+        opacity: 0;
+    }
+}
+
+/* Add a font for the digital display */
+@font-face {
+    font-family: 'Digital-7';
+    src: url('https://cdnjs.cloudflare.com/ajax/libs/digital-7-font/1.0.0/digital-7.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
     </style>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -610,49 +696,52 @@
             </button>
         </div>
 
-        <div class="container">
-            <div class="tasbih-container" id="tasbihContainer">
-                <div class="sound-indicator" id="soundIndicator">
-                    <i class="fas fa-volume-mute"></i>
-                </div>
-                <h1 class="tasbih-title">Digital Tasbih</h1>
-                <div class="dhikr-name" id="dhikrName">SubhanAllah</div>
-                <div class="counter-display" id="counter">0</div>
-                
-                <div class="progress-container">
-                    <div class="progress-bar" id="progressBar"></div>
-                </div>
-                
-                <div class="counter-stats">
-                    <div class="stat">
-                        <div class="stat-title">Target</div>
-                        <div class="stat-value" id="targetValue">33</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-title">Sets Completed</div>
-                        <div class="stat-value" id="setsValue">0</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-title">Total</div>
-                        <div class="stat-value" id="totalValue">0</div>
-                    </div>
-                </div>
-                
-                <div class="buttons-container">
-                    <button class="main-btn" id="resetBtn">
-                        <i class="fas fa-redo-alt"></i> Reset
-                    </button>
-                    <button class="main-btn" id="undoBtn">
-                        <i class="fas fa-undo"></i> Undo
-                    </button>
-                    <button class="main-btn" id="saveBtn">
-                        <i class="fas fa-save"></i> Save
-                    </button>
-                    <button class="main-btn count-btn" id="countBtn">
-                        Count
-                    </button>
-                </div>
-            </div>
+       <!-- Update this section in the HTML file -->
+<div class="tasbih-container" id="tasbihContainer">
+    <div class="sound-indicator" id="soundIndicator">
+        <i class="fas fa-volume-mute"></i>
+    </div>
+    <h1 class="tasbih-title">Digital Tasbih</h1>
+    <div class="dhikr-name" id="dhikrName">SubhanAllah</div>
+    
+    <div class="counter-display-container">
+        <div class="counter-display" id="counter">0</div>
+    </div>
+    
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+    
+    <div class="counter-stats">
+        <div class="stat">
+            <div class="stat-title">Target</div>
+            <div class="stat-value" id="targetValue">33</div>
+        </div>
+        <div class="stat">
+            <div class="stat-title">Sets Completed</div>
+            <div class="stat-value" id="setsValue">0</div>
+        </div>
+        <div class="stat">
+            <div class="stat-title">Total</div>
+            <div class="stat-value" id="totalValue">0</div>
+        </div>
+    </div>
+    
+    <div class="buttons-container">
+        <button class="main-btn" id="resetBtn">
+            <i class="fas fa-redo-alt"></i> Reset
+        </button>
+        <button class="main-btn" id="undoBtn">
+            <i class="fas fa-undo"></i> Undo
+        </button>
+        <button class="main-btn" id="saveBtn">
+            <i class="fas fa-save"></i> Save
+        </button>
+        <button class="main-btn count-btn" id="countBtn">
+            Count
+        </button>
+    </div>
+</div>
 
             <div class="recent-activities">
                 <h2 class="activities-title">Recent Activities</h2>
