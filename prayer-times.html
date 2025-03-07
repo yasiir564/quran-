@@ -218,8 +218,8 @@
     </footer>
 
     <script>
-      // Adhan.js-inspired prayer times calculation
-// Accurate prayer times calculation with proper location handling and error management
+     // Prayer times application using API instead of manual calculations
+// This code fetches accurate prayer times from an API and provides a clean UI
 
 // Prayer names in Arabic
 const prayerNamesArabic = {
@@ -261,338 +261,113 @@ const prayerColors = {
     Isha: ['#6366f1', '#4338ca']
 };
 
-// ======================== ACCURATE CALCULATION FUNCTIONS ======================== //
-
-// Main calculation constants
+// Available calculation methods
 const METHODS = {
-    MWL: { fajrAngle: 18, ishaAngle: 17, name: 'Muslim World League' },
-    ISNA: { fajrAngle: 15, ishaAngle: 15, name: 'Islamic Society of North America' },
-    EGYPT: { fajrAngle: 19.5, ishaAngle: 17.5, name: 'Egyptian General Authority of Survey' },
-    MAKKAH: { fajrAngle: 18.5, ishaIsMinutes: true, ishaValue: 90, name: 'Umm al-Qura University, Makkah' },
-    KARACHI: { fajrAngle: 18, ishaAngle: 18, name: 'University of Islamic Sciences, Karachi' },
-    TEHRAN: { fajrAngle: 17.7, ishaAngle: 14, name: 'Institute of Geophysics, Tehran University' },
-    GULF: { fajrAngle: 19.5, ishaIsMinutes: true, ishaValue: 90, name: 'Gulf Region' }
+    MWL: { id: 3, name: 'Muslim World League' },
+    ISNA: { id: 2, name: 'Islamic Society of North America' },
+    EGYPT: { id: 5, name: 'Egyptian General Authority of Survey' },
+    MAKKAH: { id: 4, name: 'Umm al-Qura University, Makkah' },
+    KARACHI: { id: 1, name: 'University of Islamic Sciences, Karachi' },
+    TEHRAN: { id: 7, name: 'Institute of Geophysics, Tehran University' },
+    GULF: { id: 8, name: 'Gulf Region' }
 };
 
-// Default calculation method
+// Default settings
 let CALCULATION_METHOD = METHODS.MWL;
-
-// Default Asr calculation method - 1 for Shafi'i, 2 for Hanafi
-let ASR_SHADOW_FACTOR = 1;
+let ASR_JURISTIC_METHOD = 0; // 0 for Shafi'i, 1 for Hanafi
 
 // Global variable to store the countdown timer
 let countdownTimer = null;
 
-// Utility functions for degree/radian conversion
-function toRadians(degrees) {
-    return degrees * (Math.PI / 180);
-}
+// Current position
+let currentPosition = {
+    latitude: null,
+    longitude: null
+};
 
-function toDegrees(radians) {
-    return radians * (180 / Math.PI);
-}
+// ======================== API INTEGRATION ======================== //
 
-// Calculate Julian date for a given date
-function getJulianDate(date) {
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    
-    let adjustedYear = year;
-    let adjustedMonth = month;
-    
-    if (month <= 2) {
-        adjustedYear -= 1;
-        adjustedMonth += 12;
-    }
-    
-    const A = Math.floor(adjustedYear / 100);
-    const B = 2 - A + Math.floor(A / 4);
-    
-    return Math.floor(365.25 * (adjustedYear + 4716)) + 
-           Math.floor(30.6001 * (adjustedMonth + 1)) + 
-           day + B - 1524.5;
-}
-
-// Calculate sun declination for a given Julian date
-function getSunDeclination(julianDate) {
-    // Approximate solar declination from Julian date
-    const D = julianDate - 2451545.0;
-    const g = 357.529 + 0.98560028 * D; // Mean anomaly of the sun
-    const q = 280.459 + 0.98564736 * D; // Mean longitude of the sun
-    
-    // Geocentric apparent ecliptic longitude of the sun
-    const L = q + 1.915 * Math.sin(toRadians(g)) + 0.020 * Math.sin(toRadians(2 * g));
-    
-    // Earth's axial tilt
-    const e = 23.439 - 0.00000036 * D;
-    
-    // Sun's declination
-    return toDegrees(Math.asin(Math.sin(toRadians(e)) * Math.sin(toRadians(L))));
-}
-
-// Calculate equation of time
-function getEquationOfTime(julianDate) {
-    // Approximate equation of time in minutes from Julian date
-    const D = julianDate - 2451545.0;
-    const g = 357.529 + 0.98560028 * D; // Mean anomaly of the sun
-    const q = 280.459 + 0.98564736 * D; // Mean longitude of the sun
-    
-    // Geocentric apparent ecliptic longitude of the sun
-    const L = q + 1.915 * Math.sin(toRadians(g)) + 0.020 * Math.sin(toRadians(2 * g));
-    
-    // Earth's axial tilt
-    const e = 23.439 - 0.00000036 * D;
-    
-    // Right ascension
-    let RA = toDegrees(Math.atan2(
-        Math.cos(toRadians(e)) * Math.sin(toRadians(L)), 
-        Math.cos(toRadians(L))
-    ));
-    
-    // Adjust RA to be in the same quadrant as L
-    const Lquadrant = Math.floor(L / 90) * 90;
-    const RAquadrant = Math.floor(RA / 90) * 90;
-    RA = RA + (Lquadrant - RAquadrant);
-    
-    // Convert to hours
-    RA = RA / 15;
-    
-    // Equation of time: difference between apparent solar time and mean solar time
-    return 4 * (q - RA); // in minutes
-}
-
-// Get timezone offset from browser in hours
-function getTimeZoneOffset() {
-    const now = new Date();
-    return -(now.getTimezoneOffset() / 60);
-}
-
-// Calculate solar noon for a specific date and longitude
-function getSolarNoon(date, longitude, timeZoneOffset) {
-    const julianDate = getJulianDate(date);
-    const equation = getEquationOfTime(julianDate);
-    
-    // Solar noon in hours (local standard time)
-    return 12 + timeZoneOffset - (longitude / 15) - (equation / 60);
-}
-
-// Calculate prayer time for a specific angle (Fajr, Sunrise, Maghrib, Isha)
-function calculateAngleBasedTime(date, latitude, longitude, angle, isAfterNoon) {
-    const julianDate = getJulianDate(date);
-    const declination = getSunDeclination(julianDate);
-    const timeZone = getTimeZoneOffset();
-    const midDay = getSolarNoon(date, longitude, timeZone);
-    
-    // Handle extreme latitudes
-    const absLatitude = Math.abs(latitude);
-    if (absLatitude >= 65) {
-        // For extreme latitudes, use middle seasons method or nearest valid latitude
-        if (absLatitude > 80) {
-            // Too extreme, use approximation - fallback to Mecca
-            return { status: "extreme_latitude", time: null }; 
-        }
-    }
-    
-    const term1 = Math.sin(toRadians(angle)) - 
-                 Math.sin(toRadians(latitude)) * Math.sin(toRadians(declination));
-    const term2 = Math.cos(toRadians(latitude)) * Math.cos(toRadians(declination));
-    
-    const cosTime = term1 / term2;
-    
-    // Check if the sun never reaches the angle
-    if (cosTime > 1) {
-        return { status: "never_above", time: null }; // Sun never rises above this angle
-    } else if (cosTime < -1) {
-        return { status: "never_below", time: null }; // Sun never goes below this angle
-    }
-    
-    const timeAngle = toDegrees(Math.acos(cosTime));
-    const timeHours = timeAngle / 15;
-    
-    // Apply the time adjustment based on whether it's before or after noon
-    const adjustedTimeHours = isAfterNoon ? midDay + timeHours : midDay - timeHours;
-    
-    return { 
-        status: "valid", 
-        time: createTimeForHour(date, adjustedTimeHours)
-    };
-}
-
-// Calculate Asr time based on shadow length factor
-function calculateAsrTime(date, latitude, longitude, shadowFactor) {
-    const julianDate = getJulianDate(date);
-    const declination = getSunDeclination(julianDate);
-    const timeZone = getTimeZoneOffset();
-    const midDay = getSolarNoon(date, longitude, timeZone);
-    
-    // Shadow angle calculation for Asr
-    const zenithDistance = Math.abs(latitude - declination);
-    const asrAngle = toDegrees(Math.atan(1 / (shadowFactor + Math.tan(toRadians(zenithDistance)))));
-    
-    const term1 = Math.sin(toRadians(90 - asrAngle)) - 
-                 Math.sin(toRadians(latitude)) * Math.sin(toRadians(declination));
-    const term2 = Math.cos(toRadians(latitude)) * Math.cos(toRadians(declination));
-    
-    const cosTime = term1 / term2;
-    
-    // Make sure the result is valid
-    if (cosTime > 1 || cosTime < -1) {
-        return { status: "invalid", time: null };
-    }
-    
-    const timeAngle = toDegrees(Math.acos(cosTime));
-    const timeHours = timeAngle / 15;
-    
-    // Asr is always after noon
-    return { 
-        status: "valid", 
-        time: createTimeForHour(date, midDay + timeHours)
-    };
-}
-
-// Create a date object for a specific hour
-function createTimeForHour(date, hours) {
-    const result = new Date(date);
-    const wholeHours = Math.floor(hours);
-    const minutes = Math.floor((hours - wholeHours) * 60);
-    const seconds = Math.floor(((hours - wholeHours) * 60 - minutes) * 60);
-    
-    result.setHours(wholeHours, minutes, seconds, 0);
-    return result;
-}
-
-// Calculate all prayer times for a specific date, latitude and longitude
-function calculatePrayerTimes(latitude, longitude, date) {
-    // Prepare result object
-    const result = {
-        Fajr: null,
-        Sunrise: null,
-        Dhuhr: null,
-        Asr: null,
-        Maghrib: null,
-        Isha: null
-    };
-    
-    // Get timezone offset
-    const timeZoneOffset = getTimeZoneOffset();
-    
-    // Set date to midnight for consistent calculations
-    const calculationDate = new Date(date);
-    calculationDate.setHours(0, 0, 0, 0);
-    
-    // Calculate Fajr
-    const fajrCalc = calculateAngleBasedTime(
-        calculationDate, 
-        latitude, 
-        longitude, 
-        -CALCULATION_METHOD.fajrAngle, 
-        false
-    );
-    
-    if (fajrCalc.status === "valid") {
-        result.Fajr = fajrCalc.time;
-    } else {
-        // In extreme latitudes, handle special cases
-        result.Fajr = "-----";
-    }
-    
-    // Calculate Sunrise (approx -0.833 degrees due to refraction and solar radius)
-    const sunriseCalc = calculateAngleBasedTime(
-        calculationDate, 
-        latitude, 
-        longitude, 
-        -0.833, 
-        false
-    );
-    
-    if (sunriseCalc.status === "valid") {
-        result.Sunrise = sunriseCalc.time;
-    } else {
-        result.Sunrise = "-----";
-    }
-    
-    // Calculate Dhuhr (solar noon)
-    const midDay = getSolarNoon(calculationDate, longitude, timeZoneOffset);
-    result.Dhuhr = createTimeForHour(calculationDate, midDay);
-    
-    // Calculate Asr
-    const asrCalc = calculateAsrTime(
-        calculationDate, 
-        latitude, 
-        longitude, 
-        ASR_SHADOW_FACTOR
-    );
-    
-    if (asrCalc.status === "valid") {
-        result.Asr = asrCalc.time;
-    } else {
-        result.Asr = "-----";
-    }
-    
-    // Calculate Maghrib (approx +0.833 degrees due to refraction and solar radius)
-    const maghribCalc = calculateAngleBasedTime(
-        calculationDate, 
-        latitude, 
-        longitude, 
-        0.833, 
-        true
-    );
-    
-    if (maghribCalc.status === "valid") {
-        result.Maghrib = maghribCalc.time;
-    } else {
-        result.Maghrib = "-----";
-    }
-    
-    // Calculate Isha
-    if (CALCULATION_METHOD.ishaIsMinutes) {
-        // If Isha is calculated based on minutes after Maghrib
-        if (maghribCalc.status === "valid") {
-            const ishaTime = new Date(maghribCalc.time);
-            ishaTime.setMinutes(ishaTime.getMinutes() + CALCULATION_METHOD.ishaValue);
-            result.Isha = ishaTime;
-        } else {
-            result.Isha = "-----";
-        }
-    } else {
-        // If Isha is calculated based on sun angle
-        const ishaCalc = calculateAngleBasedTime(
-            calculationDate, 
-            latitude, 
-            longitude, 
-            -CALCULATION_METHOD.ishaAngle, 
-            true
-        );
+// Fetch prayer times from API
+async function fetchPrayerTimes(latitude, longitude, date) {
+    try {
+        updateLoadingState(true, 'Fetching prayer times...');
         
-        if (ishaCalc.status === "valid") {
-            result.Isha = ishaCalc.time;
+        // Format date as YYYY-MM-DD
+        const formattedDate = date.toISOString().split('T')[0];
+        
+        // Create API URL with parameters
+        const url = new URL('https://api.aladhan.com/v1/timings');
+        url.search = new URLSearchParams({
+            latitude: latitude,
+            longitude: longitude,
+            method: CALCULATION_METHOD.id,
+            adjustment: 0,
+            tune: "0,0,0,0,0,0,0,0,0",
+            school: ASR_JURISTIC_METHOD,
+            date: formattedDate
+        }).toString();
+        
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error(`API Error: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        updateLoadingState(false);
+        
+        if (data.code === 200 && data.data && data.data.timings) {
+            return formatPrayerTimesFromAPI(data.data.timings);
         } else {
-            result.Isha = "-----";
+            throw new Error('Invalid data format received from API');
         }
+    } catch (error) {
+        updateLoadingState(false);
+        console.error('Error fetching prayer times:', error);
+        
+        // Show error to user
+        showErrorMessage('Failed to fetch prayer times. Please try again later.');
+        
+        // Return empty times
+        return {
+            Fajr: "-----",
+            Sunrise: "-----",
+            Dhuhr: "-----",
+            Asr: "-----",
+            Maghrib: "-----",
+            Isha: "-----"
+        };
     }
+}
+
+// Format times from API to match our format
+function formatPrayerTimesFromAPI(timings) {
+    // Convert API response to our format and convert to 12-hour format
+    return {
+        Fajr: convertTo12HourFormat(timings.Fajr),
+        Sunrise: convertTo12HourFormat(timings.Sunrise),
+        Dhuhr: convertTo12HourFormat(timings.Dhuhr),
+        Asr: convertTo12HourFormat(timings.Asr),
+        Maghrib: convertTo12HourFormat(timings.Maghrib),
+        Isha: convertTo12HourFormat(timings.Isha)
+    };
+}
+
+// Convert time from 24-hour format to 12-hour format
+function convertTo12HourFormat(timeStr) {
+    if (!timeStr || timeStr === "-----") return "-----";
     
-    // Format all valid times to strings
-    Object.keys(result).forEach(prayer => {
-        if (result[prayer] !== "-----" && result[prayer] instanceof Date) {
-            result[prayer] = formatTime(result[prayer]);
-        }
-    });
+    const [hours24, minutes] = timeStr.split(':').map(Number);
     
-    return result;
+    if (isNaN(hours24) || isNaN(minutes)) return "-----";
+    
+    const period = hours24 >= 12 ? 'PM' : 'AM';
+    const hours12 = hours24 % 12 || 12;
+    
+    return `${hours12.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${period}`;
 }
 
 // ======================== FORMATTING FUNCTIONS ======================== //
-
-// Format a Date object to time string (12-hour format)
-function formatTime(date) {
-    if (!(date instanceof Date)) return "-----";
-    return date.toLocaleTimeString('en-US', { 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        hour12: true 
-    });
-}
 
 // Format time string to Arabic numerals
 function formatTimeArabic(timeStr) {
@@ -626,6 +401,21 @@ function convertTimeStringToDate(timeStr) {
     
     const result = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
     return result;
+}
+
+// Show error message to user
+function showErrorMessage(message) {
+    // Check if we have SweetAlert2 available
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            title: 'Error',
+            text: message,
+            icon: 'error',
+            confirmButtonColor: '#6366f1'
+        });
+    } else {
+        alert(message);
+    }
 }
 
 // ======================== UI UPDATE FUNCTIONS ======================== //
@@ -680,35 +470,42 @@ function displayPrayerTimes(times) {
 
     // Handle case where all prayers have passed for the day
     if (!nextPrayer) {
-        // Set Fajr of the next day as the next prayer
+        // Let the user know that we'll show tomorrow's times for Fajr
+        const nextPrayerNameElement = safeGetElement('next-prayer-name', 'div');
+        if (nextPrayerNameElement) {
+            nextPrayerNameElement.innerHTML = `
+                <span class="mr-2">All prayers passed for today. Showing countdown to tomorrow's Fajr</span>
+                <span class="arabic mr-2">انتهت جميع الصلوات لهذا اليوم. عرض العد التنازلي لصلاة الفجر غدًا</span>
+            `;
+        }
+        
+        // Fetch tomorrow's times for Fajr
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         
-        // Recalculate for tomorrow
-        const tomorrowTimes = calculatePrayerTimes(
+        fetchPrayerTimes(
             currentPosition.latitude, 
             currentPosition.longitude, 
             tomorrow
-        );
-        
-        nextPrayer = 'Fajr';
-        nextPrayerTime = convertTimeStringToDate(tomorrowTimes.Fajr);
-        
-        // If still no valid time (e.g., extreme latitude), show placeholder
-        if (!nextPrayerTime) {
-            const nextPrayerNameElement = safeGetElement('next-prayer-name', 'div');
-            if (nextPrayerNameElement) {
-                nextPrayerNameElement.innerHTML = `
-                    <span class="mr-2">No upcoming prayers available</span>
-                    <span class="arabic mr-2">لا توجد صلوات قادمة متاحة</span>
-                `;
+        ).then(tomorrowTimes => {
+            if (tomorrowTimes.Fajr !== "-----") {
+                nextPrayer = 'Fajr';
+                
+                // Create a date for tomorrow's Fajr
+                const fajrTime = convertTimeStringToDate(tomorrowTimes.Fajr);
+                if (fajrTime) {
+                    fajrTime.setDate(fajrTime.getDate() + 1);
+                    nextPrayerTime = fajrTime;
+                    updateCountdown(nextPrayerTime);
+                }
             }
-            
+        }).catch(error => {
+            console.error("Error fetching tomorrow's prayer times:", error);
             const timeRemainingElement = safeGetElement('time-remaining', 'div');
             if (timeRemainingElement) {
                 timeRemainingElement.textContent = "--:--:--";
             }
-        }
+        });
     }
 
     // Now create cards
@@ -818,12 +615,6 @@ function updateCurrentDate() {
 }
 
 // ======================== LOCATION HANDLING ======================== //
-
-// Global variable to store current position
-let currentPosition = {
-    latitude: null,
-    longitude: null
-};
 
 // Function to handle location retrieval and updates
 async function getCurrentLocation() {
@@ -943,7 +734,7 @@ function updateLocationDisplay(locationName) {
     `;
 }
 
-// Continuation of the handleLocationError function
+// Handle location error
 function handleLocationError(error) {
     console.error('Location error:', error);
     
@@ -997,21 +788,26 @@ function handleLocationError(error) {
 // ======================== APPLICATION INITIALIZATION ======================== //
 
 // Refresh prayer times with current settings
-function refreshPrayerTimes() {
+async function refreshPrayerTimes() {
     if (!currentPosition.latitude || !currentPosition.longitude) {
         console.error('No location available');
         return;
     }
     
-    const today = new Date();
-    const times = calculatePrayerTimes(
-        currentPosition.latitude, 
-        currentPosition.longitude, 
-        today
-    );
-    
-    displayPrayerTimes(times);
-    updateCurrentDate();
+    try {
+        const today = new Date();
+        const times = await fetchPrayerTimes(
+            currentPosition.latitude, 
+            currentPosition.longitude, 
+            today
+        );
+        
+        displayPrayerTimes(times);
+        updateCurrentDate();
+    } catch (error) {
+        console.error('Error refreshing prayer times:', error);
+        showErrorMessage('Failed to refresh prayer times. Please try again.');
+    }
 }
 
 // Handle method selection change
@@ -1025,23 +821,25 @@ function handleMethodChange(methodName) {
             methodDisplay.textContent = CALCULATION_METHOD.name;
         }
         
+        // Save the setting
+        localStorage.setItem('prayerCalculationMethod', methodName);
+        
         refreshPrayerTimes();
     }
 }
 
 // Handle Asr calculation method change
 function handleAsrMethodChange(asrMethod) {
-    if (asrMethod === 'shafi' || asrMethod === '1') {
-        ASR_SHADOW_FACTOR = 1;
-    } else if (asrMethod === 'hanafi' || asrMethod === '2') {
-        ASR_SHADOW_FACTOR = 2;
-    }
+    ASR_JURISTIC_METHOD = parseInt(asrMethod) || 0;
     
     // Update Asr method display
     const asrMethodDisplay = safeGetElement('asr-method', 'div');
     if (asrMethodDisplay) {
-        asrMethodDisplay.textContent = ASR_SHADOW_FACTOR === 1 ? 'Shafi\'i' : 'Hanafi';
+        asrMethodDisplay.textContent = ASR_JURISTIC_METHOD === 0 ? 'Shafi\'i' : 'Hanafi';
     }
+    
+    // Save the setting
+    localStorage.setItem('asrJuristicMethod', ASR_JURISTIC_METHOD.toString());
     
     refreshPrayerTimes();
 }
@@ -1076,8 +874,8 @@ function setupEventListeners() {
         // Populate Asr method options if not already done
         if (asrMethodSelect.options.length === 0) {
             const options = [
-                { value: '1', text: 'Shafi\'i (Standard)' },
-                { value: '2', text: 'Hanafi' }
+                { value: '0', text: 'Shafi\'i (Standard)' },
+                { value: '1', text: 'Hanafi' }
             ];
             
             options.forEach(opt => {
@@ -1088,7 +886,7 @@ function setupEventListeners() {
             });
         }
         
-        asrMethodSelect.value = ASR_SHADOW_FACTOR.toString();
+        asrMethodSelect.value = ASR_JURISTIC_METHOD.toString();
         
         asrMethodSelect.addEventListener('change', (e) => {
             handleAsrMethodChange(e.target.value);
@@ -1114,9 +912,9 @@ function loadSettings() {
         }
         
         // Load Asr calculation method
-        const savedAsrMethod = localStorage.getItem('asrShadowFactor');
-        if (savedAsrMethod) {
-            ASR_SHADOW_FACTOR = parseInt(savedAsrMethod) || 1;
+        const savedAsrMethod = localStorage.getItem('asrJuristicMethod');
+        if (savedAsrMethod !== null) {
+            ASR_JURISTIC_METHOD = parseInt(savedAsrMethod) || 0;
         }
         
         // Update UI to reflect loaded settings
@@ -1127,26 +925,10 @@ function loadSettings() {
         
         const asrMethodDisplay = safeGetElement('asr-method', 'div');
         if (asrMethodDisplay) {
-            asrMethodDisplay.textContent = ASR_SHADOW_FACTOR === 1 ? 'Shafi\'i' : 'Hanafi';
+            asrMethodDisplay.textContent = ASR_JURISTIC_METHOD === 0 ? 'Shafi\'i' : 'Hanafi';
         }
     } catch (error) {
         console.error('Error loading settings:', error);
-    }
-}
-
-// Save settings to localStorage
-function saveSettings() {
-    try {
-        // Find the key for the current calculation method
-        const methodKey = Object.keys(METHODS).find(
-            key => METHODS[key].name === CALCULATION_METHOD.name
-        );
-        
-        // Save settings
-        localStorage.setItem('prayerCalculationMethod', methodKey || 'MWL');
-        localStorage.setItem('asrShadowFactor', ASR_SHADOW_FACTOR.toString());
-    } catch (error) {
-        console.error('Error saving settings:', error);
     }
 }
 
@@ -1167,10 +949,7 @@ async function initialize() {
         updateLocationDisplay(locationName);
         
         // Calculate and display prayer times
-        refreshPrayerTimes();
-        
-        // Save settings for next visit
-        saveSettings();
+        await refreshPrayerTimes();
     } catch (error) {
         handleLocationError(error);
     }
@@ -1264,210 +1043,348 @@ function setupPreferenceControls() {
     if (langButton) {
         langButton.addEventListener('click', toggleLanguage);
     }
-    
-    // Load saved preferences
-    loadPreferences();
 }
 
 // Add preference controls setup to initialization
 document.addEventListener('DOMContentLoaded', () => {
+    // Setup preference controls
     setupPreferenceControls();
+    
+    // Load saved preferences
+    loadPreferences();
+    
+    // Initialize the app
+    initialize();
 });
 
-// ======================== EXPORT/SHARE FUNCTIONS ======================== //
+// ======================== RESPONSIVE LAYOUT ADJUSTMENTS ======================== //
 
-// Generate shareable link with current settings
-function generateShareableLink() {
-    const methodKey = Object.keys(METHODS).find(
-        key => METHODS[key].name === CALCULATION_METHOD.name
-    ) || 'MWL';
+// Adjust layout based on screen size
+function handleResponsiveLayout() {
+    const prayerContainer = document.getElementById('prayer-times');
+    if (!prayerContainer) return;
     
-    const params = new URLSearchParams({
-        method: methodKey,
-        asr: ASR_SHADOW_FACTOR.toString(),
-        lat: currentPosition.latitude.toString(),
-        lng: currentPosition.longitude.toString()
-    });
-    
-    return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    // Adjust grid columns based on screen width
+    if (window.innerWidth < 640) {
+        prayerContainer.className = 'grid grid-cols-1 gap-4 mt-6';
+    } else if (window.innerWidth < 1024) {
+        prayerContainer.className = 'grid grid-cols-2 gap-4 mt-6';
+    } else {
+        prayerContainer.className = 'grid grid-cols-3 gap-4 mt-6';
+    }
 }
 
-// Copy shareable link to clipboard
-function copyShareableLink() {
-    const link = generateShareableLink();
-    
-    navigator.clipboard.writeText(link)
-        .then(() => {
-            // Show success message
-            const shareButton = document.getElementById('share-button');
-            if (shareButton) {
-                const originalText = shareButton.textContent;
-                shareButton.textContent = 'Copied!';
-                
-                setTimeout(() => {
-                    shareButton.textContent = originalText;
-                }, 2000);
-            }
-        })
-        .catch(err => {
-            console.error('Error copying to clipboard:', err);
-            
-            // Fallback for browsers without clipboard API
-            const textArea = document.createElement('textarea');
-            textArea.value = link;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-        });
-}
+// Listen for window resize
+window.addEventListener('resize', handleResponsiveLayout);
 
-// Export prayer times to calendar (iCal format)
+// Call once on load
+document.addEventListener('DOMContentLoaded', handleResponsiveLayout);
+
+// ======================== EXPORT & SHARE FUNCTIONS ======================== //
+
+// Export prayer times to calendar
 function exportToCalendar() {
     if (!currentPosition.latitude || !currentPosition.longitude) {
-        console.error('No location available for export');
+        showErrorMessage('No location data available for export.');
         return;
     }
     
-    // Get prayer times for the next 7 days
-    const today = new Date();
+    try {
+        // Show loading state
+        updateLoadingState(true, 'Generating calendar events...');
+        
+        // We'll fetch a month of prayer times
+        const today = new Date();
+        const endDate = new Date();
+        endDate.setDate(today.getDate() + 30);
+        
+        let currentDate = new Date(today);
+        
+        // Create a queue of dates to process
+        const dates = [];
+        while (currentDate <= endDate) {
+            dates.push(new Date(currentDate));
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+        
+        // Process the queue sequentially to avoid API rate limits
+        processDateQueue(dates, 0)
+            .then(events => {
+                updateLoadingState(false);
+                
+                // Generate ICS file content
+                const icsContent = generateICSFile(events);
+                
+                // Create and trigger download
+                const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'prayer_times.ics';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Show success message
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Prayer times have been exported to your calendar.',
+                        icon: 'success',
+                        confirmButtonColor: '#6366f1'
+                    });
+                } else {
+                    alert('Prayer times have been exported to your calendar.');
+                }
+            })
+            .catch(error => {
+                updateLoadingState(false);
+                console.error('Error exporting to calendar:', error);
+                showErrorMessage('Failed to export prayer times. Please try again later.');
+            });
+    } catch (error) {
+        updateLoadingState(false);
+        console.error('Error in export function:', error);
+        showErrorMessage('An unexpected error occurred during export.');
+    }
+}
+
+// Process a queue of dates to fetch prayer times
+async function processDateQueue(dates, index) {
+    if (index >= dates.length) return [];
+    
+    try {
+        // Update loading message with progress
+        updateLoadingState(true, `Generating calendar events (${index + 1}/${dates.length})...`);
+        
+        // Fetch prayer times for this date
+        const times = await fetchPrayerTimes(
+            currentPosition.latitude,
+            currentPosition.longitude,
+            dates[index]
+        );
+        
+        // Create events for this date
+        const events = createEventsForDate(dates[index], times);
+        
+        // Process the next date (with a small delay to respect API rate limits)
+        return new Promise(resolve => {
+            setTimeout(async () => {
+                const remainingEvents = await processDateQueue(dates, index + 1);
+                resolve([...events, ...remainingEvents]);
+            }, 250); // 250ms delay between requests
+        });
+    } catch (error) {
+        console.error(`Error processing date ${dates[index].toISOString()}:`, error);
+        // Continue with the next date even if this one failed
+        return processDateQueue(dates, index + 1);
+    }
+}
+
+// Create calendar events for a specific date
+function createEventsForDate(date, times) {
+    const events = [];
+    
+    // Prayers to include (excluding Sunrise)
+    const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+    
+    prayers.forEach(prayer => {
+        if (times[prayer] === "-----") return;
+        
+        // Convert time string to Date object
+        const timeDate = convertTimeStringToDate(times[prayer]);
+        if (!timeDate) return;
+        
+        // Set the correct date (keeping the time)
+        timeDate.setFullYear(date.getFullYear());
+        timeDate.setMonth(date.getMonth());
+        timeDate.setDate(date.getDate());
+        
+        // Create event (30 minutes duration for prayers)
+        const endTime = new Date(timeDate);
+        endTime.setMinutes(endTime.getMinutes() + 30);
+        
+        events.push({
+            title: `${prayer} Prayer`,
+            start: timeDate,
+            end: endTime,
+            description: `${prayer} Prayer (${prayerNamesArabic[prayer]})`
+        });
+    });
+    
+    return events;
+}
+
+// Generate ICS file content
+function generateICSFile(events) {
+    // Start ICS file
     let icsContent = [
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
         'PRODID:-//Prayer Times App//EN',
         'CALSCALE:GREGORIAN',
         'METHOD:PUBLISH'
-    ];
+    ].join('\r\n') + '\r\n';
     
-    // Generate events for the next 7 days
-    for (let i = 0; i < 7; i++) {
-        const date = new Date(today);
-        date.setDate(date.getDate() + i);
+    // Add each event
+    events.forEach(event => {
+        // Format dates in ICS format
+        const startDate = formatDateForICS(event.start);
+        const endDate = formatDateForICS(event.end);
         
-        const times = calculatePrayerTimes(
-            currentPosition.latitude, 
-            currentPosition.longitude, 
-            date
-        );
+        // Create unique ID for event
+        const eventId = 'prayer-' + Math.random().toString(36).substring(2, 15);
         
-        // Add each prayer as an event
-        Object.entries(times).forEach(([prayer, timeStr]) => {
-            if (timeStr === "-----") return;
-            
-            const prayerTime = convertTimeStringToDate(timeStr);
-            if (!prayerTime) return;
-            
-            // Set to the current date being processed
-            prayerTime.setFullYear(date.getFullYear());
-            prayerTime.setMonth(date.getMonth());
-            prayerTime.setDate(date.getDate());
-            
-            // Format date for iCal
-            const dtStart = prayerTime.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-            
-            // Default duration of 30 minutes
-            const dtEnd = new Date(prayerTime.getTime() + 30 * 60000).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-            
-            icsContent = icsContent.concat([
-                'BEGIN:VEVENT',
-                `DTSTART:${dtStart}`,
-                `DTEND:${dtEnd}`,
-                `SUMMARY:${prayer} Prayer`,
-                `DESCRIPTION:${prayer} Prayer Time`,
-                `LOCATION:${currentPosition.latitude}, ${currentPosition.longitude}`,
-                'END:VEVENT'
-            ]);
-        });
-    }
+        // Add event to ICS content
+        icsContent += [
+            'BEGIN:VEVENT',
+            `UID:${eventId}`,
+            `DTSTAMP:${formatDateForICS(new Date())}`,
+            `DTSTART:${startDate}`,
+            `DTEND:${endDate}`,
+            `SUMMARY:${event.title}`,
+            `DESCRIPTION:${event.description}`,
+            'END:VEVENT'
+        ].join('\r\n') + '\r\n';
+    });
     
-    // Close the calendar
-    icsContent.push('END:VCALENDAR');
+    // End ICS file
+    icsContent += 'END:VCALENDAR';
     
-    // Create and download the file
-    const blob = new Blob([icsContent.join('\r\n')], { type: 'text/calendar' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'prayer_times.ics';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    return icsContent;
 }
 
-// Setup share and export buttons
-function setupShareExportButtons() {
-    // Share button
-    const shareButton = safeGetElement('share-button', 'button');
-    if (shareButton) {
-        shareButton.addEventListener('click', copyShareableLink);
+// Format date for ICS file
+function formatDateForICS(date) {
+    return date.getUTCFullYear() +
+           String(date.getUTCMonth() + 1).padStart(2, '0') +
+           String(date.getUTCDate()).padStart(2, '0') + 'T' +
+           String(date.getUTCHours()).padStart(2, '0') +
+           String(date.getUTCMinutes()).padStart(2, '0') +
+           String(date.getUTCSeconds()).padStart(2, '0') + 'Z';
+}
+
+// Share current prayer times
+function sharePrayerTimes() {
+    // Check if sharing is supported
+    if (!navigator.share) {
+        // Fallback for browsers that don't support Web Share API
+        copyPrayerTimesToClipboard();
+        return;
     }
     
-    // Export button
+    // Get prayer times container
+    const prayerContainer = document.getElementById('prayer-times');
+    if (!prayerContainer) {
+        showErrorMessage('No prayer times available to share.');
+        return;
+    }
+    
+    // Prepare text to share
+    const today = new Date().toLocaleDateString();
+    const locationDisplay = document.getElementById('location-display');
+    const location = locationDisplay ? locationDisplay.textContent.trim() : 'Current Location';
+    
+    let shareText = `Prayer Times for ${today} (${location})\n\n`;
+    
+    // Extract prayer times from the DOM
+    const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+    prayers.forEach(prayer => {
+        const card = prayerContainer.querySelector(`.prayer-time-card:nth-child(${prayers.indexOf(prayer) + 1})`);
+        if (!card) return;
+        
+        const timeElement = card.querySelector('.text-lg.font-semibold:not(.arabic)');
+        if (!timeElement) return;
+        
+        shareText += `${prayer}: ${timeElement.textContent.trim()}\n`;
+    });
+    
+    // Add app attribution
+    shareText += `\nShared from Prayer Times App`;
+    
+    // Share the text
+    navigator.share({
+        title: 'Prayer Times',
+        text: shareText
+    })
+    .catch(error => {
+        console.error('Error sharing:', error);
+        
+        // Fall back to clipboard copy if sharing fails
+        copyPrayerTimesToClipboard(shareText);
+    });
+}
+
+// Copy prayer times to clipboard
+function copyPrayerTimesToClipboard(shareText) {
+    // If shareText was not provided, generate it
+    if (!shareText) {
+        const today = new Date().toLocaleDateString();
+        const locationDisplay = document.getElementById('location-display');
+        const location = locationDisplay ? locationDisplay.textContent.trim() : 'Current Location';
+        
+        shareText = `Prayer Times for ${today} (${location})\n\n`;
+        
+        // Extract prayer times from the DOM
+        const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+        const prayerContainer = document.getElementById('prayer-times');
+        
+        if (prayerContainer) {
+            prayers.forEach(prayer => {
+                const card = prayerContainer.querySelector(`.prayer-time-card:nth-child(${prayers.indexOf(prayer) + 1})`);
+                if (!card) return;
+                
+                const timeElement = card.querySelector('.text-lg.font-semibold:not(.arabic)');
+                if (!timeElement) return;
+                
+                shareText += `${prayer}: ${timeElement.textContent.trim()}\n`;
+            });
+        }
+        
+        // Add app attribution
+        shareText += `\nShared from Prayer Times App`;
+    }
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(shareText)
+        .then(() => {
+            // Show success message
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Copied!',
+                    text: 'Prayer times have been copied to clipboard.',
+                    icon: 'success',
+                    confirmButtonColor: '#6366f1',
+                    timer: 1500
+                });
+            } else {
+                alert('Prayer times have been copied to clipboard.');
+            }
+        })
+        .catch(error => {
+            console.error('Error copying to clipboard:', error);
+            showErrorMessage('Failed to copy prayer times to clipboard.');
+        });
+}
+
+// Setup share buttons
+function setupShareButtons() {
+    // Export to calendar button
     const exportButton = safeGetElement('export-button', 'button');
     if (exportButton) {
         exportButton.addEventListener('click', exportToCalendar);
     }
+    
+    // Share button
+    const shareButton = safeGetElement('share-button', 'button');
+    if (shareButton) {
+        shareButton.addEventListener('click', sharePrayerTimes);
+    }
 }
 
-// Add share/export setup to initialization
-document.addEventListener('DOMContentLoaded', () => {
-    setupShareExportButtons();
-});
-
-// Parse URL parameters on load
-function parseUrlParameters() {
-    const params = new URLSearchParams(window.location.search);
-    
-    // Check for method parameter
-    const methodParam = params.get('method');
-    if (methodParam && METHODS[methodParam]) {
-        CALCULATION_METHOD = METHODS[methodParam];
-    }
-    
-    // Check for Asr method parameter
-    const asrParam = params.get('asr');
-    if (asrParam) {
-        ASR_SHADOW_FACTOR = parseInt(asrParam) || 1;
-    }
-    
-    // Check for location parameters
-    const latParam = params.get('lat');
-    const lngParam = params.get('lng');
-    
-    if (latParam && lngParam) {
-        const lat = parseFloat(latParam);
-        const lng = parseFloat(lngParam);
-        
-        if (!isNaN(lat) && !isNaN(lng)) {
-            currentPosition = { latitude: lat, longitude: lng };
-            
-            // Update location name from coordinates
-            getLocationName(lat, lng)
-                .then(locationName => {
-                    updateLocationDisplay(locationName);
-                })
-                .catch(() => {
-                    updateLocationDisplay('Shared Location');
-                });
-                
-            // Skip location detection if coordinates provided
-            return true;
-        }
-    }
-    
-    return false;
-}
-
-// Check URL parameters at startup
-document.addEventListener('DOMContentLoaded', () => {
-    const hasLocationParams = parseUrlParameters();
-    
-    if (hasLocationParams) {
-        // If we got location from URL, skip geolocation and calculate times
-        refreshPrayerTimes();
-    }
-});
+// Add share buttons setup to initialization
+document.addEventListener('DOMContentLoaded', setupShareButtons);
     </script>
 </body>
 </html>
