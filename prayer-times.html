@@ -1,23 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prayer Times Tool</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.lordicon.com/lordicon.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1850217813586802"
-     crossorigin="anonymous"></script>
-
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
         :root {
             --gradient-start: #6366f1;
             --gradient-end: #8b5cf6;
+            --accent-color: #6366f1;
+            --accent-dark: #4f46e5;
+            --card-bg: rgba(255, 255, 255, 0.9);
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
             background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            font-family: 'Tajawal', sans-serif;
+            overflow-x: hidden;
         }
 
         .custom-gradient {
@@ -25,213 +34,341 @@
         }
 
         .prayer-time-card {
-            transition: all 0.3s ease;
-            background: white;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--card-bg);
             overflow: hidden;
             position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .prayer-time-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--gradient-start), var(--gradient-end));
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .prayer-time-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.25);
         }
 
-        .ad-container {
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #6366f1;
-            font-weight: bold;
+        .prayer-time-card:hover::before {
+            opacity: 1;
         }
 
-        .icon-pulse {
-            animation: iconPulse 2s infinite;
+        .prayer-time-card.active {
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
         }
 
-        @keyframes iconPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+        .prayer-time-card.active::before {
+            opacity: 1;
+            width: 6px;
+        }
+
+        .arabic {
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 500;
+        }
+
+        .scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-color) rgba(240, 240, 240, 0.7);
+        }
+
+        .scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .scrollbar::-webkit-scrollbar-track {
+            background: rgba(240, 240, 240, 0.7);
+            border-radius: 10px;
+        }
+
+        .scrollbar::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 10px;
+        }
+
+        .countdown {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .icon-float {
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 5px 15px rgba(99, 102, 241, 0.3));
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .nav-shine {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-shine::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.3) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(30deg);
+            animation: shine 6s infinite linear;
+        }
+
+        @keyframes shine {
+            from { transform: translateX(-100%) rotate(30deg); }
+            to { transform: translateX(100%) rotate(30deg); }
+        }
+
+        @media (prefers-reduced-motion) {
+            .icon-float, .nav-shine::after {
+                animation: none;
+            }
         }
     </style>
 </head>
-<body class="min-h-screen pb-8 bg-gray-50">
+<body class="min-h-screen pb-8 scrollbar">
     <!-- Navigation -->
-    <nav class="custom-gradient shadow-lg text-white sticky top-0 z-50">
+    <nav class="custom-gradient shadow-lg text-white sticky top-0 z-50 nav-shine">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-mosque text-2xl icon-pulse"></i>
-                    <h1 class="text-2xl font-bold">Prayer Times</h1>
+                <div class="flex items-center space-x-3 animate__animated animate__fadeInLeft">
+                    <lord-icon
+                        src="https://cdn.lordicon.com/xnwbsupk.json"
+                        trigger="loop"
+                        colors="primary:#ffffff"
+                        style="width:40px;height:40px">
+                    </lord-icon>
+                    <h1 class="text-2xl font-bold">Prayer Times | أوقات الصلاة</h1>
                 </div>
-                <div id="location-display" class="text-white font-semibold"></div>
+                <div class="flex items-center space-x-4 animate__animated animate__fadeInRight">
+                    <div id="current-date" class="text-white font-medium hidden md:block"></div>
+                    <div id="location-display" class="text-white font-semibold bg-indigo-700 px-3 py-1 rounded-full text-sm flex items-center">
+                        <i class="fas fa-map-marker-alt mr-1"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
 
-    <!-- Top Ad -->
-    <div class="w-full flex justify-center my-4">
-        <div class="ad-container w-[728px] h-[90px] rounded-lg bg-white shadow">
-            <ins class="adsbygoogle"
-                style="display:block"
-                data-ad-client="ca-pub-1850217813586802"
-                data-ad-slot="3972952911"
-                data-ad-format="auto"
-                data-full-width-responsive="true">
-            </ins>
-        </div>
-    </div>
-
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 py-8">
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            <!-- Left Sidebar Ad -->
-            <div class="lg:col-span-1">
-                <div class="ad-container h-[600px] rounded-lg bg-white shadow sticky top-24">
-                    <ins class="adsbygoogle"
-                        style="display:block"
-                        data-ad-client="ca-pub-1850217813586802"
-                        data-ad-slot="8495749332"
-                        data-ad-format="auto"
-                        data-full-width-responsive="true">
-                    </ins>
-                </div>
-            </div>
-
-            <!-- Main Content -->
-            <div class="lg:col-span-2 space-y-6">
-                <!-- Prayer Times Grid -->
-                <div id="prayer-times" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Prayer cards will be inserted here by JavaScript -->
-                </div>
-                
-                <!-- Qibla Direction -->
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <h2 class="text-2xl font-bold mb-4 text-indigo-600">
-                        <i class="fas fa-compass mr-2"></i>Qibla Direction
-                    </h2>
-                    <div id="qibla-info" class="text-center">
-                        <div class="text-4xl mb-2">
-                            <i id="qibla-arrow" class="fas fa-arrow-up transform"></i>
-                        </div>
-                        <p id="qibla-degrees" class="text-lg font-semibold text-gray-700"></p>
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Next Prayer Counter -->
+        <div class="bg-white bg-opacity-90 rounded-2xl shadow-xl p-6 mb-8 transform transition-all duration-500 animate__animated animate__fadeInUp backdrop-filter backdrop-blur-md border border-indigo-100">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <lord-icon
+                        src="https://cdn.lordicon.com/osvvqecf.json"
+                        trigger="loop"
+                        colors="primary:#6366f1,secondary:#8b5cf6"
+                        style="width:64px;height:64px" class="icon-float">
+                    </lord-icon>
+                    <div class="ml-4">
+                        <h2 class="text-2xl font-bold text-indigo-600">Next Prayer | الصلاة القادمة</h2>
+                        <p id="next-prayer-name" class="text-lg text-gray-600 flex flex-col md:flex-row">
+                            <span class="mr-2">Loading...</span>
+                            <span class="arabic mr-2">جاري التحميل...</span>
+                        </p>
                     </div>
                 </div>
-            </div>
-
-            <!-- Right Sidebar Ad -->
-            <div class="lg:col-span-1">
-                <div class="ad-container h-[600px] rounded-lg bg-white shadow sticky top-24">
-                    <ins class="adsbygoogle"
-                        style="display:block"
-                        data-ad-client="ca-pub-1850217813586802"
-                        data-ad-slot="7936248658"
-                        data-ad-format="auto"
-                        data-full-width-responsive="true">
-                    </ins>
+                <div class="text-center">
+                    <div id="time-remaining" class="countdown text-4xl font-bold text-indigo-600">--:--:--</div>
+                    <p class="text-gray-500 text-sm">Time Remaining | الوقت المتبقي</p>
                 </div>
             </div>
+        </div>
+
+        <!-- Prayer Times Grid -->
+        <div id="prayer-times" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <!-- Prayer cards will be inserted here by JavaScript -->
         </div>
     </main>
 
-    <!-- Bottom Ad -->
-    <div class="w-full flex justify-center mt-8">
-        <div class="ad-container w-[728px] h-[90px] rounded-lg bg-white shadow">
-            <ins class="adsbygoogle"
-                style="display:block"
-                data-ad-client="ca-pub-1850217813586802"
-                data-ad-slot="1454600783"
-                data-ad-format="auto"
-                data-full-width-responsive="true">
-            </ins>
+    <!-- Footer -->
+    <footer class="mt-12 pt-8 pb-6 text-center text-gray-500">
+        <div class="flex justify-center mb-4">
+            <lord-icon
+                src="https://cdn.lordicon.com/dnmvmpfk.json"
+                trigger="hover"
+                colors="primary:#6366f1"
+                style="width:48px;height:48px">
+            </lord-icon>
         </div>
-    </div>
+        <p>Prayer Times Tool &copy; 2025 | Accurate Islamic Prayer Times</p>
+    </footer>
 
     <script>
-        // Prayer time calculation constants
-        const LATITUDE_MECCA = 21.4225;
-        const LONGITUDE_MECCA = 39.8262;
+        // Prayer names in Arabic
+        const prayerNamesArabic = {
+            Fajr: 'الفجر',
+            Sunrise: 'الشروق',
+            Dhuhr: 'الظهر',
+            Asr: 'العصر',
+            Maghrib: 'المغرب',
+            Isha: 'العشاء'
+        };
 
-        // Prayer times calculation functions
+        // Prayer descriptions in Arabic
+        const prayerDescArabic = {
+            Fajr: 'صلاة الفجر',
+            Sunrise: 'شروق الشمس',
+            Dhuhr: 'صلاة الظهر',
+            Asr: 'صلاة العصر',
+            Maghrib: 'صلاة المغرب',
+            Isha: 'صلاة العشاء'
+        };
+
+        // Lord icon sources for each prayer time
+        const prayerIcons = {
+            Fajr: 'https://cdn.lordicon.com/spgozyor.json',
+            Sunrise: 'https://cdn.lordicon.com/qtedxnsm.json',
+            Dhuhr: 'https://cdn.lordicon.com/oaflahpk.json',
+            Asr: 'https://cdn.lordicon.com/uqpazftn.json',
+            Maghrib: 'https://cdn.lordicon.com/wxnxiano.json',
+            Isha: 'https://cdn.lordicon.com/udwhdpod.json'
+        };
+
+        // Color schemes for each prayer
+        const prayerColors = {
+            Fajr: ['#6366f1', '#9333ea'],
+            Sunrise: ['#f59e0b', '#d97706'],
+            Dhuhr: ['#3b82f6', '#1d4ed8'],
+            Asr: ['#10b981', '#065f46'],
+            Maghrib: ['#ef4444', '#b91c1c'],
+            Isha: ['#6366f1', '#4338ca']
+        };
+
+        // More accurate prayer times calculation functions
         function calculatePrayerTimes(latitude, longitude, date) {
-            const times = {
-                Fajr: calculateFajrTime(latitude, date),
-                Sunrise: calculateSunriseTime(latitude, date),
-                Dhuhr: calculateDhuhrTime(longitude, date),
-                Asr: calculateAsrTime(latitude, date),
-                Maghrib: calculateMaghribTime(latitude, date),
-                Isha: calculateIshaTime(latitude, date)
+            // For a real implementation, consider using a library like Adhan.js or PrayTime.js
+            // This is a more realistic but still simplified calculation
+            
+            const julianDate = getJulianDate(date);
+            const decl = getSunDeclination(julianDate);
+            const equation = getEquationOfTime(julianDate);
+            
+            // Standard calculation for mid-day time
+            const midDay = 12 + getTimeZone(longitude) - longitude / 15 - equation / 60;
+            
+            // Calculate times based on sun position and location
+            return {
+                Fajr: calculateSpecificPrayerTime(latitude, decl, midDay, -18),
+                Sunrise: calculateSpecificPrayerTime(latitude, decl, midDay, -0.833),
+                Dhuhr: formatTime(new Date(date.getFullYear(), date.getMonth(), date.getDate(), 
+                           Math.floor(midDay), Math.round((midDay % 1) * 60))),
+                Asr: calculateAsrTimeAccurate(latitude, decl, midDay, 1), // Shafi'i (standard)
+                Maghrib: calculateSpecificPrayerTime(latitude, decl, midDay, 0.833),
+                Isha: calculateSpecificPrayerTime(latitude, decl, midDay, 17)
             };
-            return times;
         }
 
-        function calculateFajrTime(latitude, date) {
-            // Simplified calculation - in reality would need more complex astronomical calculations
-            const baseTime = new Date(date);
-            baseTime.setHours(4);
-            baseTime.setMinutes(Math.floor(30 + (latitude / 10)));
-            return formatTime(baseTime);
-        }
-
-        function calculateSunriseTime(latitude, date) {
-            const baseTime = new Date(date);
-            baseTime.setHours(6);
-            baseTime.setMinutes(Math.floor(15 + (latitude / 15)));
-            return formatTime(baseTime);
-        }
-
-        function calculateDhuhrTime(longitude, date) {
-            const baseTime = new Date(date);
-            baseTime.setHours(12);
-            baseTime.setMinutes(Math.floor(longitude % 15));
-            return formatTime(baseTime);
-        }
-
-        function calculateAsrTime(latitude, date) {
-            const baseTime = new Date(date);
-            baseTime.setHours(15);
-            baseTime.setMinutes(Math.floor(45 - (latitude / 10)));
-            return formatTime(baseTime);
-        }
-
-        function calculateMaghribTime(latitude, date) {
-            const baseTime = new Date(date);
-            baseTime.setHours(18);
-            baseTime.setMinutes(Math.floor(15 - (latitude / 15)));
-            return formatTime(baseTime);
-        }
-
-        function calculateIshaTime(latitude, date) {
-            const baseTime = new Date(date);
-            baseTime.setHours(19);
-            baseTime.setMinutes(Math.floor(45 - (latitude / 10)));
-            return formatTime(baseTime);
-        }
-
-        function formatTime(date) {
-            return date.toLocaleTimeString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                hour12: true 
-            });
-        }
-
-        function calculateQiblaDirection(latitude, longitude) {
-            const latRad = toRadians(latitude);
-            const longRad = toRadians(longitude);
-            const meccaLatRad = toRadians(LATITUDE_MECCA);
-            const meccaLongRad = toRadians(LONGITUDE_MECCA);
-
-            const y = Math.sin(meccaLongRad - longRad);
-            const x = Math.cos(latRad) * Math.tan(meccaLatRad) - 
-                     Math.sin(latRad) * Math.cos(meccaLongRad - longRad);
+        function getJulianDate(date) {
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const year = date.getFullYear();
             
-            let qiblaDirection = toDegrees(Math.atan2(y, x));
-            if (qiblaDirection < 0) qiblaDirection += 360;
+            let A = Math.floor(year / 100);
+            let B = 2 - A + Math.floor(A / 4);
             
-            return Math.round(qiblaDirection);
+            return Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day + B - 1524.5;
+        }
+
+        function getSunDeclination(julianDate) {
+            const D = julianDate - 2451545.0;
+            const g = 357.529 + 0.98560028 * D;
+            const q = 280.459 + 0.98564736 * D;
+            const L = q + 1.915 * Math.sin(toRadians(g)) + 0.020 * Math.sin(toRadians(2 * g));
+            
+            const e = 23.439 - 0.00000036 * D;
+            return toDegrees(Math.asin(Math.sin(toRadians(e)) * Math.sin(toRadians(L))));
+        }
+
+        function getEquationOfTime(julianDate) {
+            const D = julianDate - 2451545.0;
+            const g = 357.529 + 0.98560028 * D;
+            const q = 280.459 + 0.98564736 * D;
+            const L = q + 1.915 * Math.sin(toRadians(g)) + 0.020 * Math.sin(toRadians(2 * g));
+            
+            const e = 23.439 - 0.00000036 * D;
+            const RA = toDegrees(Math.atan2(Math.cos(toRadians(e)) * Math.sin(toRadians(L)), Math.cos(toRadians(L))));
+            
+            // Ensure RA is in the same quadrant as L
+            const Lquadrant = Math.floor(L / 90) * 90;
+            const RAquadrant = Math.floor(RA / 90) * 90;
+            RA = RA + (Lquadrant - RAquadrant);
+            
+            // Convert to hours
+            RA = RA / 15;
+            
+            return 4 * (q - RA);
+        }
+
+        function getTimeZone(longitude) {
+            // A simple estimation of timezone, more accurate would be to use a timezone API
+            return Math.round(longitude / 15);
+        }
+
+        function calculateSpecificPrayerTime(latitude, declination, midDay, angle) {
+            const term1 = Math.sin(toRadians(angle)) - Math.sin(toRadians(latitude)) * Math.sin(toRadians(declination));
+            const term2 = Math.cos(toRadians(latitude)) * Math.cos(toRadians(declination));
+            
+            const cosTime = term1 / term2;
+            
+            // Check if the sun never reaches the angle
+            if (cosTime > 1 || cosTime < -1) {
+                return "-----"; // Sun never reaches this angle at this location
+            }
+            
+            const time = toDegrees(Math.acos(cosTime)) / 15;
+            
+            // Before midday (Fajr, Sunrise)
+            if (angle < 0) {
+                const timeInHours = midDay - time;
+                const date = new Date();
+                date.setHours(Math.floor(timeInHours));
+                date.setMinutes(Math.round((timeInHours % 1) * 60));
+                return formatTime(date);
+            } 
+            // After midday (Maghrib, Isha)
+            else {
+                const timeInHours = midDay + time;
+                const date = new Date();
+                date.setHours(Math.floor(timeInHours));
+                date.setMinutes(Math.round((timeInHours % 1) * 60));
+                return formatTime(date);
+            }
+        }
+
+        function calculateAsrTimeAccurate(latitude, declination, midDay, shadowFactor) {
+            // shadowFactor: 1 for Shafi'i, 2 for Hanafi
+            const term1 = Math.atan(1 / (shadowFactor + Math.tan(toRadians(Math.abs(latitude - declination)))));
+            const time = toDegrees(term1) / 15;
+            
+            const timeInHours = midDay + time;
+            const date = new Date();
+            date.setHours(Math.floor(timeInHours));
+            date.setMinutes(Math.round((timeInHours % 1) * 60));
+            return formatTime(date);
         }
 
         function toRadians(degrees) {
@@ -242,79 +379,245 @@
             return radians * (180 / Math.PI);
         }
 
+        function formatTime(date) {
+            return date.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                hour12: true 
+            });
+        }
+
+        function formatTimeArabic(timeStr) {
+            if (timeStr === "-----") return "-----";
+            
+            // Convert to 24-hour format first
+            const [time, period] = timeStr.split(' ');
+            let [hours, minutes] = time.split(':').map(Number);
+            
+            if (period === 'PM' && hours !== 12) hours += 12;
+            if (period === 'AM' && hours === 12) hours = 0;
+            
+            // Format with Arabic numerals
+            const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+            const hoursStr = hours.toString().padStart(2, '0').split('').map(d => arabicDigits[d]).join('');
+            const minutesStr = minutes.toString().padStart(2, '0').split('').map(d => arabicDigits[d]).join('');
+            
+            return `${hoursStr}:${minutesStr}`;
+        }
+
         function displayPrayerTimes(times) {
             const container = document.getElementById('prayer-times');
             container.innerHTML = '';
 
             const prayers = {
                 Fajr: ['Dawn Prayer', 'fa-sun'],
-                Sunrise: ['Sunrise', 'fa-sunrise'],
+                Sunrise: ['Sunrise', 'fa-sun'],
                 Dhuhr: ['Noon Prayer', 'fa-sun'],
                 Asr: ['Afternoon Prayer', 'fa-cloud-sun'],
                 Maghrib: ['Sunset Prayer', 'fa-moon'],
-                Isha: ['Night Prayer', 'fa-stars']
+                Isha: ['Night Prayer', 'fa-star']
             };
 
-            Object.entries(prayers).forEach(([prayer, [label, icon]]) => {
+            const currentTime = new Date();
+            let nextPrayer = null;
+            let nextPrayerTime = null;
+
+            // First determine the next prayer
+            Object.entries(prayers).forEach(([prayer, [label, icon]], index) => {
+                if (times[prayer] === "-----") return;
+                
+                const prayerDate = convertTimeStringToDate(times[prayer]);
+                
+                if (prayerDate > currentTime && (!nextPrayerTime || prayerDate < nextPrayerTime)) {
+                    nextPrayer = prayer;
+                    nextPrayerTime = prayerDate;
+                }
+            });
+
+            // Now create cards
+            Object.entries(prayers).forEach(([prayer, [label, icon]], index) => {
+                const isActive = prayer === nextPrayer;
+                const [primary, secondary] = prayerColors[prayer] || ['#6366f1', '#8b5cf6'];
+                
                 const card = document.createElement('div');
-                card.className = 'prayer-time-card rounded-lg shadow-lg p-6';
+                card.className = `prayer-time-card rounded-xl shadow-lg p-6 animate__animated animate__fadeIn animate__delay-${index}s ${isActive ? 'active' : ''}`;
+                if (isActive) {
+                    card.style.background = `linear-gradient(145deg, ${primary}15, ${secondary}15)`;
+                }
+                
                 card.innerHTML = `
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between mb-3">
                         <div>
-                            <h3 class="text-xl font-bold text-indigo-600">${label}</h3>
-                            <p class="text-gray-600">${prayer}</p>
+                            <h3 class="text-xl font-bold ${isActive ? 'text-indigo-700' : 'text-indigo-600'}">${label}</h3>
+                            <p class="text-gray-600">${prayer} | ${prayerNamesArabic[prayer]}</p>
                         </div>
-                        <div class="flex items-center">
-                            <i class="fas ${icon} text-purple-500 text-2xl mr-3"></i>
-                            <span class="text-lg font-semibold">${times[prayer]}</span>
+                        <lord-icon
+                            src="${prayerIcons[prayer]}"
+                            trigger="hover"
+                            colors="primary:${primary},secondary:${secondary}"
+                            style="width:48px;height:48px">
+                        </lord-icon>
+                    </div>
+                    <div class="flex items-center justify-between mt-4">
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">English</span>
+                            <span class="text-lg font-semibold ${isActive ? 'text-indigo-700' : 'text-gray-700'}">${times[prayer]}</span>
+                        </div>
+                        <div class="flex flex-col items-end">
+                            <span class="text-sm text-gray-500">عربي</span>
+                            <span dir="rtl" class="text-lg font-semibold arabic ${isActive ? 'text-indigo-700' : 'text-gray-700'}">${formatTimeArabic(times[prayer])}</span>
                         </div>
                     </div>
+                    ${isActive ? '<div class="mt-2 text-xs text-indigo-600 font-medium">Next Prayer</div>' : ''}
                 `;
                 container.appendChild(card);
             });
+
+            // Update next prayer information
+            if (nextPrayer) {
+                document.getElementById('next-prayer-name').innerHTML = `
+                    <span class="mr-2">${prayers[nextPrayer][0]} (${nextPrayer})</span>
+                    <span class="arabic mr-2">${prayerDescArabic[nextPrayer]} (${prayerNamesArabic[nextPrayer]})</span>
+                `;
+                updateCountdown(nextPrayerTime);
+            } else {
+                document.getElementById('next-prayer-name').innerHTML = `
+                    <span class="mr-2">No upcoming prayers today</span>
+                    <span class="arabic mr-2">لا توجد صلوات قادمة اليوم</span>
+                `;
+                document.getElementById('time-remaining').textContent = "00:00:00";
+            }
         }
 
-        function updateQiblaDirection(degrees) {
-            const arrow = document.getElementById('qibla-arrow');
-            const degreesText = document.getElementById('qibla-degrees');
+        function convertTimeStringToDate(timeStr) {
+            if (timeStr === "-----") return null;
             
-            arrow.style.transform = `rotate(${degrees}deg)`;
-            degreesText.textContent = `${degrees}° from North`;
+            const today = new Date();
+            const [time, period] = timeStr.split(' ');
+            let [hours, minutes] = time.split(':').map(Number);
+            
+            if (period === 'PM' && hours !== 12) hours += 12;
+            if (period === 'AM' && hours === 12) hours = 0;
+            
+            const result = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
+            return result;
         }
 
-        function showError(message) {
-            swal({
-                title: "Error",
+        function updateCountdown(targetTime) {
+            if (!targetTime) return;
+            
+            const updateTimer = () => {
+                const now = new Date();
+                const diff = targetTime - now;
+                
+                if (diff <= 0) {
+                    document.getElementById('time-remaining').textContent = "00:00:00";
+                    setTimeout(initialize, 1000); // Refresh the page calculations when time is up
+                    return;
+                }
+                
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                document.getElementById('time-remaining').textContent = 
+                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                setTimeout(updateTimer, 1000);
+            };
+            
+            updateTimer();
+        }
+
+        function updateCurrentDate() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const today = new Date();
+            document.getElementById('current-date').textContent = today.toLocaleDateString('en-US', options);
+        }
+
+        function showLocationError(message) {
+            Swal.fire({
+                title: 'Location Error',
                 text: message,
-                icon: "error"
+                icon: 'error',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#6366f1'
             });
         }
 
+        function showWelcome(locationName) {
+            Swal.fire({
+                title: 'Welcome to Prayer Times',
+                html: `
+                    <lord-icon
+                        src="https://cdn.lordicon.com/xnwbsupk.json"
+                        trigger="loop"
+                        colors="primary:#6366f1,secondary:#8b5cf6"
+                        style="width:80px;height:80px">
+                    </lord-icon>
+                    <p class="mt-4">Your prayer times are now showing for ${locationName}</p>
+                `,
+                icon: 'success',
+                confirmButtonText: 'Continue',
+                confirmButtonColor: '#6366f1',
+                showClass: {
+                    popup: 'animate__animated animate__fadeInDown'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutUp'
+                }
+            });
+        }
+
+        async function getLocationName(latitude, longitude) {
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10`);
+                const data = await response.json();
+                return data.address.city || data.address.town || data.address.village || "Unknown Location";
+            } catch (error) {
+                return "Unknown Location";
+            }
+        }
+
         // Initialize the app
-        function initialize() {
+        async function initialize() {
+            updateCurrentDate();
+            
             if ("geolocation" in navigator) {
                 navigator.geolocation.getCurrentPosition(
-                    position => {
+                    async position => {
                         const { latitude, longitude } = position.coords;
                         
+                        // Get location name
+                        const locationName = await getLocationName(latitude, longitude);
+                        
                         // Display location
-                        document.getElementById('location-display').textContent = 
-                            `Location: ${latitude.toFixed(2)}°, ${longitude.toFixed(2)}°`;
+                        document.getElementById('location-display').innerHTML = `
+                            <i class="fas fa-map-marker-alt mr-1"></i>
+                            <span>${locationName}</span>
+                        `;
                         
                         // Calculate and display prayer times
                         const times = calculatePrayerTimes(latitude, longitude, new Date());
                         displayPrayerTimes(times);
                         
-                        // Calculate and display Qibla direction
-                        const qiblaDirection = calculateQiblaDirection(latitude, longitude);
-                        updateQiblaDirection(qiblaDirection);
+                        // Show welcome message
+                        showWelcome(locationName);
                     },
                     error => {
-                        showError("Unable to access location. Please enable location services.");
+                        showLocationError("Unable to access location. Please enable location services.");
+                        document.getElementById('location-display').innerHTML = `
+                            <i class="fas fa-exclamation-triangle mr-1"></i>
+                            <span>Location unavailable</span>
+                        `;
                     }
                 );
             } else {
-                showError("Geolocation is not supported by your browser.");
+                showLocationError("Geolocation is not supported by your browser.");
+                document.getElementById('location-display').innerHTML = `
+                    <i class="fas fa-exclamation-triangle mr-1"></i>
+                    <span>No location support</span>
+                `;
             }
         }
 
