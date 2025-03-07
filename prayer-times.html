@@ -144,6 +144,49 @@
                 animation: none;
             }
         }
+        /* Dark Mode Toggle Animation */
+.dark-mode-toggle {
+  transition: transform 0.3s ease;
+}
+
+.dark-mode-toggle:hover {
+  transform: rotate(30deg);
+}
+
+.dark-mode .dark-mode-toggle:hover {
+  transform: rotate(-30deg);
+}
+
+/* Focus states for accessibility */
+button:focus, select:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Add prayer color accents for Muslim World League */
+.method-mwl .prayer-time-card:nth-child(1) {
+  border-top: 3px solid #6366f1;
+}
+
+.method-mwl .prayer-time-card:nth-child(2) {
+  border-top: 3px solid #f59e0b;
+}
+
+.method-mwl .prayer-time-card:nth-child(3) {
+  border-top: 3px solid #3b82f6;
+}
+
+.method-mwl .prayer-time-card:nth-child(4) {
+  border-top: 3px solid #10b981;
+}
+
+.method-mwl .prayer-time-card:nth-child(5) {
+  border-top: 3px solid #ef4444;
+}
+
+.method-mwl .prayer-time-card:nth-child(6) {
+  border-top: 3px solid #6366f1;
+}
     </style>
 </head>
 <body class="min-h-screen pb-8 scrollbar">
