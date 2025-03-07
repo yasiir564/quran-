@@ -218,410 +218,1124 @@
     </footer>
 
     <script>
-        // Prayer names in Arabic
-        const prayerNamesArabic = {
-            Fajr: 'الفجر',
-            Sunrise: 'الشروق',
-            Dhuhr: 'الظهر',
-            Asr: 'العصر',
-            Maghrib: 'المغرب',
-            Isha: 'العشاء'
-        };
+       // Adhan.js-inspired prayer times calculation
+// Accurate prayer times calculation with proper location handling and error management
 
-        // Prayer descriptions in Arabic
-        const prayerDescArabic = {
-            Fajr: 'صلاة الفجر',
-            Sunrise: 'شروق الشمس',
-            Dhuhr: 'صلاة الظهر',
-            Asr: 'صلاة العصر',
-            Maghrib: 'صلاة المغرب',
-            Isha: 'صلاة العشاء'
-        };
+// Prayer names in Arabic
+const prayerNamesArabic = {
+    Fajr: 'الفجر',
+    Sunrise: 'الشروق',
+    Dhuhr: 'الظهر',
+    Asr: 'العصر',
+    Maghrib: 'المغرب',
+    Isha: 'العشاء'
+};
 
-        // Lord icon sources for each prayer time
-        const prayerIcons = {
-            Fajr: 'https://cdn.lordicon.com/spgozyor.json',
-            Sunrise: 'https://cdn.lordicon.com/qtedxnsm.json',
-            Dhuhr: 'https://cdn.lordicon.com/oaflahpk.json',
-            Asr: 'https://cdn.lordicon.com/uqpazftn.json',
-            Maghrib: 'https://cdn.lordicon.com/wxnxiano.json',
-            Isha: 'https://cdn.lordicon.com/udwhdpod.json'
-        };
+// Prayer descriptions in Arabic
+const prayerDescArabic = {
+    Fajr: 'صلاة الفجر',
+    Sunrise: 'شروق الشمس',
+    Dhuhr: 'صلاة الظهر',
+    Asr: 'صلاة العصر',
+    Maghrib: 'صلاة المغرب',
+    Isha: 'صلاة العشاء'
+};
 
-        // Color schemes for each prayer
-        const prayerColors = {
-            Fajr: ['#6366f1', '#9333ea'],
-            Sunrise: ['#f59e0b', '#d97706'],
-            Dhuhr: ['#3b82f6', '#1d4ed8'],
-            Asr: ['#10b981', '#065f46'],
-            Maghrib: ['#ef4444', '#b91c1c'],
-            Isha: ['#6366f1', '#4338ca']
-        };
+// Lord icon sources for each prayer time
+const prayerIcons = {
+    Fajr: 'https://cdn.lordicon.com/spgozyor.json',
+    Sunrise: 'https://cdn.lordicon.com/qtedxnsm.json',
+    Dhuhr: 'https://cdn.lordicon.com/oaflahpk.json',
+    Asr: 'https://cdn.lordicon.com/uqpazftn.json',
+    Maghrib: 'https://cdn.lordicon.com/wxnxiano.json',
+    Isha: 'https://cdn.lordicon.com/udwhdpod.json'
+};
 
-        // More accurate prayer times calculation functions
-        function calculatePrayerTimes(latitude, longitude, date) {
-            // For a real implementation, consider using a library like Adhan.js or PrayTime.js
-            // This is a more realistic but still simplified calculation
-            
-            const julianDate = getJulianDate(date);
-            const decl = getSunDeclination(julianDate);
-            const equation = getEquationOfTime(julianDate);
-            
-            // Standard calculation for mid-day time
-            const midDay = 12 + getTimeZone(longitude) - longitude / 15 - equation / 60;
-            
-            // Calculate times based on sun position and location
-            return {
-                Fajr: calculateSpecificPrayerTime(latitude, decl, midDay, -18),
-                Sunrise: calculateSpecificPrayerTime(latitude, decl, midDay, -0.833),
-                Dhuhr: formatTime(new Date(date.getFullYear(), date.getMonth(), date.getDate(), 
-                           Math.floor(midDay), Math.round((midDay % 1) * 60))),
-                Asr: calculateAsrTimeAccurate(latitude, decl, midDay, 1), // Shafi'i (standard)
-                Maghrib: calculateSpecificPrayerTime(latitude, decl, midDay, 0.833),
-                Isha: calculateSpecificPrayerTime(latitude, decl, midDay, 17)
-            };
+// Color schemes for each prayer
+const prayerColors = {
+    Fajr: ['#6366f1', '#9333ea'],
+    Sunrise: ['#f59e0b', '#d97706'],
+    Dhuhr: ['#3b82f6', '#1d4ed8'],
+    Asr: ['#10b981', '#065f46'],
+    Maghrib: ['#ef4444', '#b91c1c'],
+    Isha: ['#6366f1', '#4338ca']
+};
+
+// ======================== ACCURATE CALCULATION FUNCTIONS ======================== //
+
+// Main calculation constants
+const METHODS = {
+    MWL: { fajrAngle: 18, ishaAngle: 17, name: 'Muslim World League' },
+    ISNA: { fajrAngle: 15, ishaAngle: 15, name: 'Islamic Society of North America' },
+    EGYPT: { fajrAngle: 19.5, ishaAngle: 17.5, name: 'Egyptian General Authority of Survey' },
+    MAKKAH: { fajrAngle: 18.5, ishaIsMinutes: true, ishaValue: 90, name: 'Umm al-Qura University, Makkah' },
+    KARACHI: { fajrAngle: 18, ishaAngle: 18, name: 'University of Islamic Sciences, Karachi' },
+    TEHRAN: { fajrAngle: 17.7, ishaAngle: 14, name: 'Institute of Geophysics, Tehran University' },
+    GULF: { fajrAngle: 19.5, ishaIsMinutes: true, ishaValue: 90, name: 'Gulf Region' }
+};
+
+// Default calculation method
+let CALCULATION_METHOD = METHODS.MWL;
+
+// Default Asr calculation method - 1 for Shafi'i, 2 for Hanafi
+let ASR_SHADOW_FACTOR = 1;
+
+// Utility functions for degree/radian conversion
+function toRadians(degrees) {
+    return degrees * (Math.PI / 180);
+}
+
+function toDegrees(radians) {
+    return radians * (180 / Math.PI);
+}
+
+// Calculate Julian date for a given date
+function getJulianDate(date) {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    
+    if (month <= 2) {
+        year -= 1;
+        month += 12;
+    }
+    
+    const A = Math.floor(year / 100);
+    const B = 2 - A + Math.floor(A / 4);
+    
+    return Math.floor(365.25 * (year + 4716)) + 
+           Math.floor(30.6001 * (month + 1)) + 
+           day + B - 1524.5;
+}
+
+// Calculate sun declination for a given Julian date
+function getSunDeclination(julianDate) {
+    // Approximate solar declination from Julian date
+    const D = julianDate - 2451545.0;
+    const g = 357.529 + 0.98560028 * D; // Mean anomaly of the sun
+    const q = 280.459 + 0.98564736 * D; // Mean longitude of the sun
+    
+    // Geocentric apparent ecliptic longitude of the sun
+    const L = q + 1.915 * Math.sin(toRadians(g)) + 0.020 * Math.sin(toRadians(2 * g));
+    
+    // Earth's axial tilt
+    const e = 23.439 - 0.00000036 * D;
+    
+    // Sun's declination
+    return toDegrees(Math.asin(Math.sin(toRadians(e)) * Math.sin(toRadians(L))));
+}
+
+// Calculate equation of time
+function getEquationOfTime(julianDate) {
+    // Approximate equation of time in minutes from Julian date
+    const D = julianDate - 2451545.0;
+    const g = 357.529 + 0.98560028 * D; // Mean anomaly of the sun
+    const q = 280.459 + 0.98564736 * D; // Mean longitude of the sun
+    
+    // Geocentric apparent ecliptic longitude of the sun
+    const L = q + 1.915 * Math.sin(toRadians(g)) + 0.020 * Math.sin(toRadians(2 * g));
+    
+    // Earth's axial tilt
+    const e = 23.439 - 0.00000036 * D;
+    
+    // Right ascension
+    let RA = toDegrees(Math.atan2(
+        Math.cos(toRadians(e)) * Math.sin(toRadians(L)), 
+        Math.cos(toRadians(L))
+    ));
+    
+    // Adjust RA to be in the same quadrant as L
+    const Lquadrant = Math.floor(L / 90) * 90;
+    const RAquadrant = Math.floor(RA / 90) * 90;
+    RA = RA + (Lquadrant - RAquadrant);
+    
+    // Convert to hours
+    RA = RA / 15;
+    
+    // Equation of time: difference between apparent solar time and mean solar time
+    return 4 * (q - RA); // in minutes
+}
+
+// Get timezone offset from browser in hours
+function getTimeZoneOffset() {
+    const now = new Date();
+    return -(now.getTimezoneOffset() / 60);
+}
+
+// Calculate solar noon for a specific date and longitude
+function getSolarNoon(date, longitude, timeZoneOffset) {
+    const julianDate = getJulianDate(date);
+    const equation = getEquationOfTime(julianDate);
+    
+    // Solar noon in hours (local standard time)
+    return 12 + timeZoneOffset - (longitude / 15) - (equation / 60);
+}
+
+// Calculate prayer time for a specific angle (Fajr, Sunrise, Maghrib, Isha)
+function calculateAngleBasedTime(date, latitude, longitude, angle, isAfterNoon) {
+    const julianDate = getJulianDate(date);
+    const declination = getSunDeclination(julianDate);
+    const timeZone = getTimeZoneOffset();
+    const midDay = getSolarNoon(date, longitude, timeZone);
+    
+    const term1 = Math.sin(toRadians(angle)) - 
+                 Math.sin(toRadians(latitude)) * Math.sin(toRadians(declination));
+    const term2 = Math.cos(toRadians(latitude)) * Math.cos(toRadians(declination));
+    
+    const cosTime = term1 / term2;
+    
+    // Check if the sun never reaches the angle
+    if (cosTime > 1) {
+        return { status: "never_above", time: null }; // Sun never rises above this angle
+    } else if (cosTime < -1) {
+        return { status: "never_below", time: null }; // Sun never goes below this angle
+    }
+    
+    const timeAngle = toDegrees(Math.acos(cosTime));
+    const timeHours = timeAngle / 15;
+    
+    // Apply the time adjustment based on whether it's before or after noon
+    const adjustedTimeHours = isAfterNoon ? midDay + timeHours : midDay - timeHours;
+    
+    return { 
+        status: "valid", 
+        time: createTimeForHour(date, adjustedTimeHours)
+    };
+}
+
+// Calculate Asr time based on shadow length factor
+function calculateAsrTime(date, latitude, longitude, shadowFactor) {
+    const julianDate = getJulianDate(date);
+    const declination = getSunDeclination(julianDate);
+    const timeZone = getTimeZoneOffset();
+    const midDay = getSolarNoon(date, longitude, timeZone);
+    
+    // Shadow angle calculation for Asr
+    const zenithDistance = Math.abs(latitude - declination);
+    const asrAngle = toDegrees(Math.atan(1 / (shadowFactor + Math.tan(toRadians(zenithDistance)))));
+    
+    const term1 = Math.sin(toRadians(90 - asrAngle)) - 
+                 Math.sin(toRadians(latitude)) * Math.sin(toRadians(declination));
+    const term2 = Math.cos(toRadians(latitude)) * Math.cos(toRadians(declination));
+    
+    const cosTime = term1 / term2;
+    
+    // Make sure the result is valid
+    if (cosTime > 1 || cosTime < -1) {
+        return { status: "invalid", time: null };
+    }
+    
+    const timeAngle = toDegrees(Math.acos(cosTime));
+    const timeHours = timeAngle / 15;
+    
+    // Asr is always after noon
+    return { 
+        status: "valid", 
+        time: createTimeForHour(date, midDay + timeHours)
+    };
+}
+
+// Create a date object for a specific hour
+function createTimeForHour(date, hours) {
+    const result = new Date(date);
+    const wholeHours = Math.floor(hours);
+    const minutes = Math.floor((hours - wholeHours) * 60);
+    result.setHours(wholeHours, minutes, 0, 0);
+    return result;
+}
+
+// Calculate all prayer times for a specific date, latitude and longitude
+function calculatePrayerTimes(latitude, longitude, date) {
+    // Prepare result object
+    const result = {
+        Fajr: null,
+        Sunrise: null,
+        Dhuhr: null,
+        Asr: null,
+        Maghrib: null,
+        Isha: null
+    };
+    
+    // Get timezone offset
+    const timeZoneOffset = getTimeZoneOffset();
+    
+    // Set date to midnight for consistent calculations
+    const calculationDate = new Date(date);
+    calculationDate.setHours(0, 0, 0, 0);
+    
+    // Calculate Fajr
+    const fajrCalc = calculateAngleBasedTime(
+        calculationDate, 
+        latitude, 
+        longitude, 
+        -CALCULATION_METHOD.fajrAngle, 
+        false
+    );
+    
+    if (fajrCalc.status === "valid") {
+        result.Fajr = fajrCalc.time;
+    } else {
+        // In extreme latitudes, handle special cases
+        result.Fajr = "-----";
+    }
+    
+    // Calculate Sunrise (approx -0.833 degrees due to refraction and solar radius)
+    const sunriseCalc = calculateAngleBasedTime(
+        calculationDate, 
+        latitude, 
+        longitude, 
+        -0.833, 
+        false
+    );
+    
+    if (sunriseCalc.status === "valid") {
+        result.Sunrise = sunriseCalc.time;
+    } else {
+        result.Sunrise = "-----";
+    }
+    
+    // Calculate Dhuhr (solar noon)
+    const midDay = getSolarNoon(calculationDate, longitude, timeZoneOffset);
+    result.Dhuhr = createTimeForHour(calculationDate, midDay);
+    
+    // Calculate Asr
+    const asrCalc = calculateAsrTime(
+        calculationDate, 
+        latitude, 
+        longitude, 
+        ASR_SHADOW_FACTOR
+    );
+    
+    if (asrCalc.status === "valid") {
+        result.Asr = asrCalc.time;
+    } else {
+        result.Asr = "-----";
+    }
+    
+    // Calculate Maghrib (approx +0.833 degrees due to refraction and solar radius)
+    const maghribCalc = calculateAngleBasedTime(
+        calculationDate, 
+        latitude, 
+        longitude, 
+        0.833, 
+        true
+    );
+    
+    if (maghribCalc.status === "valid") {
+        result.Maghrib = maghribCalc.time;
+    } else {
+        result.Maghrib = "-----";
+    }
+    
+    // Calculate Isha
+    if (CALCULATION_METHOD.ishaIsMinutes) {
+        // If Isha is calculated based on minutes after Maghrib
+        if (maghribCalc.status === "valid") {
+            const ishaTime = new Date(maghribCalc.time);
+            ishaTime.setMinutes(ishaTime.getMinutes() + CALCULATION_METHOD.ishaValue);
+            result.Isha = ishaTime;
+        } else {
+            result.Isha = "-----";
         }
-
-        function getJulianDate(date) {
-            const month = date.getMonth() + 1;
-            const day = date.getDate();
-            const year = date.getFullYear();
-            
-            let A = Math.floor(year / 100);
-            let B = 2 - A + Math.floor(A / 4);
-            
-            return Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day + B - 1524.5;
+    } else {
+        // If Isha is calculated based on sun angle
+        const ishaCalc = calculateAngleBasedTime(
+            calculationDate, 
+            latitude, 
+            longitude, 
+            -CALCULATION_METHOD.ishaAngle, 
+            true
+        );
+        
+        if (ishaCalc.status === "valid") {
+            result.Isha = ishaCalc.time;
+        } else {
+            result.Isha = "-----";
         }
-
-        function getSunDeclination(julianDate) {
-            const D = julianDate - 2451545.0;
-            const g = 357.529 + 0.98560028 * D;
-            const q = 280.459 + 0.98564736 * D;
-            const L = q + 1.915 * Math.sin(toRadians(g)) + 0.020 * Math.sin(toRadians(2 * g));
-            
-            const e = 23.439 - 0.00000036 * D;
-            return toDegrees(Math.asin(Math.sin(toRadians(e)) * Math.sin(toRadians(L))));
+    }
+    
+    // Format all valid times to strings
+    Object.keys(result).forEach(prayer => {
+        if (result[prayer] !== "-----" && result[prayer] instanceof Date) {
+            result[prayer] = formatTime(result[prayer]);
         }
+    });
+    
+    return result;
+}
 
-        function getEquationOfTime(julianDate) {
-            const D = julianDate - 2451545.0;
-            const g = 357.529 + 0.98560028 * D;
-            const q = 280.459 + 0.98564736 * D;
-            const L = q + 1.915 * Math.sin(toRadians(g)) + 0.020 * Math.sin(toRadians(2 * g));
-            
-            const e = 23.439 - 0.00000036 * D;
-            const RA = toDegrees(Math.atan2(Math.cos(toRadians(e)) * Math.sin(toRadians(L)), Math.cos(toRadians(L))));
-            
-            // Ensure RA is in the same quadrant as L
-            const Lquadrant = Math.floor(L / 90) * 90;
-            const RAquadrant = Math.floor(RA / 90) * 90;
-            RA = RA + (Lquadrant - RAquadrant);
-            
-            // Convert to hours
-            RA = RA / 15;
-            
-            return 4 * (q - RA);
+// ======================== FORMATTING FUNCTIONS ======================== //
+
+// Format a Date object to time string (12-hour format)
+function formatTime(date) {
+    if (!(date instanceof Date)) return "-----";
+    return date.toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        hour12: true 
+    });
+}
+
+// Format time string to Arabic numerals
+function formatTimeArabic(timeStr) {
+    if (timeStr === "-----") return "-----";
+    
+    // Convert to 24-hour format first
+    const [time, period] = timeStr.split(' ');
+    let [hours, minutes] = time.split(':').map(Number);
+    
+    if (period === 'PM' && hours !== 12) hours += 12;
+    if (period === 'AM' && hours === 12) hours = 0;
+    
+    // Format with Arabic numerals
+    const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    const hoursStr = hours.toString().padStart(2, '0').split('').map(d => arabicDigits[parseInt(d)]).join('');
+    const minutesStr = minutes.toString().padStart(2, '0').split('').map(d => arabicDigits[parseInt(d)]).join('');
+    
+    return `${hoursStr}:${minutesStr}`;
+}
+
+// Convert time string to Date object for comparison
+function convertTimeStringToDate(timeStr) {
+    if (timeStr === "-----") return null;
+    
+    const today = new Date();
+    const [time, period] = timeStr.split(' ');
+    let [hours, minutes] = time.split(':').map(Number);
+    
+    if (period === 'PM' && hours !== 12) hours += 12;
+    if (period === 'AM' && hours === 12) hours = 0;
+    
+    const result = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
+    return result;
+}
+
+// ======================== UI UPDATE FUNCTIONS ======================== //
+
+// Display the prayer times in the UI
+function displayPrayerTimes(times) {
+    const container = document.getElementById('prayer-times');
+    container.innerHTML = '';
+
+    const prayers = {
+        Fajr: ['Dawn Prayer', 'fa-sun'],
+        Sunrise: ['Sunrise', 'fa-sun'],
+        Dhuhr: ['Noon Prayer', 'fa-sun'],
+        Asr: ['Afternoon Prayer', 'fa-cloud-sun'],
+        Maghrib: ['Sunset Prayer', 'fa-moon'],
+        Isha: ['Night Prayer', 'fa-star']
+    };
+
+    const currentTime = new Date();
+    let nextPrayer = null;
+    let nextPrayerTime = null;
+
+    // First determine the next prayer
+    Object.entries(prayers).forEach(([prayer, [label, icon]]) => {
+        if (times[prayer] === "-----") return;
+        
+        const prayerDate = convertTimeStringToDate(times[prayer]);
+        
+        if (prayerDate > currentTime && (!nextPrayerTime || prayerDate < nextPrayerTime)) {
+            nextPrayer = prayer;
+            nextPrayerTime = prayerDate;
         }
+    });
 
-        function getTimeZone(longitude) {
-            // A simple estimation of timezone, more accurate would be to use a timezone API
-            return Math.round(longitude / 15);
+    // Handle case where all prayers have passed for the day
+    if (!nextPrayer) {
+        // Set Fajr of the next day as the next prayer
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        // Recalculate for tomorrow
+        const tomorrowTimes = calculatePrayerTimes(
+            currentPosition.latitude, 
+            currentPosition.longitude, 
+            tomorrow
+        );
+        
+        nextPrayer = 'Fajr';
+        nextPrayerTime = convertTimeStringToDate(tomorrowTimes.Fajr);
+        
+        // If still no valid time (e.g., extreme latitude), show placeholder
+        if (!nextPrayerTime) {
+            document.getElementById('next-prayer-name').innerHTML = `
+                <span class="mr-2">No upcoming prayers available</span>
+                <span class="arabic mr-2">لا توجد صلوات قادمة متاحة</span>
+            `;
+            document.getElementById('time-remaining').textContent = "--:--:--";
         }
+    }
 
-        function calculateSpecificPrayerTime(latitude, declination, midDay, angle) {
-            const term1 = Math.sin(toRadians(angle)) - Math.sin(toRadians(latitude)) * Math.sin(toRadians(declination));
-            const term2 = Math.cos(toRadians(latitude)) * Math.cos(toRadians(declination));
-            
-            const cosTime = term1 / term2;
-            
-            // Check if the sun never reaches the angle
-            if (cosTime > 1 || cosTime < -1) {
-                return "-----"; // Sun never reaches this angle at this location
-            }
-            
-            const time = toDegrees(Math.acos(cosTime)) / 15;
-            
-            // Before midday (Fajr, Sunrise)
-            if (angle < 0) {
-                const timeInHours = midDay - time;
-                const date = new Date();
-                date.setHours(Math.floor(timeInHours));
-                date.setMinutes(Math.round((timeInHours % 1) * 60));
-                return formatTime(date);
-            } 
-            // After midday (Maghrib, Isha)
-            else {
-                const timeInHours = midDay + time;
-                const date = new Date();
-                date.setHours(Math.floor(timeInHours));
-                date.setMinutes(Math.round((timeInHours % 1) * 60));
-                return formatTime(date);
-            }
+    // Now create cards
+    Object.entries(prayers).forEach(([prayer, [label, icon]], index) => {
+        const isActive = prayer === nextPrayer;
+        const [primary, secondary] = prayerColors[prayer] || ['#6366f1', '#8b5cf6'];
+        
+        const card = document.createElement('div');
+        card.className = `prayer-time-card rounded-xl shadow-lg p-6 animate__animated animate__fadeIn animate__delay-${index % 5}s ${isActive ? 'active' : ''}`;
+        if (isActive) {
+            card.style.background = `linear-gradient(145deg, ${primary}15, ${secondary}15)`;
         }
+        
+        card.innerHTML = `
+            <div class="flex items-center justify-between mb-3">
+                <div>
+                    <h3 class="text-xl font-bold ${isActive ? 'text-indigo-700' : 'text-indigo-600'}">${label}</h3>
+                    <p class="text-gray-600">${prayer} | ${prayerNamesArabic[prayer]}</p>
+                </div>
+                <lord-icon
+                    src="${prayerIcons[prayer]}"
+                    trigger="hover"
+                    colors="primary:${primary},secondary:${secondary}"
+                    style="width:48px;height:48px">
+                </lord-icon>
+            </div>
+            <div class="flex items-center justify-between mt-4">
+                <div class="flex flex-col">
+                    <span class="text-sm text-gray-500">English</span>
+                    <span class="text-lg font-semibold ${isActive ? 'text-indigo-700' : 'text-gray-700'}">${times[prayer]}</span>
+                </div>
+                <div class="flex flex-col items-end">
+                    <span class="text-sm text-gray-500">عربي</span>
+                    <span dir="rtl" class="text-lg font-semibold arabic ${isActive ? 'text-indigo-700' : 'text-gray-700'}">${formatTimeArabic(times[prayer])}</span>
+                </div>
+            </div>
+            ${isActive ? '<div class="mt-2 text-xs text-indigo-600 font-medium">Next Prayer</div>' : ''}
+        `;
+        container.appendChild(card);
+    });
 
-        function calculateAsrTimeAccurate(latitude, declination, midDay, shadowFactor) {
-            // shadowFactor: 1 for Shafi'i, 2 for Hanafi
-            const term1 = Math.atan(1 / (shadowFactor + Math.tan(toRadians(Math.abs(latitude - declination)))));
-            const time = toDegrees(term1) / 15;
-            
-            const timeInHours = midDay + time;
-            const date = new Date();
-            date.setHours(Math.floor(timeInHours));
-            date.setMinutes(Math.round((timeInHours % 1) * 60));
-            return formatTime(date);
+    // Update next prayer information
+    if (nextPrayer && nextPrayerTime) {
+        document.getElementById('next-prayer-name').innerHTML = `
+            <span class="mr-2">${prayers[nextPrayer][0]} (${nextPrayer})</span>
+            <span class="arabic mr-2">${prayerDescArabic[nextPrayer]} (${prayerNamesArabic[nextPrayer]})</span>
+        `;
+        updateCountdown(nextPrayerTime);
+    }
+}
+
+// Update the countdown timer
+function updateCountdown(targetTime) {
+    if (!targetTime) return;
+    
+    const updateTimer = () => {
+        const now = new Date();
+        const diff = targetTime - now;
+        
+        if (diff <= 0) {
+            document.getElementById('time-remaining').textContent = "00:00:00";
+            // Refresh the page calculations when time is up
+            setTimeout(() => {
+                refreshPrayerTimes();
+            }, 1000);
+            return;
         }
+        
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        document.getElementById('time-remaining').textContent = 
+            `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        // Update every second
+        countdownTimer = setTimeout(updateTimer, 1000);
+    };
+    
+    // Clear any existing timer before starting a new one
+    if (countdownTimer) {
+        clearTimeout(countdownTimer);
+    }
+    
+    let countdownTimer = setTimeout(updateTimer, 0);
+}
 
-        function toRadians(degrees) {
-            return degrees * (Math.PI / 180);
+// Update the current date
+function updateCurrentDate() {
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const today = new Date();
+    
+    const gregorianDate = today.toLocaleDateString('en-US', options);
+    document.getElementById('current-date').textContent = gregorianDate;
+}
+
+// ======================== LOCATION HANDLING ======================== //
+
+// Global variable to store current position
+let currentPosition = {
+    latitude: null,
+    longitude: null
+};
+
+// Function to handle location retrieval and updates
+async function getCurrentLocation() {
+    return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+            return reject(new Error('Geolocation is not supported by your browser'));
         }
-
-        function toDegrees(radians) {
-            return radians * (180 / Math.PI);
-        }
-
-        function formatTime(date) {
-            return date.toLocaleTimeString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                hour12: true 
-            });
-        }
-
-        function formatTimeArabic(timeStr) {
-            if (timeStr === "-----") return "-----";
-            
-            // Convert to 24-hour format first
-            const [time, period] = timeStr.split(' ');
-            let [hours, minutes] = time.split(':').map(Number);
-            
-            if (period === 'PM' && hours !== 12) hours += 12;
-            if (period === 'AM' && hours === 12) hours = 0;
-            
-            // Format with Arabic numerals
-            const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-            const hoursStr = hours.toString().padStart(2, '0').split('').map(d => arabicDigits[d]).join('');
-            const minutesStr = minutes.toString().padStart(2, '0').split('').map(d => arabicDigits[d]).join('');
-            
-            return `${hoursStr}:${minutesStr}`;
-        }
-
-        function displayPrayerTimes(times) {
-            const container = document.getElementById('prayer-times');
-            container.innerHTML = '';
-
-            const prayers = {
-                Fajr: ['Dawn Prayer', 'fa-sun'],
-                Sunrise: ['Sunrise', 'fa-sun'],
-                Dhuhr: ['Noon Prayer', 'fa-sun'],
-                Asr: ['Afternoon Prayer', 'fa-cloud-sun'],
-                Maghrib: ['Sunset Prayer', 'fa-moon'],
-                Isha: ['Night Prayer', 'fa-star']
-            };
-
-            const currentTime = new Date();
-            let nextPrayer = null;
-            let nextPrayerTime = null;
-
-            // First determine the next prayer
-            Object.entries(prayers).forEach(([prayer, [label, icon]], index) => {
-                if (times[prayer] === "-----") return;
+        
+        // Show loading state
+        updateLoadingState(true, 'Retrieving your location...');
+        
+        navigator.geolocation.getCurrentPosition(
+            // Success callback
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                currentPosition = { latitude, longitude };
+                updateLoadingState(false);
+                resolve(position.coords);
+            },
+            // Error callback
+            (error) => {
+                updateLoadingState(false);
                 
-                const prayerDate = convertTimeStringToDate(times[prayer]);
-                
-                if (prayerDate > currentTime && (!nextPrayerTime || prayerDate < nextPrayerTime)) {
-                    nextPrayer = prayer;
-                    nextPrayerTime = prayerDate;
+                let errorMessage;
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage = 'Location access was denied. Prayer times may not be accurate.';
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage = 'Location information is unavailable. Using default location.';
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage = 'Location request timed out. Using cached or default location.';
+                        break;
+                    default:
+                        errorMessage = 'An unknown error occurred while retrieving location.';
                 }
-            });
-
-            // Now create cards
-            Object.entries(prayers).forEach(([prayer, [label, icon]], index) => {
-                const isActive = prayer === nextPrayer;
-                const [primary, secondary] = prayerColors[prayer] || ['#6366f1', '#8b5cf6'];
                 
-                const card = document.createElement('div');
-                card.className = `prayer-time-card rounded-xl shadow-lg p-6 animate__animated animate__fadeIn animate__delay-${index}s ${isActive ? 'active' : ''}`;
-                if (isActive) {
-                    card.style.background = `linear-gradient(145deg, ${primary}15, ${secondary}15)`;
-                }
-                
-                card.innerHTML = `
-                    <div class="flex items-center justify-between mb-3">
-                        <div>
-                            <h3 class="text-xl font-bold ${isActive ? 'text-indigo-700' : 'text-indigo-600'}">${label}</h3>
-                            <p class="text-gray-600">${prayer} | ${prayerNamesArabic[prayer]}</p>
-                        </div>
-                        <lord-icon
-                            src="${prayerIcons[prayer]}"
-                            trigger="hover"
-                            colors="primary:${primary},secondary:${secondary}"
-                            style="width:48px;height:48px">
-                        </lord-icon>
-                    </div>
-                    <div class="flex items-center justify-between mt-4">
-                        <div class="flex flex-col">
-                            <span class="text-sm text-gray-500">English</span>
-                            <span class="text-lg font-semibold ${isActive ? 'text-indigo-700' : 'text-gray-700'}">${times[prayer]}</span>
-                        </div>
-                        <div class="flex flex-col items-end">
-                            <span class="text-sm text-gray-500">عربي</span>
-                            <span dir="rtl" class="text-lg font-semibold arabic ${isActive ? 'text-indigo-700' : 'text-gray-700'}">${formatTimeArabic(times[prayer])}</span>
-                        </div>
-                    </div>
-                    ${isActive ? '<div class="mt-2 text-xs text-indigo-600 font-medium">Next Prayer</div>' : ''}
-                `;
-                container.appendChild(card);
-            });
+                reject(new Error(errorMessage));
+            },
+            // Options
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 300000 // 5 minutes
+            }
+        );
+    });
+}
 
-            // Update next prayer information
-            if (nextPrayer) {
-                document.getElementById('next-prayer-name').innerHTML = `
-                    <span class="mr-2">${prayers[nextPrayer][0]} (${nextPrayer})</span>
-                    <span class="arabic mr-2">${prayerDescArabic[nextPrayer]} (${prayerNamesArabic[nextPrayer]})</span>
-                `;
-                updateCountdown(nextPrayerTime);
+// Show/hide a loading indicator
+function updateLoadingState(isLoading, message = 'Loading...') {
+    const locationDisplay = document.getElementById('location-display');
+    
+    if (isLoading) {
+        locationDisplay.innerHTML = `
+            <div class="flex items-center">
+                <div class="animate-spin mr-2">
+                    <i class="fas fa-circle-notch"></i>
+                </div>
+                <span>${message}</span>
+            </div>
+        `;
+    } else {
+        // Reset to default state - will be updated later
+        locationDisplay.innerHTML = `
+            <i class="fas fa-map-marker-alt mr-1"></i>
+            <span>Location pending...</span>
+        `;
+    }
+}
+
+// Fetch location name from coordinates
+async function getLocationName(latitude, longitude) {
+    try {
+        updateLoadingState(true, 'Finding your city...');
+        
+        const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10`,
+            { headers: { 'Accept-Language': 'en' } }
+        );
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch location data');
+        }
+        
+        const data = await response.json();
+        updateLoadingState(false);
+        
+        return data.address.city || 
+               data.address.town || 
+               data.address.village || 
+               data.address.county ||
+               data.address.state ||
+               "Unknown Location";
+    } catch (error) {
+        updateLoadingState(false);
+        console.error('Error fetching location name:', error);
+        return "Unknown Location";
+    }
+}
+
+// Update the location display
+function updateLocationDisplay(locationName) {
+    const locationDisplay = document.getElementById('location-display');
+    locationDisplay.innerHTML = `
+        <i class="fas fa-map-marker-alt mr-1"></i>
+        <span>${locationName}</span>
+    `;
+}
+
+// Show location error and fallback to default location
+function handleLocationError(error) {
+    console.error('Location error:', error);
+    
+    // Show error alert
+    Swal.fire({
+        title: 'Location Error',
+        text: error.message || 'Unable to determine your location. Using default location.',
+        icon: 'warning',
+        confirmButtonText: 'Use Default Location',
+        confirmButtonColor: '#6366f1',
+        showCancelButton: true,
+        cancelButtonText: 'Try Again',
+        cancelButtonColor: '#ef4444'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Use default location (Mecca coordinates as fallback)
+            currentPosition = { 
+                latitude: 21.4225, 
+                longitude: 39.8262 
+            };
+            updateLocationDisplay('Mecca (Default)');
+            refreshPrayerTimes();
+        } else {
+            // Try again
+            initialize();
+        }
+    });
+}
+
+// ======================== CALCULATION METHOD HANDLING ======================== //
+
+// Function to set calculation method
+function setCalculationMethod(methodKey) {
+    if (METHODS[methodKey]) {
+        CALCULATION_METHOD = METHODS[methodKey];
+        refreshPrayerTimes();
+        
+        // Save preference
+        localStorage.setItem('prayerCalculationMethod', methodKey);
+        
+        return true;
+    }
+    return false;
+}
+
+// Function to set Asr calculation method
+function setAsrMethod(method) {
+    if (method === 'shafi' || method === 1) {
+        ASR_SHADOW_FACTOR = 1;
+    } else if (method === 'hanafi' || method === 2) {
+        ASR_SHADOW_FACTOR = 2;
+    } else {
+        return false;
+    }
+    
+    // Save preference
+    localStorage.setItem('asrCalculationMethod', ASR_SHADOW_FACTOR);
+    refreshPrayerTimes();
+    
+    return true;
+}
+
+// Load saved calculation preferences
+function loadCalculationPreferences() {
+    const savedMethod = localStorage.getItem('prayerCalculationMethod');
+    const savedAsrMethod = localStorage.getItem('asrCalculationMethod');
+    
+    if (savedMethod && METHODS[savedMethod]) {
+        CALCULATION_METHOD = METHODS[savedMethod];
+    }
+    
+    if (savedAsrMethod) {
+        ASR_SHADOW_FACTOR = parseInt(savedAsrMethod, 10) || 1;
+    }
+}
+
+// ======================== MAIN APPLICATION LOGIC ======================== //
+
+// Refresh prayer times calculations
+function refreshPrayerTimes() {
+    if (!currentPosition.latitude || !currentPosition.longitude) {
+        handleLocationError(new Error('No location data available'));
+        return;
+    }
+    
+    const times = calculatePrayerTimes(
+        currentPosition.latitude, 
+        currentPosition.longitude, 
+        new Date()
+    );
+    
+    displayPrayerTimes(times);
+}
+
+// Display welcome message
+function showWelcomeMessage(locationName) {
+    Swal.fire({
+        title: 'Prayer Times',
+        html: `
+            <lord-icon
+                src="https://cdn.lordicon.com/xnwbsupk.json"
+                trigger="loop"
+                colors="primary:#6366f1,secondary:#8b5cf6"
+                style="width:80px;height:80px">
+            </lord-icon>
+            <p class="mt-4">Your prayer times are being calculated for <strong>${locationName}</strong></p>
+            <p class="mt-2 text-sm text-gray-500">Using ${CALCULATION_METHOD.name} calculation method</p>
+        `,
+        icon: 'success',
+        confirmButtonText: 'Continue',
+        confirmButtonColor: '#6366f1',
+        showClass: {
+            popup: 'animate__animated animate__fadeInDown'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOutUp'
+        }
+    });
+}
+
+// Initialize the settings UI
+function initializeSettings() {
+    const methodSelector = document.getElementById('calculation-method');
+    const asrMethodSelector = document.getElementById('asr-method');
+    
+    // Populate calculation method options
+    if (methodSelector) {
+        methodSelector.innerHTML = '';
+        
+        Object.entries(METHODS).forEach(([key, method]) => {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = method.name;
+            if (method === CALCULATION_METHOD) {
+                option.selected = true;
+            }
+            methodSelector.appendChild(option);
+        });
+        
+        // Add event listener
+        methodSelector.addEventListener('change', (e) => {
+            setCalculationMethod(e.target.value);
+        });
+    }
+    
+    // Set up Asr method selector
+    if (asrMethodSelector) {
+        asrMethodSelector.value = ASR_SHADOW_FACTOR === 1 ? 'shafi' : 'hanafi';
+        
+        // Add event listener
+        asrMethodSelector.addEventListener('change', (e) => {
+            setAsrMethod(e.target.value);
+        });
+    }
+    
+    // Set up settings button
+    const settingsBtn = document.getElementById('settings-button');
+    if (settingsBtn) {
+        settingsBtn.addEventListener('click', () => {
+            showSettingsModal();
+        });
+    }
+}
+
+// Show settings modal
+function showSettingsModal() {
+    Swal.fire({
+        title: 'Prayer Times Settings',
+        html: `
+            <div class="flex flex-col gap-4 mt-4">
+                <div class="flex flex-col">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Calculation Method</label>
+                    <select id="modal-calc-method" class="p-2 border border-gray-300 rounded-md shadow-sm">
+                        ${Object.entries(METHODS).map(([key, method]) => 
+                            `<option value="${key}" ${method === CALCULATION_METHOD ? 'selected' : ''}>${method.name}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+                <div class="flex flex-col">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Asr Calculation</label>
+                    <select id="modal-asr-method" class="p-2 border border-gray-300 rounded-md shadow-sm">
+                        <option value="shafi" ${ASR_SHADOW_FACTOR === 1 ? 'selected' : ''}>Shafi'i, Maliki, Hanbali</option>
+                        <option value="hanafi" ${ASR_SHADOW_FACTOR === 2 ? 'selected' : ''}>Hanafi</option>
+                    </select>
+                </div>
+                <div class="flex flex-col">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                    <div class="flex items-center">
+                        <span id="current-location-display" class="text-gray-600 mr-2">
+                            ${document.getElementById('location-display').textContent.trim()}
+                        </span>
+                        <button id="refresh-location-btn" class="p-2 bg-indigo-100 text-indigo-600 rounded-md hover:bg-indigo-200">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Save Changes',
+        confirmButtonColor: '#6366f1',
+        cancelButtonText: 'Cancel',
+        didOpen: () => {
+            const refreshBtn = document.getElementById('refresh-location-btn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', () => {
+                    Swal.close();
+                    initialize();
+                });
+            }
+        },
+        preConfirm: () => {
+            const method = document.getElementById('modal-calc-method').value;
+            const asrMethod = document.getElementById('modal-asr-method').value;
+            
+            setCalculationMethod(method);
+            setAsrMethod(asrMethod);
+            
+            return true;
+        }
+    });
+}
+
+// Theme toggler
+function initializeThemeToggle() {
+    const themeToggle = document.getElementById('theme-toggle');
+    const htmlElement = document.documentElement;
+    
+    // Check saved preference or system preference
+    const savedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+        htmlElement.classList.add('dark');
+        themeToggle.checked = true;
+    }
+    
+    // Add event listener
+    themeToggle.addEventListener('change', () => {
+        if (themeToggle.checked) {
+            htmlElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            htmlElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        }
+    });
+}
+
+// Update the app language
+function setLanguage(lang) {
+    document.documentElement.lang = lang;
+    localStorage.setItem('language', lang);
+    
+    // Update UI elements based on language
+    const elements = document.querySelectorAll('[data-i18n]');
+    elements.forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+            element.textContent = translations[lang][key];
+        }
+    });
+    
+    // Update direction for Arabic
+    if (lang === 'ar') {
+        document.body.dir = 'rtl';
+        document.querySelector('.container').classList.add('rtl-layout');
+    } else {
+        document.body.dir = 'ltr';
+        document.querySelector('.container').classList.remove('rtl-layout');
+    }
+}
+
+// Initialize language selector
+function initializeLanguageSelector() {
+    const langSelector = document.getElementById('language-selector');
+    if (!langSelector) return;
+    
+    const savedLang = localStorage.getItem('language') || 'en';
+    langSelector.value = savedLang;
+    setLanguage(savedLang);
+    
+    langSelector.addEventListener('change', (e) => {
+        setLanguage(e.target.value);
+    });
+}
+
+// Share functionality
+function initializeShareButton() {
+    const shareBtn = document.getElementById('share-button');
+    if (!shareBtn) return;
+    
+    shareBtn.addEventListener('click', async () => {
+        try {
+            if (navigator.share) {
+                await navigator.share({
+                    title: 'Prayer Times',
+                    text: 'Check out these accurate prayer times for your location!',
+                    url: window.location.href
+                });
             } else {
-                document.getElementById('next-prayer-name').innerHTML = `
-                    <span class="mr-2">No upcoming prayers today</span>
-                    <span class="arabic mr-2">لا توجد صلوات قادمة اليوم</span>
-                `;
-                document.getElementById('time-remaining').textContent = "00:00:00";
-            }
-        }
-
-        function convertTimeStringToDate(timeStr) {
-            if (timeStr === "-----") return null;
-            
-            const today = new Date();
-            const [time, period] = timeStr.split(' ');
-            let [hours, minutes] = time.split(':').map(Number);
-            
-            if (period === 'PM' && hours !== 12) hours += 12;
-            if (period === 'AM' && hours === 12) hours = 0;
-            
-            const result = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
-            return result;
-        }
-
-        function updateCountdown(targetTime) {
-            if (!targetTime) return;
-            
-            const updateTimer = () => {
-                const now = new Date();
-                const diff = targetTime - now;
-                
-                if (diff <= 0) {
-                    document.getElementById('time-remaining').textContent = "00:00:00";
-                    setTimeout(initialize, 1000); // Refresh the page calculations when time is up
-                    return;
-                }
-                
-                const hours = Math.floor(diff / (1000 * 60 * 60));
-                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-                
-                document.getElementById('time-remaining').textContent = 
-                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                
-                setTimeout(updateTimer, 1000);
-            };
-            
-            updateTimer();
-        }
-
-        function updateCurrentDate() {
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const today = new Date();
-            document.getElementById('current-date').textContent = today.toLocaleDateString('en-US', options);
-        }
-
-        function showLocationError(message) {
-            Swal.fire({
-                title: 'Location Error',
-                text: message,
-                icon: 'error',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#6366f1'
-            });
-        }
-
-        function showWelcome(locationName) {
-            Swal.fire({
-                title: 'Welcome to Prayer Times',
-                html: `
-                    <lord-icon
-                        src="https://cdn.lordicon.com/xnwbsupk.json"
-                        trigger="loop"
-                        colors="primary:#6366f1,secondary:#8b5cf6"
-                        style="width:80px;height:80px">
-                    </lord-icon>
-                    <p class="mt-4">Your prayer times are now showing for ${locationName}</p>
-                `,
-                icon: 'success',
-                confirmButtonText: 'Continue',
-                confirmButtonColor: '#6366f1',
-                showClass: {
-                    popup: 'animate__animated animate__fadeInDown'
-                },
-                hideClass: {
-                    popup: 'animate__animated animate__fadeOutUp'
-                }
-            });
-        }
-
-        async function getLocationName(latitude, longitude) {
-            try {
-                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10`);
-                const data = await response.json();
-                return data.address.city || data.address.town || data.address.village || "Unknown Location";
-            } catch (error) {
-                return "Unknown Location";
-            }
-        }
-
-        // Initialize the app
-        async function initialize() {
-            updateCurrentDate();
-            
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(
-                    async position => {
-                        const { latitude, longitude } = position.coords;
-                        
-                        // Get location name
-                        const locationName = await getLocationName(latitude, longitude);
-                        
-                        // Display location
-                        document.getElementById('location-display').innerHTML = `
-                            <i class="fas fa-map-marker-alt mr-1"></i>
-                            <span>${locationName}</span>
-                        `;
-                        
-                        // Calculate and display prayer times
-                        const times = calculatePrayerTimes(latitude, longitude, new Date());
-                        displayPrayerTimes(times);
-                        
-                        // Show welcome message
-                        showWelcome(locationName);
+                // Fallback for browsers that don't support Web Share API
+                Swal.fire({
+                    title: 'Share Prayer Times',
+                    input: 'text',
+                    inputValue: window.location.href,
+                    inputAttributes: {
+                        readonly: true,
                     },
-                    error => {
-                        showLocationError("Unable to access location. Please enable location services.");
-                        document.getElementById('location-display').innerHTML = `
-                            <i class="fas fa-exclamation-triangle mr-1"></i>
-                            <span>Location unavailable</span>
-                        `;
+                    confirmButtonText: 'Copy Link',
+                    confirmButtonColor: '#6366f1',
+                    showCancelButton: true,
+                    cancelButtonText: 'Close'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        navigator.clipboard.writeText(window.location.href)
+                            .then(() => {
+                                Swal.fire({
+                                    title: 'Link Copied!',
+                                    icon: 'success',
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
+                            });
                     }
-                );
-            } else {
-                showLocationError("Geolocation is not supported by your browser.");
-                document.getElementById('location-display').innerHTML = `
-                    <i class="fas fa-exclamation-triangle mr-1"></i>
-                    <span>No location support</span>
-                `;
+                });
             }
+        } catch (error) {
+            console.error('Error sharing:', error);
         }
+    });
+}
 
-        document.addEventListener('DOMContentLoaded', initialize);
+// Main initialization function
+async function initialize() {
+    // Load saved preferences
+    loadCalculationPreferences();
+    
+    // Initialize UI components
+    updateCurrentDate();
+    initializeSettings();
+    initializeThemeToggle();
+    initializeLanguageSelector();
+    initializeShareButton();
+    
+    try {
+        // Get location
+        const coords = await getCurrentLocation();
+        
+        // Get location name
+        const locationName = await getLocationName(coords.latitude, coords.longitude);
+        updateLocationDisplay(locationName);
+        
+        // Calculate prayer times
+        refreshPrayerTimes();
+        
+        // Show welcome
+        showWelcomeMessage(locationName);
+    } catch (error) {
+        handleLocationError(error);
+    }
+}
+
+// Event listener for when DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    initialize();
+    
+    // Set refresh timer for midnight to update to the next day
+    const now = new Date();
+    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    const timeToMidnight = midnight - now;
+    
+    setTimeout(() => {
+        updateCurrentDate();
+        refreshPrayerTimes();
+        
+        // Then set up a daily refresh
+        setInterval(() => {
+            updateCurrentDate();
+            refreshPrayerTimes();
+        }, 24 * 60 * 60 * 1000); // 24 hours
+    }, timeToMidnight);
+});
+
+// Simple translations object for basic multilingual support
+const translations = {
+    'en': {
+        'prayerTimesTitle': 'Prayer Times',
+        'nextPrayer': 'Next Prayer',
+        'countdown': 'Countdown',
+        'settings': 'Settings',
+        'share': 'Share',
+        'location': 'Location'
+    },
+    'ar': {
+        'prayerTimesTitle': 'أوقات الصلاة',
+        'nextPrayer': 'الصلاة القادمة',
+        'countdown': 'العد التنازلي',
+        'settings': 'الإعدادات',
+        'share': 'مشاركة',
+        'location': 'الموقع'
+    }
+};
+
+// Service Worker Registration for PWA support
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+                console.log('Service Worker registered successfully:', registration.scope);
+            })
+            .catch(error => {
+                console.error('Service Worker registration failed:', error);
+            });
+    });
+}
+
+// Handle offline/online status
+window.addEventListener('online', () => {
+    Swal.fire({
+        title: 'You are back online!',
+        text: 'Refreshing prayer times with your current location.',
+        icon: 'success',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+    initialize();
+});
+
+window.addEventListener('offline', () => {
+    Swal.fire({
+        title: 'You are offline',
+        text: 'Prayer times will continue to work with your last known location.',
+        icon: 'warning',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+});
+
+// Export functions for testing or external use
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        calculatePrayerTimes,
+        getJulianDate,
+        getSunDeclination,
+        getEquationOfTime,
+        getSolarNoon,
+        calculateAngleBasedTime,
+        calculateAsrTime
+    };
+}
     </script>
 </body>
 </html>
