@@ -192,6 +192,33 @@ button:focus, select:focus {
 .method-mwl .prayer-time-card:nth-child(6) {
   border-top: 3px solid #6366f1;
 }
+
+/* AdSense Container Styles */
+.ad-container {
+    width: 100%;
+    margin: 1rem 0 2rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+
+.ad-container ins {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .ad-container {
+        margin: 1rem 0 1.5rem 0;
+    }
+}
     </style>
 </head>
 <body class="min-h-screen pb-8 scrollbar">
@@ -246,6 +273,19 @@ button:focus, select:focus {
             </div>
         </div>
 
+      <!-- AdSense Ad Container -->
+<div class="ad-container animate__animated animate__fadeIn">
+    <ins class="adsbygoogle"
+         style="display:block; text-align:center;"
+         data-ad-layout="in-article"
+         data-ad-format="fluid"
+         data-ad-client="ca-pub-1850217813586802"
+         data-ad-slot="1343025343"></ins>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+</div>
+
         <!-- Prayer Times Grid -->
         <div id="prayer-times" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             <!-- Prayer cards will be inserted here by JavaScript -->
@@ -264,7 +304,6 @@ button:focus, select:focus {
         </div>
         <p>Prayer Times Tool &copy; 2025 | Accurate Islamic Prayer Times</p>
     </footer>
-
     <script>
   // Prayer times application using API instead of manual calculations
 // This code fetches accurate prayer times from an API and provides a clean UI
