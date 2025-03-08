@@ -266,7 +266,7 @@ button:focus, select:focus {
     </footer>
 
     <script>
-     // Prayer times application using API instead of manual calculations
+    // Prayer times application using API instead of manual calculations
 // This code fetches accurate prayer times from an API and provides a clean UI
 
 // Prayer names in Arabic
@@ -451,16 +451,28 @@ function convertTimeStringToDate(timeStr) {
     return result;
 }
 
-// Show error message to user
+// Show error message to user with improved SweetAlert handling
 function showErrorMessage(message) {
     // Check if we have SweetAlert2 available
     if (typeof Swal !== 'undefined') {
-        Swal.fire({
-            title: 'Error',
-            text: message,
-            icon: 'error',
-            confirmButtonColor: '#6366f1'
-        });
+        try {
+            Swal.fire({
+                title: 'Error',
+                text: message,
+                icon: 'error',
+                confirmButtonColor: '#6366f1',
+                customClass: {
+                    container: 'prayer-times-swal-container',
+                    popup: 'prayer-times-swal-popup',
+                    title: 'prayer-times-swal-title',
+                    confirmButton: 'prayer-times-swal-confirm-button'
+                }
+            });
+        } catch (swalError) {
+            // If SweetAlert fails, fall back to standard alert
+            console.error('SweetAlert error:', swalError);
+            alert(message);
+        }
     } else {
         alert(message);
     }
@@ -782,25 +794,53 @@ function updateLocationDisplay(locationName) {
     `;
 }
 
-// Handle location error
+// Handle location error with improved SweetAlert
 function handleLocationError(error) {
     console.error('Location error:', error);
     
     // Check if we have Swal (SweetAlert2) available
     if (typeof Swal !== 'undefined') {
-        // Show error alert
-        Swal.fire({
-            title: 'Location Error',
-            text: error.message || 'Unable to determine your location. Using default location.',
-            icon: 'warning',
-            confirmButtonText: 'Use Default Location',
-            confirmButtonColor: '#6366f1',
-            showCancelButton: true,
-            cancelButtonText: 'Try Again',
-            cancelButtonColor: '#ef4444'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Use default location (Mecca coordinates as fallback)
+        try {
+            // Show error alert
+            Swal.fire({
+                title: 'Location Error',
+                text: error.message || 'Unable to determine your location. Using default location.',
+                icon: 'warning',
+                confirmButtonText: 'Use Default Location',
+                confirmButtonColor: '#6366f1',
+                showCancelButton: true,
+                cancelButtonText: 'Try Again',
+                cancelButtonColor: '#ef4444',
+                customClass: {
+                    container: 'prayer-times-swal-container',
+                    popup: 'prayer-times-swal-popup',
+                    title: 'prayer-times-swal-title',
+                    confirmButton: 'prayer-times-swal-confirm-button',
+                    cancelButton: 'prayer-times-swal-cancel-button'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Use default location (Mecca coordinates as fallback)
+                    currentPosition = { 
+                        latitude: 21.4225, 
+                        longitude: 39.8262 
+                    };
+                    updateLocationDisplay('Mecca (Default)');
+                    refreshPrayerTimes();
+                } else {
+                    // Try again
+                    initialize();
+                }
+            });
+        } catch (swalError) {
+            console.error('SweetAlert error:', swalError);
+            // Fallback to simple alert if SweetAlert fails
+            const useDefault = window.confirm(
+                `${error.message || 'Unable to determine your location.'} Would you like to use the default location (Mecca)?`
+            );
+            
+            if (useDefault) {
+                // Use default location (Mecca coordinates)
                 currentPosition = { 
                     latitude: 21.4225, 
                     longitude: 39.8262 
@@ -811,7 +851,7 @@ function handleLocationError(error) {
                 // Try again
                 initialize();
             }
-        });
+        }
     } else {
         // Fallback to simple alert if SweetAlert is not available
         const useDefault = window.confirm(
@@ -988,6 +1028,9 @@ async function initialize() {
     // Setup UI event listeners
     setupEventListeners();
     
+    // Initialize SweetAlert styles
+    initSweetAlertStyles();
+    
     try {
         // Get user location
         const coords = await getCurrentLocation();
@@ -1003,436 +1046,361 @@ async function initialize() {
     }
 }
 
+// Add SweetAlert custom styles
+function initSweetAlertStyles() {
+    // Only add if SweetAlert is available
+    if (typeof Swal === 'undefined') return;
+
+    // Check if our styles already exist
+    if (!document.getElementById('swal-custom-styles')) {
+        const styleElement = document.createElement('style');
+        styleElement.id = 'swal-custom-styles';
+        styleElement.textContent = `
+            .prayer-times-swal-container {
+                z-index: 9999;
+            }
+            .prayer-times-swal-popup {
+                border-radius: 1rem;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            }
+            .prayer-times-swal-title {
+                font-weight: 600;
+            }
+            .prayer-times-swal-confirm-button {
+                font-weight: 500;
+                border-radius: 0.5rem;
+            }
+            .prayer-times-swal-cancel-button {
+                font-weight: 500;
+                border-radius: 0.5rem;
+            }
+        `;
+        document.head.appendChild(styleElement);
+    }
+}
+
 // Run initialization when DOM is loaded
 document.addEventListener('DOMContentLoaded', initialize);
 
 // Set up auto-refresh every minute to keep countdown accurate
 setInterval(() => {
     const now = new Date();
+    
+    // If we're at a new minute, refresh the countdown
     if (now.getSeconds() === 0) {
-        refreshPrayerTimes();
-    }
-}, 1000);
-
-// ======================== THEME AND LANGUAGE FUNCTIONS ======================== //
-
-// Toggle dark mode
-function toggleDarkMode() {
-    const body = document.body;
-    body.classList.toggle('dark-mode');
-    
-    // Save preference
-    const isDarkMode = body.classList.contains('dark-mode');
-    localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
-    
-    // Update button icon
-    const darkModeButton = safeGetElement('dark-mode-toggle', 'button');
-    if (darkModeButton) {
-        darkModeButton.innerHTML = isDarkMode ? 
-            '<i class="fas fa-sun"></i>' : 
-            '<i class="fas fa-moon"></i>';
-    }
-}
-
-// Toggle Arabic/English display priority
-function toggleLanguage() {
-    const container = document.getElementById('app-container');
-    container.classList.toggle('arabic-primary');
-    
-    // Save preference
-    const isArabicPrimary = container.classList.contains('arabic-primary');
-    localStorage.setItem('arabicPrimary', isArabicPrimary ? 'true' : 'false');
-    
-    // Update button text
-    const langButton = safeGetElement('language-toggle', 'button');
-    if (langButton) {
-        langButton.textContent = isArabicPrimary ? 'English' : 'العربية';
-    }
-}
-
-// Load theme and language preferences
-function loadPreferences() {
-    // Dark mode preference
-    const darkModeSetting = localStorage.getItem('darkMode');
-    if (darkModeSetting === 'true') {
-        document.body.classList.add('dark-mode');
-        
-        const darkModeButton = safeGetElement('dark-mode-toggle', 'button');
-        if (darkModeButton) {
-            darkModeButton.innerHTML = '<i class="fas fa-sun"></i>';
+        // If it's midnight (0:00), refresh all prayer times for the new day
+        if (now.getHours() === 0 && now.getMinutes() === 0) {
+            refreshPrayerTimes();
+        } else {
+            // Otherwise just make sure the countdown is accurate
+            const timeRemainingElement = safeGetElement('time-remaining', 'div');
+            if (timeRemainingElement && timeRemainingElement.textContent === "00:00:00") {
+                // If countdown reached zero, refresh the prayer times
+                refreshPrayerTimes();
+            }
         }
     }
+}, 1000); // Check every second for precise timing
+
+// ======================== SETTINGS PANEL ======================== //
+
+// Toggle settings panel visibility
+function toggleSettings() {
+    const settingsPanel = safeGetElement('settings-panel', 'div');
+    if (!settingsPanel) return;
     
-    // Language preference
-    const arabicPrimarySetting = localStorage.getItem('arabicPrimary');
-    if (arabicPrimarySetting === 'true') {
-        const container = document.getElementById('app-container');
-        if (container) {
-            container.classList.add('arabic-primary');
-        }
-        
-        const langButton = safeGetElement('language-toggle', 'button');
-        if (langButton) {
-            langButton.textContent = 'English';
-        }
+    settingsPanel.classList.toggle('hidden');
+    
+    // Add animation classes
+    if (!settingsPanel.classList.contains('hidden')) {
+        settingsPanel.classList.add('animate__animated', 'animate__fadeInRight');
+    } else {
+        // We don't need to animate when hiding, just hide immediately
+        settingsPanel.classList.remove('animate__animated', 'animate__fadeInRight');
     }
 }
 
-// Setup theme and language toggles
-function setupPreferenceControls() {
-    // Dark mode toggle
-    const darkModeButton = safeGetElement('dark-mode-toggle', 'button');
-    if (darkModeButton) {
-        darkModeButton.addEventListener('click', toggleDarkMode);
-    }
+// Setup settings toggle button
+function setupSettingsToggle() {
+    const settingsButton = safeGetElement('settings-toggle', 'button');
+    if (!settingsButton) return;
     
-    // Language toggle
-    const langButton = safeGetElement('language-toggle', 'button');
-    if (langButton) {
-        langButton.addEventListener('click', toggleLanguage);
+    settingsButton.addEventListener('click', toggleSettings);
+    
+    // Add close button in settings panel
+    const closeButton = safeGetElement('settings-close', 'button');
+    if (closeButton) {
+        closeButton.addEventListener('click', toggleSettings);
     }
 }
 
-// Add preference controls setup to initialization
-document.addEventListener('DOMContentLoaded', () => {
-    // Setup preference controls
-    setupPreferenceControls();
-    
-    // Load saved preferences
-    loadPreferences();
-    
-    // Initialize the app
-    initialize();
-});
+// ======================== RESPONSIVE DESIGN ======================== //
 
-// ======================== RESPONSIVE LAYOUT ADJUSTMENTS ======================== //
-
-// Adjust layout based on screen size
+// Handle responsive layout changes
 function handleResponsiveLayout() {
-    const prayerContainer = document.getElementById('prayer-times');
-    if (!prayerContainer) return;
+    const width = window.innerWidth;
+    const container = safeGetElement('prayer-times', 'div');
+    if (!container) return;
     
     // Adjust grid columns based on screen width
-    if (window.innerWidth < 640) {
-        prayerContainer.className = 'grid grid-cols-1 gap-4 mt-6';
-    } else if (window.innerWidth < 1024) {
-        prayerContainer.className = 'grid grid-cols-2 gap-4 mt-6';
-    } else {
-        prayerContainer.className = 'grid grid-cols-3 gap-4 mt-6';
+    if (width < 640) { // mobile
+        container.className = 'grid grid-cols-1 gap-4 mt-6';
+    } else if (width < 1024) { // tablet
+        container.className = 'grid grid-cols-2 gap-4 mt-6';
+    } else { // desktop
+        container.className = 'grid grid-cols-3 gap-4 mt-6';
     }
 }
 
-// Listen for window resize
+// Listen for window resize events
 window.addEventListener('resize', handleResponsiveLayout);
 
-// Call once on load
-document.addEventListener('DOMContentLoaded', handleResponsiveLayout);
+// Call once on init to set initial layout
+document.addEventListener('DOMContentLoaded', () => {
+    handleResponsiveLayout();
+    setupSettingsToggle();
+});
 
-// ======================== EXPORT & SHARE FUNCTIONS ======================== //
+// ======================== NOTIFICATIONS ======================== //
 
-// Export prayer times to calendar
-function exportToCalendar() {
-    if (!currentPosition.latitude || !currentPosition.longitude) {
-        showErrorMessage('No location data available for export.');
-        return;
+// Check if notifications are supported and get permission
+async function setupNotifications() {
+    if (!('Notification' in window)) {
+        console.log('This browser does not support notifications');
+        return false;
     }
+    
+    if (Notification.permission === 'granted') {
+        return true;
+    }
+    
+    if (Notification.permission !== 'denied') {
+        const permission = await Notification.requestPermission();
+        return permission === 'granted';
+    }
+    
+    return false;
+}
+
+// Schedule notification for next prayer
+function scheduleNextPrayerNotification(prayer, time) {
+    if (!prayer || !time) return;
+    
+    // Convert time to Date object
+    const prayerTime = convertTimeStringToDate(time);
+    if (!prayerTime) return;
+    
+    const now = new Date();
+    const timeUntilPrayer = prayerTime - now;
+    
+    // Only schedule if prayer is in the future and within 24 hours
+    if (timeUntilPrayer <= 0 || timeUntilPrayer > 24 * 60 * 60 * 1000) return;
+    
+    // Schedule notification 15 minutes before prayer time
+    const notificationTime = new Date(prayerTime.getTime() - 15 * 60 * 1000);
+    const timeUntilNotification = notificationTime - now;
+    
+    // Only schedule if notification time is in the future
+    if (timeUntilNotification <= 0) return;
+    
+    setTimeout(() => {
+        sendPrayerNotification(prayer);
+    }, timeUntilNotification);
+    
+    // Also schedule a notification at prayer time
+    setTimeout(() => {
+        sendPrayerNotification(prayer, true);
+    }, timeUntilPrayer);
+}
+
+// Send a prayer notification
+function sendPrayerNotification(prayer, isExact = false) {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
     
     try {
-        // Show loading state
-        updateLoadingState(true, 'Generating calendar events...');
+        const title = isExact 
+            ? `Time for ${prayer} Prayer`
+            : `${prayer} Prayer in 15 minutes`;
+            
+        const options = {
+            body: isExact 
+                ? 'It is time to pray now.' 
+                : 'Prepare for prayer in 15 minutes.',
+            icon: 'assets/icons/prayer-icon.png',
+            badge: 'assets/icons/prayer-badge.png',
+            silent: false
+        };
         
-        // We'll fetch a month of prayer times
-        const today = new Date();
-        const endDate = new Date();
-        endDate.setDate(today.getDate() + 30);
+        const notification = new Notification(title, options);
         
-        let currentDate = new Date(today);
-        
-        // Create a queue of dates to process
-        const dates = [];
-        while (currentDate <= endDate) {
-            dates.push(new Date(currentDate));
-            currentDate.setDate(currentDate.getDate() + 1);
-        }
-        
-        // Process the queue sequentially to avoid API rate limits
-        processDateQueue(dates, 0)
-            .then(events => {
-                updateLoadingState(false);
-                
-                // Generate ICS file content
-                const icsContent = generateICSFile(events);
-                
-                // Create and trigger download
-                const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
-                
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'prayer_times.ics';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                // Show success message
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: 'Prayer times have been exported to your calendar.',
-                        icon: 'success',
-                        confirmButtonColor: '#6366f1'
-                    });
-                } else {
-                    alert('Prayer times have been exported to your calendar.');
-                }
-            })
-            .catch(error => {
-                updateLoadingState(false);
-                console.error('Error exporting to calendar:', error);
-                showErrorMessage('Failed to export prayer times. Please try again later.');
-            });
+        // Handle notification click
+        notification.onclick = function() {
+            window.focus();
+            notification.close();
+        };
     } catch (error) {
-        updateLoadingState(false);
-        console.error('Error in export function:', error);
-        showErrorMessage('An unexpected error occurred during export.');
+        console.error('Error sending notification:', error);
     }
 }
 
-// Process a queue of dates to fetch prayer times
-async function processDateQueue(dates, index) {
-    if (index >= dates.length) return [];
+// Initialize notification system
+async function initNotifications() {
+    const notificationEnabled = await setupNotifications();
     
-    try {
-        // Update loading message with progress
-        updateLoadingState(true, `Generating calendar events (${index + 1}/${dates.length})...`);
+    // Update notification toggle in settings
+    const notificationToggle = safeGetElement('notification-toggle', 'input');
+    if (notificationToggle) {
+        notificationToggle.checked = notificationEnabled;
         
-        // Fetch prayer times for this date
-        const times = await fetchPrayerTimes(
-            currentPosition.latitude,
-            currentPosition.longitude,
-            dates[index]
-        );
+        // Save setting
+        localStorage.setItem('notificationsEnabled', notificationEnabled.toString());
         
-        // Create events for this date
-        const events = createEventsForDate(dates[index], times);
-        
-        // Process the next date (with a small delay to respect API rate limits)
-        return new Promise(resolve => {
-            setTimeout(async () => {
-                const remainingEvents = await processDateQueue(dates, index + 1);
-                resolve([...events, ...remainingEvents]);
-            }, 250); // 250ms delay between requests
-        });
-    } catch (error) {
-        console.error(`Error processing date ${dates[index].toISOString()}:`, error);
-        // Continue with the next date even if this one failed
-        return processDateQueue(dates, index + 1);
-    }
-}
-
-// Create calendar events for a specific date
-function createEventsForDate(date, times) {
-    const events = [];
-    
-    // Prayers to include (excluding Sunrise)
-    const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-    
-    prayers.forEach(prayer => {
-        if (times[prayer] === "-----") return;
-        
-        // Convert time string to Date object
-        const timeDate = convertTimeStringToDate(times[prayer]);
-        if (!timeDate) return;
-        
-        // Set the correct date (keeping the time)
-        timeDate.setFullYear(date.getFullYear());
-        timeDate.setMonth(date.getMonth());
-        timeDate.setDate(date.getDate());
-        
-        // Create event (30 minutes duration for prayers)
-        const endTime = new Date(timeDate);
-        endTime.setMinutes(endTime.getMinutes() + 30);
-        
-        events.push({
-            title: `${prayer} Prayer`,
-            start: timeDate,
-            end: endTime,
-            description: `${prayer} Prayer (${prayerNamesArabic[prayer]})`
-        });
-    });
-    
-    return events;
-}
-
-// Generate ICS file content
-function generateICSFile(events) {
-    // Start ICS file
-    let icsContent = [
-        'BEGIN:VCALENDAR',
-        'VERSION:2.0',
-        'PRODID:-//Prayer Times App//EN',
-        'CALSCALE:GREGORIAN',
-        'METHOD:PUBLISH'
-    ].join('\r\n') + '\r\n';
-    
-    // Add each event
-    events.forEach(event => {
-        // Format dates in ICS format
-        const startDate = formatDateForICS(event.start);
-        const endDate = formatDateForICS(event.end);
-        
-        // Create unique ID for event
-        const eventId = 'prayer-' + Math.random().toString(36).substring(2, 15);
-        
-        // Add event to ICS content
-        icsContent += [
-            'BEGIN:VEVENT',
-            `UID:${eventId}`,
-            `DTSTAMP:${formatDateForICS(new Date())}`,
-            `DTSTART:${startDate}`,
-            `DTEND:${endDate}`,
-            `SUMMARY:${event.title}`,
-            `DESCRIPTION:${event.description}`,
-            'END:VEVENT'
-        ].join('\r\n') + '\r\n';
-    });
-    
-    // End ICS file
-    icsContent += 'END:VCALENDAR';
-    
-    return icsContent;
-}
-
-// Format date for ICS file
-function formatDateForICS(date) {
-    return date.getUTCFullYear() +
-           String(date.getUTCMonth() + 1).padStart(2, '0') +
-           String(date.getUTCDate()).padStart(2, '0') + 'T' +
-           String(date.getUTCHours()).padStart(2, '0') +
-           String(date.getUTCMinutes()).padStart(2, '0') +
-           String(date.getUTCSeconds()).padStart(2, '0') + 'Z';
-}
-
-// Share current prayer times
-function sharePrayerTimes() {
-    // Check if sharing is supported
-    if (!navigator.share) {
-        // Fallback for browsers that don't support Web Share API
-        copyPrayerTimesToClipboard();
-        return;
-    }
-    
-    // Get prayer times container
-    const prayerContainer = document.getElementById('prayer-times');
-    if (!prayerContainer) {
-        showErrorMessage('No prayer times available to share.');
-        return;
-    }
-    
-    // Prepare text to share
-    const today = new Date().toLocaleDateString();
-    const locationDisplay = document.getElementById('location-display');
-    const location = locationDisplay ? locationDisplay.textContent.trim() : 'Current Location';
-    
-    let shareText = `Prayer Times for ${today} (${location})\n\n`;
-    
-    // Extract prayer times from the DOM
-    const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-    prayers.forEach(prayer => {
-        const card = prayerContainer.querySelector(`.prayer-time-card:nth-child(${prayers.indexOf(prayer) + 1})`);
-        if (!card) return;
-        
-        const timeElement = card.querySelector('.text-lg.font-semibold:not(.arabic)');
-        if (!timeElement) return;
-        
-        shareText += `${prayer}: ${timeElement.textContent.trim()}\n`;
-    });
-    
-    // Add app attribution
-    shareText += `\nShared from Prayer Times App`;
-    
-    // Share the text
-    navigator.share({
-        title: 'Prayer Times',
-        text: shareText
-    })
-    .catch(error => {
-        console.error('Error sharing:', error);
-        
-        // Fall back to clipboard copy if sharing fails
-        copyPrayerTimesToClipboard(shareText);
-    });
-}
-
-// Copy prayer times to clipboard
-function copyPrayerTimesToClipboard(shareText) {
-    // If shareText was not provided, generate it
-    if (!shareText) {
-        const today = new Date().toLocaleDateString();
-        const locationDisplay = document.getElementById('location-display');
-        const location = locationDisplay ? locationDisplay.textContent.trim() : 'Current Location';
-        
-        shareText = `Prayer Times for ${today} (${location})\n\n`;
-        
-        // Extract prayer times from the DOM
-        const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-        const prayerContainer = document.getElementById('prayer-times');
-        
-        if (prayerContainer) {
-            prayers.forEach(prayer => {
-                const card = prayerContainer.querySelector(`.prayer-time-card:nth-child(${prayers.indexOf(prayer) + 1})`);
-                if (!card) return;
-                
-                const timeElement = card.querySelector('.text-lg.font-semibold:not(.arabic)');
-                if (!timeElement) return;
-                
-                shareText += `${prayer}: ${timeElement.textContent.trim()}\n`;
-            });
-        }
-        
-        // Add app attribution
-        shareText += `\nShared from Prayer Times App`;
-    }
-    
-    // Copy to clipboard
-    navigator.clipboard.writeText(shareText)
-        .then(() => {
-            // Show success message
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    title: 'Copied!',
-                    text: 'Prayer times have been copied to clipboard.',
-                    icon: 'success',
-                    confirmButtonColor: '#6366f1',
-                    timer: 1500
-                });
+        // Add event listener
+        notificationToggle.addEventListener('change', async (e) => {
+            if (e.target.checked) {
+                const granted = await setupNotifications();
+                e.target.checked = granted;
+                localStorage.setItem('notificationsEnabled', granted.toString());
             } else {
-                alert('Prayer times have been copied to clipboard.');
+                localStorage.setItem('notificationsEnabled', 'false');
             }
-        })
-        .catch(error => {
-            console.error('Error copying to clipboard:', error);
-            showErrorMessage('Failed to copy prayer times to clipboard.');
         });
+    }
 }
 
-// Setup share buttons
-function setupShareButtons() {
-    // Export to calendar button
-    const exportButton = safeGetElement('export-button', 'button');
-    if (exportButton) {
-        exportButton.addEventListener('click', exportToCalendar);
+// ======================== THEME MANAGEMENT ======================== //
+
+// Set theme (light/dark)
+function setTheme(isDark) {
+    const htmlElement = document.documentElement;
+    
+    if (isDark) {
+        htmlElement.classList.add('dark');
+    } else {
+        htmlElement.classList.remove('dark');
     }
     
-    // Share button
-    const shareButton = safeGetElement('share-button', 'button');
-    if (shareButton) {
-        shareButton.addEventListener('click', sharePrayerTimes);
+    // Save the setting
+    localStorage.setItem('darkMode', isDark.toString());
+    
+    // Update toggle in settings
+    const themeToggle = safeGetElement('theme-toggle', 'input');
+    if (themeToggle) {
+        themeToggle.checked = isDark;
     }
 }
 
-// Add share buttons setup to initialization
-document.addEventListener('DOMContentLoaded', setupShareButtons);
+// Initialize theme settings
+function initTheme() {
+    // Check for saved theme preference
+    const savedTheme = localStorage.getItem('darkMode');
+    
+    // If we have a saved preference, use it
+    if (savedTheme !== null) {
+        setTheme(savedTheme === 'true');
+    } 
+    // Otherwise use system preference
+    else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        setTheme(true);
+    }
+    
+    // Add event listener for theme toggle
+    const themeToggle = safeGetElement('theme-toggle', 'input');
+    if (themeToggle) {
+        themeToggle.addEventListener('change', (e) => {
+            setTheme(e.target.checked);
+        });
+    }
+    
+    // Listen for system theme changes
+    if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', (e) => {
+                if (localStorage.getItem('darkMode') === null) {
+                    setTheme(e.matches);
+                }
+            });
+    }
+}
+
+// ======================== MAIN INITIALIZATION ======================== //
+
+// Main initialization function - called when DOM is fully loaded
+document.addEventListener('DOMContentLoaded', async () => {
+    // Initialize UI components
+    initialize();
+    
+    // Initialize theme
+    initTheme();
+    
+    // Initialize notifications if enabled
+    const notificationsEnabled = localStorage.getItem('notificationsEnabled') === 'true';
+    if (notificationsEnabled) {
+        initNotifications();
+    }
+    
+    // Add welcome message
+    setTimeout(() => {
+        const userHasVisited = localStorage.getItem('hasVisitedBefore') === 'true';
+        if (!userHasVisited && typeof Swal !== 'undefined') {
+            try {
+                Swal.fire({
+                    title: 'Welcome to Prayer Times',
+                    text: 'This app helps you keep track of Islamic prayer times for your location. Allow location access for accurate times.',
+                    icon: 'info',
+                    confirmButtonText: 'Get Started',
+                    confirmButtonColor: '#6366f1',
+                    customClass: {
+                        container: 'prayer-times-swal-container',
+                        popup: 'prayer-times-swal-popup',
+                        title: 'prayer-times-swal-title',
+                        confirmButton: 'prayer-times-swal-confirm-button'
+                    }
+                });
+                
+                // Mark as visited
+                localStorage.setItem('hasVisitedBefore', 'true');
+            } catch (error) {
+                console.error('SweetAlert error:', error);
+            }
+        }
+    }, 1000);
+});
+
+// Handle application errors
+window.addEventListener('error', function(e) {
+    console.error('Global error:', e.error || e.message);
+    
+    // Only show fatal errors to users, not all errors
+    if (e.error && e.error.toString().includes('Fatal')) {
+        showErrorMessage('An application error occurred. Please refresh the page.');
+    }
+    
+    // Prevent default error handling
+    e.preventDefault();
+});
+
+// Handle offline/online status
+window.addEventListener('online', () => {
+    refreshPrayerTimes();
+});
+
+window.addEventListener('offline', () => {
+    showErrorMessage('You are currently offline. Prayer times may not be updated.');
+});
+
+// ======================== EXPORTS ======================== //
+
+// Export for testing or external use if needed
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        fetchPrayerTimes,
+        convertTo12HourFormat,
+        formatTimeArabic,
+        convertTimeStringToDate,
+        refreshPrayerTimes
+    };
+}
     </script>
 </body>
 </html>
