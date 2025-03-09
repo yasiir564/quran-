@@ -522,6 +522,163 @@ button:focus, select:focus {
         font-size: 0.9rem;
     }
 }
+        /* About Tool Section Styles */
+.about-tool-section {
+    position: relative;
+    overflow: hidden;
+}
+
+.about-tool-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 400px;
+    background: linear-gradient(180deg, rgba(127, 27, 242, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+    z-index: -1;
+}
+
+/* Feature Cards Styles */
+.feature-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.feature-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(127, 27, 242, 0.15);
+}
+
+.feature-card:hover::after {
+    transform: scaleX(1);
+}
+
+.feature-icon-wrapper {
+    margin-bottom: 1.5rem;
+    background: rgba(127, 27, 242, 0.05);
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover .feature-icon-wrapper {
+    transform: scale(1.1);
+    background: rgba(127, 27, 242, 0.1);
+}
+
+.feature-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #333;
+    font-family: 'Tajawal', sans-serif;
+}
+
+.feature-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    color: #666;
+}
+
+.feature-list li {
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: flex-start;
+    line-height: 1.5;
+}
+
+.feature-bullet {
+    color: var(--accent-color);
+    font-weight: bold;
+    margin-right: 0.5rem;
+}
+
+/* Testimonial Card Styles */
+.testimonial-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.testimonial-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(127, 27, 242, 0.1);
+}
+
+/* Dark Mode Styles */
+@media (prefers-color-scheme: dark) {
+    .feature-card {
+        background: rgba(30, 30, 40, 0.8);
+        border-color: rgba(127, 27, 242, 0.2);
+    }
+    
+    .feature-title {
+        color: #fff;
+    }
+    
+    .feature-list {
+        color: #ccc;
+    }
+    
+    .about-tool-section::before {
+        background: linear-gradient(180deg, rgba(127, 27, 242, 0.1) 0%, rgba(30, 30, 40, 0) 100%);
+    }
+    
+    .testimonial-card {
+        background: rgba(30, 30, 40, 0.8);
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .feature-card {
+        padding: 1.5rem;
+    }
+    
+    .feature-icon-wrapper {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .feature-title {
+        font-size: 1.1rem;
+    }
+    
+    .testimonial-card {
+        padding: 1.25rem;
+    }
+}
     </style>
 </head>
      <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -628,6 +785,181 @@ button:focus, select:focus {
      (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 </div>
+    <!-- About This Tool Section -->
+<section id="about-tool" class="about-tool-section py-16">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold mb-3 benefits-title">About This Prayer Times Tool</h2>
+            <div class="w-24 h-1 custom-gradient mx-auto rounded-full"></div>
+            <p class="mt-4 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">Learn how our prayer times calculator works and why it's the perfect companion for your daily worship.</p>
+        </div>
+
+        <!-- Main Content Area with Image and Text -->
+        <div class="flex flex-col lg:flex-row items-center justify-between gap-8 mb-12">
+            <!-- Image/Illustration Side -->
+            <div class="w-full lg:w-5/12 mb-8 lg:mb-0">
+                <div class="relative">
+                    <div class="absolute -inset-4 bg-gradient-to-r from-purple-400 to-indigo-500 rounded-2xl opacity-20 blur-lg"></div>
+                    <div class="relative overflow-hidden rounded-2xl shadow-xl">
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl flex items-center justify-center h-80">
+                            <lord-icon
+                                src="https://cdn.lordicon.com/rafxnitx.json"
+                                trigger="loop"
+                                colors="primary:#7f1bf2,secondary:#9543f5"
+                                style="width:250px;height:250px" class="icon-float">
+                            </lord-icon>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Text/Information Side -->
+            <div class="w-full lg:w-7/12">
+                <h3 class="text-2xl font-bold mb-6 text-indigo-600 dark:text-indigo-400">How Our Prayer Times Tool Works</h3>
+                
+                <div class="space-y-6">
+                    <div class="flex items-start">
+                        <div class="mr-4 mt-1 p-2 bg-indigo-100 dark:bg-indigo-900 rounded-full">
+                            <i class="fas fa-location-dot text-indigo-600 dark:text-indigo-400"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-1">Location Detection</h4>
+                            <p class="text-gray-600 dark:text-gray-300">Our tool automatically detects your location using GPS coordinates to provide the most accurate prayer times for your exact position.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="mr-4 mt-1 p-2 bg-indigo-100 dark:bg-indigo-900 rounded-full">
+                            <i class="fas fa-calculator text-indigo-600 dark:text-indigo-400"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-1">Precise Calculation Methods</h4>
+                            <p class="text-gray-600 dark:text-gray-300">We use advanced astronomical calculations based on trusted standards like Muslim World League, ISNA, and Umm al-Qura to ensure prayer time accuracy.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="mr-4 mt-1 p-2 bg-indigo-100 dark:bg-indigo-900 rounded-full">
+                            <i class="fas fa-bell text-indigo-600 dark:text-indigo-400"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-1">Real-Time Updates</h4>
+                            <p class="text-gray-600 dark:text-gray-300">Prayer times are updated in real-time, adjusting automatically for seasonal changes, daylight saving time, and your current location.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Cards Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
+            <!-- Feature Card 1 -->
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <lord-icon
+                        src="https://cdn.lordicon.com/zzcjjxew.json"
+                        trigger="hover"
+                        colors="primary:#7f1bf2,secondary:#9543f5"
+                        style="width:64px;height:64px">
+                    </lord-icon>
+                </div>
+                <h3 class="feature-title">Why Use This Tool</h3>
+                <ul class="feature-list">
+                    <li><span class="feature-bullet">•</span> Highly accurate prayer times based on your exact location</li>
+                    <li><span class="feature-bullet">•</span> Easy-to-read countdown to the next prayer</li>
+                    <li><span class="feature-bullet">•</span> Beautiful, intuitive interface for all devices</li>
+                    <li><span class="feature-bullet">•</span> Works offline after initial load</li>
+                </ul>
+            </div>
+
+            <!-- Feature Card 2 -->
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <lord-icon
+                        src="https://cdn.lordicon.com/iltqorsz.json"
+                        trigger="hover"
+                        colors="primary:#7f1bf2,secondary:#9543f5"
+                        style="width:64px;height:64px">
+                    </lord-icon>
+                </div>
+                <h3 class="feature-title">How to Use</h3>
+                <ul class="feature-list">
+                    <li><span class="feature-bullet">•</span> Allow location access when prompted for accurate times</li>
+                    <li><span class="feature-bullet">•</span> View all five daily prayers and sunrise times</li>
+                    <li><span class="feature-bullet">•</span> Check the countdown timer for the next prayer</li>
+                    <li><span class="feature-bullet">•</span> Bookmark the page for quick access</li>
+                </ul>
+            </div>
+
+            <!-- Feature Card 3 -->
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <lord-icon
+                        src="https://cdn.lordicon.com/qhviklyi.json"
+                        trigger="hover"
+                        colors="primary:#7f1bf2,secondary:#9543f5"
+                        style="width:64px;height:64px">
+                    </lord-icon>
+                </div>
+                <h3 class="feature-title">Advanced Options</h3>
+                <ul class="feature-list">
+                    <li><span class="feature-bullet">•</span> Change calculation method for different schools</li>
+                    <li><span class="feature-bullet">•</span> Enable notifications for prayer time alerts</li>
+                    <li><span class="feature-bullet">•</span> Save multiple locations for travel</li>
+                    <li><span class="feature-bullet">•</span> Adjust Asr calculation based on Hanafi or Shafi'i</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Testimonial Section -->
+        <div class="mt-16 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl p-8 shadow-lg">
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">What Users Say</h3>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-card">
+                    <div class="mb-4 text-indigo-500">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 italic mb-4">"This prayer times tool has been a blessing. The accuracy is spot-on and the interface is beautiful. I use it every day!"</p>
+                    <div class="font-medium">- Ahmed S.</div>
+                </div>
+                
+                <!-- Testimonial 2 -->
+                <div class="testimonial-card">
+                    <div class="mb-4 text-indigo-500">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 italic mb-4">"The countdown feature helps me prepare for prayer ahead of time. Very convenient and reliable - highly recommended!"</p>
+                    <div class="font-medium">- Fatima K.</div>
+                </div>
+                
+                <!-- Testimonial 3 -->
+                <div class="testimonial-card">
+                    <div class="mb-4 text-indigo-500">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 italic mb-4">"I travel frequently and this tool adjusts automatically to my location. It's become an essential part of my daily worship routine."</p>
+                    <div class="font-medium">- Omar J.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
     <!-- Benefits of Prayer Section -->
 <section id="benefits" class="benefits-section py-16">
