@@ -851,8 +851,13 @@ async function fetchPrayerTimes(latitude, longitude, date) {
         updateLoadingState(false);
         console.error('Error fetching prayer times:', error);
         
-        // Show error using alert instead of SweetAlert
-        alert('Failed to fetch prayer times. Please try again later.');
+        // Show error using SweetAlert
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to fetch prayer times. Please try again later.',
+            confirmButtonColor: '#6366f1'
+        });
         
         // Return empty times
         return {
@@ -1108,6 +1113,18 @@ function updateCountdown(targetTime) {
             timeRemainingElement.textContent = "00:00:00";
             // Refresh the page calculations when time is up
             setTimeout(() => {
+                // Show notification that prayer time has arrived
+                const prayerName = document.getElementById('next-prayer-name')?.innerText.split('(')[0].trim() || 'Prayer';
+                
+                Swal.fire({
+                    icon: 'info',
+                    title: `${prayerName} Time`,
+                    text: `It's time for ${prayerName}`,
+                    confirmButtonColor: '#6366f1',
+                    timer: 5000,
+                    timerProgressBar: true
+                });
+                
                 refreshPrayerTimes();
             }, 1000);
             return;
@@ -1224,12 +1241,23 @@ function updateLoadingState(isLoading, message = 'Loading...') {
 
 // Request location permission explicitly
 function requestLocationPermission() {
-    if (confirm('This app needs your location to provide accurate prayer times. Allow access to your location?')) {
-        initialize();
-    } else {
-        // Use default location
-        useDefaultLocation();
-    }
+    Swal.fire({
+        title: 'Location Access',
+        text: 'This app needs your location to provide accurate prayer times. Allow access to your location?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#6366f1',
+        cancelButtonColor: '#ef4444',
+        confirmButtonText: 'Yes, allow',
+        cancelButtonText: 'No, use default'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            initialize();
+        } else {
+            // Use default location
+            useDefaultLocation();
+        }
+    });
 }
 
 // Use default location (Mecca)
@@ -1239,6 +1267,16 @@ function useDefaultLocation() {
         latitude: 21.4225, 
         longitude: 39.8262 
     };
+    
+    Swal.fire({
+        icon: 'info',
+        title: 'Default Location',
+        text: 'Using Mecca as the default location for prayer times.',
+        confirmButtonColor: '#6366f1',
+        timer: 3000,
+        timerProgressBar: true
+    });
+    
     updateLocationDisplay('Mecca (Default)');
     refreshPrayerTimes();
 }
@@ -1291,7 +1329,19 @@ function updateLocationDisplay(locationName) {
     const refreshLocationBtn = document.getElementById('refresh-location-btn');
     if (refreshLocationBtn) {
         refreshLocationBtn.addEventListener('click', () => {
-            initialize();
+            Swal.fire({
+                title: 'Refresh Location',
+                text: 'Do you want to update your current location?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#6366f1',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Yes, update'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    initialize();
+                }
+            });
         });
     }
 }
@@ -1300,12 +1350,23 @@ function updateLocationDisplay(locationName) {
 function handleLocationError(error) {
     console.error('Location error:', error);
     
-    if (confirm(`${error.message || 'Unable to determine your location.'} Would you like to use the default location (Mecca)?`)) {
-        useDefaultLocation();
-    } else {
-        // Show location button in the display area
-        updateLoadingState(false);
-    }
+    Swal.fire({
+        title: 'Location Error',
+        text: `${error.message || 'Unable to determine your location.'} Would you like to use the default location (Mecca)?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#6366f1',
+        cancelButtonColor: '#ef4444',
+        confirmButtonText: 'Yes, use Mecca',
+        cancelButtonText: 'No'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            useDefaultLocation();
+        } else {
+            // Show location button in the display area
+            updateLoadingState(false);
+        }
+    });
 }
 
 // ======================== APPLICATION INITIALIZATION ======================== //
@@ -1314,6 +1375,24 @@ function handleLocationError(error) {
 async function refreshPrayerTimes() {
     if (!currentPosition.latitude || !currentPosition.longitude) {
         console.error('No location available');
+        
+        Swal.fire({
+            icon: 'warning',
+            title: 'No Location',
+            text: 'Location data is not available. Please provide your location for accurate prayer times.',
+            confirmButtonColor: '#6366f1',
+            showCancelButton: true,
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Provide Location',
+            cancelButtonText: 'Use Default'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                requestLocationPermission();
+            } else {
+                useDefaultLocation();
+            }
+        });
+        
         return;
     }
     
@@ -1328,13 +1407,33 @@ async function refreshPrayerTimes() {
         displayPrayerTimes(times);
     } catch (error) {
         console.error('Error refreshing prayer times:', error);
-        alert('Failed to refresh prayer times. Please try again.');
+        
+        Swal.fire({
+            icon: 'error',
+            title: 'Refresh Error',
+            text: 'Failed to refresh prayer times. Please try again.',
+            confirmButtonColor: '#6366f1'
+        });
     }
 }
 
 // Initialize the application
 async function initialize() {
     try {
+        // Show welcome message on first load
+        if (!localStorage.getItem('appInitialized')) {
+            Swal.fire({
+                title: 'Welcome to Prayer Times App',
+                text: 'This app helps you track Islamic prayer times based on your location.',
+                icon: 'info',
+                confirmButtonColor: '#6366f1',
+                timer: 3000,
+                timerProgressBar: true
+            });
+            
+            localStorage.setItem('appInitialized', 'true');
+        }
+        
         // Get user location
         const coords = await getCurrentLocation();
         
@@ -1344,6 +1443,21 @@ async function initialize() {
         
         // Calculate and display prayer times
         await refreshPrayerTimes();
+        
+        // Show success message
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+        });
+        
+        Toast.fire({
+            icon: 'success',
+            title: 'Prayer times updated successfully'
+        });
+        
     } catch (error) {
         handleLocationError(error);
     }
@@ -1366,6 +1480,20 @@ function toggleLanguage() {
         if (langButton) {
             langButton.textContent = isArabicPrimary ? 'English' : 'العربية';
         }
+        
+        // Show notification
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true
+        });
+        
+        Toast.fire({
+            icon: 'success',
+            title: isArabicPrimary ? 'تم التغيير إلى العربية' : 'Switched to English'
+        });
     }
 }
 
@@ -1403,63 +1531,76 @@ function handleResponsiveLayout() {
     }
 }
 
-// ======================== INITIALIZATION ======================== //
+// ======================== PRAYER NOTIFICATIONS ======================== //
 
-// Run initialization when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    // Set language toggle
-    const langButton = safeGetElement('language-toggle', 'button');
-    if (langButton) {
-        langButton.addEventListener('click', toggleLanguage);
+// Function to schedule notifications for upcoming prayers
+function schedulePrayerNotifications(times) {
+    if (!("Notification" in window)) {
+        console.warn("This browser does not support notifications");
+        return;
     }
     
-    // Load saved language preferences
-    loadPreferences();
-    
-    // Initialize the app
-    initialize();
-    
-    // Set up auto-refresh every minute to keep countdown accurate
-    setInterval(() => {
-        const now = new Date();
-        if (now.getSeconds() === 0) {
-            refreshPrayerTimes();
-        }
-    }, 1000);
-    
-    // Handle responsive layout
-    handleResponsiveLayout();
-    
-    // Listen for window resize
-    window.addEventListener('resize', handleResponsiveLayout);
-    
-    // Listen for online/offline events
-    window.addEventListener('online', () => {
-        console.log('Back online, refreshing data...');
-        refreshPrayerTimes();
-    });
-    
-    // Handle page visibility changes to refresh when tab becomes visible again
-    document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-            console.log('Tab is now visible, refreshing data...');
-            refreshPrayerTimes();
-        }
-    });
-    
-    // Clean up on page unload
-    window.addEventListener('beforeunload', () => {
-        if (countdownTimer) {
-            clearTimeout(countdownTimer);
-            countdownTimer = null;
-        }
-    });
-});
+    // Check if we have permission
+    if (Notification.permission === "granted") {
+        setupNotifications(times);
+    } else if (Notification.permission !== "denied") {
+        Swal.fire({
+            title: 'Enable Notifications?',
+            text: 'Would you like to receive notifications for prayer times?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#6366f1',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Yes, enable',
+            cancelButtonText: 'No, thanks'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        setupNotifications(times);
+                    }
+                });
+            }
+        });
+    }
+}
 
-// Make functions available globally since we're not using modules
-window.initialize = initialize;
-window.refreshPrayerTimes = refreshPrayerTimes;
-window.toggleLanguage = toggleLanguage;
+// Set up notifications for each prayer time
+function setupNotifications(times) {
+    const now = new Date();
+    
+    Object.entries(times).forEach(([prayer, timeStr]) => {
+        if (timeStr === "-----") return;
+        
+        const prayerDate = convertTimeStringToDate(timeStr);
+        if (!prayerDate || prayerDate <= now) return;
+        
+        // Schedule notification 5 minutes before prayer time
+        const notificationTime = new Date(prayerDate);
+        notificationTime.setMinutes(notificationTime.getMinutes() - 5);
+        
+        const timeUntilNotification = notificationTime - now;
+        if (timeUntilNotification <= 0) return;
+
+        setTimeout(() => {
+            if (Notification.permission === "granted") {
+                new Notification(`${prayer} Prayer Time Soon`, {
+                    body: `${prayer} prayer time is in 5 minutes`,
+                    icon: '/favicon.ico'
+                });
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        new Notification(`${prayer} Prayer Time Soon`, {
+                            body: `${prayer} prayer time is in 5 minutes`,
+                            icon: '/favicon.ico'
+                        });
+                    }
+                });
+            }
+        }, timeUntilNotification);
+    });
+}
     </script>
 </body>
 </html>
