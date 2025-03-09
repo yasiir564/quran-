@@ -759,8 +759,7 @@ button:focus, select:focus {
     window.addEventListener('scroll', applyScrollEffects);
 });
 
-        // Add this after the prayerColors definition
-// Adhan recitation options by sheikhs
+      // Adhan recitation options by sheikhs
 const adhanOptions = [
   { id: 'sheikh-ali-mulla', name: 'Sheikh Ali Ahmed Mulla', audio: 'https://cdn.islamic.network/adhans/ali-mulla.mp3' },
   { id: 'sheikh-abdullah-basfar', name: 'Sheikh Abdullah Basfar', audio: 'https://cdn.islamic.network/adhans/basfar.mp3' },
@@ -826,6 +825,15 @@ let currentPosition = {
     latitude: null,
     longitude: null
 };
+
+// Track active notifications to prevent duplicates
+let activeNotifications = {};
+
+// App favicon URL
+const APP_FAVICON = '/favicon.ico';
+
+// Service worker registration
+let swRegistration = null;
 
 // ======================== API INTEGRATION ======================== //
 
@@ -937,7 +945,7 @@ function formatTimeArabic(timeStr) {
 }
 
 // Convert time string to Date object for comparison
-function convertTimeStringToDate(timeStr) {
+function convertTimeStringToDate(timeStr, useNextDay = false) {
     if (timeStr === "-----") return null;
     
     const today = new Date();
@@ -947,7 +955,7 @@ function convertTimeStringToDate(timeStr) {
     if (period === 'PM' && hours !== 12) hours += 12;
     if (period === 'AM' && hours === 12) hours = 0;
     
-    const result = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
+    const result = new Date(today.getFullYear(), today.getMonth(), today.getDate() + (useNextDay ? 1 : 0), hours, minutes);
     return result;
 }
 
@@ -1031,18 +1039,15 @@ function displayPrayerTimes(times) {
             if (tomorrowTimes.Fajr !== "-----") {
                 nextPrayer = 'Fajr';
                 
-                // Create a date for tomorrow's Fajr
-                const fajrTime = convertTimeStringToDate(tomorrowTimes.Fajr);
+                // Use true to indicate this is for tomorrow
+                const fajrTime = convertTimeStringToDate(tomorrowTimes.Fajr, true);
+                
                 if (fajrTime) {
-                    // Set the date specifically to tomorrow
-                    const tomorrow = new Date();
-                    tomorrow.setDate(tomorrow.getDate() + 1);
-                    fajrTime.setFullYear(tomorrow.getFullYear());
-                    fajrTime.setMonth(tomorrow.getMonth());
-                    fajrTime.setDate(tomorrow.getDate());
-                    
                     nextPrayerTime = fajrTime;
                     updateCountdown(nextPrayerTime);
+                    
+                    // Store tomorrow's Fajr time for notifications
+                    storeNextDayPrayer('Fajr', tomorrowTimes.Fajr);
                 }
             }
         }).catch(error => {
@@ -1065,49 +1070,47 @@ function displayPrayerTimes(times) {
             card.style.background = `linear-gradient(145deg, ${primary}15, ${secondary}15)`;
         }
         
-       card.innerHTML = `
-    <div class="flex items-center justify-between mb-3">
-        <div>
-            <h3 class="text-xl font-bold ${isActive ? 'text-indigo-700' : 'text-indigo-600'}">${label}</h3>
-            <p class="text-gray-600">${prayer} | ${prayerNamesArabic[prayer]}</p>
-        </div>
-        <lord-icon
-            src="${prayerIcons[prayer]}"
-            trigger="hover"
-            colors="primary:${primary},secondary:${secondary}"
-            style="width:48px;height:48px">
-        </lord-icon>
-    </div>
-    <div class="flex items-center justify-between mt-4">
-        <div class="flex flex-col">
-            <span class="text-sm text-gray-500">English</span>
-            <span class="text-lg font-semibold ${isActive ? 'text-indigo-700' : 'text-gray-700'}">${times[prayer]}</span>
-        </div>
-        <div class="flex flex-col items-end">
-            <span class="text-sm text-gray-500">عربي</span>
-            <span dir="rtl" class="text-lg font-semibold arabic ${isActive ? 'text-indigo-700' : 'text-gray-700'}">${formatTimeArabic(times[prayer])}</span>
-        </div>
-    </div>
-    <div class="mt-4 flex justify-between items-center">
-        ${isActive ? '<div class="text-xs text-indigo-600 font-medium">Next Prayer</div>' : ''}
-        <button class="get-notified-btn text-xs px-3 py-1.5 rounded bg-indigo-600 text-white hover:bg-indigo-700 transition-colors" 
-                data-prayer="${prayer}">
-            <i class="fas fa-bell mr-1"></i> ${notificationSettings[prayer] ? 'Notification On' : 'Get Notified'}
-        </button>
-    </div>
-`;
+        card.innerHTML = `
+            <div class="flex items-center justify-between mb-3">
+                <div>
+                    <h3 class="text-xl font-bold ${isActive ? 'text-indigo-700' : 'text-indigo-600'}">${label}</h3>
+                    <p class="text-gray-600">${prayer} | ${prayerNamesArabic[prayer]}</p>
+                </div>
+                <lord-icon
+                    src="${prayerIcons[prayer]}"
+                    trigger="hover"
+                    colors="primary:${primary},secondary:${secondary}"
+                    style="width:48px;height:48px">
+                </lord-icon>
+            </div>
+            <div class="flex items-center justify-between mt-4">
+                <div class="flex flex-col">
+                    <span class="text-sm text-gray-500">English</span>
+                    <span class="text-lg font-semibold ${isActive ? 'text-indigo-700' : 'text-gray-700'}">${times[prayer]}</span>
+                </div>
+                <div class="flex flex-col items-end">
+                    <span class="text-sm text-gray-500">عربي</span>
+                    <span dir="rtl" class="text-lg font-semibold arabic ${isActive ? 'text-indigo-700' : 'text-gray-700'}">${formatTimeArabic(times[prayer])}</span>
+                </div>
+            </div>
+            <div class="mt-4 flex justify-between items-center">
+                ${isActive ? '<div class="text-xs text-indigo-600 font-medium">Next Prayer</div>' : ''}
+                <button class="get-notified-btn text-xs px-3 py-1.5 rounded bg-indigo-600 text-white hover:bg-indigo-700 transition-colors" 
+                        data-prayer="${prayer}">
+                    <i class="fas fa-bell mr-1"></i> ${notificationSettings[prayer] ? 'Notification On' : 'Get Notified'}
+                </button>
+            </div>
+        `;
         container.appendChild(card);
     });
 
-    // Add this at the end of the displayPrayerTimes function:
-
-// Add event listeners to notification buttons
-document.querySelectorAll('.get-notified-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const prayer = this.getAttribute('data-prayer');
-        showNotificationSettings(prayer, times[prayer]);
+    // Add event listeners to notification buttons
+    document.querySelectorAll('.get-notified-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const prayer = this.getAttribute('data-prayer');
+            showNotificationSettings(prayer, times[prayer]);
+        });
     });
-});
 
     // Update next prayer information
     if (nextPrayer && nextPrayerTime) {
@@ -1120,6 +1123,20 @@ document.querySelectorAll('.get-notified-btn').forEach(btn => {
         }
         updateCountdown(nextPrayerTime);
     }
+}
+
+// Store prayer time for next day
+function storeNextDayPrayer(prayer, timeStr) {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split('T')[0];
+    
+    // Store in localStorage
+    const nextDayPrayers = JSON.parse(localStorage.getItem('nextDayPrayers') || '{}');
+    nextDayPrayers[tomorrowStr] = nextDayPrayers[tomorrowStr] || {};
+    nextDayPrayers[tomorrowStr][prayer] = timeStr;
+    
+    localStorage.setItem('nextDayPrayers', JSON.stringify(nextDayPrayers));
 }
 
 // Update the countdown timer
@@ -1147,17 +1164,6 @@ function updateCountdown(targetTime) {
             // Refresh the page calculations when time is up
             setTimeout(() => {
                 refreshPrayerTimes();
-                
-                // Show notification when prayer time has arrived
-                Swal.fire({
-                    title: 'Prayer Time',
-                    text: 'Time for prayer has arrived',
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#6366f1',
-                    timer: 10000,
-                    timerProgressBar: true
-                });
             }, 1000);
             return;
         }
@@ -1175,7 +1181,8 @@ function updateCountdown(targetTime) {
     
     updateTimer();
 }
-        // Add these functions after the updateCountdown function:
+
+// ======================== NOTIFICATION FUNCTIONS ======================== //
 
 // Check if browser supports notifications
 function checkNotificationSupport() {
@@ -1209,6 +1216,23 @@ async function requestNotificationPermission() {
     }
 }
 
+// Register service worker for advanced notification features
+async function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        try {
+            swRegistration = await navigator.serviceWorker.register('/sw.js');
+            console.log('Service Worker registered successfully:', swRegistration);
+            return true;
+        } catch (error) {
+            console.error('Service Worker registration failed:', error);
+            return false;
+        }
+    } else {
+        console.warn('Service Worker not supported in this browser');
+        return false;
+    }
+}
+
 // Show notification settings dialog
 async function showNotificationSettings(prayer, prayerTime) {
     // Check if notification is supported and permission is granted
@@ -1224,6 +1248,9 @@ async function showNotificationSettings(prayer, prayerTime) {
         });
         return;
     }
+    
+    // Try to register service worker for better notification handling
+    registerServiceWorker();
     
     // Build adhan options HTML
     const adhanOptionsHtml = adhanOptions.map(option => `
@@ -1254,8 +1281,12 @@ async function showNotificationSettings(prayer, prayerTime) {
                     <label for="notify-before">Notify 10 minutes before prayer time</label>
                 </div>
                 <div>
-                    <input type="checkbox" id="play-adhan" ${notificationSettings[prayer]?.playAdhan ? 'checked' : ''}>
+                    <input type="checkbox" id="play-adhan" ${notificationSettings[prayer]?.playAdhan ? 'checked' : ''} checked>
                     <label for="play-adhan">Play Adhan at prayer time</label>
+                </div>
+                <div class="mt-2">
+                    <input type="checkbox" id="vibrate-device" ${notificationSettings[prayer]?.vibrateDevice ? 'checked' : ''} checked>
+                    <label for="vibrate-device">Vibrate device (mobile only)</label>
                 </div>
             </div>
         `,
@@ -1270,6 +1301,12 @@ async function showNotificationSettings(prayer, prayerTime) {
                     previewAdhan(this.getAttribute('data-audio'));
                 });
             });
+            
+            // Auto-select first option if none selected
+            if (!document.querySelector('input[name="adhan-option"]:checked')) {
+                const firstOption = document.querySelector('input[name="adhan-option"]');
+                if (firstOption) firstOption.checked = true;
+            }
         }
     });
     
@@ -1278,6 +1315,7 @@ async function showNotificationSettings(prayer, prayerTime) {
         const selectedAdhan = document.querySelector('input[name="adhan-option"]:checked');
         const notifyBefore = document.getElementById('notify-before').checked;
         const playAdhan = document.getElementById('play-adhan').checked;
+        const vibrateDevice = document.getElementById('vibrate-device').checked;
         
         if (!selectedAdhan) {
             Swal.fire({
@@ -1300,6 +1338,7 @@ async function showNotificationSettings(prayer, prayerTime) {
             adhanName: adhanOption.name,
             notifyBefore,
             playAdhan,
+            vibrateDevice,
             prayerTime
         };
         
@@ -1337,9 +1376,16 @@ function previewAdhan(audioUrl) {
         adhanAudio = null;
     }
     
+    // Create audio context for better mobile support
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
     // Play the selected adhan
     adhanAudio = new Audio(audioUrl);
     adhanAudio.volume = 0.5;
+    
+    // Create media element source
+    const source = audioContext.createMediaElementSource(adhanAudio);
+    source.connect(audioContext.destination);
     
     // Add controls to stop preview
     Swal.fire({
@@ -1366,7 +1412,21 @@ function previewAdhan(audioUrl) {
             }
         },
         didOpen: () => {
-            adhanAudio.play();
+            // Resume audio context (needed for Chrome)
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            
+            adhanAudio.play().catch(error => {
+                console.error('Error playing adhan preview:', error);
+                Swal.fire({
+                    title: 'Playback Error',
+                    text: 'Could not play the adhan. Please try again or select another recitation.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#6366f1'
+                });
+            });
             
             // Add event listener to stop button
             document.getElementById('stop-adhan').addEventListener('click', () => {
@@ -1437,6 +1497,12 @@ function scheduleNotification(prayer) {
     // Calculate time for notification
     const now = new Date();
     
+    // Generate a unique ID for this notification
+    const notificationId = `${prayer}-${prayerTime.getTime()}`;
+    
+    // Clear any existing scheduled notification for this prayer
+    clearScheduledNotification(prayer);
+    
     // Check if prayer time is in the future
     if (prayerTime > now) {
         // Schedule notification 10 minutes before if enabled
@@ -1446,554 +1512,607 @@ function scheduleNotification(prayer) {
             
             if (notifyTime > now) {
                 const timeUntilNotify = notifyTime - now;
-                setTimeout(() => {
-                    showPrayerNotification(prayer, true);
+                const earlyNotificationId = `${prayer}-early-${prayerTime.getTime()}`;
+                
+                // Store in active notifications
+                activeNotifications[earlyNotificationId] = setTimeout(() => {
+                    sendPrayerNotification(prayer, true);
+                    delete activeNotifications[earlyNotificationId];
                 }, timeUntilNotify);
                 
-                console.log(`Scheduled early notification for ${prayer} in ${Math.round(timeUntilNotify / 60000)} minutes`);
+                console.log(`Scheduled early notification for ${prayer} in ${Math.floor(timeUntilNotify / 60000)} minutes`);
             }
         }
         
-        // Schedule the main notification at prayer time
-        const timeUntilPrayer = prayerTime - now;
-        setTimeout(() => {
-            showPrayerNotification(prayer, false);
-        }, timeUntilPrayer);
+        // Schedule main notification at prayer time
+        const timeUntil = prayerTime - now;
         
-        console.log(`Scheduled notification for ${prayer} in ${Math.round(timeUntilPrayer / 60000)} minutes`);
+        // Store in active notifications
+        activeNotifications[notificationId] = setTimeout(() => {
+            sendPrayerNotification(prayer, false);
+            delete activeNotifications[notificationId];
+        }, timeUntil);
+        
+        console.log(`Scheduled notification for ${prayer} in ${Math.floor(timeUntil / 60000)} minutes`);
     }
 }
 
-// Show notification for prayer time
-function showPrayerNotification(prayer, isEarly) {
+// Clear a scheduled notification
+function clearScheduledNotification(prayer) {
+    // Find and clear all timeouts related to this prayer
+    Object.keys(activeNotifications).forEach(id => {
+        if (id.startsWith(`${prayer}-`)) {
+            clearTimeout(activeNotifications[id]);
+            delete activeNotifications[id];
+        }
+    });
+}
+
+// Send notification for prayer time
+async function sendPrayerNotification(prayer, isEarly) {
     const settings = notificationSettings[prayer];
     if (!settings) return;
     
-    // Create notification
-    const title = isEarly ? `${prayer} Prayer Soon` : `Time for ${prayer} Prayer`;
-    const body = isEarly ? 
-        `${prayer} prayer will start in 10 minutes` : 
-        `It's time for ${prayer} prayer`;
+    // Check if browser tab is already focused
+    if (document.visibilityState === 'visible') {
+        // If we're playing Adhan at prayer time (not early notification), play it even when tab is visible
+        if (!isEarly && settings.playAdhan) {
+            playAdhan(settings.adhanUrl);
+        }
+    }
     
-    const notification = new Notification(title, {
-        body: body,
-        icon: '/favicon.ico', // Make sure to have a favicon
-        badge: '/favicon.ico',
-        vibrate: [100, 50, 100]
-    });
+    // Display native notification
+    const title = isEarly 
+        ? `${prayer} Prayer Soon` 
+        : `${prayer} Prayer Time`;
     
-    // Play adhan if it's prayer time and enabled
-    if (!isEarly && settings.playAdhan) {
-        // Show adhan notification with SweetAlert
-        Swal.fire({
-            title: `Time for ${prayer} Prayer`,
-            html: `
-                <p>Playing adhan recited by ${settings.adhanName}</p>
-                <button id="stop-adhan-notification" class="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
-                    <i class="fas fa-stop mr-1"></i> Stop Adhan
-                </button>
-            `,
-            showConfirmButton: false,
-            showCancelButton: false,
-            allowOutsideClick: false,
-            willClose: () => {
-                if (adhanAudio) {
-                    adhanAudio.pause();
-                    adhanAudio = null;
-                }
-            },
-            didOpen: () => {
-                // Play adhan
-                adhanAudio = new Audio(settings.adhanUrl);
-                adhanAudio.play();
-                
-                // Add event listener to stop button
-                document.getElementById('stop-adhan-notification').addEventListener('click', () => {
-                    if (adhanAudio) {
-                        adhanAudio.pause();
-                        adhanAudio = null;
+    const body = isEarly 
+        ? `${prayer} prayer will begin in 10 minutes` 
+        : `It's time for ${prayer} prayer`;
+    
+    try {
+        // Check if we have service worker or use regular notification
+        if (swRegistration && swRegistration.showNotification) {
+            // Advanced notification with service worker
+            const notificationOptions = {
+                body: body,
+                icon: APP_FAVICON,
+                badge: APP_FAVICON,
+                tag: `prayer-${prayer}-${isEarly ? 'early' : 'now'}`,
+                renotify: true,
+                requireInteraction: !isEarly, // Keep notification for actual prayer time
+                actions: [
+                    {
+                        action: 'open',
+                        title: 'Open App'
                     }
-                    Swal.close();
-                });
+                ]
+            };
+            
+            // Add vibration if enabled
+            if (settings.vibrateDevice) {
+                notificationOptions.vibrate = [200, 100, 200];
             }
-        });
-    }
-    
-    // Handle notification click
-    notification.onclick = () => {
-        window.focus();
-        notification.close();
-    };
-}
-
-// ======================== LOCATION HANDLING ======================== //
-
-// Function to handle location retrieval and updates
-async function getCurrentLocation() {
-    return new Promise((resolve, reject) => {
-        if (!navigator.geolocation) {
-            return reject(new Error('Geolocation is not supported by your browser'));
-        }
-        
-        // Show loading state
-        updateLoadingState(true, 'Retrieving your location...');
-        
-        navigator.geolocation.getCurrentPosition(
-            // Success callback
-            (position) => {
-                const { latitude, longitude } = position.coords;
-                currentPosition = { latitude, longitude };
-                updateLoadingState(false);
-                resolve(position.coords);
-            },
-            // Error callback
-            (error) => {
-                updateLoadingState(false);
-                
-                let errorMessage;
-                switch (error.code) {
-                    case error.PERMISSION_DENIED:
-                        errorMessage = 'Location access was denied. Please provide location access for accurate prayer times.';
-                        break;
-                    case error.POSITION_UNAVAILABLE:
-                        errorMessage = 'Location information is unavailable. Using default location.';
-                        break;
-                    case error.TIMEOUT:
-                        errorMessage = 'Location request timed out. Using cached or default location.';
-                        break;
-                    default:
-                        errorMessage = 'An unknown error occurred while retrieving location.';
-                }
-                
-                reject(new Error(errorMessage));
-            },
-            // Options
-            {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 300000 // 5 minutes
-            }
-        );
-    });
-}
-
-// Show/hide a loading indicator
-function updateLoadingState(isLoading, message = 'Loading...') {
-    const locationDisplay = safeGetElement('location-display', 'div');
-    if (!locationDisplay) return;
-    
-    if (isLoading) {
-        locationDisplay.innerHTML = `
-            <div class="flex items-center">
-                <div class="animate-spin mr-2">
-                    <i class="fas fa-circle-notch"></i>
-                </div>
-                <span>${message}</span>
-            </div>
-        `;
-    } else if (currentPosition.latitude && currentPosition.longitude) {
-        // Only update if we have a valid position
-        getLocationName(currentPosition.latitude, currentPosition.longitude)
-            .then(locationName => {
-                updateLocationDisplay(locationName);
-            })
-            .catch(() => {
-                // Show coordinates if location name fetching fails
-                updateLocationDisplay(`Location: ${currentPosition.latitude.toFixed(4)}, ${currentPosition.longitude.toFixed(4)}`);
-            });
-    } else {
-        // Show default message when there's no position yet
-        locationDisplay.innerHTML = `
-            <i class="fas fa-map-marker-alt mr-1"></i>
-            <span>No location data</span>
-            <button id="get-location-btn" class="ml-2 px-2 py-1 bg-indigo-600 text-white rounded text-xs">
-                Get Location
-            </button>
-        `;
-        
-        // Add event listener to the button
-        const getLocationBtn = document.getElementById('get-location-btn');
-        if (getLocationBtn) {
-            getLocationBtn.addEventListener('click', () => {
-                requestLocationPermission();
-            });
-        }
-    }
-}
-
-// Request location permission explicitly
-function requestLocationPermission() {
-    // Use SweetAlert for location permission
-    Swal.fire({
-        title: 'Location Access',
-        text: 'This app needs your location to provide accurate prayer times. Allow access to your location?',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Allow',
-        cancelButtonText: 'Use Default',
-        confirmButtonColor: '#6366f1',
-        cancelButtonColor: '#64748b'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            initialize();
+            
+            await swRegistration.showNotification(title, notificationOptions);
         } else {
-            // Use default location
-            useDefaultLocation();
-        }
-    });
-}
-
-// Use default location (Mecca)
-function useDefaultLocation() {
-    // Set Mecca as default location
-    currentPosition = { 
-        latitude: 21.4225, 
-        longitude: 39.8262 
-    };
-    updateLocationDisplay('Mecca (Default)');
-    refreshPrayerTimes();
-    
-    // Show a notification that default location is being used
-    Swal.fire({
-        title: 'Using Default Location',
-        text: 'Prayer times will be calculated for Mecca, Saudi Arabia.',
-        icon: 'info',
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true
-    });
-}
-
-// Fetch location name from coordinates
-async function getLocationName(latitude, longitude) {
-    try {
-        const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10`,
-            { 
-                headers: { 
-                    'Accept-Language': 'en',
-                    'User-Agent': 'PrayerTimesApp/1.0'
-                } 
-            }
-        );
-        
-        if (!response.ok) {
-            throw new Error('Failed to fetch location data');
+            // Regular notification
+            const notification = new Notification(title, {
+                body: body,
+                icon: APP_FAVICON
+            });
+            
+            // Add click handler
+            notification.onclick = function() {
+                window.focus();
+                this.close();
+            };
         }
         
-        const data = await response.json();
+        // Play Adhan for the actual prayer time (not early notification)
+        if (!isEarly && settings.playAdhan) {
+            playAdhan(settings.adhanUrl);
+        }
         
-        return data.address.city || 
-               data.address.town || 
-               data.address.village || 
-               data.address.county ||
-               data.address.state ||
-               "Unknown Location";
+        // Vibrate device if enabled
+        if (settings.vibrateDevice && "vibrate" in navigator) {
+            // Vibration pattern: 200ms vibrate, 100ms pause, 200ms vibrate
+            navigator.vibrate([200, 100, 200]);
+        }
     } catch (error) {
-        console.error('Error fetching location name:', error);
-        return "Unknown Location";
+        console.error('Error sending notification:', error);
     }
 }
 
-// Update the location display
-function updateLocationDisplay(locationName) {
-    const locationDisplay = safeGetElement('location-display', 'div');
-    if (!locationDisplay) return;
-    
-    locationDisplay.innerHTML = `
-        <i class="fas fa-map-marker-alt mr-1"></i>
-        <span>${locationName}</span>
-        <button id="refresh-location-btn" class="ml-2 px-2 py-1 bg-indigo-600 text-white rounded text-xs">
-            <i class="fas fa-sync-alt"></i>
-        </button>
-    `;
-    
-    // Add event listener to the refresh button
-    const refreshLocationBtn = document.getElementById('refresh-location-btn');
-    if (refreshLocationBtn) {
-        refreshLocationBtn.addEventListener('click', () => {
-            initialize();
-        });
-    }
-}
-
-// Handle location error
-function handleLocationError(error) {
-    console.error('Location error:', error);
-    
-    // Use SweetAlert for location error handling
-    Swal.fire({
-        title: 'Location Error',
-        text: `${error.message || 'Unable to determine your location.'} Would you like to use the default location (Mecca)?`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Use Mecca',
-        cancelButtonText: 'No',
-        confirmButtonColor: '#6366f1',
-        cancelButtonColor: '#64748b'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            useDefaultLocation();
-        } else {
-            // Show location button in the display area
-            updateLoadingState(false);
-        }
-    });
-}
-
-// ======================== APPLICATION INITIALIZATION ======================== //
-
-// Refresh prayer times with current settings
-async function refreshPrayerTimes() {
-    if (!currentPosition.latitude || !currentPosition.longitude) {
-        console.error('No location available');
-        return;
-    }
-    
-    try {
-        const today = new Date();
-        const times = await fetchPrayerTimes(
-            currentPosition.latitude, 
-            currentPosition.longitude, 
-            today
-        );
-        
-        displayPrayerTimes(times);
-    } catch (error) {
-        console.error('Error refreshing prayer times:', error);
-        
-        // Use SweetAlert for error notification
-        Swal.fire({
-            title: 'Refresh Failed',
-            text: 'Failed to refresh prayer times. Please try again.',
-            icon: 'error',
-            confirmButtonText: 'OK',
-            confirmButtonColor: '#6366f1'
-        });
-    }
-}
-
-// Initialize the application
-async function initialize() {
-    try {
-        // Get user location
-        const coords = await getCurrentLocation();
-        
-        // Get location name
-        const locationName = await getLocationName(coords.latitude, coords.longitude);
-        updateLocationDisplay(locationName);
-        
-        // Show successful location retrieval notification
-        Swal.fire({
-            title: 'Location Found',
-            text: `Using location: ${locationName}`,
-            icon: 'success',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true
-        });
-        
-        // Calculate and display prayer times
-        await refreshPrayerTimes();
-    } catch (error) {
-        handleLocationError(error);
-    }
-}
-        // Add this to the initialize function, before the refreshPrayerTimes call:
-
-// Load saved notification settings
-const savedSettings = localStorage.getItem('prayerNotifications');
-if (savedSettings) {
-    notificationSettings = JSON.parse(savedSettings);
-    
-    // Re-schedule notifications
-    Object.keys(notificationSettings).forEach(prayer => {
-        scheduleNotification(prayer);
-    });
-}
-
-// ======================== LANGUAGE FUNCTIONS ======================== //
-
-// Toggle Arabic/English display priority
-function toggleLanguage() {
-    const container = document.getElementById('app-container');
-    if (container) {
-        container.classList.toggle('arabic-primary');
-        
-        // Save preference
-        const isArabicPrimary = container.classList.contains('arabic-primary');
-        localStorage.setItem('arabicPrimary', isArabicPrimary ? 'true' : 'false');
-        
-        // Update button text
-        const langButton = safeGetElement('language-toggle', 'button');
-        if (langButton) {
-            langButton.textContent = isArabicPrimary ? 'English' : 'العربية';
-        }
-        
-        // Show language change notification
-        Swal.fire({
-            title: isArabicPrimary ? 'تم تغيير اللغة' : 'Language Changed',
-            text: isArabicPrimary ? 'تم تعيين العربية كلغة رئيسية' : 'Set to English as primary language',
-            icon: 'success',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 2000,
-            timerProgressBar: true
-        });
-    }
-}
-        // Update the window.addEventListener('beforeunload') in the DOMContentLoaded event:
-
-window.addEventListener('beforeunload', () => {
-    if (countdownTimer) {
-        clearTimeout(countdownTimer);
-        countdownTimer = null;
-    }
-    
+// Play Adhan
+function playAdhan(audioUrl) {
     // Stop any playing audio
     if (adhanAudio) {
         adhanAudio.pause();
         adhanAudio = null;
     }
-});
+    
+    // Create and play new audio
+    adhanAudio = new Audio(audioUrl);
+    adhanAudio.volume = 0.7; // Default volume
+    
+    // Try to resume audio context (needed for mobile)
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+    
+    // Play adhan
+    adhanAudio.play().catch(error => {
+        console.error('Error playing adhan:', error);
+        // Show error notification
+        if (Notification.permission === 'granted') {
+            new Notification('Adhan Error', {
+                body: 'Unable to play adhan. Please check your audio settings.',
+                icon: APP_FAVICON
+            });
+        }
+    });
+    
+    // Show controls to stop adhan
+    Swal.fire({
+        title: 'Adhan Playing',
+        html: `
+            <div class="text-center">
+                <p class="mb-4">Prayer time adhan is playing</p>
+                <button id="stop-prayer-adhan" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+                    <i class="fas fa-stop mr-1"></i> Stop Adhan
+                </button>
+            </div>
+        `,
+        showConfirmButton: false,
+        showCancelButton: false,
+        toast: true,
+        position: 'top-end',
+        timer: 30000, // Auto close after 30 seconds
+        timerProgressBar: true,
+        willClose: () => {
+            // Don't stop adhan when toast closes unless requested
+        },
+        didOpen: () => {
+            // Add event listener to stop button
+            document.getElementById('stop-prayer-adhan').addEventListener('click', () => {
+                if (adhanAudio) {
+                    adhanAudio.pause();
+                    adhanAudio = null;
+                }
+                Swal.close();
+            });
+        }
+    });
+    
+    // Handle audio end
+    adhanAudio.onended = () => {
+        if (Swal.isVisible()) {
+            Swal.close();
+        }
+    };
+}
 
-// Load language preferences
-function loadPreferences() {
-    // Language preference
-    const arabicPrimarySetting = localStorage.getItem('arabicPrimary');
-    if (arabicPrimarySetting === 'true') {
-        const container = document.getElementById('app-container');
-        if (container) {
-            container.classList.add('arabic-primary');
+// ======================== LOCATION HANDLING ======================== //
+
+// Get user's location
+async function getUserLocation() {
+    try {
+        updateLoadingState(true, 'Getting location...');
+        
+        // Check if we already have a stored location
+        const storedLocation = localStorage.getItem('userLocation');
+        if (storedLocation) {
+            const location = JSON.parse(storedLocation);
+            currentPosition.latitude = location.latitude;
+            currentPosition.longitude = location.longitude;
+            updateLocationDisplay(location.address || 'Saved Location');
+            
+            // Still try to get updated location in background
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    const { latitude, longitude } = position.coords;
+                    
+                    // Only update if significantly different (more than ~100m)
+                    const distance = calculateDistance(
+                        latitude, longitude,
+                        currentPosition.latitude, currentPosition.longitude
+                    );
+                    
+                    if (distance > 0.1) {
+                        updateUserLocation(position);
+                    }
+                },
+                () => {
+                    // Silently fail, we already have a stored location
+                }
+            );
+            
+            updateLoadingState(false);
+            return true;
         }
         
-        const langButton = safeGetElement('language-toggle', 'button');
-        if (langButton) {
-            langButton.textContent = 'English';
-        }
+        // Request new location
+        const position = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            });
+        });
+        
+        updateUserLocation(position);
+        updateLoadingState(false);
+        return true;
+    } catch (error) {
+        console.error('Error getting user location:', error);
+        updateLoadingState(false);
+        
+        // Show error using SweetAlert
+        Swal.fire({
+            title: 'Location Error',
+            text: 'Unable to get your location. Please allow location access or enter your location manually.',
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonColor: '#6366f1',
+            cancelButtonColor: '#ef4444',
+            confirmButtonText: 'Enter Location',
+            cancelButtonText: 'Try Again'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                showManualLocationDialog();
+            } else {
+                getUserLocation();
+            }
+        });
+        
+        return false;
     }
 }
 
-// ======================== RESPONSIVE LAYOUT ADJUSTMENTS ======================== //
-
-// Adjust layout based on screen size
-function handleResponsiveLayout() {
-    const prayerContainer = document.getElementById('prayer-times');
-    if (!prayerContainer) return;
+// Update user location
+async function updateUserLocation(position) {
+    const { latitude, longitude } = position.coords;
+    currentPosition.latitude = latitude;
+    currentPosition.longitude = longitude;
     
-    // Adjust grid columns based on screen width
-    if (window.innerWidth < 640) {
-        prayerContainer.className = 'grid grid-cols-1 gap-4 mt-6';
-    } else if (window.innerWidth < 1024) {
-        prayerContainer.className = 'grid grid-cols-2 gap-4 mt-6';
-    } else {
-        prayerContainer.className = 'grid grid-cols-3 gap-4 mt-6';
+    // Attempt to get location name
+    try {
+        const address = await reverseGeocode(latitude, longitude);
+        updateLocationDisplay(address);
+        
+        // Store location in localStorage
+        localStorage.setItem('userLocation', JSON.stringify({
+            latitude,
+            longitude,
+            address,
+            timestamp: new Date().getTime()
+        }));
+    } catch (error) {
+        console.error('Error getting location address:', error);
+        updateLocationDisplay(`${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+        
+        // Store location without address
+        localStorage.setItem('userLocation', JSON.stringify({
+            latitude,
+            longitude,
+            timestamp: new Date().getTime()
+        }));
     }
+    
+    return { latitude, longitude };
+}
+
+// Show manual location input dialog
+function showManualLocationDialog() {
+    Swal.fire({
+        title: 'Enter Your Location',
+        html: `
+            <input id="manual-location" class="swal2-input" placeholder="City, Country (e.g., Cairo, Egypt)">
+            <p class="text-sm text-gray-500 mt-2">Or enter coordinates:</p>
+            <div class="flex space-x-2 mt-2">
+                <input id="manual-lat" class="swal2-input" placeholder="Latitude (e.g., 30.0444)">
+                <input id="manual-lng" class="swal2-input" placeholder="Longitude (e.g., 31.2357)">
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Search',
+        confirmButtonColor: '#6366f1',
+        preConfirm: () => {
+            const location = document.getElementById('manual-location').value;
+            const lat = document.getElementById('manual-lat').value;
+            const lng = document.getElementById('manual-lng').value;
+            
+            if (location) {
+                return { location };
+            } else if (lat && lng) {
+                return { lat, lng };
+            } else {
+                Swal.showValidationMessage('Please enter a location or coordinates');
+                return false;
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if (result.value.location) {
+                geocodeLocation(result.value.location);
+            } else if (result.value.lat && result.value.lng) {
+                const lat = parseFloat(result.value.lat);
+                const lng = parseFloat(result.value.lng);
+                
+                if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+                    Swal.fire({
+                        title: 'Invalid Coordinates',
+                        text: 'Please enter valid latitude (-90 to 90) and longitude (-180 to 180)',
+                        icon: 'error',
+                        confirmButtonText: 'Try Again',
+                        confirmButtonColor: '#6366f1'
+                    }).then(() => {
+                        showManualLocationDialog();
+                    });
+                } else {
+                    currentPosition.latitude = lat;
+                    currentPosition.longitude = lng;
+                    updateLocationDisplay(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+                    
+                    // Store location
+                    localStorage.setItem('userLocation', JSON.stringify({
+                        latitude: lat,
+                        longitude: lng,
+                        timestamp: new Date().getTime()
+                    }));
+                    
+                    refreshPrayerTimes();
+                }
+            }
+        }
+    });
+}
+
+// Geocode location (convert place name to coordinates)
+async function geocodeLocation(locationName) {
+    try {
+        updateLoadingState(true, 'Finding location...');
+        
+        // Use Nominatim API (OpenStreetMap) for geocoding
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationName)}`;
+        
+        const response = await fetch(url, {
+            headers: {
+                'Accept-Language': 'en',
+                'User-Agent': 'PrayerTimesApp/1.0'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Geocoding failed: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.length === 0) {
+            throw new Error('Location not found');
+        }
+        
+        // Get first result
+        const result = data[0];
+        currentPosition.latitude = parseFloat(result.lat);
+        currentPosition.longitude = parseFloat(result.lon);
+        
+        // Create display name
+        const display = result.display_name.split(',').slice(0, 2).join(', ');
+        updateLocationDisplay(display);
+        
+        // Store location
+        localStorage.setItem('userLocation', JSON.stringify({
+            latitude: currentPosition.latitude,
+            longitude: currentPosition.longitude,
+            address: display,
+            timestamp: new Date().getTime()
+        }));
+        
+        updateLoadingState(false);
+        refreshPrayerTimes();
+        
+        return { lat: currentPosition.latitude, lng: currentPosition.longitude };
+    } catch (error) {
+        console.error('Error geocoding location:', error);
+        updateLoadingState(false);
+        
+        Swal.fire({
+            title: 'Location Not Found',
+            text: 'Could not find the location. Please try a different search term or enter coordinates.',
+            icon: 'error',
+            confirmButtonText: 'Try Again',
+            confirmButtonColor: '#6366f1'
+        }).then(() => {
+            showManualLocationDialog();
+        });
+        
+        return null;
+    }
+}
+
+// Reverse geocode coordinates to address
+async function reverseGeocode(latitude, longitude) {
+    try {
+        // Use Nominatim API (OpenStreetMap) for reverse geocoding
+        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+        
+        const response = await fetch(url, {
+            headers: {
+                'Accept-Language': 'en',
+                'User-Agent': 'PrayerTimesApp/1.0'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Reverse geocoding failed: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Extract city and country or return a simplified address
+        let address;
+        if (data.address) {
+            const { city, town, village, county, state, country } = data.address;
+            const locality = city || town || village || county || state || '';
+            address = locality && country ? `${locality}, ${country}` : data.display_name.split(',').slice(0, 2).join(', ');
+        } else {
+            address = data.display_name.split(',').slice(0, 2).join(', ');
+        }
+        
+        return address;
+    } catch (error) {
+        console.error('Error reverse geocoding:', error);
+        throw error;
+    }
+}
+
+// Calculate distance between two coordinates (haversine formula)
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Radius of the Earth in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    
+    const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+    
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distance = R * c; // Distance in km
+    
+    return distance;
+}
+
+// Update location display in UI
+function updateLocationDisplay(locationName) {
+    const locationElement = safeGetElement('location-display', 'div');
+    if (locationElement) {
+        locationElement.innerHTML = `
+            <i class="fas fa-map-marker-alt text-indigo-500 mr-1"></i>
+            ${locationName}
+        `;
+    }
+}
+
+// ======================== UTILITY FUNCTIONS ======================== //
+
+// Update loading state
+function updateLoadingState(isLoading, message = 'Loading...') {
+    const loaderElement = safeGetElement('loader', 'div');
+    
+    if (!loaderElement) {
+        console.error('Loader element not found and could not be created');
+        return;
+    }
+    
+    if (isLoading) {
+        loaderElement.innerHTML = `
+            <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center">
+                    <div class="loader"></div>
+                    <p class="mt-4 text-lg font-medium">${message}</p>
+                </div>
+            </div>
+        `;
+        loaderElement.style.display = 'block';
+    } else {
+        loaderElement.style.display = 'none';
+    }
+}
+
+// Load settings from localStorage
+function loadSettings() {
+    try {
+        // Load notification settings
+        const savedNotifications = localStorage.getItem('prayerNotifications');
+        if (savedNotifications) {
+            notificationSettings = JSON.parse(savedNotifications);
+        }
+        
+        // Load other app settings if needed
+        // ...
+    } catch (error) {
+        console.error('Error loading settings:', error);
+    }
+}
+
+// Refresh prayer times
+async function refreshPrayerTimes() {
+    if (!currentPosition.latitude || !currentPosition.longitude) {
+        const locationObtained = await getUserLocation();
+        if (!locationObtained) return;
+    }
+    
+    const today = new Date();
+    const prayerTimes = await fetchPrayerTimes(
+        currentPosition.latitude,
+        currentPosition.longitude,
+        today
+    );
+    
+    displayPrayerTimes(prayerTimes);
+    
+    // Reschedule notifications
+    Object.keys(notificationSettings).forEach(prayer => {
+        notificationSettings[prayer].prayerTime = prayerTimes[prayer];
+        scheduleNotification(prayer);
+    });
 }
 
 // ======================== INITIALIZATION ======================== //
 
-// Run initialization when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    // Check if SweetAlert is loaded, if not show an error message
-    if (typeof Swal === 'undefined') {
-        console.error('SweetAlert2 library is not loaded! Please include it in your HTML.');
-        alert('SweetAlert2 library is missing. Some features may not work properly.');
+// Initialize the app
+async function initApp() {
+    // Load saved settings
+    loadSettings();
+    
+    // Check notification permission status
+    if (checkNotificationSupport() && Notification.permission === 'granted') {
+        registerServiceWorker();
     }
     
-    // Set language toggle
-    const langButton = safeGetElement('language-toggle', 'button');
-    if (langButton) {
-        langButton.addEventListener('click', toggleLanguage);
-    }
+    // Get user location and display prayer times
+    const locationObtained = await getUserLocation();
     
-    // Load saved language preferences
-    loadPreferences();
-    
-    // Initialize the app
-    initialize();
-    
-    // Welcome message using SweetAlert
-    Swal.fire({
-        title: 'Prayer Times App',
-        text: 'Welcome to the Prayer Times Application',
-        icon: 'info',
-        confirmButtonText: 'Start',
-        confirmButtonColor: '#6366f1'
-    });
-    
-    // Set up auto-refresh every minute to keep countdown accurate
-    setInterval(() => {
-        const now = new Date();
-        if (now.getSeconds() === 0) {
-            refreshPrayerTimes();
-        }
-    }, 1000);
-    
-    // Handle responsive layout
-    handleResponsiveLayout();
-    
-    // Listen for window resize
-    window.addEventListener('resize', handleResponsiveLayout);
-    
-    // Listen for online/offline events
-    window.addEventListener('online', () => {
-        console.log('Back online, refreshing data...');
-        refreshPrayerTimes();
+    if (locationObtained) {
+        const today = new Date();
+        const prayerTimes = await fetchPrayerTimes(
+            currentPosition.latitude,
+            currentPosition.longitude,
+            today
+        );
         
-        // Show back online notification
-        Swal.fire({
-            title: 'Connection Restored',
-            text: 'You are back online. Prayer times have been refreshed.',
-            icon: 'success',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true
-        });
+        displayPrayerTimes(prayerTimes);
+    }
+    
+    // Add event listeners for UI controls
+    safeGetElement('change-location-btn', 'button')?.addEventListener('click', () => {
+        showManualLocationDialog();
     });
     
-    window.addEventListener('offline', () => {
-        // Show offline notification
-        Swal.fire({
-            title: 'Offline',
-            text: 'You are currently offline. Prayer times may not be updated.',
-            icon: 'warning',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true
-        });
+    safeGetElement('refresh-btn', 'button')?.addEventListener('click', () => {
+        refreshPrayerTimes();
     });
     
-    // Handle page visibility changes to refresh when tab becomes visible again
-    document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-            console.log('Tab is now visible, refreshing data...');
-            refreshPrayerTimes();
-        }
-    });
-    
-    // Clean up on page unload
-    window.addEventListener('beforeunload', () => {
-        if (countdownTimer) {
-            clearTimeout(countdownTimer);
-            countdownTimer = null;
-        }
-    });
-});
+    // Setup periodic refresh (every 5 minutes)
+    setInterval(() => {
+        refreshPrayerTimes();
+    }, 5 * 60 * 1000);
+}
 
-// Make functions available globally since we're not using modules
-window.initialize = initialize;
-window.refreshPrayerTimes = refreshPrayerTimes;
-window.toggleLanguage = toggleLanguage;
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', initApp);
+
+// Re-initialize when document becomes visible (tab focus)
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        refreshPrayerTimes();
+    }
+});
     </script>
 </body>
 </html>
