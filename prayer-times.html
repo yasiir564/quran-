@@ -1175,105 +1175,316 @@ function updateCountdown(targetTime) {
     
     updateTimer();
 }
-        // Function to show notification for prayer time
+        // Add these functions after the updateCountdown function:
+
+// Check if browser supports notifications
+function checkNotificationSupport() {
+    if (!('Notification' in window)) {
+        Swal.fire({
+            title: 'Notifications Not Available',
+            text: 'This browser does not support notifications',
+            icon: 'error',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#6366f1'
+        });
+        return false;
+    }
+    return true;
+}
+
+// Request notification permission
+async function requestNotificationPermission() {
+    if (!checkNotificationSupport()) return false;
+    
+    if (Notification.permission === 'granted') {
+        return true;
+    }
+    
+    try {
+        const permission = await Notification.requestPermission();
+        return permission === 'granted';
+    } catch (error) {
+        console.error('Error requesting notification permission:', error);
+        return false;
+    }
+}
+
+// Show notification settings dialog
+async function showNotificationSettings(prayer, prayerTime) {
+    // Check if notification is supported and permission is granted
+    const permissionGranted = await requestNotificationPermission();
+    
+    if (!permissionGranted) {
+        Swal.fire({
+            title: 'Permission Required',
+            text: 'Please allow notifications to receive prayer time alerts',
+            icon: 'warning',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#6366f1'
+        });
+        return;
+    }
+    
+    // Build adhan options HTML
+    const adhanOptionsHtml = adhanOptions.map(option => `
+        <div class="adhan-option flex items-center p-2 rounded hover:bg-indigo-50 cursor-pointer">
+            <input type="radio" name="adhan-option" id="${option.id}" value="${option.id}" 
+                   ${notificationSettings[prayer]?.adhanId === option.id ? 'checked' : ''}>
+            <label for="${option.id}" class="ml-2 cursor-pointer flex-grow">${option.name}</label>
+            <button class="preview-adhan text-xs px-2 py-1 rounded bg-indigo-100 text-indigo-700 hover:bg-indigo-200" 
+                    data-audio="${option.audio}">
+                <i class="fas fa-play"></i> Preview
+            </button>
+        </div>
+    `).join('');
+    
+    // Show SweetAlert with adhan options
+    const result = await Swal.fire({
+        title: `${prayer} Notification Settings`,
+        html: `
+            <div class="mb-4">
+                <p class="text-left mb-2">Select Adhan Recitation:</p>
+                <div class="adhan-options-container max-h-60 overflow-y-auto">
+                    ${adhanOptionsHtml}
+                </div>
+            </div>
+            <div class="notification-options mt-4 text-left">
+                <div class="mb-2">
+                    <input type="checkbox" id="notify-before" ${notificationSettings[prayer]?.notifyBefore ? 'checked' : ''}>
+                    <label for="notify-before">Notify 10 minutes before prayer time</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="play-adhan" ${notificationSettings[prayer]?.playAdhan ? 'checked' : ''}>
+                    <label for="play-adhan">Play Adhan at prayer time</label>
+                </div>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Save Settings',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#6366f1',
+        didOpen: () => {
+            // Add event listeners to preview buttons
+            document.querySelectorAll('.preview-adhan').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    previewAdhan(this.getAttribute('data-audio'));
+                });
+            });
+        }
+    });
+    
+    if (result.isConfirmed) {
+        // Get selected options
+        const selectedAdhan = document.querySelector('input[name="adhan-option"]:checked');
+        const notifyBefore = document.getElementById('notify-before').checked;
+        const playAdhan = document.getElementById('play-adhan').checked;
+        
+        if (!selectedAdhan) {
+            Swal.fire({
+                title: 'Selection Required',
+                text: 'Please select an Adhan recitation',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#6366f1'
+            });
+            return;
+        }
+        
+        // Save notification settings
+        const adhanId = selectedAdhan.value;
+        const adhanOption = adhanOptions.find(option => option.id === adhanId);
+        
+        notificationSettings[prayer] = {
+            adhanId,
+            adhanUrl: adhanOption.audio,
+            adhanName: adhanOption.name,
+            notifyBefore,
+            playAdhan,
+            prayerTime
+        };
+        
+        // Save to localStorage
+        localStorage.setItem('prayerNotifications', JSON.stringify(notificationSettings));
+        
+        // Schedule notification
+        scheduleNotification(prayer);
+        
+        // Update button text
+        const notifyBtn = document.querySelector(`.get-notified-btn[data-prayer="${prayer}"]`);
+        if (notifyBtn) {
+            notifyBtn.innerHTML = '<i class="fas fa-bell mr-1"></i> Notification On';
+        }
+        
+        // Show confirmation
+        Swal.fire({
+            title: 'Notification Set',
+            text: `You will be notified for ${prayer} prayer time`,
+            icon: 'success',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+        });
+    }
+}
+
+// Preview adhan audio
+function previewAdhan(audioUrl) {
+    // Stop any playing audio
+    if (adhanAudio) {
+        adhanAudio.pause();
+        adhanAudio = null;
+    }
+    
+    // Play the selected adhan
+    adhanAudio = new Audio(audioUrl);
+    adhanAudio.volume = 0.5;
+    
+    // Add controls to stop preview
+    Swal.fire({
+        title: 'Adhan Preview',
+        html: `
+            <div class="text-center">
+                <p class="mb-4">Playing adhan preview...</p>
+                <div class="flex justify-center space-x-4">
+                    <button id="stop-adhan" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+                        <i class="fas fa-stop mr-1"></i> Stop
+                    </button>
+                    <button id="adjust-volume" class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600">
+                        <i class="fas fa-volume-up mr-1"></i> Volume
+                    </button>
+                </div>
+            </div>
+        `,
+        showConfirmButton: false,
+        showCancelButton: false,
+        willClose: () => {
+            if (adhanAudio) {
+                adhanAudio.pause();
+                adhanAudio = null;
+            }
+        },
+        didOpen: () => {
+            adhanAudio.play();
+            
+            // Add event listener to stop button
+            document.getElementById('stop-adhan').addEventListener('click', () => {
+                if (adhanAudio) {
+                    adhanAudio.pause();
+                    adhanAudio = null;
+                }
+                Swal.close();
+            });
+            
+            // Add event listener to volume button
+            document.getElementById('adjust-volume').addEventListener('click', () => {
+                if (!adhanAudio) return;
+                
+                // Show volume slider
+                Swal.fire({
+                    title: 'Adjust Volume',
+                    html: `
+                        <input type="range" id="volume-slider" min="0" max="100" value="${adhanAudio.volume * 100}" 
+                               class="w-full">
+                        <div class="text-center mt-2" id="volume-value">${Math.round(adhanAudio.volume * 100)}%</div>
+                    `,
+                    confirmButtonText: 'Done',
+                    confirmButtonColor: '#6366f1',
+                    didOpen: () => {
+                        const slider = document.getElementById('volume-slider');
+                        const volumeValue = document.getElementById('volume-value');
+                        
+                        slider.addEventListener('input', () => {
+                            const volume = slider.value / 100;
+                            adhanAudio.volume = volume;
+                            volumeValue.textContent = `${slider.value}%`;
+                        });
+                    }
+                }).then(() => {
+                    // Resume the preview control after volume adjustment
+                    if (adhanAudio && !adhanAudio.paused) {
+                        previewAdhan(adhanAudio.src);
+                    }
+                });
+            });
+            
+            // Auto-close after 15 seconds
+            setTimeout(() => {
+                if (Swal.isVisible()) {
+                    Swal.close();
+                }
+            }, 15000);
+        }
+    });
+    
+    // Handle audio end
+    adhanAudio.onended = () => {
+        if (Swal.isVisible()) {
+            Swal.close();
+        }
+    };
+}
+
+// Schedule notification for prayer time
+function scheduleNotification(prayer) {
+    const settings = notificationSettings[prayer];
+    if (!settings) return;
+    
+    const prayerTime = convertTimeStringToDate(settings.prayerTime);
+    if (!prayerTime) return;
+    
+    // Calculate time for notification
+    const now = new Date();
+    
+    // Check if prayer time is in the future
+    if (prayerTime > now) {
+        // Schedule notification 10 minutes before if enabled
+        if (settings.notifyBefore) {
+            const notifyTime = new Date(prayerTime);
+            notifyTime.setMinutes(notifyTime.getMinutes() - 10);
+            
+            if (notifyTime > now) {
+                const timeUntilNotify = notifyTime - now;
+                setTimeout(() => {
+                    showPrayerNotification(prayer, true);
+                }, timeUntilNotify);
+                
+                console.log(`Scheduled early notification for ${prayer} in ${Math.round(timeUntilNotify / 60000)} minutes`);
+            }
+        }
+        
+        // Schedule the main notification at prayer time
+        const timeUntilPrayer = prayerTime - now;
+        setTimeout(() => {
+            showPrayerNotification(prayer, false);
+        }, timeUntilPrayer);
+        
+        console.log(`Scheduled notification for ${prayer} in ${Math.round(timeUntilPrayer / 60000)} minutes`);
+    }
+}
+
+// Show notification for prayer time
 function showPrayerNotification(prayer, isEarly) {
     const settings = notificationSettings[prayer];
     if (!settings) return;
     
-    // Create notification with improved mobile support
+    // Create notification
     const title = isEarly ? `${prayer} Prayer Soon` : `Time for ${prayer} Prayer`;
     const body = isEarly ? 
         `${prayer} prayer will start in 10 minutes` : 
         `It's time for ${prayer} prayer`;
     
-    // Options specifically optimized for mobile
-    const notificationOptions = {
+    const notification = new Notification(title, {
         body: body,
-        icon: '/favicon.ico', // Website icon for notification
-        badge: '/favicon.ico', // Small icon shown in status bar (Android)
-        vibrate: [200, 100, 200], // More noticeable vibration pattern
-        tag: `prayer-${prayer}`, // Tag to prevent duplicate notifications
-        renotify: true, // Notify user again even if there's a notification with same tag
-        requireInteraction: true, // Keep notification until user interacts with it
-        silent: !settings.playAdhan // Silent if adhan will play independently
-    };
+        icon: '/favicon.ico', // Make sure to have a favicon
+        badge: '/favicon.ico',
+        vibrate: [100, 50, 100]
+    });
     
-    // Create and show notification
-    const notification = new Notification(title, notificationOptions);
-    
-    // Play adhan immediately for non-early notifications if enabled
+    // Play adhan if it's prayer time and enabled
     if (!isEarly && settings.playAdhan) {
-        // Play adhan without requiring user interaction on mobile
-        let adhanContext;
-        
-        // Create audio context for mobile autoplay
-        try {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            adhanContext = new AudioContext();
-        } catch (e) {
-            console.error('Web Audio API not supported', e);
-        }
-        
-        // Create and play the adhan
-        adhanAudio = new Audio(settings.adhanUrl);
-        
-        // Attempt to play automatically (handles mobile autoplay restrictions)
-        const playPromise = adhanAudio.play();
-        
-        if (playPromise !== undefined) {
-            playPromise.catch(error => {
-                console.warn('Autoplay prevented, showing play button:', error);
-                
-                // Show notification with play button if autoplay is blocked
-                Swal.fire({
-                    title: `Time for ${prayer} Prayer`,
-                    html: `
-                        <p>Click below to play adhan recited by ${settings.adhanName}</p>
-                        <button id="play-adhan-notification" class="mt-4 px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600">
-                            <i class="fas fa-play mr-1"></i> Play Adhan
-                        </button>
-                        <button id="stop-adhan-notification" class="mt-4 ml-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 hidden">
-                            <i class="fas fa-stop mr-1"></i> Stop Adhan
-                        </button>
-                    `,
-                    showConfirmButton: false,
-                    showCancelButton: false,
-                    allowOutsideClick: true,
-                    willClose: () => {
-                        if (adhanAudio) {
-                            adhanAudio.pause();
-                            adhanAudio = null;
-                        }
-                    },
-                    didOpen: () => {
-                        // Add event listener to play button
-                        document.getElementById('play-adhan-notification').addEventListener('click', () => {
-                            adhanAudio.play().then(() => {
-                                document.getElementById('play-adhan-notification').classList.add('hidden');
-                                document.getElementById('stop-adhan-notification').classList.remove('hidden');
-                            });
-                        });
-                        
-                        // Add event listener to stop button
-                        document.getElementById('stop-adhan-notification').addEventListener('click', () => {
-                            if (adhanAudio) {
-                                adhanAudio.pause();
-                                adhanAudio = null;
-                            }
-                            Swal.close();
-                        });
-                    }
-                });
-            });
-        } else {
-            // Fallback for browsers that don't return a promise
-            adhanAudio.addEventListener('error', () => {
-                console.warn('Adhan play error, showing fallback UI');
-                // Similar Swal code as above for error case
-            });
-        }
-        
-        // Show in-app notification as well
+        // Show adhan notification with SweetAlert
         Swal.fire({
             title: `Time for ${prayer} Prayer`,
             html: `
@@ -1284,7 +1495,7 @@ function showPrayerNotification(prayer, isEarly) {
             `,
             showConfirmButton: false,
             showCancelButton: false,
-            allowOutsideClick: true,
+            allowOutsideClick: false,
             willClose: () => {
                 if (adhanAudio) {
                     adhanAudio.pause();
@@ -1292,6 +1503,10 @@ function showPrayerNotification(prayer, isEarly) {
                 }
             },
             didOpen: () => {
+                // Play adhan
+                adhanAudio = new Audio(settings.adhanUrl);
+                adhanAudio.play();
+                
                 // Add event listener to stop button
                 document.getElementById('stop-adhan-notification').addEventListener('click', () => {
                     if (adhanAudio) {
@@ -1306,94 +1521,9 @@ function showPrayerNotification(prayer, isEarly) {
     
     // Handle notification click
     notification.onclick = () => {
-        // Focus the window if it's open
-        if (window.parent) {
-            window.parent.focus();
-        }
         window.focus();
-        
-        // On mobile, this will bring the app to the foreground
-        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({
-                action: 'focusWindow',
-                prayer: prayer
-            });
-        }
-        
         notification.close();
     };
-}
-
-// Add this function to improve mobile support by registering a service worker
-async function registerServiceWorker() {
-    if ('serviceWorker' in navigator) {
-        try {
-            // Register a service worker to handle notifications in background
-            const registration = await navigator.serviceWorker.register('/sw.js');
-            console.log('Service worker registered:', registration);
-            
-            // Subscribe to push notifications if supported
-            if ('PushManager' in window) {
-                try {
-                    const subscription = await registration.pushManager.subscribe({
-                        userVisibleOnly: true,
-                        applicationServerKey: urlBase64ToUint8Array('BLz4B3MpWd5A7z2llxx_eeVGpUeublu2Sw-bLvsK5w2ETdJ7blpbfFafOZR-VtmFA-yKyOmeIiAbbmYLTHQ7yUk') // You'll need to add your VAPID key here
-                    });
-                    console.log('Push notification subscription:', subscription);
-                } catch (error) {
-                    console.error('Failed to subscribe to push notifications:', error);
-                }
-            }
-            
-            return registration;
-        } catch (error) {
-            console.error('Service worker registration failed:', error);
-            return null;
-        }
-    }
-    return null;
-}
-
-// Helper function for VAPID key conversion
-function urlBase64ToUint8Array(base64String) {
-    const padding = '='.repeat((4 - base64String.length % 4) % 4);
-    const base64 = (base64String + padding)
-        .replace(/-/g, '+')
-        .replace(/_/g, '/');
-    
-    const rawData = window.atob(base64);
-    const outputArray = new Uint8Array(rawData.length);
-    
-    for (let i = 0; i < rawData.length; ++i) {
-        outputArray[i] = rawData.charCodeAt(i);
-    }
-    return outputArray;
-}
-
-// Modified notification request to better handle mobile cases
-async function requestNotificationPermission() {
-    if (!checkNotificationSupport()) return false;
-    
-    if (Notification.permission === 'granted') {
-        // Register service worker for better mobile support
-        await registerServiceWorker();
-        return true;
-    }
-    
-    try {
-        // Request permission
-        const permission = await Notification.requestPermission();
-        
-        if (permission === 'granted') {
-            // Register service worker after permission is granted
-            await registerServiceWorker();
-            return true;
-        }
-        return false;
-    } catch (error) {
-        console.error('Error requesting notification permission:', error);
-        return false;
-    }
 }
 
 // ======================== LOCATION HANDLING ======================== //
