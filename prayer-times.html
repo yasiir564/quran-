@@ -522,7 +522,7 @@ button:focus, select:focus {
         font-size: 0.9rem;
     }
 }
-        /* About Tool Section Styles */
+       /* About Tool Section Styles */
 .about-tool-section {
     position: relative;
     overflow: hidden;
@@ -553,8 +553,12 @@ button:focus, select:focus {
     height: 100%;
     display: flex;
     flex-direction: column;
+    align-items: center; /* Ensures content is centered */
+    justify-content: center;
+    text-align: center;
 }
 
+/* Card Hover Effect */
 .feature-card::after {
     content: '';
     position: absolute;
@@ -569,14 +573,15 @@ button:focus, select:focus {
 }
 
 .feature-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(127, 27, 242, 0.15);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(127, 27, 242, 0.15);
 }
 
 .feature-card:hover::after {
     transform: scaleX(1);
 }
 
+/* Feature Icon */
 .feature-icon-wrapper {
     margin-bottom: 1.5rem;
     background: rgba(127, 27, 242, 0.05);
@@ -594,6 +599,7 @@ button:focus, select:focus {
     background: rgba(127, 27, 242, 0.1);
 }
 
+/* Feature Title */
 .feature-title {
     font-size: 1.25rem;
     font-weight: 600;
@@ -602,6 +608,7 @@ button:focus, select:focus {
     font-family: 'Tajawal', sans-serif;
 }
 
+/* Feature List */
 .feature-list {
     list-style-type: none;
     padding: 0;
@@ -634,6 +641,13 @@ button:focus, select:focus {
 .testimonial-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 25px rgba(127, 27, 242, 0.1);
+}
+
+/* Responsive Image in Feature Card */
+.feature-card img {
+    max-width: 100%; /* Prevents image from overflowing */
+    height: auto;
+    object-fit: contain;
 }
 
 /* Dark Mode Styles */
@@ -679,6 +693,7 @@ button:focus, select:focus {
         padding: 1.25rem;
     }
 }
+
     </style>
 </head>
      <div class="sidebar-overlay" id="sidebarOverlay"></div>
