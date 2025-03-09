@@ -822,7 +822,7 @@ async function fetchPrayerTimes(latitude, longitude, date) {
         
         // Create API URL with parameters
         const url = new URL('https://api.aladhan.com/v1/timings');
-        url.search = new URLSearchParams({
+       url.search = new URLSearchParams({...}).toString();
             latitude: latitude,
             longitude: longitude,
             method: CALCULATION_METHOD.id,
