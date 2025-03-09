@@ -1593,12 +1593,380 @@ function setupNotifications(times) {
                     if (permission === "granted") {
                         new Notification(`${prayer} Prayer Time Soon`, {
                             body: `${prayer} prayer time is in 5 minutes`,
-                            icon: '/favicon.ico'
-                        });
-                    }
-                });
-            }
+                            icon: '/favicon.ico',
+                silent: false
+            });
+            
+            notification.onclick = function() {
+                window.focus();
+                this.close();
+            };
         }, timeUntilNotification);
+    });
+}
+
+// ======================== EVENT LISTENERS ======================== //
+
+// Add event listeners when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize the app
+    initialize();
+    
+    // Set up language toggle
+    const langButton = safeGetElement('language-toggle', 'button');
+    if (langButton) {
+        langButton.addEventListener('click', toggleLanguage);
+        // Set initial text
+        langButton.textContent = document.getElementById('app-container')?.classList.contains('arabic-primary') ? 'English' : 'العربية';
+    }
+    
+    // Set up refresh button
+    const refreshButton = safeGetElement('refresh-button', 'button');
+    if (refreshButton) {
+        refreshButton.addEventListener('click', refreshPrayerTimes);
+    }
+    
+    // Set up date display
+    const dateDisplay = safeGetElement('date-display', 'div');
+    if (dateDisplay) {
+        const today = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateDisplay.innerHTML = `
+            <div class="flex flex-col items-center">
+                <span>${today.toLocaleDateString('en-US', options)}</span>
+                <span class="arabic">${today.toLocaleDateString('ar-SA', options)}</span>
+            </div>
+        `;
+    }
+    
+    // Handle responsive layout
+    handleResponsiveLayout();
+    window.addEventListener('resize', handleResponsiveLayout);
+    
+    // Load saved preferences
+    loadPreferences();
+    
+    // Set up notification settings button
+    const notificationButton = safeGetElement('notification-settings', 'button');
+    if (notificationButton) {
+        notificationButton.addEventListener('click', () => {
+            Swal.fire({
+                title: 'Notification Settings',
+                html: `
+                    <div class="text-left">
+                        <p class="mb-3">Would you like to receive notifications for prayer times?</p>
+                        <label class="flex items-center mb-2">
+                            <input type="checkbox" id="notify-before" class="mr-2">
+                            Notify 5 minutes before prayer time
+                        </label>
+                        <label class="flex items-center mb-2">
+                            <input type="checkbox" id="notify-at" class="mr-2">
+                            Notify at prayer time
+                        </label>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonColor: '#6366f1',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Save Settings',
+                cancelButtonText: 'Cancel',
+                preConfirm: () => {
+                    const notifyBefore = document.getElementById('notify-before').checked;
+                    const notifyAt = document.getElementById('notify-at').checked;
+                    
+                    localStorage.setItem('notifyBefore', notifyBefore);
+                    localStorage.setItem('notifyAt', notifyAt);
+                    
+                    return { notifyBefore, notifyAt };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === "granted") {
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true
+                            });
+                            
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Notification settings saved'
+                            });
+                            
+                            // Refresh notifications with current prayer times
+                            refreshPrayerTimes();
+                        }
+                    });
+                }
+            });
+        });
+    }
+});
+
+// ======================== SETTINGS & CUSTOMIZATION ======================== //
+
+// Function to open settings modal
+function openSettings() {
+    Swal.fire({
+        title: 'Prayer Times Settings',
+        html: `
+            <div class="text-left">
+                <h3 class="font-bold mb-3">Calculation Method</h3>
+                <select id="calculation-method" class="w-full p-2 border rounded mb-4">
+                    <option value="0">Shia Ithna-Ashari</option>
+                    <option value="1">University of Islamic Sciences, Karachi</option>
+                    <option value="2">Islamic Society of North America</option>
+                    <option value="3" selected>Muslim World League</option>
+                    <option value="4">Umm Al-Qura University, Mecca</option>
+                    <option value="5">Egyptian General Authority of Survey</option>
+                    <option value="7">Institute of Geophysics, University of Tehran</option>
+                    <option value="12">Union des Organisations Islamiques de France</option>
+                    <option value="13">Spiritual Administration of Muslims of Russia</option>
+                </select>
+                
+                <h3 class="font-bold mb-3">Juristic Method (Asr)</h3>
+                <select id="juristic-method" class="w-full p-2 border rounded mb-4">
+                    <option value="0" selected>Standard (Shafi'i, Maliki, Hanbali)</option>
+                    <option value="1">Hanafi</option>
+                </select>
+                
+                <h3 class="font-bold mb-3">Display Options</h3>
+                <label class="flex items-center mb-2">
+                    <input type="checkbox" id="show-arabic" class="mr-2" checked>
+                    Show Arabic times
+                </label>
+                
+                <label class="flex items-center mb-2">
+                    <input type="checkbox" id="dark-mode" class="mr-2">
+                    Dark Mode
+                </label>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonColor: '#6366f1',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'Save Settings',
+        cancelButtonText: 'Cancel',
+        willOpen: () => {
+            // Set values from current settings
+            document.getElementById('calculation-method').value = CALCULATION_METHOD.id;
+            document.getElementById('juristic-method').value = ASR_JURISTIC_METHOD;
+            document.getElementById('show-arabic').checked = localStorage.getItem('showArabic') !== 'false';
+            document.getElementById('dark-mode').checked = document.body.classList.contains('dark-mode');
+        },
+        preConfirm: () => {
+            const calculationMethodId = parseInt(document.getElementById('calculation-method').value);
+            const calculationMethodName = document.getElementById('calculation-method').options[document.getElementById('calculation-method').selectedIndex].text;
+            const juristicMethod = parseInt(document.getElementById('juristic-method').value);
+            const showArabic = document.getElementById('show-arabic').checked;
+            const darkMode = document.getElementById('dark-mode').checked;
+            
+            return { 
+                calculationMethodId, 
+                calculationMethodName, 
+                juristicMethod, 
+                showArabic, 
+                darkMode 
+            };
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Update global settings
+            CALCULATION_METHOD.id = result.value.calculationMethodId;
+            CALCULATION_METHOD.name = result.value.calculationMethodName;
+            ASR_JURISTIC_METHOD = result.value.juristicMethod;
+            
+            // Save to localStorage
+            localStorage.setItem('calculationMethod', JSON.stringify(CALCULATION_METHOD));
+            localStorage.setItem('asrJuristicMethod', ASR_JURISTIC_METHOD);
+            localStorage.setItem('showArabic', result.value.showArabic);
+            
+            // Toggle dark mode
+            if (result.value.darkMode) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+            localStorage.setItem('darkMode', result.value.darkMode);
+            
+            // Refresh prayer times with new settings
+            refreshPrayerTimes();
+            
+            // Show success message
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true
+            });
+            
+            Toast.fire({
+                icon: 'success',
+                title: 'Settings saved successfully'
+            });
+        }
+    });
+}
+
+// ======================== OFFLINE CAPABILITIES ======================== //
+
+// Check if application is online
+function isOnline() {
+    return navigator.onLine;
+}
+
+// Load cached prayer times when offline
+function loadCachedPrayerTimes() {
+    try {
+        const cachedData = localStorage.getItem('cachedPrayerTimes');
+        if (cachedData) {
+            const { times, timestamp } = JSON.parse(cachedData);
+            
+            // Check if cache is from today
+            const cacheDate = new Date(timestamp);
+            const today = new Date();
+            
+            const isSameDay = cacheDate.getDate() === today.getDate() && 
+                              cacheDate.getMonth() === today.getMonth() &&
+                              cacheDate.getFullYear() === today.getFullYear();
+            
+            if (isSameDay) {
+                displayPrayerTimes(times);
+                
+                // Show offline indicator
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+                
+                Toast.fire({
+                    icon: 'warning',
+                    title: 'You are offline. Showing cached prayer times.'
+                });
+                
+                return true;
+            }
+        }
+        
+        return false;
+    } catch (error) {
+        console.error('Error loading cached prayer times:', error);
+        return false;
+    }
+}
+
+// Cache prayer times for offline use
+function cachePrayerTimes(times) {
+    try {
+        localStorage.setItem('cachedPrayerTimes', JSON.stringify({
+            times,
+            timestamp: new Date().toISOString()
+        }));
+    } catch (error) {
+        console.error('Error caching prayer times:', error);
+    }
+}
+
+// Handle online/offline events
+window.addEventListener('online', () => {
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+    });
+    
+    Toast.fire({
+        icon: 'success',
+        title: 'You are back online. Refreshing prayer times.'
+    });
+    
+    refreshPrayerTimes();
+});
+
+window.addEventListener('offline', () => {
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+    });
+    
+    Toast.fire({
+        icon: 'warning',
+        title: 'You are offline. Using cached prayer times if available.'
+    });
+    
+    loadCachedPrayerTimes();
+});
+
+// Periodically check for new day to refresh prayer times
+setInterval(() => {
+    const now = new Date();
+    
+    // If it's just past midnight, refresh prayer times for the new day
+    if (now.getHours() === 0 && now.getMinutes() === 0) {
+        refreshPrayerTimes();
+        
+        // Show notification for new day
+        if (Notification.permission === "granted") {
+            new Notification("New Prayer Day", {
+                body: "Prayer times have been updated for the new day",
+                icon: '/favicon.ico'
+            });
+        }
+    }
+}, 60000); // Check every minute
+
+// Set up settings button
+document.addEventListener('DOMContentLoaded', function() {
+    const settingsButton = safeGetElement('settings-button', 'button');
+    if (settingsButton) {
+        settingsButton.addEventListener('click', openSettings);
+    }
+    
+    // Load saved settings from localStorage
+    try {
+        // Calculation method
+        const savedMethod = localStorage.getItem('calculationMethod');
+        if (savedMethod) {
+            CALCULATION_METHOD = JSON.parse(savedMethod);
+        }
+        
+        // Asr juristic method
+        const savedJuristicMethod = localStorage.getItem('asrJuristicMethod');
+        if (savedJuristicMethod !== null) {
+            ASR_JURISTIC_METHOD = parseInt(savedJuristicMethod);
+        }
+        
+        // Dark mode
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+        }
+    } catch (error) {
+        console.error('Error loading saved settings:', error);
+    }
+});
+
+// Service Worker Registration for PWA Support
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+                console.log('ServiceWorker registration successful');
+            })
+            .catch(error => {
+                console.error('ServiceWorker registration failed:', error);
+            });
     });
 }
     </script>
