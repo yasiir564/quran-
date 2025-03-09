@@ -524,6 +524,10 @@ button:focus, select:focus {
 }
     </style>
 </head>
+    <div id="prayer-times-link">
+    <p>Loading prayer times...</p>
+</div>
+
      <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div id="mySidebar" class="sidebar">
         <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
@@ -2023,6 +2027,12 @@ function updateLocationDisplay(locationName) {
         `;
     }
 }
+        function updatePrayerTimesLink(location) {
+    let prayerTimesLink = `https://www.google.com/search?q=Prayer-times+${encodeURIComponent(location)}`;
+    document.getElementById("prayer-times-link").innerHTML = 
+        `<a href="${prayerTimesLink}" target="_blank">Prayer Times in ${location}</a>`;
+}
+
 
 // ======================== UTILITY FUNCTIONS ======================== //
 
@@ -2129,6 +2139,20 @@ async function initApp() {
         refreshPrayerTimes();
     }, 5 * 60 * 1000);
 }
+        fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+        let city = data.address.city || data.address.town || data.address.village || "";
+        let country = data.address.country || "";
+        
+        if (city) {
+            updatePrayerTimesLink(city);
+        } else if (country) {
+            updatePrayerTimesLink(country);
+        }
+    })
+    .catch(error => console.log("Error fetching location data:", error));
+
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', initApp);
