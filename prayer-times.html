@@ -758,6 +758,7 @@ button:focus, select:focus {
     window.addEventListener('scroll', applyScrollEffects);
 });
 
+// Prayer names in Arabic
 const prayerNamesArabic = {
     Fajr: 'الفجر',
     Sunrise: 'الشروق',
@@ -797,9 +798,9 @@ const prayerColors = {
     Isha: ['#6366f1', '#4338ca']
 };
 
-// Default settings - simplified calculation methods
+// Default calculation methods - simplified
 const CALCULATION_METHOD = { id: 3, name: 'Muslim World League' };
-let ASR_JURISTIC_METHOD = 0; // 0 for Shafi'i
+const ASR_JURISTIC_METHOD = 0; // 0 for Shafi'i
 
 // Global variable to store the countdown timer
 let countdownTimer = null;
@@ -820,9 +821,9 @@ async function fetchPrayerTimes(latitude, longitude, date) {
         // Format date as YYYY-MM-DD
         const formattedDate = date.toISOString().split('T')[0];
         
-        // Create API URL with parameters
+        // Create API URL with parameters - fixed URL construction
         const url = new URL('https://api.aladhan.com/v1/timings');
-       url.search = new URLSearchParams({...}).toString();
+        url.search = new URLSearchParams({
             latitude: latitude,
             longitude: longitude,
             method: CALCULATION_METHOD.id,
@@ -830,7 +831,7 @@ async function fetchPrayerTimes(latitude, longitude, date) {
             tune: "0,0,0,0,0,0,0,0,0",
             school: ASR_JURISTIC_METHOD,
             date: formattedDate
-        }).toString();
+        });
         
         const response = await fetch(url);
         
@@ -850,13 +851,8 @@ async function fetchPrayerTimes(latitude, longitude, date) {
         updateLoadingState(false);
         console.error('Error fetching prayer times:', error);
         
-        // Show error with SweetAlert
-        Swal.fire({
-            title: 'Error!',
-            text: 'Failed to fetch prayer times. Please try again later.',
-            icon: 'error',
-            confirmButtonText: 'OK'
-        });
+        // Show error using alert instead of SweetAlert
+        alert('Failed to fetch prayer times. Please try again later.');
         
         // Return empty times
         return {
@@ -942,8 +938,15 @@ function safeGetElement(id, fallback = null) {
         console.warn(`Element with ID '${id}' not found, creating it`);
         const newElement = document.createElement(fallback);
         newElement.id = id;
-        document.body.appendChild(newElement);
-        return newElement;
+        
+        // Make sure document.body exists before appending
+        if (document.body) {
+            document.body.appendChild(newElement);
+            return newElement;
+        } else {
+            console.error('Document body not available for appending element');
+            return null;
+        }
     }
     return element;
 }
@@ -1009,7 +1012,13 @@ function displayPrayerTimes(times) {
                 // Create a date for tomorrow's Fajr
                 const fajrTime = convertTimeStringToDate(tomorrowTimes.Fajr);
                 if (fajrTime) {
-                    fajrTime.setDate(fajrTime.getDate() + 1);
+                    // Set the date specifically to tomorrow
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    fajrTime.setFullYear(tomorrow.getFullYear());
+                    fajrTime.setMonth(tomorrow.getMonth());
+                    fajrTime.setDate(tomorrow.getDate());
+                    
                     nextPrayerTime = fajrTime;
                     updateCountdown(nextPrayerTime);
                 }
@@ -1085,6 +1094,12 @@ function updateCountdown(targetTime) {
         return;
     }
     
+    // Clear any existing timer before starting a new one
+    if (countdownTimer) {
+        clearTimeout(countdownTimer);
+        countdownTimer = null;
+    }
+    
     const updateTimer = () => {
         const now = new Date();
         const diff = targetTime - now;
@@ -1108,11 +1123,6 @@ function updateCountdown(targetTime) {
         // Update every second
         countdownTimer = setTimeout(updateTimer, 1000);
     };
-    
-    // Clear any existing timer before starting a new one
-    if (countdownTimer) {
-        clearTimeout(countdownTimer);
-    }
     
     updateTimer();
 }
@@ -1214,21 +1224,12 @@ function updateLoadingState(isLoading, message = 'Loading...') {
 
 // Request location permission explicitly
 function requestLocationPermission() {
-    Swal.fire({
-        title: 'Location Access',
-        text: 'This app needs your location to provide accurate prayer times. Allow access to your location?',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Allow',
-        cancelButtonText: 'Deny'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            initialize();
-        } else {
-            // Use default location
-            useDefaultLocation();
-        }
-    });
+    if (confirm('This app needs your location to provide accurate prayer times. Allow access to your location?')) {
+        initialize();
+    } else {
+        // Use default location
+        useDefaultLocation();
+    }
 }
 
 // Use default location (Mecca)
@@ -1295,25 +1296,16 @@ function updateLocationDisplay(locationName) {
     }
 }
 
-// Handle location error with SweetAlert
+// Handle location error
 function handleLocationError(error) {
     console.error('Location error:', error);
     
-    Swal.fire({
-        title: 'Location Error',
-        text: `${error.message || 'Unable to determine your location.'} Would you like to use the default location (Mecca)?`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, use Mecca',
-        cancelButtonText: 'No'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            useDefaultLocation();
-        } else {
-            // Show location button in the display area
-            updateLoadingState(false);
-        }
-    });
+    if (confirm(`${error.message || 'Unable to determine your location.'} Would you like to use the default location (Mecca)?`)) {
+        useDefaultLocation();
+    } else {
+        // Show location button in the display area
+        updateLoadingState(false);
+    }
 }
 
 // ======================== APPLICATION INITIALIZATION ======================== //
@@ -1336,12 +1328,7 @@ async function refreshPrayerTimes() {
         displayPrayerTimes(times);
     } catch (error) {
         console.error('Error refreshing prayer times:', error);
-        Swal.fire({
-            title: 'Error',
-            text: 'Failed to refresh prayer times. Please try again.',
-            icon: 'error',
-            confirmButtonText: 'OK'
-        });
+        alert('Failed to refresh prayer times. Please try again.');
     }
 }
 
@@ -1362,55 +1349,28 @@ async function initialize() {
     }
 }
 
-// ======================== THEME AND LANGUAGE FUNCTIONS ======================== //
-
-// Toggle dark mode
-function toggleDarkMode() {
-    const body = document.body;
-    body.classList.toggle('dark-mode');
-    
-    // Save preference
-    const isDarkMode = body.classList.contains('dark-mode');
-    localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
-    
-    // Update button icon
-    const darkModeButton = safeGetElement('dark-mode-toggle', 'button');
-    if (darkModeButton) {
-        darkModeButton.innerHTML = isDarkMode ? 
-            '<i class="fas fa-sun"></i>' : 
-            '<i class="fas fa-moon"></i>';
-    }
-}
+// ======================== LANGUAGE FUNCTIONS ======================== //
 
 // Toggle Arabic/English display priority
 function toggleLanguage() {
     const container = document.getElementById('app-container');
-    container.classList.toggle('arabic-primary');
-    
-    // Save preference
-    const isArabicPrimary = container.classList.contains('arabic-primary');
-    localStorage.setItem('arabicPrimary', isArabicPrimary ? 'true' : 'false');
-    
-    // Update button text
-    const langButton = safeGetElement('language-toggle', 'button');
-    if (langButton) {
-        langButton.textContent = isArabicPrimary ? 'English' : 'العربية';
+    if (container) {
+        container.classList.toggle('arabic-primary');
+        
+        // Save preference
+        const isArabicPrimary = container.classList.contains('arabic-primary');
+        localStorage.setItem('arabicPrimary', isArabicPrimary ? 'true' : 'false');
+        
+        // Update button text
+        const langButton = safeGetElement('language-toggle', 'button');
+        if (langButton) {
+            langButton.textContent = isArabicPrimary ? 'English' : 'العربية';
+        }
     }
 }
 
-// Load theme and language preferences
+// Load language preferences
 function loadPreferences() {
-    // Dark mode preference
-    const darkModeSetting = localStorage.getItem('darkMode');
-    if (darkModeSetting === 'true') {
-        document.body.classList.add('dark-mode');
-        
-        const darkModeButton = safeGetElement('dark-mode-toggle', 'button');
-        if (darkModeButton) {
-            darkModeButton.innerHTML = '<i class="fas fa-sun"></i>';
-        }
-    }
-    
     // Language preference
     const arabicPrimarySetting = localStorage.getItem('arabicPrimary');
     if (arabicPrimarySetting === 'true') {
@@ -1423,21 +1383,6 @@ function loadPreferences() {
         if (langButton) {
             langButton.textContent = 'English';
         }
-    }
-}
-
-// Setup theme and language toggles
-function setupPreferenceControls() {
-    // Dark mode toggle
-    const darkModeButton = safeGetElement('dark-mode-toggle', 'button');
-    if (darkModeButton) {
-        darkModeButton.addEventListener('click', toggleDarkMode);
-    }
-    
-    // Language toggle
-    const langButton = safeGetElement('language-toggle', 'button');
-    if (langButton) {
-        langButton.addEventListener('click', toggleLanguage);
     }
 }
 
@@ -1458,103 +1403,19 @@ function handleResponsiveLayout() {
     }
 }
 
-// ======================== SETTINGS PANEL ======================== //
-
-// Toggle settings panel
-function toggleSettingsPanel() {
-    const settingsPanel = safeGetElement('settings-panel', 'div');
-    if (!settingsPanel) return;
-    
-    settingsPanel.classList.toggle('hidden');
-}
-
-// Update calculation method
-function updateCalculationMethod(methodId, methodName) {
-    CALCULATION_METHOD.id = methodId;
-    CALCULATION_METHOD.name = methodName;
-    
-    // Save preference
-    localStorage.setItem('calculationMethod', JSON.stringify(CALCULATION_METHOD));
-    
-    // Refresh prayer times
-    refreshPrayerTimes();
-}
-
-// Update Asr juristic method
-function updateAsrJuristicMethod(methodId, methodName) {
-    ASR_JURISTIC_METHOD = methodId;
-    
-    // Save preference
-    localStorage.setItem('asrJuristicMethod', methodId.toString());
-    
-    // Refresh prayer times
-    refreshPrayerTimes();
-}
-
-// Setup settings panel
-function setupSettingsPanel() {
-    // Load saved calculation method
-    const savedMethod = localStorage.getItem('calculationMethod');
-    if (savedMethod) {
-        try {
-            CALCULATION_METHOD = JSON.parse(savedMethod);
-        } catch (e) {
-            console.error('Error parsing saved calculation method:', e);
-        }
-    }
-    
-    // Load saved Asr juristic method
-    const savedAsrMethod = localStorage.getItem('asrJuristicMethod');
-    if (savedAsrMethod) {
-        ASR_JURISTIC_METHOD = parseInt(savedAsrMethod, 10);
-    }
-    
-    // Create settings toggle button
-    const settingsButton = safeGetElement('settings-button', 'button');
-    if (settingsButton) {
-        settingsButton.addEventListener('click', toggleSettingsPanel);
-    }
-    
-    // Set up calculation method selectors
-    const methodSelectors = document.querySelectorAll('.calculation-method');
-    methodSelectors.forEach(selector => {
-        selector.addEventListener('click', () => {
-            const methodId = parseInt(selector.dataset.methodId, 10);
-            const methodName = selector.textContent.trim();
-            updateCalculationMethod(methodId, methodName);
-        });
-    });
-    
-    // Set up Asr juristic method selectors
-    const asrMethodSelectors = document.querySelectorAll('.asr-method');
-    asrMethodSelectors.forEach(selector => {
-        selector.addEventListener('click', () => {
-            const methodId = parseInt(selector.dataset.methodId, 10);
-            const methodName = selector.textContent.trim();
-            updateAsrJuristicMethod(methodId, methodName);
-        });
-    });
-}
-
-// ======================== SERVICE WORKER REGISTRATION ======================== //
-
-// Register service worker for offline functionality if supported
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/service-worker.js')
-            .then(function(registration) {
-                console.log('ServiceWorker registration successful with scope: ', registration.scope);
-            })
-            .catch(function(err) {
-                console.log('ServiceWorker registration failed: ', err);
-            });
-    });
-}
-
 // ======================== INITIALIZATION ======================== //
 
 // Run initialization when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    // Set language toggle
+    const langButton = safeGetElement('language-toggle', 'button');
+    if (langButton) {
+        langButton.addEventListener('click', toggleLanguage);
+    }
+    
+    // Load saved language preferences
+    loadPreferences();
+    
     // Initialize the app
     initialize();
     
@@ -1566,17 +1427,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 1000);
     
-    // Setup preference controls
-    setupPreferenceControls();
-    
-    // Load saved preferences
-    loadPreferences();
-    
     // Handle responsive layout
     handleResponsiveLayout();
-    
-    // Setup settings panel
-    setupSettingsPanel();
     
     // Listen for window resize
     window.addEventListener('resize', handleResponsiveLayout);
@@ -1586,15 +1438,28 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Back online, refreshing data...');
         refreshPrayerTimes();
     });
+    
+    // Handle page visibility changes to refresh when tab becomes visible again
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            console.log('Tab is now visible, refreshing data...');
+            refreshPrayerTimes();
+        }
+    });
+    
+    // Clean up on page unload
+    window.addEventListener('beforeunload', () => {
+        if (countdownTimer) {
+            clearTimeout(countdownTimer);
+            countdownTimer = null;
+        }
+    });
 });
 
-// Export the main functions for external use
-export { 
-    initialize, 
-    refreshPrayerTimes, 
-    toggleDarkMode, 
-    toggleLanguage 
-};
+// Make functions available globally since we're not using modules
+window.initialize = initialize;
+window.refreshPrayerTimes = refreshPrayerTimes;
+window.toggleLanguage = toggleLanguage;
     </script>
 </body>
 </html>
