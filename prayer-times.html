@@ -16,140 +16,142 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
-        :root {
-            --gradient-start: #6366f1;
-            --gradient-end: #8b5cf6;
-            --accent-color: #6366f1;
-            --accent-dark: #4f46e5;
-            --card-bg: rgba(255, 255, 255, 0.9);
-        }
+       :root {
+    --gradient-start: #7f1bf2;
+    --gradient-end: #9543f5;
+    --accent-color: #7f1bf2;
+    --accent-dark: #6813d0;
+    --card-bg: rgba(255, 255, 255, 0.9);
+    --primary-color: #7f1bf2;
+}
 
-        html {
-            scroll-behavior: smooth;
-        }
+html {
+    scroll-behavior: smooth;
+}
 
-        body {
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-            font-family: 'Tajawal', sans-serif;
-            overflow-x: hidden;
-        }
+body {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    font-family: 'Tajawal', sans-serif;
+    overflow-x: hidden;
+}
 
-        .custom-gradient {
-            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-        }
+.custom-gradient {
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+}
 
-        .prayer-time-card {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            background: var(--card-bg);
-            overflow: hidden;
-            position: relative;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
+.prayer-time-card {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: var(--card-bg);
+    overflow: hidden;
+    position: relative;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
 
-        .prayer-time-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(to bottom, var(--gradient-start), var(--gradient-end));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
+.prayer-time-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--gradient-start), var(--gradient-end));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
 
-        .prayer-time-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.25);
-        }
+.prayer-time-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(127, 27, 242, 0.25);
+}
 
-        .prayer-time-card:hover::before {
-            opacity: 1;
-        }
+.prayer-time-card:hover::before {
+    opacity: 1;
+}
 
-        .prayer-time-card.active {
-            border: 2px solid var(--accent-color);
-            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
-        }
+.prayer-time-card.active {
+    border: 2px solid var(--accent-color);
+    box-shadow: 0 10px 25px rgba(127, 27, 242, 0.3);
+}
 
-        .prayer-time-card.active::before {
-            opacity: 1;
-            width: 6px;
-        }
+.prayer-time-card.active::before {
+    opacity: 1;
+    width: 6px;
+}
 
-        .arabic {
-            font-family: 'Tajawal', sans-serif;
-            font-weight: 500;
-        }
+.arabic {
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 500;
+}
 
-        .scrollbar {
-            scrollbar-width: thin;
-            scrollbar-color: var(--accent-color) rgba(240, 240, 240, 0.7);
-        }
+.scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-color) rgba(240, 240, 240, 0.7);
+}
 
-        .scrollbar::-webkit-scrollbar {
-            width: 8px;
-        }
+.scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
 
-        .scrollbar::-webkit-scrollbar-track {
-            background: rgba(240, 240, 240, 0.7);
-            border-radius: 10px;
-        }
+.scrollbar::-webkit-scrollbar-track {
+    background: rgba(240, 240, 240, 0.7);
+    border-radius: 10px;
+}
 
-        .scrollbar::-webkit-scrollbar-thumb {
-            background: var(--accent-color);
-            border-radius: 10px;
-        }
+.scrollbar::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 10px;
+}
 
-        .countdown {
-            font-variant-numeric: tabular-nums;
-        }
+.countdown {
+    font-variant-numeric: tabular-nums;
+}
 
-        .icon-float {
-            animation: float 3s ease-in-out infinite;
-            filter: drop-shadow(0 5px 15px rgba(99, 102, 241, 0.3));
-        }
+.icon-float {
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 5px 15px rgba(127, 27, 242, 0.3));
+}
 
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
 
-        .nav-shine {
-            position: relative;
-            overflow: hidden;
-        }
+.nav-shine {
+    position: relative;
+    overflow: hidden;
+}
 
-        .nav-shine::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                to right,
-                rgba(255, 255, 255, 0) 0%,
-                rgba(255, 255, 255, 0.3) 50%,
-                rgba(255, 255, 255, 0) 100%
-            );
-            transform: rotate(30deg);
-            animation: shine 6s infinite linear;
-        }
+.nav-shine::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: rotate(30deg);
+    animation: shine 6s infinite linear;
+}
 
-        @keyframes shine {
-            from { transform: translateX(-100%) rotate(30deg); }
-            to { transform: translateX(100%) rotate(30deg); }
-        }
+@keyframes shine {
+    from { transform: translateX(-100%) rotate(30deg); }
+    to { transform: translateX(100%) rotate(30deg); }
+}
 
-        @media (prefers-reduced-motion) {
-            .icon-float, .nav-shine::after {
-                animation: none;
-            }
-        }
-        /* Dark Mode Toggle Animation */
+@media (prefers-reduced-motion) {
+    .icon-float, .nav-shine::after {
+        animation: none;
+    }
+}
+
+/* Dark Mode Toggle Animation */
 .dark-mode-toggle {
   transition: transform 0.3s ease;
 }
@@ -170,27 +172,27 @@ button:focus, select:focus {
 
 /* Add prayer color accents for Muslim World League */
 .method-mwl .prayer-time-card:nth-child(1) {
-  border-top: 3px solid #6366f1;
+  border-top: 3px solid #7f1bf2;
 }
 
 .method-mwl .prayer-time-card:nth-child(2) {
-  border-top: 3px solid #f59e0b;
+  border-top: 3px solid #9543f5;
 }
 
 .method-mwl .prayer-time-card:nth-child(3) {
-  border-top: 3px solid #3b82f6;
+  border-top: 3px solid #7f1bf2;
 }
 
 .method-mwl .prayer-time-card:nth-child(4) {
-  border-top: 3px solid #10b981;
+  border-top: 3px solid #9543f5;
 }
 
 .method-mwl .prayer-time-card:nth-child(5) {
-  border-top: 3px solid #ef4444;
+  border-top: 3px solid #7f1bf2;
 }
 
 .method-mwl .prayer-time-card:nth-child(6) {
-  border-top: 3px solid #6366f1;
+  border-top: 3px solid #9543f5;
 }
 
 /* AdSense Container Styles */
@@ -206,6 +208,7 @@ button:focus, select:focus {
     overflow: hidden;
     backdrop-filter: blur(5px);
     transition: all 0.3s ease;
+    border: 1px solid rgba(127, 27, 242, 0.1);
 }
 
 .ad-container ins {
@@ -219,7 +222,8 @@ button:focus, select:focus {
         margin: 1rem 0 1.5rem 0;
     }
 }
-        /* 2. SIDEBAR STYLES */
+
+/* SIDEBAR STYLES */
 .sidebar {
     height: 100vh;
     width: 280px;
