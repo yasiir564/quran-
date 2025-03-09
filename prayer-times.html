@@ -360,6 +360,141 @@ button:focus, select:focus {
         padding: 10px 20px;
     }
 }
+        /* Benefits Section Styles */
+.benefits-section {
+    position: relative;
+    overflow: hidden;
+}
+
+.benefits-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 400px;
+    background: linear-gradient(180deg, rgba(127, 27, 242, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+    z-index: -1;
+}
+
+.benefits-title {
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+}
+
+.benefit-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.benefit-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+}
+
+.benefit-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(127, 27, 242, 0.15);
+}
+
+.benefit-card:hover::after {
+    transform: scaleX(1);
+}
+
+.benefit-icon-wrapper {
+    margin-bottom: 1.5rem;
+    background: rgba(127, 27, 242, 0.05);
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.benefit-card:hover .benefit-icon-wrapper {
+    transform: scale(1.1);
+    background: rgba(127, 27, 242, 0.1);
+}
+
+.benefit-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #333;
+    font-family: 'Tajawal', sans-serif;
+    text-align: center;
+}
+
+.benefit-description {
+    color: #666;
+    line-height: 1.6;
+    font-size: 1rem;
+    text-align: center;
+}
+
+/* Dark Mode Styles */
+@media (prefers-color-scheme: dark) {
+    .benefit-card {
+        background: rgba(30, 30, 40, 0.8);
+        border-color: rgba(127, 27, 242, 0.2);
+    }
+    
+    .benefit-title {
+        color: #fff;
+    }
+    
+    .benefit-description {
+        color: #ccc;
+    }
+    
+    .benefits-section::before {
+        background: linear-gradient(180deg, rgba(127, 27, 242, 0.1) 0%, rgba(30, 30, 40, 0) 100%);
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .benefit-card {
+        padding: 1.5rem;
+    }
+    
+    .benefit-icon-wrapper {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .benefit-title {
+        font-size: 1.1rem;
+    }
+    
+    .benefit-description {
+        font-size: 0.9rem;
+    }
+}
     </style>
 </head>
      <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -466,6 +601,103 @@ button:focus, select:focus {
      (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 </div>
+
+    <!-- Benefits of Prayer Section -->
+<section id="benefits" class="benefits-section py-16">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold mb-3 benefits-title">Benefits of Prayer</h2>
+            <div class="w-24 h-1 custom-gradient mx-auto rounded-full"></div>
+            <p class="mt-4 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">Discover how regular prayer can transform your life spiritually, mentally, and physically.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Benefit Card 1 -->
+            <div class="benefit-card">
+                <div class="benefit-icon-wrapper">
+                    <lord-icon
+                        src="https://cdn.lordicon.com/tdxypxgp.json"
+                        trigger="hover"
+                        colors="primary:#7f1bf2,secondary:#9543f5"
+                        style="width:64px;height:64px">
+                    </lord-icon>
+                </div>
+                <h3 class="benefit-title">Spiritual Connection</h3>
+                <p class="benefit-description">Prayer creates a direct connection with Allah, strengthening your faith and bringing you closer to divine guidance.</p>
+            </div>
+
+            <!-- Benefit Card 2 -->
+            <div class="benefit-card">
+                <div class="benefit-icon-wrapper">
+                    <lord-icon
+                        src="https://cdn.lordicon.com/nkmsrxys.json"
+                        trigger="hover"
+                        colors="primary:#7f1bf2,secondary:#9543f5"
+                        style="width:64px;height:64px">
+                    </lord-icon>
+                </div>
+                <h3 class="benefit-title">Mental Peace</h3>
+                <p class="benefit-description">Regular prayer reduces anxiety and stress, promoting mental clarity and emotional balance in your daily life.</p>
+            </div>
+
+            <!-- Benefit Card 3 -->
+            <div class="benefit-card">
+                <div class="benefit-icon-wrapper">
+                    <lord-icon
+                        src="https://cdn.lordicon.com/cjieiyzp.json"
+                        trigger="hover"
+                        colors="primary:#7f1bf2,secondary:#9543f5"
+                        style="width:64px;height:64px">
+                    </lord-icon>
+                </div>
+                <h3 class="benefit-title">Physical Well-being</h3>
+                <p class="benefit-description">The movements in prayer serve as a form of gentle exercise, improving flexibility, posture, and overall physical health.</p>
+            </div>
+
+            <!-- Benefit Card 4 -->
+            <div class="benefit-card">
+                <div class="benefit-icon-wrapper">
+                    <lord-icon
+                        src="https://cdn.lordicon.com/zpxybbhl.json"
+                        trigger="hover"
+                        colors="primary:#7f1bf2,secondary:#9543f5"
+                        style="width:64px;height:64px">
+                    </lord-icon>
+                </div>
+                <h3 class="benefit-title">Community Building</h3>
+                <p class="benefit-description">Congregational prayers foster a sense of unity and brotherhood, strengthening community bonds and social support.</p>
+            </div>
+
+            <!-- Benefit Card 5 -->
+            <div class="benefit-card">
+                <div class="benefit-icon-wrapper">
+                    <lord-icon
+                        src="https://cdn.lordicon.com/dycatgju.json"
+                        trigger="hover"
+                        colors="primary:#7f1bf2,secondary:#9543f5"
+                        style="width:64px;height:64px">
+                    </lord-icon>
+                </div>
+                <h3 class="benefit-title">Inner Discipline</h3>
+                <p class="benefit-description">Maintaining regular prayer times helps develop self-discipline and structure that extends to other areas of your life.</p>
+            </div>
+
+            <!-- Benefit Card 6 -->
+            <div class="benefit-card">
+                <div class="benefit-icon-wrapper">
+                    <lord-icon
+                        src="https://cdn.lordicon.com/rqqkvjqf.json"
+                        trigger="hover"
+                        colors="primary:#7f1bf2,secondary:#9543f5"
+                        style="width:64px;height:64px">
+                    </lord-icon>
+                </div>
+                <h3 class="benefit-title">Life Perspective</h3>
+                <p class="benefit-description">Prayer reminds us of our purpose and helps maintain perspective, placing worldly concerns in their proper context.</p>
+            </div>
+        </div>
+    </div>
+</section>
 
     <!-- Footer -->
     <footer class="mt-12 pt-8 pb-6 text-center text-gray-500">
