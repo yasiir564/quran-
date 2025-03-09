@@ -842,10 +842,6 @@ async function fetchPrayerTimes(latitude, longitude, date) {
         updateLoadingState(false);
         
         if (data.code === 200 && data.data && data.data.timings) {
-            // Also store Hijri date information
-            const hijriDate = data.data.date.hijri;
-            updateIslamicDate(hijriDate);
-            
             return formatPrayerTimesFromAPI(data.data.timings);
         } else {
             throw new Error('Invalid data format received from API');
@@ -854,8 +850,13 @@ async function fetchPrayerTimes(latitude, longitude, date) {
         updateLoadingState(false);
         console.error('Error fetching prayer times:', error);
         
-        // Show error to user with native alert
-        showErrorMessage('Failed to fetch prayer times. Please try again later.');
+        // Show error with SweetAlert
+        Swal.fire({
+            title: 'Error!',
+            text: 'Failed to fetch prayer times. Please try again later.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
         
         // Return empty times
         return {
@@ -930,11 +931,6 @@ function convertTimeStringToDate(timeStr) {
     
     const result = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
     return result;
-}
-
-// Show error message to user with native alert
-function showErrorMessage(message) {
-    alert(message);
 }
 
 // ======================== UI UPDATE FUNCTIONS ======================== //
@@ -1121,42 +1117,6 @@ function updateCountdown(targetTime) {
     updateTimer();
 }
 
-// Update the current date with both Gregorian and Hijri dates
-function updateCurrentDate() {
-    const currentDateElement = safeGetElement('current-date', 'div');
-    if (!currentDateElement) return;
-    
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const today = new Date();
-    
-    const gregorianDate = today.toLocaleDateString('en-US', options);
-    currentDateElement.textContent = gregorianDate;
-}
-
-// Update Islamic (Hijri) date
-function updateIslamicDate(hijriData) {
-    const islamicDateElement = safeGetElement('islamic-date', 'div');
-    if (!islamicDateElement) {
-        // Create the element if it doesn't exist
-        const dateContainer = document.querySelector('.date-container') || document.body;
-        const newElement = document.createElement('div');
-        newElement.id = 'islamic-date';
-        newElement.className = 'text-lg text-center mb-2 font-medium text-gray-600';
-        dateContainer.appendChild(newElement);
-        islamicDateElement = newElement;
-    }
-    
-    if (hijriData) {
-        const islamicDate = `${hijriData.day} ${hijriData.month.en} ${hijriData.year} AH`;
-        const islamicDateArabic = `${hijriData.day} ${hijriData.month.ar} ${hijriData.year} هـ`;
-        
-        islamicDateElement.innerHTML = `
-            <span class="mr-2">${islamicDate}</span>
-            <span class="arabic">${islamicDateArabic}</span>
-        `;
-    }
-}
-
 // ======================== LOCATION HANDLING ======================== //
 
 // Function to handle location retrieval and updates
@@ -1254,15 +1214,21 @@ function updateLoadingState(isLoading, message = 'Loading...') {
 
 // Request location permission explicitly
 function requestLocationPermission() {
-    // Show a simple native confirmation dialog
-    const confirmed = confirm("This app needs your location to provide accurate prayer times. Allow access to your location?");
-    
-    if (confirmed) {
-        initialize();
-    } else {
-        // Use default location
-        useDefaultLocation();
-    }
+    Swal.fire({
+        title: 'Location Access',
+        text: 'This app needs your location to provide accurate prayer times. Allow access to your location?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Allow',
+        cancelButtonText: 'Deny'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            initialize();
+        } else {
+            // Use default location
+            useDefaultLocation();
+        }
+    });
 }
 
 // Use default location (Mecca)
@@ -1329,21 +1295,25 @@ function updateLocationDisplay(locationName) {
     }
 }
 
-// Handle location error - simplified without SweetAlert
+// Handle location error with SweetAlert
 function handleLocationError(error) {
     console.error('Location error:', error);
     
-    // Simple confirmation dialog
-    const useDefault = confirm(
-        `${error.message || 'Unable to determine your location.'} Would you like to use the default location (Mecca)?`
-    );
-    
-    if (useDefault) {
-        useDefaultLocation();
-    } else {
-        // Show location button in the display area
-        updateLoadingState(false);
-    }
+    Swal.fire({
+        title: 'Location Error',
+        text: `${error.message || 'Unable to determine your location.'} Would you like to use the default location (Mecca)?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, use Mecca',
+        cancelButtonText: 'No'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            useDefaultLocation();
+        } else {
+            // Show location button in the display area
+            updateLoadingState(false);
+        }
+    });
 }
 
 // ======================== APPLICATION INITIALIZATION ======================== //
@@ -1364,10 +1334,14 @@ async function refreshPrayerTimes() {
         );
         
         displayPrayerTimes(times);
-        updateCurrentDate();
     } catch (error) {
         console.error('Error refreshing prayer times:', error);
-        showErrorMessage('Failed to refresh prayer times. Please try again.');
+        Swal.fire({
+            title: 'Error',
+            text: 'Failed to refresh prayer times. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
     }
 }
 
@@ -1387,20 +1361,6 @@ async function initialize() {
         handleLocationError(error);
     }
 }
-
-// Run initialization when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize the app
-    initialize();
-    
-    // Set up auto-refresh every minute to keep countdown accurate
-    setInterval(() => {
-        const now = new Date();
-        if (now.getSeconds() === 0) {
-            refreshPrayerTimes();
-        }
-    }, 1000);
-});
 
 // ======================== THEME AND LANGUAGE FUNCTIONS ======================== //
 
@@ -1481,15 +1441,6 @@ function setupPreferenceControls() {
     }
 }
 
-// Add preference controls setup to initialization
-document.addEventListener('DOMContentLoaded', () => {
-    // Setup preference controls
-    setupPreferenceControls();
-    
-    // Load saved preferences
-    loadPreferences();
-});
-
 // ======================== RESPONSIVE LAYOUT ADJUSTMENTS ======================== //
 
 // Adjust layout based on screen size
@@ -1504,131 +1455,6 @@ function handleResponsiveLayout() {
         prayerContainer.className = 'grid grid-cols-2 gap-4 mt-6';
     } else {
         prayerContainer.className = 'grid grid-cols-3 gap-4 mt-6';
-    }
-}
-
-// Listen for window resize
-window.addEventListener('resize', handleResponsiveLayout);
-
-// Call once on load
-document.addEventListener('DOMContentLoaded', handleResponsiveLayout);
-
-// ======================== SHARE FUNCTIONS ======================== //
-
-// Share current prayer times
-function sharePrayerTimes() {
-    // Check if sharing is supported
-    if (!navigator.share) {
-        // Fallback for browsers that don't support Web Share API
-        copyPrayerTimesToClipboard();
-        return;
-    }
-    
-    // Get prayer times container
-    const prayerContainer = document.getElementById('prayer-times');
-    if (!prayerContainer) {
-        showErrorMessage('No prayer times available to share.');
-        return;
-    }
-    
-    // Prepare text to share
-    const today = new Date().toLocaleDateString();
-    const islamicDate = document.getElementById('islamic-date')?.textContent.trim() || '';
-    const locationDisplay = document.getElementById('location-display');
-    const location = locationDisplay ? locationDisplay.textContent.trim() : 'Current Location';
-    
-    let shareText = `Prayer Times for ${today}`;
-    if (islamicDate) {
-        shareText += ` (${islamicDate})`;
-    }
-    shareText += `\nLocation: ${location}\n\n`;
-    
-    // Extract prayer times from the DOM
-    const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-    prayers.forEach(prayer => {
-        const card = prayerContainer.querySelector(`.prayer-time-card:nth-child(${prayers.indexOf(prayer) + 1})`);
-        if (!card) return;
-        
-        const timeElement = card.querySelector('.text-lg.font-semibold:not(.arabic)');
-        if (!timeElement) return;
-        
-        shareText += `${prayer}: ${timeElement.textContent.trim()}\n`;
-    });
-    
-    // Add app attribution
-    shareText += `\nShared from Prayer Times App`;
-    
-    // Share the text
-    navigator.share({
-        title: 'Prayer Times',
-        text: shareText
-    })
-    .catch(error => {
-        console.error('Error sharing:', error);
-        
-        // Fall back to clipboard copy if sharing fails
-        copyPrayerTimesToClipboard(shareText);
-    });
-}
-
-// Copy prayer times to clipboard
-function copyPrayerTimesToClipboard(shareText) {
-    // If shareText wasn't provided, build it
-    if (!shareText) {
-        const today = new Date().toLocaleDateString();
-        const islamicDate = document.getElementById('islamic-date')?.textContent.trim() || '';
-        const locationDisplay = document.getElementById('location-display');
-        const location = locationDisplay ? locationDisplay.textContent.trim() : 'Current Location';
-        
-        shareText = `Prayer Times for ${today}`;
-        if (islamicDate) {
-            shareText += ` (${islamicDate})`;
-        }
-        shareText += `\nLocation: ${location}\n\n`;
-        
-        // Extract prayer times from the DOM
-        const prayers = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-        const prayerContainer = document.getElementById('prayer-times');
-        
-        if (prayerContainer) {
-            prayers.forEach(prayer => {
-                const card = prayerContainer.querySelector(`.prayer-time-card:nth-child(${prayers.indexOf(prayer) + 1})`);
-                if (!card) return;
-                
-                const timeElement = card.querySelector('.text-lg.font-semibold:not(.arabic)');
-                if (!timeElement) return;
-                
-                shareText += `${prayer}: ${timeElement.textContent.trim()}\n`;
-            });
-        }
-        
-        // Add app attribution
-        shareText += `\nShared from Prayer Times App`;
-    }
-    
-    // Copy to clipboard
-    navigator.clipboard.writeText(shareText)
-        .then(() => {
-            // Show success message
-            showSuccessMessage('Prayer times copied to clipboard!');
-        })
-        .catch(err => {
-            console.error('Failed to copy: ', err);
-            showErrorMessage('Failed to copy to clipboard. Please try again.');
-        });
-}
-
-// Show success message
-function showSuccessMessage(message) {
-    // Simple native alert for success
-    alert(message);
-}
-
-// Setup share button
-function setupShareButton() {
-    const shareButton = safeGetElement('share-button', 'button');
-    if (shareButton) {
-        shareButton.addEventListener('click', sharePrayerTimes);
     }
 }
 
@@ -1647,12 +1473,6 @@ function updateCalculationMethod(methodId, methodName) {
     CALCULATION_METHOD.id = methodId;
     CALCULATION_METHOD.name = methodName;
     
-    // Update display
-    const methodDisplay = safeGetElement('calculation-method-display', 'span');
-    if (methodDisplay) {
-        methodDisplay.textContent = methodName;
-    }
-    
     // Save preference
     localStorage.setItem('calculationMethod', JSON.stringify(CALCULATION_METHOD));
     
@@ -1663,12 +1483,6 @@ function updateCalculationMethod(methodId, methodName) {
 // Update Asr juristic method
 function updateAsrJuristicMethod(methodId, methodName) {
     ASR_JURISTIC_METHOD = methodId;
-    
-    // Update display
-    const asrMethodDisplay = safeGetElement('asr-method-display', 'span');
-    if (asrMethodDisplay) {
-        asrMethodDisplay.textContent = methodName;
-    }
     
     // Save preference
     localStorage.setItem('asrJuristicMethod', methodId.toString());
@@ -1720,141 +1534,7 @@ function setupSettingsPanel() {
             updateAsrJuristicMethod(methodId, methodName);
         });
     });
-    
-    // Update method displays
-    const methodDisplay = safeGetElement('calculation-method-display', 'span');
-    if (methodDisplay) {
-        methodDisplay.textContent = CALCULATION_METHOD.name;
-    }
-    
-    const asrMethodDisplay = safeGetElement('asr-method-display', 'span');
-    if (asrMethodDisplay) {
-        asrMethodDisplay.textContent = ASR_JURISTIC_METHOD === 0 ? 'Shafi\'i' : 'Hanafi';
-    }
 }
-
-// ======================== NOTIFICATIONS ======================== //
-
-// Request notification permission
-function requestNotificationPermission() {
-    if (!('Notification' in window)) {
-        showErrorMessage('Notifications are not supported in this browser.');
-        return;
-    }
-    
-    Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-            showSuccessMessage('Notifications enabled!');
-            localStorage.setItem('notificationsEnabled', 'true');
-            updateNotificationToggle(true);
-        } else {
-            showErrorMessage('Notification permission denied.');
-            localStorage.setItem('notificationsEnabled', 'false');
-            updateNotificationToggle(false);
-        }
-    });
-}
-
-// Update notification toggle button
-function updateNotificationToggle(enabled) {
-    const toggleButton = safeGetElement('notification-toggle', 'button');
-    if (!toggleButton) return;
-    
-    if (enabled) {
-        toggleButton.innerHTML = '<i class="fas fa-bell"></i> Notifications On';
-        toggleButton.classList.remove('bg-gray-300');
-        toggleButton.classList.add('bg-green-500');
-    } else {
-        toggleButton.innerHTML = '<i class="fas fa-bell-slash"></i> Notifications Off';
-        toggleButton.classList.remove('bg-green-500');
-        toggleButton.classList.add('bg-gray-300');
-    }
-}
-
-// Schedule prayer notifications
-function schedulePrayerNotifications(times) {
-    if (!('Notification' in window) || Notification.permission !== 'granted') {
-        return;
-    }
-    
-    const notificationsEnabled = localStorage.getItem('notificationsEnabled') === 'true';
-    if (!notificationsEnabled) return;
-    
-    // Clear any existing notification timers
-    if (window.notificationTimers) {
-        window.notificationTimers.forEach(timer => clearTimeout(timer));
-    }
-    window.notificationTimers = [];
-    
-    // Set notifications for each prayer time
-    Object.entries(times).forEach(([prayer, timeStr]) => {
-        if (timeStr === "-----") return;
-        
-        const prayerTime = convertTimeStringToDate(timeStr);
-        if (!prayerTime) return;
-        
-        const now = new Date();
-        
-        // Only schedule if the prayer time is in the future
-        if (prayerTime > now) {
-            const timeUntilPrayer = prayerTime - now;
-            
-            // Schedule notification for prayer time
-            const timerId = setTimeout(() => {
-                new Notification('Prayer Time', {
-                    body: `It's time for ${prayer} prayer`,
-                    icon: '/favicon.ico'
-                });
-            }, timeUntilPrayer);
-            
-            window.notificationTimers.push(timerId);
-            
-            // Also schedule a notification 15 minutes before if applicable
-            if (timeUntilPrayer > 15 * 60 * 1000) {
-                const reminderTimerId = setTimeout(() => {
-                    new Notification('Prayer Time Reminder', {
-                        body: `${prayer} prayer will be in 15 minutes`,
-                        icon: '/favicon.ico'
-                    });
-                }, timeUntilPrayer - 15 * 60 * 1000);
-                
-                window.notificationTimers.push(reminderTimerId);
-            }
-        }
-    });
-}
-
-// Setup notification toggle
-function setupNotificationToggle() {
-    const notificationsEnabled = localStorage.getItem('notificationsEnabled') === 'true';
-    
-    updateNotificationToggle(notificationsEnabled && Notification.permission === 'granted');
-    
-    const toggleButton = safeGetElement('notification-toggle', 'button');
-    if (toggleButton) {
-        toggleButton.addEventListener('click', requestNotificationPermission);
-    }
-}
-
-// ======================== ADDITIONAL INIT FUNCTIONS ======================== //
-
-// Add more initialization to the main DOMContentLoaded event
-document.addEventListener('DOMContentLoaded', () => {
-    // Setup share button
-    setupShareButton();
-    
-    // Setup settings panel
-    setupSettingsPanel();
-    
-    // Setup notification toggle
-    setupNotificationToggle();
-    
-    // Listen for online/offline events
-    window.addEventListener('online', () => {
-        console.log('Back online, refreshing data...');
-        refreshPrayerTimes();
-    });
-});
 
 // ======================== SERVICE WORKER REGISTRATION ======================== //
 
@@ -1870,6 +1550,51 @@ if ('serviceWorker' in navigator) {
             });
     });
 }
+
+// ======================== INITIALIZATION ======================== //
+
+// Run initialization when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize the app
+    initialize();
+    
+    // Set up auto-refresh every minute to keep countdown accurate
+    setInterval(() => {
+        const now = new Date();
+        if (now.getSeconds() === 0) {
+            refreshPrayerTimes();
+        }
+    }, 1000);
+    
+    // Setup preference controls
+    setupPreferenceControls();
+    
+    // Load saved preferences
+    loadPreferences();
+    
+    // Handle responsive layout
+    handleResponsiveLayout();
+    
+    // Setup settings panel
+    setupSettingsPanel();
+    
+    // Listen for window resize
+    window.addEventListener('resize', handleResponsiveLayout);
+    
+    // Listen for online/offline events
+    window.addEventListener('online', () => {
+        console.log('Back online, refreshing data...');
+        refreshPrayerTimes();
+    });
+});
+
+// Export the main functions for external use
+export { 
+    initialize, 
+    refreshPrayerTimes, 
+    toggleDarkMode, 
+    toggleLanguage 
+};
     </script>
 </body>
 </html>
