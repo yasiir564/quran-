@@ -526,6 +526,7 @@ button:focus, select:focus {
 .about-tool-section {
     position: relative;
     overflow: hidden;
+    padding: 3rem 1.5rem;
 }
 
 .about-tool-section::before {
@@ -539,160 +540,150 @@ button:focus, select:focus {
     z-index: -1;
 }
 
-/* Feature Cards Styles */
-.feature-card {
-    background: var(--card-bg);
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    position: relative;
-    overflow: hidden;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    height: 100%;
+/* Image and Icon Styles */
+.image-container {
+    flex: 1;
     display: flex;
-    flex-direction: column;
-    align-items: center; /* Ensures content is centered */
     justify-content: center;
-    text-align: center;
-}
-
-/* Card Hover Effect */
-.feature-card::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s ease;
-}
-
-.feature-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(127, 27, 242, 0.15);
-}
-
-.feature-card:hover::after {
-    transform: scaleX(1);
-}
-
-/* Feature Icon */
-.feature-icon-wrapper {
-    margin-bottom: 1.5rem;
-    background: rgba(127, 27, 242, 0.05);
-    border-radius: 50%;
-    width: 80px;
-    height: 80px;
-    display: flex;
     align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
+    position: relative;
 }
 
-.feature-card:hover .feature-icon-wrapper {
-    transform: scale(1.1);
+.glow-effect {
+    position: absolute;
+    width: 200px;
+    height: 200px;
     background: rgba(127, 27, 242, 0.1);
+    border-radius: 50%;
+    filter: blur(40px);
 }
 
-/* Feature Title */
-.feature-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: #333;
+.icon-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+.icon-box {
+    width: 250px;
+    height: 250px;
+}
+
+/* Text and Features Section */
+.text-container {
+    flex: 1;
+    max-width: 600px;
+}
+
+.section-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 2rem;
     font-family: 'Tajawal', sans-serif;
 }
 
-/* Feature List */
-.feature-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    color: #666;
-}
-
-.feature-list li {
-    margin-bottom: 0.75rem;
+/* Feature Styles */
+.features {
     display: flex;
-    align-items: flex-start;
-    line-height: 1.5;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
-.feature-bullet {
-    color: var(--accent-color);
-    font-weight: bold;
-    margin-right: 0.5rem;
-}
-
-/* Testimonial Card Styles */
-.testimonial-card {
-    background: white;
+.feature {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--card-bg);
     border-radius: 12px;
     padding: 1.5rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.feature:hover {
+    transform: translateY(-5px);
+}
+
+.icon-circle {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(127, 27, 242, 0.1);
+    border-radius: 50%;
+    font-size: 1.5rem;
+    color: var(--accent-color);
     transition: all 0.3s ease;
 }
 
-.testimonial-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(127, 27, 242, 0.1);
+.feature:hover .icon-circle {
+    background: rgba(127, 27, 242, 0.2);
+    transform: scale(1.1);
 }
 
-/* Responsive Image in Feature Card */
-.feature-card img {
-    max-width: 100%; /* Prevents image from overflowing */
-    height: auto;
-    object-fit: contain;
+.feature-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
 }
 
-/* Dark Mode Styles */
-@media (prefers-color-scheme: dark) {
-    .feature-card {
-        background: rgba(30, 30, 40, 0.8);
-        border-color: rgba(127, 27, 242, 0.2);
-    }
-    
-    .feature-title {
-        color: #fff;
-    }
-    
-    .feature-list {
-        color: #ccc;
-    }
-    
-    .about-tool-section::before {
-        background: linear-gradient(180deg, rgba(127, 27, 242, 0.1) 0%, rgba(30, 30, 40, 0) 100%);
-    }
-    
-    .testimonial-card {
-        background: rgba(30, 30, 40, 0.8);
-    }
+.feature-text p {
+    margin: 0;
+    color: #666;
+    font-size: 0.95rem;
 }
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-    .feature-card {
-        padding: 1.5rem;
+    .about-tool-section {
+        text-align: center;
     }
-    
-    .feature-icon-wrapper {
-        width: 60px;
-        height: 60px;
+
+    .features {
+        align-items: center;
     }
-    
+
+    .feature {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.25rem;
+    }
+
+    .icon-circle {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+    }
+
     .feature-title {
         font-size: 1.1rem;
     }
-    
-    .testimonial-card {
-        padding: 1.25rem;
+}
+
+/* Dark Mode Styles */
+@media (prefers-color-scheme: dark) {
+    .about-tool-section::before {
+        background: linear-gradient(180deg, rgba(127, 27, 242, 0.1) 0%, rgba(30, 30, 40, 0) 100%);
+    }
+
+    .section-title,
+    .feature-title {
+        color: #fff;
+    }
+
+    .feature-text p {
+        color: #ccc;
+    }
+
+    .feature {
+        background: rgba(30, 30, 40, 0.8);
+        border-color: rgba(127, 27, 242, 0.2);
     }
 }
+
 
     </style>
 </head>
@@ -809,24 +800,25 @@ button:focus, select:focus {
             <p class="mt-4 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">Learn how our prayer times calculator works and why it's the perfect companion for your daily worship.</p>
         </div>
 
-    <!-- Main Content Area with Image and Text -->
-<div class="flex flex-col lg:flex-row items-center justify-between gap-8 mb-12">
-    <!-- Image/Illustration Side -->
-    <div class="w-full lg:w-5/12 mb-8 lg:mb-0">
-        <div class="relative">
-            <div class="absolute -inset-4 bg-gradient-to-r from-purple-400 to-indigo-500 rounded-2xl opacity-20 blur-lg"></div>
-            <div class="relative overflow-hidden rounded-2xl shadow-xl">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl flex items-center justify-center">
-                    <img src="undraw_ship-it_vn4g.svg" 
-                         alt="Ship It Illustration" 
-                         class="w-full max-w-sm h-auto object-contain">
+   <!-- Main Content Area with Image and Text -->
+        <div class="flex flex-col lg:flex-row items-center justify-between gap-8 mb-12">
+            <!-- Image/Illustration Side -->
+            <div class="w-full lg:w-5/12 mb-8 lg:mb-0">
+                <div class="relative">
+                    <div class="absolute -inset-4 bg-gradient-to-r from-purple-400 to-indigo-500 rounded-2xl opacity-20 blur-lg"></div>
+                    <div class="relative overflow-hidden rounded-2xl shadow-xl">
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl flex items-center justify-center h-80">
+                            <lord-icon
+                                src="https://cdn.lordicon.com/rafxnitx.json"
+                                trigger="loop"
+                                colors="primary:#7f1bf2,secondary:#9543f5"
+                                style="width:250px;height:250px" 
+                                class="icon-float">
+                            </lord-icon>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-
-
 
             <!-- Text/Information Side -->
             <div class="w-full lg:w-7/12">
@@ -865,6 +857,8 @@ button:focus, select:focus {
                 </div>
             </div>
         </div>
+
+    </div>
 
         <!-- Feature Cards Section -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
