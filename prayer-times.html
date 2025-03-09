@@ -1581,11 +1581,10 @@ function setupNotifications(times) {
         
         const timeUntilNotification = notificationTime - now;
         if (timeUntilNotification <= 0) return;
-
+        
         setTimeout(() => {
-            if (Notification.permission === "granted") {
-                new Notification(`${prayer} Prayer Time Soon`, {
-                    body: `${prayer} prayer time is in 5 minutes`,
+            const notification = new Notification(${prayer} Prayer Time Soon, {
+                body: ${prayer} prayer time is in 5 minutes,
                     icon: '/favicon.ico'
                 });
             } else if (Notification.permission !== "denied") {
