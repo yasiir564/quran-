@@ -851,8 +851,14 @@ async function fetchPrayerTimes(latitude, longitude, date) {
         updateLoadingState(false);
         console.error('Error fetching prayer times:', error);
         
-        // Show error using alert instead of SweetAlert
-        alert('Failed to fetch prayer times. Please try again later.');
+        // Show error using SweetAlert instead of standard alert
+        Swal.fire({
+            title: 'Error!',
+            text: 'Failed to fetch prayer times. Please try again later.',
+            icon: 'error',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#6366f1'
+        });
         
         // Return empty times
         return {
@@ -1109,6 +1115,17 @@ function updateCountdown(targetTime) {
             // Refresh the page calculations when time is up
             setTimeout(() => {
                 refreshPrayerTimes();
+                
+                // Show notification when prayer time has arrived
+                Swal.fire({
+                    title: 'Prayer Time',
+                    text: 'Time for prayer has arrived',
+                    icon: 'info',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#6366f1',
+                    timer: 10000,
+                    timerProgressBar: true
+                });
             }, 1000);
             return;
         }
@@ -1224,12 +1241,24 @@ function updateLoadingState(isLoading, message = 'Loading...') {
 
 // Request location permission explicitly
 function requestLocationPermission() {
-    if (confirm('This app needs your location to provide accurate prayer times. Allow access to your location?')) {
-        initialize();
-    } else {
-        // Use default location
-        useDefaultLocation();
-    }
+    // Use SweetAlert for location permission
+    Swal.fire({
+        title: 'Location Access',
+        text: 'This app needs your location to provide accurate prayer times. Allow access to your location?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Allow',
+        cancelButtonText: 'Use Default',
+        confirmButtonColor: '#6366f1',
+        cancelButtonColor: '#64748b'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            initialize();
+        } else {
+            // Use default location
+            useDefaultLocation();
+        }
+    });
 }
 
 // Use default location (Mecca)
@@ -1241,6 +1270,18 @@ function useDefaultLocation() {
     };
     updateLocationDisplay('Mecca (Default)');
     refreshPrayerTimes();
+    
+    // Show a notification that default location is being used
+    Swal.fire({
+        title: 'Using Default Location',
+        text: 'Prayer times will be calculated for Mecca, Saudi Arabia.',
+        icon: 'info',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+    });
 }
 
 // Fetch location name from coordinates
@@ -1300,12 +1341,24 @@ function updateLocationDisplay(locationName) {
 function handleLocationError(error) {
     console.error('Location error:', error);
     
-    if (confirm(`${error.message || 'Unable to determine your location.'} Would you like to use the default location (Mecca)?`)) {
-        useDefaultLocation();
-    } else {
-        // Show location button in the display area
-        updateLoadingState(false);
-    }
+    // Use SweetAlert for location error handling
+    Swal.fire({
+        title: 'Location Error',
+        text: `${error.message || 'Unable to determine your location.'} Would you like to use the default location (Mecca)?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Use Mecca',
+        cancelButtonText: 'No',
+        confirmButtonColor: '#6366f1',
+        cancelButtonColor: '#64748b'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            useDefaultLocation();
+        } else {
+            // Show location button in the display area
+            updateLoadingState(false);
+        }
+    });
 }
 
 // ======================== APPLICATION INITIALIZATION ======================== //
@@ -1328,7 +1381,15 @@ async function refreshPrayerTimes() {
         displayPrayerTimes(times);
     } catch (error) {
         console.error('Error refreshing prayer times:', error);
-        alert('Failed to refresh prayer times. Please try again.');
+        
+        // Use SweetAlert for error notification
+        Swal.fire({
+            title: 'Refresh Failed',
+            text: 'Failed to refresh prayer times. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#6366f1'
+        });
     }
 }
 
@@ -1341,6 +1402,18 @@ async function initialize() {
         // Get location name
         const locationName = await getLocationName(coords.latitude, coords.longitude);
         updateLocationDisplay(locationName);
+        
+        // Show successful location retrieval notification
+        Swal.fire({
+            title: 'Location Found',
+            text: `Using location: ${locationName}`,
+            icon: 'success',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+        });
         
         // Calculate and display prayer times
         await refreshPrayerTimes();
@@ -1366,6 +1439,18 @@ function toggleLanguage() {
         if (langButton) {
             langButton.textContent = isArabicPrimary ? 'English' : 'العربية';
         }
+        
+        // Show language change notification
+        Swal.fire({
+            title: isArabicPrimary ? 'تم تغيير اللغة' : 'Language Changed',
+            text: isArabicPrimary ? 'تم تعيين العربية كلغة رئيسية' : 'Set to English as primary language',
+            icon: 'success',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true
+        });
     }
 }
 
@@ -1407,6 +1492,12 @@ function handleResponsiveLayout() {
 
 // Run initialization when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if SweetAlert is loaded, if not show an error message
+    if (typeof Swal === 'undefined') {
+        console.error('SweetAlert2 library is not loaded! Please include it in your HTML.');
+        alert('SweetAlert2 library is missing. Some features may not work properly.');
+    }
+    
     // Set language toggle
     const langButton = safeGetElement('language-toggle', 'button');
     if (langButton) {
@@ -1418,6 +1509,15 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize the app
     initialize();
+    
+    // Welcome message using SweetAlert
+    Swal.fire({
+        title: 'Prayer Times App',
+        text: 'Welcome to the Prayer Times Application',
+        icon: 'info',
+        confirmButtonText: 'Start',
+        confirmButtonColor: '#6366f1'
+    });
     
     // Set up auto-refresh every minute to keep countdown accurate
     setInterval(() => {
@@ -1437,6 +1537,32 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('online', () => {
         console.log('Back online, refreshing data...');
         refreshPrayerTimes();
+        
+        // Show back online notification
+        Swal.fire({
+            title: 'Connection Restored',
+            text: 'You are back online. Prayer times have been refreshed.',
+            icon: 'success',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+        });
+    });
+    
+    window.addEventListener('offline', () => {
+        // Show offline notification
+        Swal.fire({
+            title: 'Offline',
+            text: 'You are currently offline. Prayer times may not be updated.',
+            icon: 'warning',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+        });
     });
     
     // Handle page visibility changes to refresh when tab becomes visible again
