@@ -476,10 +476,52 @@ button:focus, select:focus {
         <p>Prayer Times Tool &copy; 2025 | Accurate Islamic Prayer Times</p>
     </footer>
     <script>
-  // Prayer times application using API instead of manual calculations
-// This code fetches accurate prayer times from an API and provides a clean UI
+ document.addEventListener('DOMContentLoaded', function() {
+    function openNav() {
+        document.getElementById("mySidebar").classList.add("open");
+        document.getElementById("sidebarOverlay").classList.add("active");
+    }
 
-// Prayer names in Arabic
+    function closeNav() {
+        document.getElementById("mySidebar").classList.remove("open");
+        document.getElementById("sidebarOverlay").classList.remove("active");
+    }
+
+    document.getElementById('openSidebarBtn').addEventListener('click', openNav);
+    document.getElementById('closeSidebarBtn').addEventListener('click', closeNav);
+    document.getElementById('sidebarOverlay').addEventListener('click', closeNav);
+
+    let lastScrollTop = 0;
+    const header = document.querySelector('header');
+    const sidebar = document.getElementById('mySidebar');
+    let scrollTimeout;
+
+    function applyScrollEffects() {
+        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+        if (currentScrollTop > lastScrollTop) {
+            header.classList.remove('header-visible');
+            header.classList.add('header-hidden');
+            sidebar.classList.add('blur-effect');
+        } else {
+            header.classList.remove('header-hidden');
+            header.classList.add('header-visible');
+            sidebar.classList.remove('blur-effect');
+        }
+
+        lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
+
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            header.classList.remove('header-hidden');
+            header.classList.add('header-visible');
+            sidebar.classList.remove('blur-effect');
+        }, 200);
+    }
+
+    window.addEventListener('scroll', applyScrollEffects);
+});
+
 const prayerNamesArabic = {
     Fajr: 'الفجر',
     Sunrise: 'الشروق',
