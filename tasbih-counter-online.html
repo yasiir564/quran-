@@ -526,158 +526,170 @@ input:checked + .toggle-slider:before {
         font-size: 2.4rem;
     }
 }
-       /* Ad Container Styling with Mobile Responsiveness */
+     /* AdSense Container Styles */
 .ad-container {
-  margin: 30px auto;  /* Increased vertical margin for better spacing */
-  padding: 15px;      /* Internal padding */
-  max-width: 90%;     /* Slightly narrower than full width */
-  border-radius: 8px; /* Rounded corners */
-  background-color: rgba(245, 245, 245, 0.5); /* Light background to subtly separate ads */
-  position: relative; /* For positioning elements inside */
-  clear: both;        /* Prevents wrapping issues with other elements */
-  text-align: center; /* Center the ad content */
-  overflow: hidden;   /* Contain any overflow */
-  box-sizing: border-box; /* Ensure padding doesn't add to width */
-  border: 1px solid rgba(0, 0, 0, 0.05); /* Subtle border */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle shadow */
-  transition: all 0.3s ease; /* Smooth transitions */
+    width: 100%;
+    margin: 1rem 0 2rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(127, 27, 242, 0.1);
 }
 
-/* Ad label */
-.ad-container::before {
-  content: "Advertisement";
-  display: block;
-  font-size: 10px;
-  color: #888;
-  text-align: center;
-  margin-bottom: 5px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 400;
+.ad-container ins {
+    display: block;
+    width: 100%;
+    text-align: center;
 }
 
-/* Make sure ads are responsive */
-.ad-container ins.adsbygoogle {
-  display: block !important;
-  width: 100%;
-  height: auto;
-  min-height: 90px; /* Ensure minimum height for the ad space */
+@media (max-width: 768px) {
+    .ad-container {
+        margin: 1rem 0 1.5rem 0;
+    }
 }
 
-/* Remove the outline from the ad iframe */
-.ad-container iframe {
-  border: none;
-  outline: none;
+/* SIDEBAR STYLES */
+.sidebar {
+    height: 100vh;
+    width: 280px;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: -280px;
+    background: linear-gradient(135deg, #7f1bf2, #9543f5);
+    overflow-x: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding-top: 85px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Ad container hover effect */
-.ad-container:hover {
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
-  border-color: rgba(0, 0, 0, 0.08);
+.sidebar.open {
+    left: 0;
+    box-shadow: 0 0 50px rgba(127, 27, 242, 0.3);
 }
 
-/* Spacing div for better visual separation */
-.spacing-div {
-  height: 20px;
-  width: 100%;
-  clear: both;
-  visibility: visible !important; /* Make sure it doesn't get hidden */
+.sidebar a {
+    padding: 14px 24px;
+    text-decoration: none;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s ease;
+    border-radius: 0 25px 25px 0;
+    margin: 4px 0;
+    margin-right: 16px;
+    font-weight: 500;
 }
 
-/* Animation for ad appearance */
-.animate__fadeIn {
-  animation-duration: 1s;
-  animation-fill-mode: both;
+.sidebar a:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(8px);
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+.sidebar a.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
 }
 
-.animate__fadeIn {
-  animation-name: fadeIn;
+.sidebar .closebtn {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    font-size: 28px;
+    color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    margin: 0;
+    padding: 0;
 }
 
-/* Position first ad container properly after header */
-.header + .spacing-div + .ad-container {
-  margin-top: 15px;
+.sidebar .closebtn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: rotate(90deg);
 }
 
-/* Position last ad container properly before any footer */
-.ad-container:last-of-type {
-  margin-bottom: 40px;
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 999;
+    backdrop-filter: blur(3px);
+    transition: all 0.3s ease;
 }
 
-/* Responsive adjustments for medium screens */
+.sidebar-overlay.active {
+    display: block;
+}
+
+.openbtn {
+    font-size: 18px;
+    cursor: pointer;
+    background-color: #7f1bf2;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    position: fixed;
+    top: 40px;
+    left: 20px;
+    z-index: 1000;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(127, 27, 242, 0.3);
+}
+
+.openbtn:hover {
+    background-color: #6813d0;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(127, 27, 242, 0.4);
+}
+
+#main {
+    transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 20px;
+}
+
 @media screen and (max-width: 768px) {
-  .ad-container {
-    margin: 20px auto;
-    padding: 10px;
-    max-width: 95%; /* Wider on tablets */
-  }
-  
-  .spacing-div {
-    height: 15px; /* Smaller spacing on medium screens */
-  }
-  
-  .ad-container::before {
-    font-size: 9px;
-    margin-bottom: 4px;
-  }
+    .sidebar {
+        width: 100%;
+        left: -100%;
+    }
+    
+    .openbtn {
+        top: 20px;
+        left: 20px;
+    }
 }
 
-/* Responsive adjustments for small screens */
-@media screen and (max-width: 480px) {
-  .ad-container {
-    margin: 15px auto;
-    padding: 8px;
-    max-width: 100%; /* Full width on very small screens */
-    border-radius: 5px; /* Smaller border radius */
-  }
-  
-  .spacing-div {
-    height: 10px; /* Minimal spacing on very small screens */
-  }
-  
-  .ad-container::before {
-    font-size: 8px;
-    margin-bottom: 3px;
-  }
-  
-  .ad-container ins.adsbygoogle {
-    min-height: 60px; /* Smaller minimum height on mobile */
-  }
-}
-
-/* Handle landscape orientation on mobile */
-@media screen and (max-height: 450px) and (orientation: landscape) {
-  .ad-container {
-    margin: 10px auto;
-    padding: 5px;
-  }
-  
-  .spacing-div {
-    height: 8px;
-  }
-}
-
-/* For high-density screens (retina) - sharper borders */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .ad-container {
-    border-width: 0.5px;
-  }
-}
-
-/* Ensure ads don't interfere with the main content on very large screens */
-@media screen and (min-width: 1600px) {
-  .ad-container {
-    max-width: 1200px; /* Cap the width on very large screens */
-  }
+@media screen and (max-height: 450px) {
+    .sidebar {
+        padding-top: 60px;
+    }
+    
+    .sidebar a {
+        font-size: 16px;
+        padding: 10px 20px;
+    }
 }
     </style>
 </head>
@@ -694,6 +706,28 @@ input:checked + .toggle-slider:before {
             <div class="theme-toggle" id="themeToggle"></div>
         </div>
     </div>
+         <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
+        <a href="index.html">
+            <lord-icon src="https://cdn.lordicon.com/jvucoldz.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read Quran
+        </a>
+        <a href="read-quran-by-juzz.html">
+            <lord-icon src="https://cdn.lordicon.com/hpivxauj.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Read in Juzz
+        </a>
+        <a href="tracks.html">
+            <lord-icon src="https://cdn.lordicon.com/wxnxiano.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Listen to Quran
+        </a>
+        <a href="prayer-times.html">
+            <lord-icon src="https://cdn.lordicon.com/tftaqjwp.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> prayer Time
+        </a>
+        <a href="donate.html">
+            <lord-icon src="https://cdn.lordicon.com/rjzlnunf.json" trigger="hover" colors="primary:#ffffff,secondary:#08a88a" style="width:50px;height:50px"></lord-icon> Donate with love
+        </a>
+    </div>
+
+    <div id="main">
+        <button class="openbtn" id="openSidebarBtn">&#9776; Quran Pro</button>
 
     <!-- Top spacing div -->
     <div class="spacing-div"></div>
