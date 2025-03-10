@@ -733,6 +733,370 @@ input:checked + .toggle-slider:before {
         padding: 10px 20px;
     }
 }
+        /* Importance of Dhikr Section Styles */
+.dhikr-importance-section {
+  padding: 60px 20px;
+  background: linear-gradient(135deg, rgba(127, 27, 242, 0.05) 0%, rgba(149, 67, 245, 0.1) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.dhikr-importance-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%237f1bf2' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+  opacity: 0.5;
+  z-index: 0;
+}
+
+.section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.section-title {
+  color: #7f1bf2;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  transform: translateY(20px);
+  opacity: 0;
+  animation: fadeInUp 0.8s forwards 0.2s;
+}
+
+.section-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  width: 80%;
+  max-width: 300px;
+  transform: translateY(20px);
+  opacity: 0;
+  animation: fadeInUp 0.8s forwards 0.4s;
+}
+
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(127, 27, 242, 0.5), transparent);
+  flex-grow: 1;
+}
+
+.divider-icon {
+  display: inline-block;
+  margin: 0 15px;
+  color: #7f1bf2;
+  font-size: 1.8rem;
+  animation: pulse 3s infinite;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin-bottom: 50px;
+}
+
+.text-content {
+  flex: 1;
+  min-width: 300px;
+}
+
+.dhikr-intro {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  color: #333;
+  transform: translateY(20px);
+  opacity: 0;
+}
+
+.reveal-text {
+  animation: fadeInUp 0.8s forwards 0.6s;
+}
+
+.dhikr-benefits {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  opacity: 0;
+}
+
+.reveal-cards {
+  animation: fadeInUp 0.8s forwards 0.8s;
+}
+
+.benefit-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px 20px;
+  box-shadow: 0 8px 20px rgba(127, 27, 242, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(127, 27, 242, 0.1);
+}
+
+.benefit-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(127, 27, 242, 0.2);
+}
+
+.card-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #7f1bf2, #9543f5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  color: white;
+  font-size: 1.8rem;
+}
+
+.benefit-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #7f1bf2;
+}
+
+.benefit-card p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #555;
+}
+
+.video-container {
+  flex: 1;
+  min-width: 300px;
+  opacity: 0;
+}
+
+.reveal-video {
+  animation: fadeInUp 0.8s forwards 1s;
+}
+
+.video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 ratio */
+  height: 0;
+  overflow: hidden;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(127, 27, 242, 0.2);
+  border: 3px solid rgba(127, 27, 242, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.video-wrapper:hover {
+  transform: scale(1.02);
+  box-shadow: 0 15px 35px rgba(127, 27, 242, 0.3);
+}
+
+.video-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+}
+
+.video-caption {
+  text-align: center;
+  margin-top: 15px;
+  font-style: italic;
+  color: #666;
+}
+
+.dhikr-quote {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 30px;
+  background: linear-gradient(135deg, rgba(127, 27, 242, 0.05) 0%, rgba(149, 67, 245, 0.1) 100%);
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(127, 27, 242, 0.1);
+  position: relative;
+  transform: translateY(20px);
+  opacity: 0;
+  animation: fadeInUp 0.8s forwards 1.2s;
+}
+
+.dhikr-quote::before {
+  content: """;
+  position: absolute;
+  top: -20px;
+  left: 20px;
+  font-size: 5rem;
+  color: rgba(127, 27, 242, 0.2);
+  font-family: serif;
+  line-height: 1;
+}
+
+.dhikr-quote blockquote {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dhikr-quote blockquote p {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.dhikr-quote cite {
+  display: block;
+  text-align: right;
+  font-style: normal;
+  font-weight: 600;
+  color: #7f1bf2;
+}
+
+.cta-container {
+  text-align: center;
+  margin-top: 40px;
+  transform: translateY(20px);
+  opacity: 0;
+  animation: fadeInUp 0.8s forwards 1.4s;
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 15px 30px;
+  background: linear-gradient(135deg, #7f1bf2, #9543f5);
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 5px 15px rgba(127, 27, 242, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s;
+}
+
+.cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(127, 27, 242, 0.4);
+}
+
+.cta-button:hover::before {
+  transform: translateX(100%);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Intersection Observer for scroll animations */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal-text, .reveal-cards, .reveal-video {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  
+  .reveal-active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+  .section-title {
+    font-size: 2rem;
+  }
+  
+  .content-wrapper {
+    flex-direction: column;
+  }
+  
+  .dhikr-benefits {
+    grid-template-columns: 1fr;
+  }
+  
+  .dhikr-quote {
+    padding: 20px;
+  }
+  
+  .dhikr-quote blockquote p {
+    font-size: 1.1rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .section-title {
+    font-size: 1.8rem;
+  }
+  
+  .divider-icon {
+    font-size: 1.5rem;
+  }
+  
+  .dhikr-intro {
+    font-size: 1rem;
+  }
+  
+  .card-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+  
+  .cta-button {
+    padding: 12px 25px;
+    font-size: 0.9rem;
+  }
+}
     </style>
 </head>
 <body>
@@ -813,22 +1177,71 @@ input:checked + .toggle-slider:before {
             </div>
         </div>
     </div>
+        
 
-    <!-- Bottom spacing div -->
-    <div class="spacing-div"></div>
-
-    <!-- Bottom AdSense Ad Container -->
-    <div class="ad-container animate__animated animate__fadeIn">
-        <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-1850217813586802"
-         data-ad-slot="1454600783"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-        <script>
-             (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
+    <!-- Importance of Dhikr Section -->
+<section class="dhikr-importance-section">
+  <div class="section-container">
+    <div class="section-header">
+      <h2 class="section-title">The Importance of Dhikr</h2>
+      <div class="section-divider">
+        <span class="divider-icon">☪</span>
+      </div>
     </div>
+    
+    <div class="content-wrapper">
+      <div class="text-content">
+        <p class="dhikr-intro reveal-text">Dhikr (remembrance of Allah) is among the most virtuous acts of worship in Islam. It brings peace to the heart, strengthens faith, and serves as a shield against worldly distractions.</p>
+        
+        <div class="dhikr-benefits reveal-cards">
+          <div class="benefit-card">
+            <div class="card-icon">
+              <i class="heart-icon">♥</i>
+            </div>
+            <h3>Peace of Heart</h3>
+            <p>"Verily, in the remembrance of Allah do hearts find rest." - Quran 13:28</p>
+          </div>
+          
+          <div class="benefit-card">
+            <div class="card-icon">
+              <i class="shield-icon">⛨</i>
+            </div>
+            <h3>Spiritual Protection</h3>
+            <p>Dhikr serves as a shield against Satan and protects the believer from spiritual harm.</p>
+          </div>
+          
+          <div class="benefit-card">
+            <div class="card-icon">
+              <i class="scale-icon">⚖</i>
+            </div>
+            <h3>Weight on the Scales</h3>
+            <p>The Prophet Muhammad (PBUH) said that statements of dhikr are heavy on the scales of good deeds.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="video-container reveal-video">
+        <div class="video-wrapper">
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/2nwGkFLr5GI?si=AM1w81r-eFdAG3Cj" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+        <div class="video-caption">
+          <p>Learn more about the spiritual benefits of dhikr and how to incorporate it into your daily life.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="dhikr-quote">
+      <blockquote>
+        <p>"Those who remember Allah (always, and in prayers) standing, sitting, and lying down on their sides, and think deeply about the creation of the heavens and the earth."</p>
+        <cite>— Quran 3:191</cite>
+      </blockquote>
+    </div>
+    
+    <div class="cta-container">
+      <a href="#" class="cta-button">Start Your Dhikr Journey</a>
+    </div>
+  </div>
+</section>
 
     <!-- Settings Modal -->
     <div class="modal" id="settingsModal">
@@ -955,6 +1368,39 @@ input:checked + .toggle-slider:before {
     }
 
     window.addEventListener('scroll', applyScrollEffects);
+});
+        // Intersection Observer for scroll animations
+document.addEventListener("DOMContentLoaded", function() {
+  if ('IntersectionObserver' in window &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    
+    const elementsToReveal = document.querySelectorAll('.reveal-text, .reveal-cards, .reveal-video, .dhikr-quote, .cta-container');
+    
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal-active');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.15,
+      rootMargin: "0px 0px -50px 0px"
+    });
+    
+    elementsToReveal.forEach(element => {
+      element.style.opacity = "0";
+      element.style.transform = "translateY(20px)";
+      revealObserver.observe(element);
+    });
+  } else {
+    // If Intersection Observer isn't supported or reduced motion is preferred,
+    // immediately show all elements
+    document.querySelectorAll('.reveal-text, .reveal-cards, .reveal-video').forEach(el => {
+      el.style.opacity = "1";
+      el.style.transform = "translateY(0)";
+    });
+  }
 });
 
 document.addEventListener('DOMContentLoaded', function() {
