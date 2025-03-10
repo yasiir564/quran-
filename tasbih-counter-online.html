@@ -628,22 +628,20 @@
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.5/sweetalert2.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.5/sweetalert2.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // DOM Elements
             const counterDisplay = document.getElementById('counterDisplay');
             const countInfo = document.getElementById('countInfo');
-            const progressBar = document.getElementById('progressBar');
             const counterBtn = document.getElementById('counterBtn');
             const resetBtn = document.getElementById('resetBtn');
-            const dhikrName = document.getElementById('dhikrName');
             const themeToggle = document.getElementById('themeToggle');
             const settingsBtn = document.getElementById('settingsBtn');
             const settingsModal = document.getElementById('settingsModal');
             const closeModalBtn = document.getElementById('closeModalBtn');
             const saveSettingsBtn = document.getElementById('saveSettingsBtn');
-            const presetBtns = document.querySelectorAll('.preset-btn');
+            const exportBtn = document.getElementById('exportBtn');
             const customDhikrBtn = document.getElementById('customDhikrBtn');
             const customDhikrInput = document.getElementById('customDhikrInput');
             const customDhikrName = document.getElementById('customDhikrName');
@@ -651,376 +649,342 @@
             const vibrationToggle = document.getElementById('vibrationToggle');
             const soundToggle = document.getElementById('soundToggle');
             const autoResetToggle = document.getElementById('autoResetToggle');
-            const exportBtn = document.getElementById('exportBtn');
+            const presetBtns = document.querySelectorAll('.preset-btn');
             const historyTableBody = document.getElementById('historyTableBody');
-
-            // App State
+            
+            // State variables
             let count = 0;
             let targetCount = 33;
             let currentDhikr = 'SubhanAllah';
             let vibrationEnabled = true;
             let soundEnabled = true;
             let autoResetEnabled = true;
-            let history = loadHistory();
+            let history = [];
             
-            // Sound effect
-            let beepSound = new Audio();
-            beepSound.src = 'data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU' + Array(300).join('A');
-
             // Initialize app
-            updateDisplay();
-            renderHistory();
-            loadSettings();
-
-            // Event Listeners
-            counterBtn.addEventListener('click', incrementCounter);
-            resetBtn.addEventListener('click', resetCounter);
-            themeToggle.addEventListener('click', toggleTheme);
-            settingsBtn.addEventListener('click', openSettings);
-            closeModalBtn.addEventListener('click', closeSettings);
-            saveSettingsBtn.addEventListener('click', saveSettings);
-            customDhikrBtn.addEventListener('click', toggleCustomDhikrInput);
-            exportBtn.addEventListener('click', exportData);
-
-            presetBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    presetBtns.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    if (this.dataset.dhikr === 'Custom') {
-                        customDhikrInput.style.display = 'block';
-                    } else {
-                        customDhikrInput.style.display = 'none';
-                        currentDhikr = this.dataset.dhikr;
-                    }
-                });
-            });
-
-            // Functions
-            function incrementCounter() {
-                count++;
+            function init() {
+                loadSettings();
                 updateDisplay();
-                addRippleEffect(counterBtn);
-                
-                if (vibrationEnabled && 'vibrate' in navigator) {
-                    navigator.vibrate(50);
-                }
-                
-                if (soundEnabled) {
-                    playBeepSound();
-                }
-                
-                counterBtn.classList.add('pulse-animation');
-                setTimeout(() => {
-                    counterBtn.classList.remove('pulse-animation');
-                }, 500);
-                
-                if (count === targetCount) {
-                    if (autoResetEnabled) {
-                        // Auto reset after 1 second
-                        setTimeout(() => {
-                            addToHistory();
-                            resetCounter();
-                            showCompletionAlert();
-                        }, 1000);
-                    } else {
-                        addToHistory();
-                        showCompletionAlert();
-                    }
-                }
+                updateHistoryTable();
             }
             
-            function resetCounter() {
-                // Add shake animation
-                const tasbihCard = document.querySelector('.tasbih-card');
-                tasbihCard.classList.add('shake-animation');
-                setTimeout(() => {
-                    tasbihCard.classList.remove('shake-animation');
-                }, 500);
-                
-                count = 0;
-                updateDisplay();
-            }
-            
+            // Update counter display
             function updateDisplay() {
                 counterDisplay.textContent = count;
                 countInfo.textContent = `${count} / ${targetCount}`;
-                const progressPercentage = (count / targetCount) * 100;
-                progressBar.style.width = `${progressPercentage}%`;
-                dhikrName.textContent = currentDhikr;
             }
             
-            function toggleTheme() {
-                themeToggle.classList.toggle('active');
-                document.body.setAttribute('data-theme', 
-                    themeToggle.classList.contains('active') ? 'dark' : 'light');
+            // Increment counter
+            function incrementCounter() {
+                count++;
+                counterBtn.classList.add('button-press');
                 
-                // Save theme preference
-                localStorage.setItem('tasbihDarkMode', 
-                    themeToggle.classList.contains('active') ? 'true' : 'false');
-            }
-            
-            function openSettings() {
-                settingsModal.style.display = 'flex';
-                settingsModal.classList.add('fade-in');
-                
-                // Update UI with current settings
-                targetCountInput.value = targetCount;
-                vibrationToggle.checked = vibrationEnabled;
-                soundToggle.checked = soundEnabled;
-                autoResetToggle.checked = autoResetEnabled;
-                
-                // Select the active dhikr preset
-                presetBtns.forEach(btn => {
-                    btn.classList.remove('active');
-                    if (btn.dataset.dhikr === currentDhikr) {
-                        btn.classList.add('active');
-                    }
-                });
-                
-                // If current dhikr is custom
-                if (!Array.from(presetBtns).some(btn => btn.dataset.dhikr === currentDhikr && btn.dataset.dhikr !== 'Custom')) {
-                    customDhikrBtn.classList.add('active');
-                    customDhikrInput.style.display = 'block';
-                    customDhikrName.value = currentDhikr;
-                } else {
-                    customDhikrInput.style.display = 'none';
-                }
-            }
-            
-            function closeSettings() {
-                settingsModal.classList.remove('fade-in');
-                settingsModal.style.display = 'none';
-            }
-            
-            function saveSettings() {
-                // Get values from form
-                targetCount = parseInt(targetCountInput.value) || 33;
-                vibrationEnabled = vibrationToggle.checked;
-                soundEnabled = soundToggle.checked;
-                autoResetEnabled = autoResetToggle.checked;
-                
-                // Get selected dhikr
-                const activePreset = document.querySelector('.preset-btn.active');
-                if (activePreset.dataset.dhikr === 'Custom') {
-                    currentDhikr = customDhikrName.value || 'Custom Dhikr';
-                } else {
-                    currentDhikr = activePreset.dataset.dhikr;
+                // Haptic feedback
+                if (vibrationEnabled && navigator.vibrate) {
+                    navigator.vibrate(30);
                 }
                 
-                // Update display
+                // Sound feedback
+                if (soundEnabled) {
+                    playClickSound();
+                }
+                
                 updateDisplay();
                 
-                // Save settings to localStorage
-                saveSettingsToStorage();
+                // Auto reset if reached target
+                if (count >= targetCount && autoResetEnabled) {
+                    setTimeout(() => {
+                        saveToHistory();
+                        showCompletionAlert();
+                        resetCounter();
+                    }, 1000);
+                }
                 
-                // Close modal
-                closeSettings();
-                
-                // Show confirmation
-                Swal.fire({
-                    title: 'Settings Saved',
-                    icon: 'success',
-                    toast: true,
-                    position: 'bottom-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true
-                });
+                // Remove animation class
+                setTimeout(() => {
+                    counterBtn.classList.remove('button-press');
+                }, 200);
             }
             
-            function toggleCustomDhikrInput() {
-                customDhikrInput.style.display = 'block';
-                customDhikrName.focus();
-            }
-            
-            function addRippleEffect(button) {
-                const ripple = document.createElement('span');
-                ripple.classList.add('ripple');
-                button.appendChild(ripple);
-                
-                const rect = button.getBoundingClientRect();
-                const size = Math.max(rect.width, rect.height);
-                
-                ripple.style.width = ripple.style.height = `${size}px`;
-                ripple.style.left = `${-size/2}px`;
-                ripple.style.top = `${-size/2}px`;
+            // Reset counter
+            function resetCounter() {
+                count = 0;
+                updateDisplay();
+                resetBtn.classList.add('button-press');
                 
                 setTimeout(() => {
-                    ripple.remove();
-                }, 600);
+                    resetBtn.classList.remove('button-press');
+                }, 200);
             }
             
-            function playBeepSound() {
-                beepSound.currentTime = 0;
-                beepSound.play().catch(e => console.log('Error playing sound:', e));
-            }
-            
-            function showCompletionAlert() {
-                Swal.fire({
-                    title: 'Dhikr Complete!',
-                    text: `You have completed ${targetCount} ${currentDhikr}`,
-                    icon: 'success',
-                    confirmButtonText: 'Alhamdulillah',
-                    confirmButtonColor: '#6e8efb'
-                });
-            }
-            
-            function saveSettingsToStorage() {
-                const settings = {
-                    targetCount,
-                    currentDhikr,
-                    vibrationEnabled,
-                    soundEnabled,
-                    autoResetEnabled
-                };
-                
-                localStorage.setItem('tasbihSettings', JSON.stringify(settings));
-            }
-            
-            function loadSettings() {
-                // Load theme
-                const darkMode = localStorage.getItem('tasbihDarkMode') === 'true';
-                if (darkMode) {
-                    themeToggle.classList.add('active');
-                    document.body.setAttribute('data-theme', 'dark');
-                }
-                
-                // Load settings
-                const savedSettings = localStorage.getItem('tasbihSettings');
-                if (savedSettings) {
-                    const settings = JSON.parse(savedSettings);
-                    targetCount = settings.targetCount || 33;
-                    currentDhikr = settings.currentDhikr || 'SubhanAllah';
-                    vibrationEnabled = settings.vibrationEnabled !== undefined ? settings.vibrationEnabled : true;
-                    soundEnabled = settings.soundEnabled !== undefined ? settings.soundEnabled : true;
-                    autoResetEnabled = settings.autoResetEnabled !== undefined ? settings.autoResetEnabled : true;
-                    
-                    updateDisplay();
-                }
-            }
-            
-            function addToHistory() {
-                const date = new Date();
-                const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-                
-                const historyEntry = {
-                    date: formattedDate,
-                    dhikr: currentDhikr,
-                    count: count
-                };
-                
-                history.push(historyEntry);
-                saveHistory();
-                renderHistory();
-            }
-            
-            function saveHistory() {
-                // Limit history to latest 50 entries
-                if (history.length > 50) {
-                    history = history.slice(history.length - 50);
-                }
-                
-                localStorage.setItem('tasbihHistory', JSON.stringify(history));
-            }
-            
-            function loadHistory() {
-                const savedHistory = localStorage.getItem('tasbihHistory');
-                return savedHistory ? JSON.parse(savedHistory) : [];
-            }
-            
-            function renderHistory() {
-                historyTableBody.innerHTML = '';
-                
-                // Show most recent entries first
-                const recentHistory = [...history].reverse();
-                
-                recentHistory.forEach(entry => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${entry.date}</td>
-                        <td>${entry.dhikr}</td>
-                        <td>${entry.count}</td>
-                    `;
-                    historyTableBody.appendChild(row);
-                });
-                
-                if (history.length === 0) {
-                    const emptyRow = document.createElement('tr');
-                    emptyRow.innerHTML = `
-                        <td colspan="3" style="text-align: center; padding: 20px;">No history yet</td>
-                    `;
-                    historyTableBody.appendChild(emptyRow);
-                }
-            }
-            
-            function exportData() {
-                // Prepare data
-                const exportData = {
-                    settings: {
-                        targetCount,
-                        currentDhikr,
-                        vibrationEnabled,
-                        soundEnabled,
-                        autoResetEnabled
-                    },
-                    history: history
-                };
-                
-                // Convert to JSON string
-                const dataStr = JSON.stringify(exportData, null, 2);
-                
-                // Create download link
-                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-                
-                const exportFileName = 'tasbih_data_' + new Date().toISOString().slice(0,10) + '.json';
-                
-                const linkElement = document.createElement('a');
-                linkElement.setAttribute('href', dataUri);
-                linkElement.setAttribute('download', exportFileName);
-                linkElement.style.display = 'none';
-                
-                document.body.appendChild(linkElement);
-                linkElement.click();
-                document.body.removeChild(linkElement);
-                
-                Swal.fire({
-                    title: 'Data Exported',
-                    text: 'Your settings and history have been downloaded.',
-                    icon: 'success',
-                    confirmButtonColor: '#6e8efb'
-                });
-            }
-            
-            // Add keyboard support
-            document.addEventListener('keydown', function(e) {
-                if (e.code === 'Space') {
-                    incrementCounter();
-                    e.preventDefault(); // Prevent page scrolling
-                } else if (e.code === 'KeyR') {
-                    resetCounter();
-                }
-            });
-            
-            // Check for dark mode preference
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                if (localStorage.getItem('tasbihDarkMode') === null) {
-                    themeToggle.classList.add('active');
-                    document.body.setAttribute('data-theme', 'dark');
-                }
-            }
-            
-            // Register service worker for PWA support
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/sw.js').then(function(registration) {
-                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                    }, function(err) {
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
-                });
+            // Play click sound
+function playClickSound() {
+    const audio = new Audio("data:audio/mp3;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVV");
+    audio.play();
+}
+
+// Show completion alert
+function showCompletionAlert() {
+    Swal.fire({
+        title: 'Complete!',
+        text: `Completed ${targetCount} ${currentDhikr}`,
+        icon: 'success',
+        confirmButtonColor: '#1e50e2'
+    });
+}
+
+// Save to history
+function saveToHistory() {
+    const now = new Date();
+    const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+    
+    history.push({
+        date: dateStr,
+        dhikr: currentDhikr,
+        count: count
+    });
+    
+    // Save history to localStorage
+    localStorage.setItem('tasbihHistory', JSON.stringify(history));
+    
+    // Update history table
+    updateHistoryTable();
+}
+
+// Update history table
+function updateHistoryTable() {
+    historyTableBody.innerHTML = '';
+    
+    // Display most recent entries first (last 10)
+    const recentHistory = [...history].reverse().slice(0, 10);
+    
+    recentHistory.forEach(entry => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${entry.date}</td>
+            <td>${entry.dhikr}</td>
+            <td>${entry.count}</td>
+        `;
+        historyTableBody.appendChild(row);
+    });
+}
+
+// Save settings
+function saveSettings() {
+    const settings = {
+        targetCount: targetCount,
+        currentDhikr: currentDhikr,
+        vibrationEnabled: vibrationEnabled,
+        soundEnabled: soundEnabled,
+        autoResetEnabled: autoResetEnabled,
+        darkMode: document.body.getAttribute('data-theme') === 'dark'
+    };
+    
+    localStorage.setItem('tasbihSettings', JSON.stringify(settings));
+}
+
+// Load settings
+function loadSettings() {
+    const settings = JSON.parse(localStorage.getItem('tasbihSettings'));
+    const savedHistory = JSON.parse(localStorage.getItem('tasbihHistory'));
+    
+    if (settings) {
+        targetCount = settings.targetCount || 33;
+        currentDhikr = settings.currentDhikr || 'SubhanAllah';
+        vibrationEnabled = settings.vibrationEnabled !== undefined ? settings.vibrationEnabled : true;
+        soundEnabled = settings.soundEnabled !== undefined ? settings.soundEnabled : true;
+        autoResetEnabled = settings.autoResetEnabled !== undefined ? settings.autoResetEnabled : true;
+        
+        // Update UI to match loaded settings
+        targetCountInput.value = targetCount;
+        vibrationToggle.checked = vibrationEnabled;
+        soundToggle.checked = soundEnabled;
+        autoResetToggle.checked = autoResetEnabled;
+        
+        // Update preset buttons
+        presetBtns.forEach(btn => {
+            if (btn.dataset.dhikr === currentDhikr) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
             }
         });
-    </script>
+        
+        // Show custom input if needed
+        if (!['SubhanAllah', 'Alhamdulillah', 'Allahu Akbar', 'La ilaha illallah', 'Astaghfirullah', 'Salawat'].includes(currentDhikr)) {
+            customDhikrBtn.classList.add('active');
+            customDhikrInput.style.display = 'block';
+            customDhikrName.value = currentDhikr;
+        }
+        
+        // Apply theme
+        if (settings.darkMode) {
+            document.body.setAttribute('data-theme', 'dark');
+            themeToggle.classList.add('active');
+        } else {
+            document.body.removeAttribute('data-theme');
+            themeToggle.classList.remove('active');
+        }
+    }
+    
+    // Load history
+    if (savedHistory) {
+        history = savedHistory;
+    }
+}
+
+// Export data
+function exportData() {
+    if (history.length === 0) {
+        Swal.fire({
+            title: 'No Data',
+            text: 'There is no history data to export',
+            icon: 'info',
+            confirmButtonColor: '#1e50e2'
+        });
+        return;
+    }
+    
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "Date,Dhikr,Count\n";
+    
+    history.forEach(entry => {
+        csvContent += `${entry.date},${entry.dhikr},${entry.count}\n`;
+    });
+    
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "tasbih_history.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Event Listeners
+counterBtn.addEventListener('click', incrementCounter);
+resetBtn.addEventListener('click', resetCounter);
+
+// Theme toggle
+themeToggle.addEventListener('click', function() {
+    themeToggle.classList.toggle('active');
+    
+    if (themeToggle.classList.contains('active')) {
+        document.body.setAttribute('data-theme', 'dark');
+    } else {
+        document.body.removeAttribute('data-theme');
+    }
+    
+    saveSettings();
+});
+
+// Settings modal
+settingsBtn.addEventListener('click', function() {
+    settingsModal.style.display = 'flex';
+});
+
+closeModalBtn.addEventListener('click', function() {
+    settingsModal.style.display = 'none';
+});
+
+// Close modal when clicking outside
+window.addEventListener('click', function(event) {
+    if (event.target === settingsModal) {
+        settingsModal.style.display = 'none';
+    }
+});
+
+// Preset buttons
+presetBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+        presetBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        if (btn.dataset.dhikr === 'Custom') {
+            customDhikrInput.style.display = 'block';
+            currentDhikr = customDhikrName.value || 'Custom Dhikr';
+        } else {
+            customDhikrInput.style.display = 'none';
+            currentDhikr = btn.dataset.dhikr;
+        }
+    });
+});
+
+// Custom dhikr input
+customDhikrName.addEventListener('input', function() {
+    if (customDhikrBtn.classList.contains('active')) {
+        currentDhikr = customDhikrName.value || 'Custom Dhikr';
+    }
+});
+
+// Save settings button
+saveSettingsBtn.addEventListener('click', function() {
+    // Update settings from inputs
+    targetCount = parseInt(targetCountInput.value) || 33;
+    vibrationEnabled = vibrationToggle.checked;
+    soundEnabled = soundToggle.checked;
+    autoResetEnabled = autoResetToggle.checked;
+    
+    // Get selected dhikr
+    presetBtns.forEach(btn => {
+        if (btn.classList.contains('active')) {
+            if (btn.dataset.dhikr === 'Custom') {
+                currentDhikr = customDhikrName.value || 'Custom Dhikr';
+            } else {
+                currentDhikr = btn.dataset.dhikr;
+            }
+        }
+    });
+    
+    // Save settings and update display
+    saveSettings();
+    updateDisplay();
+    
+    // Close modal
+    settingsModal.style.display = 'none';
+    
+    // Show confirmation
+    Swal.fire({
+        title: 'Settings Saved',
+        text: 'Your settings have been saved successfully',
+        icon: 'success',
+        timer: 1500,
+        confirmButtonColor: '#1e50e2',
+        showConfirmButton: false
+    });
+});
+
+// Export data button
+exportBtn.addEventListener('click', exportData);
+
+// Keyboard support
+document.addEventListener('keydown', function(e) {
+    if (e.code === 'Space' || e.key === ' ') {
+        incrementCounter();
+        e.preventDefault(); // Prevent page scrolling
+    } else if (e.key === 'r' || e.key === 'R') {
+        resetCounter();
+    }
+});
+
+// Touch events for mobile
+let touchStartY = 0;
+document.addEventListener('touchstart', function(e) {
+    touchStartY = e.touches[0].clientY;
+});
+
+document.addEventListener('touchend', function(e) {
+    const touchEndY = e.changedTouches[0].clientY;
+    const yDiff = touchStartY - touchEndY;
+    
+    // Swipe up gesture for reset
+    if (yDiff > 100) {
+        resetCounter();
+    }
+});
+
+// Initialize the app
+init();
+            </script>
 </body>
 </html>
