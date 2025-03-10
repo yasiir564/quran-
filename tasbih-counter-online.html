@@ -526,6 +526,89 @@ input:checked + .toggle-slider:before {
         font-size: 2.4rem;
     }
 }
+        /* Ad Container Styling with Mobile Responsiveness */
+.ad-container {
+  margin: 30px auto;  /* Increased vertical margin for better spacing */
+  padding: 15px;      /* Internal padding */
+  max-width: 100%;    /* Ensure it doesn't overflow its container */
+  border-radius: 8px; /* Optional: rounded corners */
+  background-color: rgba(245, 245, 245, 0.5); /* Light background to subtly separate ads */
+  position: relative; /* For positioning elements inside if needed */
+  clear: both;        /* Prevents wrapping issues with other elements */
+  text-align: center; /* Center the ad content */
+  overflow: hidden;   /* Contain any overflow */
+  box-sizing: border-box; /* Ensure padding doesn't add to width */
+}
+
+/* Ad label */
+.ad-container::before {
+  content: "Advertisement";
+  display: block;
+  font-size: 10px;
+  color: #888;
+  text-align: center;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Make sure ads are responsive */
+.ad-container ins.adsbygoogle {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Responsive adjustments for mobile */
+@media screen and (max-width: 768px) {
+  .ad-container {
+    margin: 20px auto; /* Slightly reduced margin on mobile */
+    padding: 10px;     /* Reduced padding on mobile */
+  }
+  
+  /* Ensure ads don't push content awkwardly on small screens */
+  .tasbih-device + .ad-container,
+  .ad-container + .tasbih-device {
+    margin-top: 25px; /* Reduced separation on mobile */
+  }
+  
+  /* Optimize animation for mobile performance */
+  .animate__fadeIn {
+    animation-duration: 0.5s; /* Faster animation on mobile */
+  }
+}
+
+/* Even smaller screens like phones in portrait mode */
+@media screen and (max-width: 480px) {
+  .ad-container {
+    margin: 15px auto; /* Further reduced margin on very small screens */
+    padding: 8px;      /* Minimal padding on very small screens */
+  }
+  
+  .ad-container::before {
+    font-size: 8px;    /* Smaller label on very small screens */
+    margin-bottom: 3px;
+  }
+}
+
+/* Ensure ads don't interfere with the main functionality on small screens */
+@media screen and (max-height: 600px) {
+  /* For devices with limited vertical space, prioritize the main content */
+  .ad-container {
+    margin: 10px auto;
+  }
+}
+
+/* Animation for ad appearance */
+.animate__fadeIn {
+  animation-duration: 1s;
+}
+
+/* Separation between ads and the tasbih device */
+.tasbih-device + .ad-container,
+.ad-container + .tasbih-device {
+  margin-top: 40px;
+}
     </style>
 </head>
 <body>
