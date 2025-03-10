@@ -526,18 +526,21 @@ input:checked + .toggle-slider:before {
         font-size: 2.4rem;
     }
 }
-        /* Ad Container Styling with Mobile Responsiveness */
+       /* Ad Container Styling with Mobile Responsiveness */
 .ad-container {
   margin: 30px auto;  /* Increased vertical margin for better spacing */
   padding: 15px;      /* Internal padding */
-  max-width: 100%;    /* Ensure it doesn't overflow its container */
-  border-radius: 8px; /* Optional: rounded corners */
+  max-width: 90%;     /* Slightly narrower than full width */
+  border-radius: 8px; /* Rounded corners */
   background-color: rgba(245, 245, 245, 0.5); /* Light background to subtly separate ads */
-  position: relative; /* For positioning elements inside if needed */
+  position: relative; /* For positioning elements inside */
   clear: both;        /* Prevents wrapping issues with other elements */
   text-align: center; /* Center the ad content */
   overflow: hidden;   /* Contain any overflow */
   box-sizing: border-box; /* Ensure padding doesn't add to width */
+  border: 1px solid rgba(0, 0, 0, 0.05); /* Subtle border */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+  transition: all 0.3s ease; /* Smooth transitions */
 }
 
 /* Ad label */
@@ -550,64 +553,131 @@ input:checked + .toggle-slider:before {
   margin-bottom: 5px;
   text-transform: uppercase;
   letter-spacing: 1px;
+  font-weight: 400;
 }
 
 /* Make sure ads are responsive */
 .ad-container ins.adsbygoogle {
-  display: block;
+  display: block !important;
   width: 100%;
   height: auto;
+  min-height: 90px; /* Ensure minimum height for the ad space */
 }
 
-/* Responsive adjustments for mobile */
-@media screen and (max-width: 768px) {
-  .ad-container {
-    margin: 20px auto; /* Slightly reduced margin on mobile */
-    padding: 10px;     /* Reduced padding on mobile */
-  }
-  
-  /* Ensure ads don't push content awkwardly on small screens */
-  .tasbih-device + .ad-container,
-  .ad-container + .tasbih-device {
-    margin-top: 25px; /* Reduced separation on mobile */
-  }
-  
-  /* Optimize animation for mobile performance */
-  .animate__fadeIn {
-    animation-duration: 0.5s; /* Faster animation on mobile */
-  }
+/* Remove the outline from the ad iframe */
+.ad-container iframe {
+  border: none;
+  outline: none;
 }
 
-/* Even smaller screens like phones in portrait mode */
-@media screen and (max-width: 480px) {
-  .ad-container {
-    margin: 15px auto; /* Further reduced margin on very small screens */
-    padding: 8px;      /* Minimal padding on very small screens */
-  }
-  
-  .ad-container::before {
-    font-size: 8px;    /* Smaller label on very small screens */
-    margin-bottom: 3px;
-  }
+/* Ad container hover effect */
+.ad-container:hover {
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.08);
 }
 
-/* Ensure ads don't interfere with the main functionality on small screens */
-@media screen and (max-height: 600px) {
-  /* For devices with limited vertical space, prioritize the main content */
-  .ad-container {
-    margin: 10px auto;
-  }
+/* Spacing div for better visual separation */
+.spacing-div {
+  height: 20px;
+  width: 100%;
+  clear: both;
+  visibility: visible !important; /* Make sure it doesn't get hidden */
 }
 
 /* Animation for ad appearance */
 .animate__fadeIn {
   animation-duration: 1s;
+  animation-fill-mode: both;
 }
 
-/* Separation between ads and the tasbih device */
-.tasbih-device + .ad-container,
-.ad-container + .tasbih-device {
-  margin-top: 40px;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate__fadeIn {
+  animation-name: fadeIn;
+}
+
+/* Position first ad container properly after header */
+.header + .spacing-div + .ad-container {
+  margin-top: 15px;
+}
+
+/* Position last ad container properly before any footer */
+.ad-container:last-of-type {
+  margin-bottom: 40px;
+}
+
+/* Responsive adjustments for medium screens */
+@media screen and (max-width: 768px) {
+  .ad-container {
+    margin: 20px auto;
+    padding: 10px;
+    max-width: 95%; /* Wider on tablets */
+  }
+  
+  .spacing-div {
+    height: 15px; /* Smaller spacing on medium screens */
+  }
+  
+  .ad-container::before {
+    font-size: 9px;
+    margin-bottom: 4px;
+  }
+}
+
+/* Responsive adjustments for small screens */
+@media screen and (max-width: 480px) {
+  .ad-container {
+    margin: 15px auto;
+    padding: 8px;
+    max-width: 100%; /* Full width on very small screens */
+    border-radius: 5px; /* Smaller border radius */
+  }
+  
+  .spacing-div {
+    height: 10px; /* Minimal spacing on very small screens */
+  }
+  
+  .ad-container::before {
+    font-size: 8px;
+    margin-bottom: 3px;
+  }
+  
+  .ad-container ins.adsbygoogle {
+    min-height: 60px; /* Smaller minimum height on mobile */
+  }
+}
+
+/* Handle landscape orientation on mobile */
+@media screen and (max-height: 450px) and (orientation: landscape) {
+  .ad-container {
+    margin: 10px auto;
+    padding: 5px;
+  }
+  
+  .spacing-div {
+    height: 8px;
+  }
+}
+
+/* For high-density screens (retina) - sharper borders */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .ad-container {
+    border-width: 0.5px;
+  }
+}
+
+/* Ensure ads don't interfere with the main content on very large screens */
+@media screen and (min-width: 1600px) {
+  .ad-container {
+    max-width: 1200px; /* Cap the width on very large screens */
+  }
 }
     </style>
 </head>
@@ -625,18 +695,24 @@ input:checked + .toggle-slider:before {
         </div>
     </div>
 
-    <!-- AdSense Ad Container -->
-<div class="ad-container animate__animated animate__fadeIn">
-    <ins class="adsbygoogle"
-         style="display:block; text-align:center;"
-         data-ad-layout="in-article"
-         data-ad-format="fluid"
-         data-ad-client="ca-pub-1850217813586802"
-         data-ad-slot="1343025343"></ins>
-    <script>
-         (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-</div>
+    <!-- Top spacing div -->
+    <div class="spacing-div"></div>
+
+    <!-- Top AdSense Ad Container -->
+    <div class="ad-container animate__animated animate__fadeIn">
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-1850217813586802"
+             data-ad-slot="1343025343"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+
+    <!-- Middle spacing div -->
+    <div class="spacing-div"></div>
 
     <div class="container">
         <div class="tasbih-device fade-in">
@@ -662,18 +738,21 @@ input:checked + .toggle-slider:before {
         </div>
     </div>
 
-    <!-- AdSense Ad Container -->
-<div class="ad-container animate__animated animate__fadeIn" style="text-align:center; margin: 10px 0;">
-    <ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-1850217813586802"
-     data-ad-slot="1454600783"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-</div>
+    <!-- Bottom spacing div -->
+    <div class="spacing-div"></div>
+
+    <!-- Bottom AdSense Ad Container -->
+    <div class="ad-container animate__animated animate__fadeIn">
+        <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-1850217813586802"
+         data-ad-slot="1454600783"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
 
     <!-- Settings Modal -->
     <div class="modal" id="settingsModal">
@@ -752,6 +831,7 @@ input:checked + .toggle-slider:before {
             </div>
         </div>
     </div>
+</body>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.5/sweetalert2.min.js"></script>
     <script>
