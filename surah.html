@@ -762,6 +762,7 @@ const AppState = {
     autoScrollEnabled: true,
     currentFontIndex: 0,
     currentReciter: 'ar.alafasy',
+    cache: {}, // Added cache for API responses
     fonts: [
         'Amiri', 
         'Scheherazade New', 
@@ -806,10 +807,11 @@ const AppState = {
             name: 'Ali Jaber', 
             arabicName: 'علي جابر'
         }
-    ]
+    ],
+    surahNames: {} // Will be filled with surah name mappings
 };
 
-// Utility functions (unchanged)
+// Utility functions
 const Utils = {
     convertToArabicNumbers(num) {
         const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
@@ -826,12 +828,48 @@ const Utils = {
             toast: true,
             position: 'top-end'
         });
+    },
+
+    // New utility to generate URL-friendly surah names
+    getSurahSlug(englishName) {
+        return englishName.toLowerCase().replace(/\s+/g, '-');
+    },
+
+    // New utility to parse surah from URL
+    parseUrlForSurah() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const surahParam = urlParams.get('surah');
+        
+        if (!surahParam) return 1;
+        
+        // If it's a number, return it directly
+        if (!isNaN(surahParam)) {
+            return parseInt(surahParam);
+        }
+        
+        // Otherwise, look up the surah by name slug
+        for (const [number, name] of Object.entries(AppState.surahNames)) {
+            if (Utils.getSurahSlug(name) === surahParam) {
+                return parseInt(number);
+            }
+        }
+        
+        // Default to Surah Al-Fatiha if not found
+        return 1;
     }
 };
 
-// API Service (unchanged)
+// API Service with caching
 class QuranAPIService {
     static async fetchSurahData(surahNumber, reciter = 'ar.alafasy') {
+        const cacheKey = `surah_${surahNumber}_${reciter}`;
+        
+        // Check if data is in cache
+        if (AppState.cache[cacheKey]) {
+            console.log(`Using cached data for ${cacheKey}`);
+            return AppState.cache[cacheKey];
+        }
+        
         try {
             const [surahData, translationData, audioData] = await Promise.all([
                 fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`).then(r => r.json()),
@@ -839,10 +877,47 @@ class QuranAPIService {
                 fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/${reciter}`).then(r => r.json())
             ]);
 
-            return { surahData, translationData, audioData };
+            // Store in cache
+            const result = { surahData, translationData, audioData };
+            AppState.cache[cacheKey] = result;
+            
+            // Store surah name mapping if not already present
+            if (surahData.data && !AppState.surahNames[surahNumber]) {
+                AppState.surahNames[surahNumber] = surahData.data.englishName;
+            }
+            
+            return result;
         } catch (error) {
             console.error('Fetch error:', error);
             throw new Error('Failed to load Surah data');
+        }
+    }
+    
+    // New method to prefetch next/prev surahs for better UX
+    static async prefetchAdjacentSurahs(currentSurah, reciter) {
+        if (currentSurah < 114) {
+            this.fetchSurahData(currentSurah + 1, reciter).catch(e => console.log('Prefetch error:', e));
+        }
+        if (currentSurah > 1) {
+            this.fetchSurahData(currentSurah - 1, reciter).catch(e => console.log('Prefetch error:', e));
+        }
+    }
+    
+    // New method to initialize surah names cache
+    static async initializeSurahNames() {
+        if (Object.keys(AppState.surahNames).length === 0) {
+            try {
+                const response = await fetch('https://api.alquran.cloud/v1/surah');
+                const data = await response.json();
+                
+                if (data.data) {
+                    data.data.forEach(surah => {
+                        AppState.surahNames[surah.number] = surah.englishName;
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to load surah names:', error);
+            }
         }
     }
 }
@@ -853,6 +928,9 @@ class QuranApp {
         this.state = AppState;
         this.initializeEventListeners();
         this.setupReciterSelectionUI();
+        
+        // Initialize surah names for better URLs
+        QuranAPIService.initializeSurahNames();
     }
 
     initializeEventListeners() {
@@ -932,6 +1010,15 @@ class QuranApp {
         document.getElementById('font-change-toggle').addEventListener('click', () => {
             this.cycleFonts();
         });
+        
+        // Auto-scroll toggle
+        document.getElementById('auto-scroll-toggle')?.addEventListener('click', () => {
+            this.state.autoScrollEnabled = !this.state.autoScrollEnabled;
+            Utils.showToast(
+                'Auto-scroll', 
+                `Auto-scroll is ${this.state.autoScrollEnabled ? 'enabled' : 'disabled'}`
+            );
+        });
     }
 
     updateActiveMode(activeButton) {
@@ -983,8 +1070,9 @@ class QuranApp {
     }
 
     async loadInitialContent() {
-        const surahNumber = new URLSearchParams(window.location.search).get('surah') || 1;
-        this.state.currentSurah = parseInt(surahNumber);
+        // Use the utility function to parse the URL
+        const surahNumber = Utils.parseUrlForSurah();
+        this.state.currentSurah = surahNumber;
         await this.loadContent();
     }
 
@@ -1010,6 +1098,12 @@ class QuranApp {
 
             document.getElementById('quran-content').innerHTML = contentHTML;
             this.setupAudioControls();
+            
+            // Update the page title with surah name
+            document.title = `${surahData.data.englishName} (${surahData.data.name}) - Quran App`;
+            
+            // Prefetch adjacent surahs for better user experience
+            QuranAPIService.prefetchAdjacentSurahs(this.state.currentSurah, this.state.currentReciter);
 
             Swal.close();
         } catch (error) {
@@ -1020,10 +1114,6 @@ class QuranApp {
             });
         }
     }
-
-    // Remaining methods (generateSurahHTML, generateAyahHTML, generateNavigationButtons, 
-    // setupAudioControls, handleAudioPlay, handleAudioEnded, highlightCurrentAyah, 
-    // scrollToAyah, navigateSurah) remain unchanged from the previous implementation
     
     generateSurahHTML(surahData, translationData, audioData = null) {
         let html = `
@@ -1044,7 +1134,7 @@ class QuranApp {
             );
         });
 
-        html += this.generateNavigationButtons();
+        html += this.generateNavigationButtons(surahData);
 
         return html;
     }
@@ -1063,7 +1153,7 @@ class QuranApp {
         if (this.state.currentMode === 'quran-audio' && audioData) {
             html += `
                 <div class="custom-audio-player">
-                    <audio controls data-ayah="${index}">
+                    <audio controls data-ayah="${index}" data-total-ayahs="${ayah.numberInSurah}" data-surah="${this.state.currentSurah}">
                         <source src="${audioData.audio}" type="audio/mpeg">
                     </audio>
                     <div class="translation">${translation.text}</div>
@@ -1075,21 +1165,25 @@ class QuranApp {
         return html;
     }
 
-    generateNavigationButtons() {
+    generateNavigationButtons(surahData) {
         let html = '<div class="navigation-buttons">';
         
+        // Previous surah button with name
         if (this.state.currentSurah > 1) {
+            const prevSurahName = this.state.surahNames[this.state.currentSurah - 1] || `Surah ${this.state.currentSurah - 1}`;
             html += `
                 <button class="nav-btn" onclick="quranApp.navigateSurah(${this.state.currentSurah - 1})">
-                    <i class="fas fa-chevron-left"></i> Previous Surah
+                    <i class="fas fa-chevron-left"></i> ${prevSurahName}
                 </button>
             `;
         }
         
+        // Next surah button with name
         if (this.state.currentSurah < 114) {
+            const nextSurahName = this.state.surahNames[this.state.currentSurah + 1] || `Surah ${this.state.currentSurah + 1}`;
             html += `
                 <button class="nav-btn" onclick="quranApp.navigateSurah(${this.state.currentSurah + 1})">
-                    Next Surah <i class="fas fa-chevron-right"></i>
+                    ${nextSurahName} <i class="fas fa-chevron-right"></i>
                 </button>
             `;
         }
@@ -1103,11 +1197,21 @@ class QuranApp {
         audioElements.forEach(audio => {
             audio.addEventListener('play', this.handleAudioPlay.bind(this));
             audio.addEventListener('ended', this.handleAudioEnded.bind(this));
+            audio.addEventListener('timeupdate', this.handleAudioTimeUpdate.bind(this));
         });
     }
 
     handleAudioPlay(event) {
+        // Stop all other audio elements
+        document.querySelectorAll('audio').forEach(audio => {
+            if (audio !== event.target) {
+                audio.pause();
+                audio.currentTime = 0;
+            }
+        });
+        
         const ayahIndex = parseInt(event.target.dataset.ayah);
+        this.state.currentAyah = ayahIndex;
         this.highlightCurrentAyah(ayahIndex);
         
         if (this.state.autoScrollEnabled) {
@@ -1118,12 +1222,37 @@ class QuranApp {
     handleAudioEnded(event) {
         const currentAyahIndex = parseInt(event.target.dataset.ayah);
         const nextAyah = currentAyahIndex + 1;
-        const nextAudio = document.querySelector(`audio[data-ayah="${nextAyah}"]`);
+        const totalAyahs = document.querySelectorAll('audio').length;
         
-        if (nextAudio) {
-            nextAudio.play();
+        // Accurately determine if this was the last ayah
+        if (nextAyah < totalAyahs) {
+            const nextAudio = document.querySelector(`audio[data-ayah="${nextAyah}"]`);
+            if (nextAudio) {
+                nextAudio.play();
+            }
         } else if (this.state.currentSurah < 114) {
-            this.navigateSurah(this.state.currentSurah + 1);
+            // This was the last ayah, navigate to next surah
+            setTimeout(() => {
+                this.navigateSurah(this.state.currentSurah + 1);
+            }, 1500); // Give a small pause between surahs
+        }
+    }
+    
+    // New method to track audio progress
+    handleAudioTimeUpdate(event) {
+        const audio = event.target;
+        const ayahIndex = parseInt(audio.dataset.ayah);
+        
+        // If the audio is near completion (95% played), pre-highlight the next ayah
+        // to provide a smoother transition
+        if (audio.currentTime > audio.duration * 0.95) {
+            const nextAyah = ayahIndex + 1;
+            const nextAudio = document.querySelector(`audio[data-ayah="${nextAyah}"]`);
+            
+            if (nextAudio) {
+                // Pre-load the next ayah's audio
+                nextAudio.load();
+            }
         }
     }
 
@@ -1150,10 +1279,46 @@ class QuranApp {
 
     navigateSurah(surahNumber) {
         this.state.currentSurah = surahNumber;
-        window.history.pushState({}, '', `?surah=${surahNumber}`);
+        this.state.currentAyah = 0;
         
-        Utils.showToast('Loading', 'Navigating to next Surah', 'info');
+        // Get the surah name for the URL if available
+        const surahName = this.state.surahNames[surahNumber];
+        const urlParam = surahName ? Utils.getSurahSlug(surahName) : surahNumber;
+        
+        window.history.pushState({}, '', `?surah=${urlParam}`);
+        
+        Utils.showToast('Loading', `Navigating to ${surahName || 'Surah ' + surahNumber}`, 'info');
         this.loadContent();
+    }
+    
+    // New method to allow jumping to a specific ayah
+    jumpToAyah(surahNumber, ayahNumber) {
+        if (surahNumber !== this.state.currentSurah) {
+            this.state.currentSurah = surahNumber;
+            this.state.currentAyah = ayahNumber - 1; // Convert to zero-indexed
+            
+            const surahName = this.state.surahNames[surahNumber];
+            const urlParam = surahName ? Utils.getSurahSlug(surahName) : surahNumber;
+            
+            window.history.pushState({}, '', `?surah=${urlParam}&ayah=${ayahNumber}`);
+            this.loadContent().then(() => {
+                setTimeout(() => {
+                    this.scrollToAyah(ayahNumber - 1);
+                    
+                    // Optionally start playing from this ayah
+                    const audio = document.querySelector(`audio[data-ayah="${ayahNumber - 1}"]`);
+                    if (audio) {
+                        audio.play();
+                    }
+                }, 500);
+            });
+        } else {
+            this.scrollToAyah(ayahNumber - 1);
+            const audio = document.querySelector(`audio[data-ayah="${ayahNumber - 1}"]`);
+            if (audio) {
+                audio.play();
+            }
+        }
     }
 }
 
