@@ -1937,7 +1937,7 @@ footer ul li a:hover::after {
             surahDiv.classList.add('surah');
             surahDiv.innerHTML = `<span>${surah.number}</span> ${surah.englishName} <div class="arabic-name">${surah.name}</div>`;
             surahDiv.addEventListener('click', () => {
-                window.location.href = `surah.html?surah=${surah.number}`;
+                window.location.href = `Read-surah.html?surah=${surah.number}`;
             });
             fragment.appendChild(surahDiv);
         });
