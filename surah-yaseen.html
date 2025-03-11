@@ -1,115 +1,194 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Surah Yaseen</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&family=Poppins:wght@300;400;500;600&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
-        body {
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6e45e2, #88d3ce);
+            --secondary-gradient: linear-gradient(135deg, #5e60ce, #6930c3);
+            --text-color: #333;
+            --light-text: #f8f9fa;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+        }
+
+        * {
             margin: 0;
-            height: 100vh;
-            background: #abbaab;
-            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
-            background: linear-gradient(to right, #ffffff, #abbaab);
-            font-family: 'Amiri', serif;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: var(--text-color);
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Particles background */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 20px;
-            text-align: center;
+            padding: 30px 20px;
+            position: relative;
+            z-index: 1;
         }
 
         header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
             position: relative;
+            padding-bottom: 20px;
+        }
+
+        .header-content {
+            background: var(--primary-gradient);
+            padding: 30px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
         }
 
         h1 {
-            font-size: 2.5em;
-            color: #fff;
+            font-size: 3em;
+            color: var(--light-text);
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            color: #5e60ce;
+            margin-bottom: 15px;
+            font-size: 1.8em;
         }
 
         .search-container {
-            margin: 10px 0;
+            margin: 20px 0;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .search-container input {
-            padding: 10px;
+            padding: 12px 20px;
             font-size: 1em;
-            width: 70%;
+            width: 100%;
+            max-width: 400px;
             border: none;
-            border-radius: 5px;
-            max-width: 300px;
+            border-radius: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .search-container input:focus {
+            outline: none;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
         .search-container button {
-            padding: 10px;
+            padding: 12px 25px;
             font-size: 1em;
             border: none;
             cursor: pointer;
-            border-radius: 5px;
-            margin-left: 10px;
+            border-radius: 30px;
+            background: var(--secondary-gradient);
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .search-container button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
         #dark-mode-toggle {
-            margin: 10px 0;
             cursor: pointer;
             font-size: 1.5em;
-            color: #fff;
+            color: var(--light-text);
+            margin-top: 15px;
+            display: inline-block;
+            transition: transform 0.3s ease;
         }
 
-       
+        #dark-mode-toggle:hover {
+            transform: rotate(30deg);
+        }
 
-        .close-button {
-            cursor: pointer;
-            color: #ff0000;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.5em;
+        #surah-content {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
         }
 
         .ayah {
-            font-size: 1.5em;
-            line-height: 2em;
+            font-family: 'Amiri', serif;
+            font-size: 1.8em;
+            line-height: 2.2em;
             text-align: right;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
+            margin-bottom: 15px;
+            padding: 20px;
             position: relative;
+            border-radius: var(--border-radius);
+            background-color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
         }
 
         .ayah.playing {
-            background-color: #e0f7fa;
+            background: rgba(110, 69, 226, 0.1);
+            box-shadow: 0 5px 15px rgba(110, 69, 226, 0.2);
+            transform: scale(1.01);
         }
 
         .translation {
-            font-size: 1em;
-            line-height: 1.5em;
+            font-size: 1.1em;
+            line-height: 1.6em;
             text-align: left;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             color: #555;
-            border-bottom: 1px dashed #ddd;
-            padding-bottom: 10px;
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            background-color: rgba(255, 255, 255, 0.5);
         }
 
         .audio {
             display: block;
-            margin: 10px 0;
+            width: 100%;
+            margin: 10px 0 30px;
+            border-radius: 30px;
         }
 
         .audio.loading::after {
             content: ' Loading...';
             font-size: 1em;
-            color: #3498db;
+            color: #6e45e2;
             animation: blink 1s linear infinite;
         }
 
@@ -118,45 +197,54 @@
             50% { opacity: 0; }
         }
 
-       .separator {
+        .separator {
             display: inline-block;
             margin-left: 10px;
-            color: #2c3e50;
+            color: #6e45e2;
             font-size: 1.2em;
         }
 
         .buttons {
-            margin-top: 20px;
+            margin-top: 40px;
             text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
         .buttons button {
-            background-color: #2980b9;
-            color: #fff;
+            background: var(--secondary-gradient);
+            color: var(--light-text);
             border: none;
-            padding: 10px 20px;
+            padding: 15px 30px;
             font-size: 1em;
+            font-weight: 500;
             cursor: pointer;
-            margin: 5px;
+            border-radius: 30px;
             display: inline-flex;
             align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .buttons button:hover {
-            background-color: #3498db;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
         }
 
         .buttons i {
-            margin-right: 5px;
+            font-size: 1.2em;
         }
 
         .loader {
-            border: 16px solid #f3f3f3;
+            border: 5px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            border-top: 16px solid #3498db;
-            width: 120px;
-            height: 120px;
-            animation: spin 2s linear infinite;
+            border-top: 5px solid #6e45e2;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
             margin: 50px auto;
         }
 
@@ -165,59 +253,80 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Dark mode styles */
         body.dark-mode {
-            background: linear-gradient(to right, #0f0f0f, #434343);
-            color: #ddd;
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .header-content {
+            background: linear-gradient(135deg, #3a1f5d, #25424f);
+        }
+
+        body.dark-mode #surah-content {
+            background: rgba(30, 30, 40, 0.85);
         }
 
         body.dark-mode .ayah {
-            background-color: #333;
-            color: #ddd;
+            background-color: rgba(40, 40, 50, 0.7);
+            color: #e0e0e0;
         }
 
         body.dark-mode .ayah.playing {
-            background-color: #555;
+            background: rgba(110, 69, 226, 0.2);
         }
 
         body.dark-mode .translation {
-            color: #ccc;
-            border-color: #666;
+            color: #cccccc;
+            background-color: rgba(40, 40, 50, 0.5);
         }
 
         body.dark-mode .buttons button {
-            background-color: #444;
+            background: linear-gradient(135deg, #3a1f5d, #4f2e7a);
         }
 
-        body.dark-mode .buttons button:hover {
-            background-color: #555;
+        body.dark-mode h2 {
+            color: #a391e0;
         }
 
-        body.dark-mode h1 {
-            color: #ddd;
-        }
-
-        @media (max-width: 600px) {
-            .search-container input {
-                width: 100%;
-                margin-bottom: 10px;
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
             }
 
-            .search-container button {
+            h1 {
+                font-size: 2.2em;
+            }
+
+            .ayah {
+                font-size: 1.5em;
+                padding: 15px;
+            }
+
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .buttons button {
                 width: 100%;
+                max-width: 300px;
             }
         }
     </style>
 </head>
 <body>
+    <div id="particles-js"></div>
     <div class="container">
         <header>
-            <h1>Surah Yaseen</h1>
-            <div class="search-container">
-                <input type="text" id="search-input" placeholder="Search for an Ayah...">
-                <button id="search-button">Search</button>
+            <div class="header-content">
+                <h1>Surah Yaseen</h1>
+                <div class="search-container">
+                    <input type="text" id="search-input" placeholder="Search for an Ayah...">
+                    <button id="search-button"><i class="fas fa-search"></i> Search</button>
+                </div>
+                <i id="dark-mode-toggle" class="fas fa-moon"></i>
             </div>
-            <i id="dark-mode-toggle" class="fas fa-moon"></i>
-            <span class="close-button" onclick="window.location.href='index.html'">×</span>
         </header>
         <div id="surah-content"></div>
         <div class="loader" id="loader"></div>
@@ -226,8 +335,121 @@
             <button id="next-surah"><i class="fas fa-arrow-right"></i> Next Surah</button>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // Initialize particles
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof particlesJS !== 'undefined') {
+                particlesJS("particles-js", {
+                    "particles": {
+                        "number": {
+                            "value": 80,
+                            "density": {
+                                "enable": true,
+                                "value_area": 800
+                            }
+                        },
+                        "color": {
+                            "value": "#6e45e2"
+                        },
+                        "shape": {
+                            "type": "circle",
+                            "stroke": {
+                                "width": 0,
+                                "color": "#000000"
+                            },
+                            "polygon": {
+                                "nb_sides": 5
+                            }
+                        },
+                        "opacity": {
+                            "value": 0.5,
+                            "random": false,
+                            "anim": {
+                                "enable": false,
+                                "speed": 1,
+                                "opacity_min": 0.1,
+                                "sync": false
+                            }
+                        },
+                        "size": {
+                            "value": 3,
+                            "random": true,
+                            "anim": {
+                                "enable": false,
+                                "speed": 40,
+                                "size_min": 0.1,
+                                "sync": false
+                            }
+                        },
+                        "line_linked": {
+                            "enable": true,
+                            "distance": 150,
+                            "color": "#a391e0",
+                            "opacity": 0.4,
+                            "width": 1
+                        },
+                        "move": {
+                            "enable": true,
+                            "speed": 2,
+                            "direction": "none",
+                            "random": false,
+                            "straight": false,
+                            "out_mode": "out",
+                            "bounce": false,
+                            "attract": {
+                                "enable": false,
+                                "rotateX": 600,
+                                "rotateY": 1200
+                            }
+                        }
+                    },
+                    "interactivity": {
+                        "detect_on": "canvas",
+                        "events": {
+                            "onhover": {
+                                "enable": true,
+                                "mode": "grab"
+                            },
+                            "onclick": {
+                                "enable": true,
+                                "mode": "push"
+                            },
+                            "resize": true
+                        },
+                        "modes": {
+                            "grab": {
+                                "distance": 140,
+                                "line_linked": {
+                                    "opacity": 1
+                                }
+                            },
+                            "bubble": {
+                                "distance": 400,
+                                "size": 40,
+                                "duration": 2,
+                                "opacity": 8,
+                                "speed": 3
+                            },
+                            "repulse": {
+                                "distance": 200,
+                                "duration": 0.4
+                            },
+                            "push": {
+                                "particles_nb": 4
+                            },
+                            "remove": {
+                                "particles_nb": 2
+                            }
+                        }
+                    },
+                    "retina_detect": true
+                });
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', function () {
             const surahContent = document.getElementById('surah-content');
             const loader = document.getElementById('loader');
@@ -268,16 +490,26 @@
             document.addEventListener('visibilitychange', handleVisibilityChange);
             requestWakeLock();
 
+            // Check for saved theme preference
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+                darkModeToggle.classList.remove('fa-moon');
+                darkModeToggle.classList.add('fa-sun');
+            }
+
             function loadSurah(surahNumber) {
                 surahContent.style.display = 'none';
                 loader.style.display = 'block';
 
                 Swal.fire({
-                    title: 'Loading...',
+                    title: 'Loading Surah Yaseen',
+                    html: 'Please wait...',
                     allowOutsideClick: false,
                     didOpen: () => {
                         Swal.showLoading();
-                    }
+                    },
+                    background: document.body.classList.contains('dark-mode') ? '#2d2d3a' : '#ffffff',
+                    color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333333'
                 });
 
                 Promise.all([
@@ -342,7 +574,9 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
-                        text: 'Something went wrong!',
+                        text: 'Something went wrong! Please check your connection and try again.',
+                        background: document.body.classList.contains('dark-mode') ? '#2d2d3a' : '#ffffff',
+                        color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333333'
                     });
                 });
             }
@@ -356,13 +590,23 @@
                 clearTimeout(autoNextSurahTimeout);
                 autoNextSurahTimeout = setTimeout(() => {
                     const nextSurahNumber = parseInt(surahNumber) + 1;
+                    if (nextSurahNumber > 114) {
+                        Swal.fire({
+                            title: 'End of Quran',
+                            text: 'You have reached the end of the Quran.',
+                            icon: 'info',
+                            background: document.body.classList.contains('dark-mode') ? '#2d2d3a' : '#ffffff',
+                            color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333333'
+                        });
+                        return;
+                    }
                     window.location.href = `surah.html?surah=${nextSurahNumber}`;
                 }, 3000);
             }
 
             function getSurahNumber() {
                 const urlParams = new URLSearchParams(window.location.search);
-                return urlParams.get('surah');
+                return urlParams.get('surah') || '36'; // Default to Surah Yaseen (36) if not specified
             }
 
             const surahNumber = getSurahNumber();
@@ -376,29 +620,82 @@
             nextSurahButton.addEventListener('click', () => {
                 clearTimeout(autoNextSurahTimeout);
                 const nextSurahNumber = parseInt(surahNumber) + 1;
+                if (nextSurahNumber > 114) {
+                    Swal.fire({
+                        title: 'End of Quran',
+                        text: 'You have reached the end of the Quran.',
+                        icon: 'info',
+                        background: document.body.classList.contains('dark-mode') ? '#2d2d3a' : '#ffffff',
+                        color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333333'
+                    });
+                    return;
+                }
                 window.location.href = `surah.html?surah=${nextSurahNumber}`;
             });
 
-            searchButton.addEventListener('click', () => {
-                const searchTerm = searchInput.value.toLowerCase();
-                const translations = surahContent.querySelectorAll('.translation');
-                translations.forEach(translation => {
-                    if (translation.innerText.toLowerCase().includes(searchTerm)) {
+            searchButton.addEventListener('click', performSearch);
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+
+            function performSearch() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                if (!searchTerm) return;
+                
+                const translations = document.querySelectorAll('.translation');
+                const ayahs = document.querySelectorAll('.ayah');
+                
+                let found = false;
+                
+                translations.forEach((translation, index) => {
+                    const translationText = translation.innerText.toLowerCase();
+                    const ayah = ayahs[index];
+                    
+                    if (translationText.includes(searchTerm)) {
                         translation.style.display = 'block';
+                        ayah.style.display = 'block';
+                        
+                        // Highlight the first match
+                        if (!found) {
+                            found = true;
+                            ayah.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            
+                            // Add a temporary highlight effect
+                            ayah.style.boxShadow = '0 0 0 3px #6e45e2';
+                            setTimeout(() => {
+                                ayah.style.boxShadow = '';
+                            }, 3000);
+                        }
                     } else {
                         translation.style.display = 'none';
+                        ayah.style.display = 'none';
                     }
                 });
-            });
+                
+                if (!found) {
+                    Swal.fire({
+                        title: 'No Results',
+                        text: `No matches found for "${searchTerm}"`,
+                        icon: 'info',
+                        background: document.body.classList.contains('dark-mode') ? '#2d2d3a' : '#ffffff',
+                        color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333333'
+                    });
+                }
+            }
 
             darkModeToggle.addEventListener('click', () => {
                 document.body.classList.toggle('dark-mode');
+                
                 if (document.body.classList.contains('dark-mode')) {
                     darkModeToggle.classList.remove('fa-moon');
                     darkModeToggle.classList.add('fa-sun');
+                    localStorage.setItem('darkMode', 'true');
                 } else {
                     darkModeToggle.classList.remove('fa-sun');
                     darkModeToggle.classList.add('fa-moon');
+                    localStorage.setItem('darkMode', 'false');
                 }
             });
         });
