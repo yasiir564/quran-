@@ -4,15 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ayat Al-Kursi</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&family=Poppins:wght@300;400;500;600&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+            --text-color: #333;
+            --background-light: #ffffff;
+            --card-background: rgba(255, 255, 255, 0.9);
+            --card-shadow: 0 10px 20px rgba(106, 17, 203, 0.1);
+            --transition-speed: 0.3s;
+        }
+
         body {
             margin: 0;
-            height: 100vh;
-            background: #abbaab;  
-            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);  
-            background: linear-gradient(to right, #ffffff, #abbaab); 
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            transition: background var(--transition-speed), color var(--transition-speed);
+            overflow-x: hidden;
         }
 
         .container {
@@ -22,221 +35,468 @@
             text-align: center;
         }
 
-        header {
+        .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             position: relative;
+            padding-top: 20px;
         }
 
-        h1 {
-            font-size: 2.5em;
+        .title {
+            font-size: 3em;
+            font-weight: 600;
             color: #fff;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+            animation: fadeIn 1.5s ease-out;
         }
 
         .search-container {
-            margin: 10px 0;
+            margin: 20px 0;
             display: flex;
             align-items: center;
             justify-content: center;
+            animation: fadeIn 2s ease-out;
         }
 
         .search-container input {
-            padding: 10px;
+            padding: 12px 20px;
             font-size: 1em;
             width: 70%;
             border: none;
-            border-radius: 5px;
+            border-radius: 30px 0 0 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all var(--transition-speed);
             max-width: 300px;
         }
 
+        .search-container input:focus {
+            outline: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
         .search-container button {
-            padding: 10px;
+            padding: 12px 20px;
             font-size: 1em;
             border: none;
             cursor: pointer;
-            border-radius: 5px;
-            margin-left: 10px;
+            border-radius: 0 30px 30px 0;
+            margin-left: 0;
+            background: var(--primary-color);
+            color: white;
+            transition: all var(--transition-speed);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-container button:hover {
+            background: #5a0fb0;
+            transform: translateY(-2px);
         }
 
         #dark-mode-toggle {
-            margin: 10px 0;
+            margin: 10px;
             cursor: pointer;
             font-size: 1.5em;
             color: #fff;
-        }
-
-        #ayat-content {
-            background-color: #fff;
-            padding: 20px;
-            border: 1px solid #ddd;
-            margin-top: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow-y: auto;
-            max-height: 600px;
-        }
-
-        .close-button {
-            cursor: pointer;
-            color: #ff0000;
+            transition: color var(--transition-speed), transform 0.3s;
             position: absolute;
             top: 10px;
             right: 10px;
-            font-size: 1.5em;
+        }
+
+        #dark-mode-toggle:hover {
+            transform: rotate(30deg);
+        }
+
+        .content-card {
+            background-color: var(--card-background);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            transition: all var(--transition-speed);
+            max-height: 60vh;
+            overflow: hidden;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .content-wrapper {
+            overflow-y: auto;
+            max-height: calc(60vh - 40px);
+            padding-right: 10px;
+            scroll-behavior: smooth;
+        }
+
+        .content-wrapper::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .content-wrapper::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+
+        .content-wrapper::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 10px;
         }
 
         .ayah {
-            font-size: 1.5em;
-            line-height: 2em;
+            font-family: 'Amiri', serif;
+            font-size: 1.8em;
+            line-height: 2.2em;
             text-align: right;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
+            margin-bottom: 30px;
+            padding: 20px;
             position: relative;
+            border-radius: 10px;
+            transition: all var(--transition-speed);
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .ayah::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 10px 10px 0 0;
         }
 
         .ayah.playing {
-            background-color: #e0f7fa;
+            background-color: rgba(37, 117, 252, 0.1);
+            transform: scale(1.02);
         }
 
         .translation {
-            font-size: 1em;
-            line-height: 1.5em;
+            font-size: 1.1em;
+            line-height: 1.8em;
             text-align: left;
-            margin-bottom: 20px;
-            color: #555;
-            border-bottom: 1px dashed #ddd;
-            padding-bottom: 10px;
+            margin-bottom: 30px;
+            color: var(--text-color);
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
-        .separator {
-            display: inline-block;
-            margin-left: 10px;
-            color: #2c3e50;
-            font-size: 1.2em;
+        .translation::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--secondary-color), transparent);
         }
 
         .buttons {
-            margin-top: 20px;
+            margin-top: 30px;
             text-align: center;
+            animation: fadeIn 2.5s ease-out;
         }
 
-        .buttons button {
-            background-color: #2980b9;
+        .button {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: #fff;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 25px;
             font-size: 1em;
             cursor: pointer;
-            margin: 5px;
+            margin: 10px;
+            border-radius: 30px;
             display: inline-flex;
             align-items: center;
+            transition: all var(--transition-speed);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .buttons button:hover {
-            background-color: #3498db;
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .buttons i {
-            margin-right: 5px;
+        .button i {
+            margin-right: 10px;
         }
 
         body.dark-mode {
-            background: linear-gradient(to right, #0f0f0f, #434343);
-            color: #ddd;
+            --primary-color: #4a148c;
+            --secondary-color: #1a237e;
+            --text-color: #f5f5f5;
+            --background-light: #121212;
+            --card-background: rgba(30, 30, 30, 0.9);
+            --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        body.dark-mode .content-card {
+            background-color: var(--card-background);
         }
 
         body.dark-mode .ayah {
-            background-color: #333;
+            background: rgba(30, 30, 30, 0.8);
+            color: #fff;
+        }
+
+        body.dark-mode .translation {
+            background: rgba(30, 30, 30, 0.8);
             color: #ddd;
         }
 
         body.dark-mode .ayah.playing {
-            background-color: #555;
+            background-color: rgba(74, 20, 140, 0.3);
         }
 
-        body.dark-mode .translation {
-            color: #ccc;
-            border-color: #666;
+        body.dark-mode .search-container input {
+            background: var(--background-light);
+            color: #fff;
         }
 
-        body.dark-mode .buttons button {
-            background-color: #444;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        body.dark-mode .buttons button:hover {
-            background-color: #555;
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        body.dark-mode h1 {
-            color: #ddd;
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(106, 17, 203, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(106, 17, 203, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(106, 17, 203, 0); }
         }
 
         @media (max-width: 600px) {
+            .title {
+                font-size: 2.2em;
+            }
+
+            .search-container {
+                flex-direction: column;
+            }
+
             .search-container input {
                 width: 100%;
                 margin-bottom: 10px;
+                border-radius: 30px;
+                max-width: none;
             }
 
             .search-container button {
-                width: 100%;
+                width: 80%;
+                border-radius: 30px;
+            }
+
+            .content-card {
+                padding: 15px;
+            }
+
+            .ayah {
+                font-size: 1.6em;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Ayat Al-Kursi</h1>
+        <div class="header">
+            <h1 class="title">Ayat Al-Kursi</h1>
+            <p class="subtitle">The Verse of the Throne</p>
             <div class="search-container">
-                <input type="text" id="search-input" placeholder="Search for an Ayah...">
-                <button id="search-button">Search</button>
+                <input type="text" id="search-input" placeholder="Search within the verse...">
+                <button id="search-button"><i class="fas fa-search"></i></button>
             </div>
             <i id="dark-mode-toggle" class="fas fa-moon"></i>
-            <span class="close-button" onclick="window.location.href='index.html'">×</span>
-        </header>
-        <div id="ayat-content"></div>
+        </div>
+
+        <div class="content-card animate__animated animate__fadeIn">
+            <div class="content-wrapper" id="content-wrapper">
+                <div id="ayat-content"></div>
+            </div>
+        </div>
+
         <div class="buttons">
-            <button id="repeat-ayat"><i class="fas fa-redo"></i> Repeat Ayat</button>
+            <button class="button" id="repeat-ayat">
+                <i class="fas fa-redo"></i> Repeat Verse
+            </button>
+            <button class="button" id="play-audio">
+                <i class="fas fa-play"></i> Play Audio
+            </button>
+            <button class="button" id="copy-ayat">
+                <i class="fas fa-copy"></i> Copy Text
+            </button>
         </div>
     </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const ayatContent = document.getElementById('ayat-content');
             const searchInput = document.getElementById('search-input');
             const searchButton = document.getElementById('search-button');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const repeatAyatButton = document.getElementById('repeat-ayat');
+            const playAudioButton = document.getElementById('play-audio');
+            const copyAyatButton = document.getElementById('copy-ayat');
+            const contentWrapper = document.getElementById('content-wrapper');
             
+            // Load the Ayat content with animation
             function loadAyat() {
                 // Hardcoded data for Ayat Al-Kursi
-                const ayatText = "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۗ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۗ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِندَهُ إِلَّا بِإِذْنِهِ ۗ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۗ وَلَا يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۗ وِسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۗ وَلَا يَؤُودُهُ حِفْظُهُمَا ۗ وَهُوَ الْعَلِيُّ الْعَظِيمُ";
+                const ayatText = "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۗ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۗ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِندَهُ إِلَّا بِإِذْنِهِ ۗ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۗ وَلَا يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۗ وِسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۗ وَلَا يَؤُودُهُ حِفْظُهُمَا ۗ وَهُوَ الْعَلِيُّ الْعَظِيمُ";
                 const translationText = "Allah! There is no deity except Him, the Ever-Living, the Sustainer of existence. Neither drowsiness overtakes Him nor sleep. To Him belongs whatever is in the heavens and whatever is on the earth. Who is it that can intercede with Him except by His permission? He knows what is before them and what will be after them, and they encompass not a thing of His knowledge except for what He wills. His Kursi extends over the heavens and the earth, and their preservation tires Him not. And He is the Most High, the Most Great.";
 
+                // Create a closing tag with surah/ayah info
+                const ayahInfo = "Surah Al-Baqarah (2:255)";
+
                 ayatContent.innerHTML = `
-                    <div class="ayah">${ayatText}</div>
-                    <div class="translation">${translationText}</div>
+                    <div class="ayah animate__animated animate__fadeIn">${ayatText}</div>
+                    <div class="translation animate__animated animate__fadeIn animate__delay-1s">${translationText}</div>
+                    <div class="translation animate__animated animate__fadeIn animate__delay-1s" style="text-align: center; font-style: italic; color: var(--primary-color);">${ayahInfo}</div>
                 `;
             }
 
-            searchButton.addEventListener('click', function () {
-                const query = searchInput.value.toLowerCase();
+            // Add pulse animation to search results
+            function highlightSearchResults(query) {
                 const ayah = document.querySelector('.ayah');
+                if (!query) return;
+                
                 if (ayah.textContent.toLowerCase().includes(query)) {
+                    ayah.classList.add('animate__animated', 'animate__pulse');
+                    setTimeout(() => {
+                        ayah.classList.remove('animate__animated', 'animate__pulse');
+                    }, 1000);
+                    
                     ayah.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+
+            // Search functionality
+            searchButton.addEventListener('click', function() {
+                const query = searchInput.value.toLowerCase();
+                highlightSearchResults(query);
+            });
+
+            // Allow search on Enter key press
+            searchInput.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    const query = searchInput.value.toLowerCase();
+                    highlightSearchResults(query);
                 }
             });
 
-            darkModeToggle.addEventListener('click', function () {
+            // Dark mode toggle with animation
+            darkModeToggle.addEventListener('click', function() {
                 document.body.classList.toggle('dark-mode');
                 if (document.body.classList.contains('dark-mode')) {
                     darkModeToggle.classList.remove('fa-moon');
                     darkModeToggle.classList.add('fa-sun');
+                    darkModeToggle.classList.add('animate__animated', 'animate__rotateIn');
+                    setTimeout(() => {
+                        darkModeToggle.classList.remove('animate__animated', 'animate__rotateIn');
+                    }, 500);
                 } else {
                     darkModeToggle.classList.remove('fa-sun');
                     darkModeToggle.classList.add('fa-moon');
+                    darkModeToggle.classList.add('animate__animated', 'animate__rotateIn');
+                    setTimeout(() => {
+                        darkModeToggle.classList.remove('animate__animated', 'animate__rotateIn');
+                    }, 500);
                 }
             });
 
+            // Repeat verse (scroll animation)
+            repeatAyatButton.addEventListener('click', function() {
+                contentWrapper.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+                
+                const ayah = document.querySelector('.ayah');
+                ayah.classList.add('animate__animated', 'animate__pulse');
+                setTimeout(() => {
+                    ayah.classList.remove('animate__animated', 'animate__pulse');
+                }, 1000);
+            });
+
+            // Play audio button (simulated functionality)
+            playAudioButton.addEventListener('click', function() {
+                const ayah = document.querySelector('.ayah');
+                ayah.classList.add('playing');
+                playAudioButton.innerHTML = '<i class="fas fa-pause"></i> Pause Audio';
+                
+                // Simulate audio playing (just for UI demo)
+                setTimeout(() => {
+                    ayah.classList.remove('playing');
+                    playAudioButton.innerHTML = '<i class="fas fa-play"></i> Play Audio';
+                }, 5000);
+            });
+
+            // Copy text functionality
+            copyAyatButton.addEventListener('click', function() {
+                const ayah = document.querySelector('.ayah');
+                const translation = document.querySelector('.translation');
+                
+                // Create a temporary textarea element to hold the text
+                const textArea = document.createElement('textarea');
+                textArea.value = `${ayah.textContent}\n\n${translation.textContent}`;
+                
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                // Show feedback
+                copyAyatButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    copyAyatButton.innerHTML = '<i class="fas fa-copy"></i> Copy Text';
+                }, 2000);
+            });
+
+            // Add scroll animation to content
+            contentWrapper.addEventListener('scroll', function() {
+                const scrollPosition = contentWrapper.scrollTop;
+                const ayah = document.querySelector('.ayah');
+                const translation = document.querySelector('.translation');
+                
+                // Parallax-like effect on scroll
+                ayah.style.transform = `translateY(${scrollPosition * 0.05}px)`;
+                translation.style.transform = `translateY(${scrollPosition * 0.02}px)`;
+            });
+
+            // Initialize
             loadAyat();
+
+            // Add a subtle animation to the background
+            document.body.addEventListener('mousemove', function(e) {
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
+                document.body.style.background = `linear-gradient(135deg, 
+                    rgba(106, 17, 203, ${0.8 + y * 0.2}), 
+                    rgba(37, 117, 252, ${0.8 + x * 0.2}))`;
+            });
         });
     </script>
 </body>
