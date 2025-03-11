@@ -399,366 +399,443 @@ body.dark-mode h2 {
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Initialize particles
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof particlesJS !== 'undefined') {
-                particlesJS("particles-js", {
-                    "particles": {
-                        "number": {
-                            "value": 80,
-                            "density": {
-                                "enable": true,
-                                "value_area": 800
-                            }
-                        },
-                        "color": {
-                            "value": "#6e45e2"
-                        },
-                        "shape": {
-                            "type": "circle",
-                            "stroke": {
-                                "width": 0,
-                                "color": "#000000"
-                            },
-                            "polygon": {
-                                "nb_sides": 5
-                            }
-                        },
-                        "opacity": {
-                            "value": 0.5,
-                            "random": false,
-                            "anim": {
-                                "enable": false,
-                                "speed": 1,
-                                "opacity_min": 0.1,
-                                "sync": false
-                            }
-                        },
-                        "size": {
-                            "value": 3,
-                            "random": true,
-                            "anim": {
-                                "enable": false,
-                                "speed": 40,
-                                "size_min": 0.1,
-                                "sync": false
-                            }
-                        },
+       document.addEventListener('DOMContentLoaded', function() {
+    // Initialize particles if the library is available
+    initializeParticles();
+    
+    // Initialize Quran app functionality
+    initializeQuranApp();
+});
+
+// Particles.js initialization
+function initializeParticles() {
+    if (typeof particlesJS !== 'undefined') {
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#6e45e2"
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": false,
+                    "anim": {
+                        "enable": false,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#a391e0",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 2,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "grab"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 140,
                         "line_linked": {
-                            "enable": true,
-                            "distance": 150,
-                            "color": "#a391e0",
-                            "opacity": 0.4,
-                            "width": 1
-                        },
-                        "move": {
-                            "enable": true,
-                            "speed": 2,
-                            "direction": "none",
-                            "random": false,
-                            "straight": false,
-                            "out_mode": "out",
-                            "bounce": false,
-                            "attract": {
-                                "enable": false,
-                                "rotateX": 600,
-                                "rotateY": 1200
-                            }
+                            "opacity": 1
                         }
                     },
-                    "interactivity": {
-                        "detect_on": "canvas",
-                        "events": {
-                            "onhover": {
-                                "enable": true,
-                                "mode": "grab"
-                            },
-                            "onclick": {
-                                "enable": true,
-                                "mode": "push"
-                            },
-                            "resize": true
-                        },
-                        "modes": {
-                            "grab": {
-                                "distance": 140,
-                                "line_linked": {
-                                    "opacity": 1
-                                }
-                            },
-                            "bubble": {
-                                "distance": 400,
-                                "size": 40,
-                                "duration": 2,
-                                "opacity": 8,
-                                "speed": 3
-                            },
-                            "repulse": {
-                                "distance": 200,
-                                "duration": 0.4
-                            },
-                            "push": {
-                                "particles_nb": 4
-                            },
-                            "remove": {
-                                "particles_nb": 2
-                            }
-                        }
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
                     },
-                    "retina_detect": true
-                });
-            }
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
         });
+    }
+}
 
-        document.addEventListener('DOMContentLoaded', function () {
-            const surahContent = document.getElementById('surah-content');
-            const loader = document.getElementById('loader');
-            const searchInput = document.getElementById('search-input');
-            const searchButton = document.getElementById('search-button');
-            const darkModeToggle = document.getElementById('dark-mode-toggle');
-            const repeatSurahButton = document.getElementById('repeat-surah');
-            const nextSurahButton = document.getElementById('next-surah');
-            let autoNextSurahTimeout;
-            let wakeLock = null;
-
-            async function requestWakeLock() {
+// Main Quran app functionality
+function initializeQuranApp() {
+    // DOM elements
+    const elements = {
+        surahContent: document.getElementById('surah-content'),
+        loader: document.getElementById('loader'),
+        searchInput: document.getElementById('search-input'),
+        searchButton: document.getElementById('search-button'),
+        darkModeToggle: document.getElementById('dark-mode-toggle')
+    };
+    
+    // Variables
+    let wakeLock = null;
+    
+    // Wake lock functionality to keep screen on
+    initializeWakeLock();
+    
+    // Dark mode initialization
+    initializeDarkMode(elements.darkModeToggle);
+    
+    // Load Surah Yaseen
+    loadSurahYaseen(elements);
+    
+    // Event listeners
+    elements.searchButton.addEventListener('click', () => performSearch(elements));
+    elements.searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            performSearch(elements);
+        }
+    });
+    
+    elements.darkModeToggle.addEventListener('click', () => toggleDarkMode(elements.darkModeToggle));
+    
+    // Wake lock functions
+    function initializeWakeLock() {
+        async function requestWakeLock() {
+            if ('wakeLock' in navigator) {
                 try {
                     wakeLock = await navigator.wakeLock.request('screen');
                     console.log('Wake lock is active');
                 } catch (err) {
-                    console.error(`${err.name}, ${err.message}`);
+                    console.error(`Wake lock error: ${err.name}, ${err.message}`);
                 }
             }
-
-            function releaseWakeLock() {
-                if (wakeLock) {
-                    wakeLock.release().then(() => {
-                        wakeLock = null;
-                        console.log('Wake lock released');
-                    });
-                }
-            }
-
-            function handleVisibilityChange() {
-                if (document.visibilityState === 'visible') {
-                    requestWakeLock();
-                } else {
-                    releaseWakeLock();
-                }
-            }
-
-            document.addEventListener('visibilitychange', handleVisibilityChange);
-            requestWakeLock();
-
-            // Check for saved theme preference
-            if (localStorage.getItem('darkMode') === 'true') {
-                document.body.classList.add('dark-mode');
-                darkModeToggle.classList.remove('fa-moon');
-                darkModeToggle.classList.add('fa-sun');
-            }
-
-            function loadSurah(surahNumber) {
-                surahContent.style.display = 'none';
-                loader.style.display = 'block';
-
-                Swal.fire({
-                    title: 'Loading Surah Yaseen',
-                    html: 'Please wait...',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    },
-                    background: document.body.classList.contains('dark-mode') ? '#2d2d3a' : '#ffffff',
-                    color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333333'
-                });
-
-                Promise.all([
-                    fetch(`https://api.alquran.cloud/v1/surah/36`),
-                    fetch(`https://api.alquran.cloud/v1/surah/36/en.sahih`),
-                    fetch(`https://api.alquran.cloud/v1/surah/36/ar.alafasy`)
-                ])
-                .then(responses => Promise.all(responses.map(response => response.json())))
-                .then(([surahData, translationData, audioData]) => {
-                    loader.style.display = 'none';
-                    Swal.close();
-                    surahContent.style.display = 'block';
-
-                    surahContent.innerHTML = `
-                        <h2>${surahData.data.englishName} (${surahData.data.name})</h2>
-                        <p>${surahData.data.englishNameTranslation}</p>
-                        ${surahData.data.ayahs.map((ayah, index) => `
-                            <div class="ayah" id="ayah-${index}">
-                                ${ayah.text}<span class="separator">۞</span>
-                            </div>
-                            <div class="translation" id="translation-${index}">
-                                ${translationData.data.ayahs[index].text}
-                            </div>
-                            <audio class="audio" id="audio-${index}" controls>
-                                <source src="${audioData.data.ayahs[index].audio}" type="audio/mpeg">
-                                Your browser does not support the audio element.
-                            </audio>`).join('')}
-                    `;
-
-                    const audios = document.querySelectorAll('.audio');
-                    const ayahs = document.querySelectorAll('.ayah');
-
-                    audios.forEach((audio, index) => {
-                        audio.addEventListener('play', () => {
-                            ayahs.forEach(ayah => ayah.classList.remove('playing'));
-                            document.getElementById('ayah-' + index).classList.add('playing');
-                            scrollToAyah(index);
-                        });
-
-                        audio.addEventListener('waiting', () => {
-                            audio.classList.add('loading');
-                        });
-
-                        audio.addEventListener('playing', () => {
-                            audio.classList.remove('loading');
-                        });
-
-                        audio.addEventListener('ended', () => {
-                            if (index < audios.length - 1) {
-                                audios[index + 1].play();
-                            } else {
-                                autoNextSurah();
-                            }
-                        });
-                    });
-
-                    audios[0].play();
-                })
-                .catch(error => {
-                    Swal.close();
-                    console.error('Error fetching surah:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Something went wrong! Please check your connection and try again.',
-                        background: document.body.classList.contains('dark-mode') ? '#2d2d3a' : '#ffffff',
-                        color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333333'
-                    });
+        }
+        
+        function releaseWakeLock() {
+            if (wakeLock) {
+                wakeLock.release().then(() => {
+                    wakeLock = null;
+                    console.log('Wake lock released');
                 });
             }
-
-            function scrollToAyah(index) {
-                const ayahElement = document.getElementById(`ayah-${index}`);
-                ayahElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        function handleVisibilityChange() {
+            if (document.visibilityState === 'visible') {
+                requestWakeLock();
+            } else {
+                releaseWakeLock();
             }
+        }
+        
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        requestWakeLock();
+    }
+}
 
-            function autoNextSurah() {
-                clearTimeout(autoNextSurahTimeout);
-                autoNextSurahTimeout = setTimeout(() => {
-                    const nextSurahNumber = parseInt(surahNumber) + 1;
-                    if (nextSurahNumber > 114) {
-                        Swal.fire({
-                            title: 'End of Quran',
-                            text: 'You have reached the end of the Quran.',
-                            icon: 'info',
-                            background: document.body.classList.contains('dark-mode') ? '#2d2d3a' : '#ffffff',
-                            color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333333'
-                        });
-                        return;
-                    }
-                    window.location.href = `surah.html?surah=${nextSurahNumber}`;
-                }, 3000);
-            }
+// Load Surah Yaseen function
+function loadSurahYaseen(elements) {
+    elements.surahContent.style.display = 'none';
+    elements.loader.style.display = 'block';
+    
+    showLoadingAlert();
+    
+    // Fixed Surah Yaseen (36) for this application
+    const surahNumber = 36;
+    
+    Promise.all([
+        fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`),
+        fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.sahih`),
+        fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/ar.alafasy`)
+    ])
+    .then(responses => Promise.all(responses.map(response => response.json())))
+    .then(([surahData, translationData, audioData]) => {
+        elements.loader.style.display = 'none';
+        Swal.close();
+        elements.surahContent.style.display = 'block';
+        
+        renderSurahContent(elements.surahContent, surahData, translationData, audioData);
+        setupAudioPlayers();
+    })
+    .catch(error => {
+        handleFetchError(error);
+    });
+}
 
-            function getSurahNumber() {
-                const urlParams = new URLSearchParams(window.location.search);
-                return urlParams.get('surah') || '36'; // Default to Surah Yaseen (36) if not specified
-            }
+// Render Surah content
+function renderSurahContent(contentElement, surahData, translationData, audioData) {
+    contentElement.innerHTML = `
+        <div class="surah-header">
+            <h2>${surahData.data.englishName} (${surahData.data.name})</h2>
+            <p class="surah-translation">${surahData.data.englishNameTranslation}</p>
+        </div>
+        <div class="surah-body">
+            ${surahData.data.ayahs.map((ayah, index) => `
+                <div class="ayah-container">
+                    <div class="ayah" id="ayah-${index}">
+                        ${ayah.text}<span class="ayah-number">(${index + 1})</span>
+                    </div>
+                    <div class="translation" id="translation-${index}">
+                        ${translationData.data.ayahs[index].text}
+                    </div>
+                    <div class="audio-container">
+                        <audio class="audio" id="audio-${index}" controls>
+                            <source src="${audioData.data.ayahs[index].audio}" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
 
-            const surahNumber = getSurahNumber();
-            loadSurah(surahNumber);
-
-            repeatSurahButton.addEventListener('click', () => {
-                clearTimeout(autoNextSurahTimeout);
-                loadSurah(surahNumber);
-            });
-
-            nextSurahButton.addEventListener('click', () => {
-                clearTimeout(autoNextSurahTimeout);
-                const nextSurahNumber = parseInt(surahNumber) + 1;
-                if (nextSurahNumber > 114) {
-                    Swal.fire({
-                        title: 'End of Quran',
-                        text: 'You have reached the end of the Quran.',
-                        icon: 'info',
-                        background: document.body.classList.contains('dark-mode') ? '#2d2d3a' : '#ffffff',
-                        color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333333'
-                    });
-                    return;
-                }
-                window.location.href = `surah.html?surah=${nextSurahNumber}`;
-            });
-
-            searchButton.addEventListener('click', performSearch);
-            searchInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    performSearch();
-                }
-            });
-
-            function performSearch() {
-                const searchTerm = searchInput.value.toLowerCase().trim();
-                if (!searchTerm) return;
-                
-                const translations = document.querySelectorAll('.translation');
-                const ayahs = document.querySelectorAll('.ayah');
-                
-                let found = false;
-                
-                translations.forEach((translation, index) => {
-                    const translationText = translation.innerText.toLowerCase();
-                    const ayah = ayahs[index];
-                    
-                    if (translationText.includes(searchTerm)) {
-                        translation.style.display = 'block';
-                        ayah.style.display = 'block';
-                        
-                        // Highlight the first match
-                        if (!found) {
-                            found = true;
-                            ayah.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            
-                            // Add a temporary highlight effect
-                            ayah.style.boxShadow = '0 0 0 3px #6e45e2';
-                            setTimeout(() => {
-                                ayah.style.boxShadow = '';
-                            }, 3000);
-                        }
-                    } else {
-                        translation.style.display = 'none';
-                        ayah.style.display = 'none';
-                    }
-                });
-                
-                if (!found) {
-                    Swal.fire({
-                        title: 'No Results',
-                        text: `No matches found for "${searchTerm}"`,
-                        icon: 'info',
-                        background: document.body.classList.contains('dark-mode') ? '#2d2d3a' : '#ffffff',
-                        color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333333'
-                    });
-                }
-            }
-
-            darkModeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('dark-mode');
-                
-                if (document.body.classList.contains('dark-mode')) {
-                    darkModeToggle.classList.remove('fa-moon');
-                    darkModeToggle.classList.add('fa-sun');
-                    localStorage.setItem('darkMode', 'true');
-                } else {
-                    darkModeToggle.classList.remove('fa-sun');
-                    darkModeToggle.classList.add('fa-moon');
-                    localStorage.setItem('darkMode', 'false');
-                }
-            });
+// Setup audio players
+function setupAudioPlayers() {
+    const audios = document.querySelectorAll('.audio');
+    const ayahs = document.querySelectorAll('.ayah');
+    
+    audios.forEach((audio, index) => {
+        audio.addEventListener('play', () => {
+            // Remove playing class from all ayahs
+            ayahs.forEach(ayah => ayah.classList.remove('playing'));
+            
+            // Add playing class to current ayah
+            document.getElementById('ayah-' + index).classList.add('playing');
+            
+            // Scroll to current ayah
+            scrollToAyah(index);
         });
+        
+        audio.addEventListener('waiting', () => {
+            audio.classList.add('loading');
+        });
+        
+        audio.addEventListener('playing', () => {
+            audio.classList.remove('loading');
+        });
+        
+        audio.addEventListener('ended', () => {
+            // Play next ayah if available
+            if (index < audios.length - 1) {
+                audios[index + 1].play();
+            }
+        });
+    });
+    
+    // Auto-play the first ayah
+    audios[0].play().catch(error => {
+        console.warn('Auto-play failed:', error);
+        // Modern browsers require user interaction before audio can play
+        showAutoplayMessage();
+    });
+}
+
+// Scroll to specific ayah
+function scrollToAyah(index) {
+    const ayahElement = document.getElementById(`ayah-${index}`);
+    if (ayahElement) {
+        ayahElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+// Show loading alert using SweetAlert
+function showLoadingAlert() {
+    Swal.fire({
+        title: 'Loading Surah Yaseen',
+        html: 'Please wait while we fetch the Surah...',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+        background: document.body.classList.contains('dark-mode') ? '#2d2d3a' : '#ffffff',
+        color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333333'
+    });
+}
+
+// Handle fetch errors
+function handleFetchError(error) {
+    Swal.close();
+    console.error('Error fetching surah:', error);
+    Swal.fire({
+        icon: 'error',
+        title: 'Connection Error',
+        text: 'Unable to load Surah Yaseen. Please check your connection and try again.',
+        confirmButtonText: 'Retry',
+        background: document.body.classList.contains('dark-mode') ? '#2d2d3a' : '#ffffff',
+        color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333333'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.reload();
+        }
+    });
+}
+
+// Show message when autoplay is blocked
+function showAutoplayMessage() {
+    Swal.fire({
+        icon: 'info',
+        title: 'Playback Ready',
+        text: 'Click play to start listening to Surah Yaseen',
+        timer: 3000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+        background: document.body.classList.contains('dark-mode') ? '#2d2d3a' : '#ffffff',
+        color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333333'
+    });
+}
+
+// Search functionality
+function performSearch(elements) {
+    const searchTerm = elements.searchInput.value.toLowerCase().trim();
+    if (!searchTerm) return;
+    
+    const translations = document.querySelectorAll('.translation');
+    const ayahContainers = document.querySelectorAll('.ayah-container');
+    
+    let found = false;
+    let foundIndex = -1;
+    
+    translations.forEach((translation, index) => {
+        const translationText = translation.innerText.toLowerCase();
+        const ayahContainer = ayahContainers[index];
+        
+        if (translationText.includes(searchTerm)) {
+            ayahContainer.style.display = 'block';
+            
+            // Record the first match
+            if (!found) {
+                found = true;
+                foundIndex = index;
+            }
+        } else {
+            ayahContainer.style.display = 'none';
+        }
+    });
+    
+    if (found) {
+        // Highlight and scroll to the first match
+        const firstMatchElement = ayahContainers[foundIndex];
+        firstMatchElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Add a temporary highlight effect
+        firstMatchElement.classList.add('search-highlight');
+        setTimeout(() => {
+            firstMatchElement.classList.remove('search-highlight');
+        }, 3000);
+        
+        // Show result count
+        const matches = Array.from(ayahContainers).filter(container => 
+            container.style.display !== 'none'
+        ).length;
+        
+        Swal.fire({
+            icon: 'success',
+            title: 'Search Results',
+            text: `Found ${matches} ${matches === 1 ? 'ayah' : 'ayahs'} containing "${searchTerm}"`,
+            timer: 2000,
+            showConfirmButton: false,
+            background: document.body.classList.contains('dark-mode') ? '#2d2d3a' : '#ffffff',
+            color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333333'
+        });
+    } else {
+        // No results found
+        Swal.fire({
+            title: 'No Results',
+            text: `No matches found for "${searchTerm}"`,
+            icon: 'info',
+            confirmButtonText: 'OK',
+            background: document.body.classList.contains('dark-mode') ? '#2d2d3a' : '#ffffff',
+            color: document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#333333'
+        }).then(() => {
+            // Reset search display
+            ayahContainers.forEach(container => {
+                container.style.display = 'block';
+            });
+            elements.searchInput.value = '';
+        });
+    }
+}
+
+// Initialize dark mode
+function initializeDarkMode(darkModeToggle) {
+    // Check for saved theme preference
+    if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+        updateDarkModeIcon(darkModeToggle, true);
+    }
+}
+
+// Toggle dark mode
+function toggleDarkMode(darkModeToggle) {
+    const isDarkMode = document.body.classList.toggle('dark-mode');
+    updateDarkModeIcon(darkModeToggle, isDarkMode);
+    localStorage.setItem('darkMode', isDarkMode.toString());
+}
+
+// Update dark mode icon
+function updateDarkModeIcon(darkModeToggle, isDarkMode) {
+    if (isDarkMode) {
+        darkModeToggle.classList.remove('fa-moon');
+        darkModeToggle.classList.add('fa-sun');
+    } else {
+        darkModeToggle.classList.remove('fa-sun');
+        darkModeToggle.classList.add('fa-moon');
+    }
+}
     </script>
 </body>
 </html>
