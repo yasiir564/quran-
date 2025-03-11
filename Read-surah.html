@@ -1306,6 +1306,121 @@ body::before {
         padding: 0.4rem 0.8rem;
     }
 }
+        .ayah-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  background-color: #f7f7f7;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+.ayah-meta:hover {
+  background-color: #f0f0f0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+}
+
+.ayah-number {
+  font-size: 1.2rem;
+  color: #444;
+  font-weight: 600;
+  font-family: 'Amiri', serif;
+  user-select: none;
+  display: flex;
+  align-items: center;
+}
+
+.ayah-number::after {
+  content: '';
+  display: inline-block;
+  width: 1px;
+  height: 18px;
+  background-color: #ddd;
+  margin: 0 10px;
+}
+
+.page-number {
+  font-size: 1rem;
+  color: #666;
+  text-align: right;
+  direction: rtl;
+  font-family: 'Amiri', serif;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.page-number .page-digit {
+  font-weight: 600;
+  color: #0056b3;
+}
+
+.page-number .page-text {
+  font-size: 0.9em;
+}
+
+/* Active state when an ayah is being read/played */
+.ayah-container.active .ayah-meta {
+  background-color: #e8f4ff;
+  border-left: 3px solid #0056b3;
+}
+
+.ayah-container.active .ayah-number {
+  color: #0056b3;
+}
+
+/* Dark mode styles */
+.dark-mode .ayah-meta {
+  background-color: #2a2a2a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .ayah-meta:hover {
+  background-color: #333;
+}
+
+.dark-mode .ayah-number {
+  color: #e0e0e0;
+}
+
+.dark-mode .page-number {
+  color: #bbb;
+}
+
+.dark-mode .page-number .page-digit {
+  color: #7cb9ff;
+}
+
+.dark-mode .ayah-number::after {
+  background-color: #555;
+}
+
+.dark-mode .ayah-container.active .ayah-meta {
+  background-color: #1a3a5a;
+  border-left: 3px solid #7cb9ff;
+}
+
+.dark-mode .ayah-container.active .ayah-number {
+  color: #7cb9ff;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .ayah-meta {
+    padding: 6px 10px;
+  }
+  
+  .ayah-number {
+    font-size: 1.1rem;
+  }
+  
+  .page-number {
+    font-size: 0.9rem;
+  }
+}
 
     </style>
 </head>
