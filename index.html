@@ -1803,201 +1803,230 @@ footer ul li a:hover::after {
 
     <script src="https://unpkg.com/idb@6.1.0/build/iife/index-min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', async function() {
-            function updateProfileIcon() {
-                const userAvatar = localStorage.getItem('userAvatar');
-                const defaultProfileIcon = document.getElementById('default-profile-icon');
-                const userProfilePic = document.getElementById('user-profile-pic');
-                const profileLink = document.getElementById('profile-link');
+       document.addEventListener('DOMContentLoaded', async function() {
+    // User profile management
+    function updateProfileIcon() {
+        const userAvatar = localStorage.getItem('userAvatar');
+        const defaultProfileIcon = document.getElementById('default-profile-icon');
+        const userProfilePic = document.getElementById('user-profile-pic');
+        const profileLink = document.getElementById('profile-link');
 
-                if (userAvatar) {
-                    defaultProfileIcon.style.display = 'none';
-                    userProfilePic.src = userAvatar;
-                    userProfilePic.style.display = 'block';
-                    profileLink.href = 'profile.html';
-                } else {
-                    defaultProfileIcon.style.display = 'block';
-                    userProfilePic.style.display = 'none';
-                    profileLink.href = 'login.html';
-                }
-            }
+        if (userAvatar) {
+            defaultProfileIcon.style.display = 'none';
+            userProfilePic.src = userAvatar;
+            userProfilePic.style.display = 'block';
+            profileLink.href = 'profile.html';
+        } else {
+            defaultProfileIcon.style.display = 'block';
+            userProfilePic.style.display = 'none';
+            profileLink.href = 'login.html';
+        }
+    }
 
-            updateProfileIcon();
+    // Sidebar navigation functions
+    function openNav() {
+        document.getElementById("mySidebar").classList.add("open");
+        document.getElementById("sidebarOverlay").classList.add("active");
+    }
 
-            function openNav() {
-                document.getElementById("mySidebar").classList.add("open");
-                document.getElementById("sidebarOverlay").classList.add("active");
-            }
+    function closeNav() {
+        document.getElementById("mySidebar").classList.remove("open");
+        document.getElementById("sidebarOverlay").classList.remove("active");
+    }
 
-            function closeNav() {
-                document.getElementById("mySidebar").classList.remove("open");
-                document.getElementById("sidebarOverlay").classList.remove("active");
-            }
+    // Dark mode toggle
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        // Save preference to localStorage
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
+    }
 
-            function toggleDarkMode() {
-                document.body.classList.toggle('dark-mode');
-            }
+    // Load dark mode preference
+    function loadDarkModePreference() {
+        const darkModePreference = localStorage.getItem('darkMode');
+        if (darkModePreference === 'enabled') {
+            document.body.classList.add('dark-mode');
+        }
+    }
 
-            function performSearch() {
-                const query = document.querySelector('#search-input').value.toLowerCase();
-                const surahElements = document.querySelectorAll('.surah');
+    // Search functionality
+    function performSearch() {
+        const query = document.querySelector('#search-input').value.toLowerCase().trim();
+        const surahElements = document.querySelectorAll('.surah');
+        let resultsFound = false;
 
-                surahElements.forEach(surahElement => {
-                    const surahName = surahElement.innerText.toLowerCase();
-                    if (surahName.includes(query)) {
-                        surahElement.style.display = 'block';
-                    } else {
-                        surahElement.style.display = 'none';
-                    }
-                });
-            }
-
-            document.querySelector('.search-container button').addEventListener('click', performSearch);
-
-            document.querySelector('#search-input').addEventListener('keypress', function(event) {
-                if (event.key === 'Enter') {
-                    performSearch();
-                }
-            });
-
-            document.getElementById('openSidebarBtn').addEventListener('click', openNav);
-            document.getElementById('closeSidebarBtn').addEventListener('click', closeNav);
-            document.getElementById('sidebarOverlay').addEventListener('click', closeNav);
-
-            function showLoader() {
-                document.getElementById('loader').style.display = 'block';
-            }
-
-            function hideLoader() {
-                document.getElementById('loader').style.display = 'none';
-            }
-
-            function loadContent() {
-                showLoader();
-                setTimeout(hideLoader, 2000);
-            }
-
-            window.onload = loadContent;
-
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(function(registration) {
-                        console.log('Service Worker registered with scope:', registration.scope);
-                    }).catch(function(error) {
-                        console.log('Service Worker registration failed:', error);
-                    });
-            }
-
-              async function getSurahData() {
-        const db = await idb.openDB('quran-reader-db', 1, {
-            upgrade(db) {
-                db.createObjectStore('surahs', { keyPath: 'number' });
+        surahElements.forEach(surahElement => {
+            const surahName = surahElement.innerText.toLowerCase();
+            if (surahName.includes(query)) {
+                surahElement.style.display = 'block';
+                resultsFound = true;
+            } else {
+                surahElement.style.display = 'none';
             }
         });
 
-        const surahs = await db.getAll('surahs');
-        if (surahs.length) {
-            return surahs.map((surah, index) => ({
-                ...surah,
-                number: index + 1,
-            }));
+        // Show message if no results found
+        const noResultsMsg = document.getElementById('no-results-message') || createNoResultsElement();
+        if (!resultsFound && query !== '') {
+            noResultsMsg.style.display = 'block';
         } else {
+            noResultsMsg.style.display = 'none';
+        }
+    }
+
+    function createNoResultsElement() {
+        const noResultsMsg = document.createElement('div');
+        noResultsMsg.id = 'no-results-message';
+        noResultsMsg.textContent = 'No surahs found matching your search.';
+        noResultsMsg.style.textAlign = 'center';
+        noResultsMsg.style.padding = '20px';
+        document.getElementById('surah-list').appendChild(noResultsMsg);
+        return noResultsMsg;
+    }
+
+    // Loader functions
+    function showLoader() {
+        document.getElementById('loader').style.display = 'block';
+    }
+
+    function hideLoader() {
+        document.getElementById('loader').style.display = 'none';
+    }
+
+    // IndexedDB functions for caching
+    async function getSurahData() {
+        // Try to get data from IndexedDB first
+        try {
+            const db = await idb.openDB('quran-reader-db', 1, {
+                upgrade(db) {
+                    db.createObjectStore('surahs', { keyPath: 'number' });
+                }
+            });
+
+            const surahs = await db.getAll('surahs');
+            if (surahs.length) {
+                console.log('Loading surahs from IndexedDB cache');
+                return surahs;
+            } 
+            
+            // If no cached data, fetch from API
+            console.log('Fetching surahs from API and caching');
             const response = await fetch('https://api.alquran.cloud/v1/surah');
             const data = await response.json();
+            
+            // Store in IndexedDB for future use
             const tx = db.transaction('surahs', 'readwrite');
             for (const surah of data.data) {
                 tx.store.put(surah);
             }
             await tx.done;
-            return data.data.map((surah, index) => ({
-                ...surah,
-                number: index + 1,
-            }));
+            
+            return data.data;
+        } catch (error) {
+            console.error('IndexedDB error:', error);
+            
+            // Fallback to direct API fetch if IndexedDB fails
+            const response = await fetch('https://api.alquran.cloud/v1/surah');
+            const data = await response.json();
+            return data.data;
         }
     }
 
-    const surahList = document.getElementById('surah-list');
-    const loader = document.getElementById('loader');
-    loader.style.display = 'block';
-
-    let surahs = [];
-    try {
-        surahs = await getSurahData();
-        loader.style.display = 'none';
-        showSurahs(0, 15);
-    } catch (error) {
-        loader.style.display = 'none';
-        console.error('Error fetching Surahs:', error);
-    }
-
+    // Surah display functions
     function showSurahs(start, end) {
         const fragment = document.createDocumentFragment();
-        surahs.slice(start, end).forEach(surah => {
+        const displayedSurahs = surahs.slice(start, end);
+        
+        displayedSurahs.forEach(surah => {
             const surahDiv = document.createElement('div');
             surahDiv.classList.add('surah');
-            surahDiv.innerHTML = `<span>${surah.number}</span> ${surah.englishName} <div class="arabic-name">${surah.name}</div>`;
+            
+            // Replace surah number with name (both English and Arabic)
+            surahDiv.innerHTML = `
+                <div class="surah-name">${surah.englishName}</div>
+                <div class="surah-name-translation">${surah.englishNameTranslation}</div>
+                <div class="arabic-name">${surah.name}</div>
+                <div class="surah-meta">Verses: ${surah.numberOfAyahs} | ${surah.revelationType}</div>
+            `;
+            
             surahDiv.addEventListener('click', () => {
                 window.location.href = `Read-surah.html?surah=${surah.number}`;
             });
+            
             fragment.appendChild(surahDiv);
         });
+        
+        // Clear and append new content
+        const surahList = document.getElementById('surah-list');
         surahList.innerHTML = '';
         surahList.appendChild(fragment);
+        
+        // Add navigation buttons
+        addNavigationButtons(surahList, start, end);
+    }
+
+    function addNavigationButtons(container, start, end) {
+        const buttonContainer = document.createElement('div');
+        buttonContainer.classList.add('navigation-buttons');
+        
+        if (start > 0) {
+            const showLessButton = document.createElement('button');
+            showLessButton.id = 'show-less-button';
+            showLessButton.textContent = 'Show Previous';
+            showLessButton.addEventListener('click', () => {
+                const newStart = Math.max(0, start - 15);
+                showSurahs(newStart, newStart + 15);
+                window.scrollTo(0, 0);
+            });
+            buttonContainer.appendChild(showLessButton);
+        }
         
         if (end < surahs.length) {
             const showMoreButton = document.createElement('button');
             showMoreButton.id = 'show-more-button';
             showMoreButton.textContent = 'Show More';
             showMoreButton.addEventListener('click', () => {
-                showSurahs(start + 15, end + 15);
+                showSurahs(end, end + 15);
+                window.scrollTo(0, 0);
             });
-            surahList.appendChild(showMoreButton);
+            buttonContainer.appendChild(showMoreButton);
         }
-
-        if (start > 0) {
-            const showLessButton = document.createElement('button');
-            showLessButton.id = 'show-less-button';
-            showLessButton.textContent = 'Show Less';
-            showLessButton.addEventListener('click', () => {
-                showSurahs(0, 15);
-            });
-            surahList.appendChild(showLessButton);
+        
+        if (buttonContainer.children.length > 0) {
+            container.appendChild(buttonContainer);
         }
     }
 
-    const searchInput = document.getElementById('search-input');
-    const searchButton = document.getElementById('search-button');
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    // Function to update Hijri calendar
+    function updateHijriCalendar() {
+        try {
+            const hijriDate = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            }).format(new Date());
 
-    searchButton.addEventListener('click', () => {
-        const searchTerm = searchInput.value.toLowerCase();
-        const surahElements = surahList.querySelectorAll('.surah');
-        surahElements.forEach(surah => {
-            if (surah.innerText.toLowerCase().includes(searchTerm)) {
-                surah.style.display = 'block';
-            } else {
-                surah.style.display = 'none';
-            }
-        });
-    });
+            const hijriDateArabic = new Intl.DateTimeFormat('ar-TN-u-ca-islamic', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            }).format(new Date());
 
-    darkModeToggle.addEventListener('click', toggleDarkMode);
+            const calendarDiv = document.getElementById('calendar');
+            calendarDiv.innerHTML = `
+                <p id="hijri-date">${hijriDate}</p>
+                <p id="hijri-date-arabic">${hijriDateArabic}</p>
+            `;
+        } catch (error) {
+            console.error('Error updating Hijri calendar:', error);
+            // Fallback display
+            const calendarDiv = document.getElementById('calendar');
+            calendarDiv.innerHTML = `<p>Islamic Calendar</p>`;
+        }
+    }
 
-    const hijriDate = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    }).format(new Date());
-
-    const hijriDateArabic = new Intl.DateTimeFormat('ar-TN-u-ca-islamic', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    }).format(new Date());
-
-    const calendarDiv = document.getElementById('calendar');
-    calendarDiv.innerHTML = `<p id="hijri-date">${hijriDate}</p><p id="hijri-date-arabic">${hijriDateArabic}</p>`;
-
+    // Scroll effects
     let lastScrollTop = 0;
     const header = document.querySelector('header');
     const sidebar = document.getElementById('mySidebar');
@@ -2006,11 +2035,13 @@ footer ul li a:hover::after {
     function applyScrollEffects() {
         const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-        if (currentScrollTop > lastScrollTop) {
+        if (currentScrollTop > lastScrollTop && currentScrollTop > 50) {
+            // Scrolling down and not at the top
             header.classList.remove('header-visible');
             header.classList.add('header-hidden');
             sidebar.classList.add('blur-effect');
         } else {
+            // Scrolling up or at the top
             header.classList.remove('header-hidden');
             header.classList.add('header-visible');
             sidebar.classList.remove('blur-effect');
@@ -2018,65 +2049,99 @@ footer ul li a:hover::after {
 
         lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
 
+        // Auto-show header after short delay
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
             header.classList.remove('header-hidden');
             header.classList.add('header-visible');
             sidebar.classList.remove('blur-effect');
-        }, 200);
+        }, 1000);
     }
-
-    function checkScroll() {
-        const sections = document.querySelectorAll('.section');
-        sections.forEach(section => {
-            const rect = section.getBoundingClientRect();
-            if (rect.top < window.innerHeight && rect.bottom >= 0) {
-                section.classList.add('blur');
-            } else {
-                section.classList.remove('blur');
-            }
-        });
-    }
-
-    window.addEventListener('scroll', () => {
-        applyScrollEffects();
-        checkScroll();
-    });
-
-    window.addEventListener('load', () => {
-        const hash = window.location.hash;
-        if (hash) {
-            document.querySelector(hash)?.scrollIntoView();
-        }
-    });
 
     // Function to handle logout
     function handleLogout() {
-        // Clear user data from localStorage
-        localStorage.removeItem('userName');
-        localStorage.removeItem('userEmail');
-        localStorage.removeItem('userAvatar');
-        
-        // Update the profile icon
-        updateProfileIcon();
-        
-        // Sign out from Firebase
-        auth.signOut().then(() => {
-            // Redirect to login page or home page
-            window.location.href = 'login.html';
-               }).catch((error) => {
-            console.error('Error signing out:', error);
-            // Optionally, you can use SweetAlert to display an error message
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Error signing out. Please try again!',
-            });
-        });
+        // Show confirmation dialog
+        if (confirm("Are you sure you want to log out?")) {
+            // Clear user data from localStorage
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userAvatar');
+            
+            // Update the profile icon
+            updateProfileIcon();
+            
+            // Sign out from Firebase if available
+            if (typeof auth !== 'undefined') {
+                auth.signOut().then(() => {
+                    // Redirect to login page
+                    window.location.href = 'login.html';
+                }).catch((error) => {
+                    console.error('Error signing out:', error);
+                    alert('Error signing out. Please try again!');
+                });
+            } else {
+                // If Firebase auth is not available, just redirect
+                window.location.href = 'login.html';
+            }
+        }
     }
 
-    // Example: Attach the handleLogout function to a logout button
-    document.getElementById('logout-button').addEventListener('click', handleLogout);
+    // Service Worker Registration
+    async function registerServiceWorker() {
+        if ('serviceWorker' in navigator) {
+            try {
+                const registration = await navigator.serviceWorker.register('/service-worker.js');
+                console.log('Service Worker registered with scope:', registration.scope);
+            } catch (error) {
+                console.log('Service Worker registration failed:', error);
+            }
+        }
+    }
+
+    // Initialize everything
+    async function initialize() {
+        // Update UI based on stored preferences
+        updateProfileIcon();
+        loadDarkModePreference();
+        updateHijriCalendar();
+        
+        // Set up event listeners
+        document.querySelector('.search-container button').addEventListener('click', performSearch);
+        document.querySelector('#search-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                performSearch();
+            }
+        });
+        document.getElementById('openSidebarBtn').addEventListener('click', openNav);
+        document.getElementById('closeSidebarBtn').addEventListener('click', closeNav);
+        document.getElementById('sidebarOverlay').addEventListener('click', closeNav);
+        document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        document.getElementById('logout-button')?.addEventListener('click', handleLogout);
+        
+        // Load surah data
+        const loader = document.getElementById('loader');
+        loader.style.display = 'block';
+        
+        try {
+            window.surahs = await getSurahData();
+            showSurahs(0, 15);
+        } catch (error) {
+            console.error('Error fetching Surahs:', error);
+            const surahList = document.getElementById('surah-list');
+            surahList.innerHTML = '<div class="error-message">Failed to load surahs. Please check your connection and try again.</div>';
+        } finally {
+            loader.style.display = 'none';
+        }
+        
+        // Register service worker
+        registerServiceWorker();
+        
+        // Set up scroll event listeners
+        window.addEventListener('scroll', applyScrollEffects);
+    }
+    
+    // Start the application
+    initialize();
 });
  </script>
 </body>
