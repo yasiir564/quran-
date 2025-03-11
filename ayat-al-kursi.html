@@ -13,13 +13,14 @@
      crossorigin="anonymous"></script>
     <style>
         :root {
-            --primary-color: #6a11cb;
-            --secondary-color: #2575fc;
+            --primary-color: #7f1bf2;
+            --secondary-color: #9543f5;
             --text-color: #333;
             --background-light: #ffffff;
             --card-background: rgba(255, 255, 255, 0.9);
-            --card-shadow: 0 10px 20px rgba(106, 17, 203, 0.1);
+            --card-shadow: 0 10px 20px rgba(127, 27, 242, 0.2);
             --transition-speed: 0.3s;
+            --gradient-highlight: linear-gradient(135deg, #7f1bf2, #2575fc);
         }
 
         body {
@@ -30,6 +31,26 @@
             color: var(--text-color);
             transition: background var(--transition-speed), color var(--transition-speed);
             overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar for the entire page */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(149, 67, 245, 0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #7f1bf2, #9543f5);
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, #6813d0, #7f35d8);
         }
 
         .container {
@@ -60,48 +81,6 @@
             color: rgba(255, 255, 255, 0.9);
             margin-bottom: 20px;
             animation: fadeIn 1.5s ease-out;
-        }
-
-        .search-container {
-            margin: 20px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 2s ease-out;
-        }
-
-        .search-container input {
-            padding: 12px 20px;
-            font-size: 1em;
-            width: 70%;
-            border: none;
-            border-radius: 30px 0 0 30px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all var(--transition-speed);
-            max-width: 300px;
-        }
-
-        .search-container input:focus {
-            outline: none;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .search-container button {
-            padding: 12px 20px;
-            font-size: 1em;
-            border: none;
-            cursor: pointer;
-            border-radius: 0 30px 30px 0;
-            margin-left: 0;
-            background: var(--primary-color);
-            color: white;
-            transition: all var(--transition-speed);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .search-container button:hover {
-            background: #5a0fb0;
-            transform: translateY(-2px);
         }
 
         #dark-mode-toggle {
@@ -144,12 +123,12 @@
         }
 
         .content-wrapper::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.05);
+            background: rgba(127, 27, 242, 0.05);
             border-radius: 10px;
         }
 
         .content-wrapper::-webkit-scrollbar-thumb {
-            background: var(--secondary-color);
+            background: linear-gradient(to bottom, #7f1bf2, #9543f5);
             border-radius: 10px;
         }
 
@@ -178,8 +157,22 @@
             border-radius: 10px 10px 0 0;
         }
 
-        .ayah.playing {
-            background-color: rgba(37, 117, 252, 0.1);
+        /* Ayah closing tag */
+        .ayah::after {
+            content: '۝';
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-size: 1.5em;
+            color: var(--primary-color);
+            opacity: 0.8;
+        }
+
+        .ayah.highlight {
+            background: var(--gradient-highlight);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
             transform: scale(1.02);
         }
 
@@ -205,6 +198,14 @@
             width: 50%;
             height: 1px;
             background: linear-gradient(90deg, transparent, var(--secondary-color), transparent);
+        }
+
+        .translation.highlight {
+            background: var(--gradient-highlight);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            transform: scale(1.02);
         }
 
         .buttons {
@@ -261,13 +262,18 @@
             color: #ddd;
         }
 
-        body.dark-mode .ayah.playing {
-            background-color: rgba(74, 20, 140, 0.3);
+        body.dark-mode .ayah.highlight {
+            background: var(--gradient-highlight);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
         }
 
-        body.dark-mode .search-container input {
-            background: var(--background-light);
-            color: #fff;
+        body.dark-mode .translation.highlight {
+            background: var(--gradient-highlight);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
         }
 
         @keyframes fadeIn {
@@ -297,22 +303,6 @@
                 font-size: 2.2em;
             }
 
-            .search-container {
-                flex-direction: column;
-            }
-
-            .search-container input {
-                width: 100%;
-                margin-bottom: 10px;
-                border-radius: 30px;
-                max-width: none;
-            }
-
-            .search-container button {
-                width: 80%;
-                border-radius: 30px;
-            }
-
             .content-card {
                 padding: 15px;
             }
@@ -322,146 +312,146 @@
             }
         }
          /* SIDEBAR STYLES */
-.sidebar {
-    height: 100vh;
-    width: 280px;
-    position: fixed;
-    z-index: 1000;
-    top: 0;
-    left: -280px;
-    background: linear-gradient(135deg, #7f1bf2, #9543f5);
-    overflow-x: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    padding-top: 85px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-}
+        .sidebar {
+            height: 100vh;
+            width: 280px;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: -280px;
+            background: linear-gradient(135deg, #7f1bf2, #9543f5);
+            overflow-x: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding-top: 85px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-.sidebar.open {
-    left: 0;
-    box-shadow: 0 0 50px rgba(127, 27, 242, 0.3);
-}
+        .sidebar.open {
+            left: 0;
+            box-shadow: 0 0 50px rgba(127, 27, 242, 0.3);
+        }
 
-.sidebar a {
-    padding: 14px 24px;
-    text-decoration: none;
-    font-size: 16px;
-    color: rgba(255, 255, 255, 0.9);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: all 0.3s ease;
-    border-radius: 0 25px 25px 0;
-    margin: 4px 0;
-    margin-right: 16px;
-    font-weight: 500;
-}
+        .sidebar a {
+            padding: 14px 24px;
+            text-decoration: none;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            border-radius: 0 25px 25px 0;
+            margin: 4px 0;
+            margin-right: 16px;
+            font-weight: 500;
+        }
 
-.sidebar a:hover {
-    color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: translateX(8px);
-}
+        .sidebar a:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(8px);
+        }
 
-.sidebar a.active {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
-}
+        .sidebar a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
 
-.sidebar .closebtn {
-    position: absolute;
-    top: 20px;
-    right: 25px;
-    font-size: 28px;
-    color: rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    margin: 0;
-    padding: 0;
-}
+        .sidebar .closebtn {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 28px;
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            margin: 0;
+            padding: 0;
+        }
 
-.sidebar .closebtn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: rotate(90deg);
-}
+        .sidebar .closebtn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
+        }
 
-.sidebar-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6);
-    z-index: 999;
-    backdrop-filter: blur(3px);
-    transition: all 0.3s ease;
-}
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 999;
+            backdrop-filter: blur(3px);
+            transition: all 0.3s ease;
+        }
 
-.sidebar-overlay.active {
-    display: block;
-}
+        .sidebar-overlay.active {
+            display: block;
+        }
 
-.openbtn {
-    font-size: 18px;
-    cursor: pointer;
-    background-color: #7f1bf2;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    position: fixed;
-    top: 40px;
-    left: 20px;
-    z-index: 1000;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(127, 27, 242, 0.3);
-}
+        .openbtn {
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #7f1bf2;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            position: fixed;
+            top: 40px;
+            left: 20px;
+            z-index: 1000;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(127, 27, 242, 0.3);
+        }
 
-.openbtn:hover {
-    background-color: #6813d0;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(127, 27, 242, 0.4);
-}
+        .openbtn:hover {
+            background-color: #6813d0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(127, 27, 242, 0.4);
+        }
 
-#main {
-    transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    padding: 20px;
-}
+        #main {
+            transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 20px;
+        }
 
-@media screen and (max-width: 768px) {
-    .sidebar {
-        width: 100%;
-        left: -100%;
-    }
-    
-    .openbtn {
-        top: 20px;
-        left: 20px;
-    }
-}
+        @media screen and (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                left: -100%;
+            }
+            
+            .openbtn {
+                top: 20px;
+                left: 20px;
+            }
+        }
 
-@media screen and (max-height: 450px) {
-    .sidebar {
-        padding-top: 60px;
-    }
-    
-    .sidebar a {
-        font-size: 16px;
-        padding: 10px 20px;
-    }
-}
+        @media screen and (max-height: 450px) {
+            .sidebar {
+                padding-top: 60px;
+            }
+            
+            .sidebar a {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+        }
     </style>
 </head>
 <body>
-        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div id="mySidebar" class="sidebar">
         <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a>
         <a href="index.html">
@@ -484,89 +474,85 @@
     <div id="main">
         <button class="openbtn" id="openSidebarBtn">&#9776; Quran Pro</button>
 
-    <div class="container">
-        <div class="header">
-            <h1 class="title">Ayat Al-Kursi</h1>
-            <p class="subtitle">The Verse of the Throne</p>
-            <div class="search-container">
-                <input type="text" id="search-input" placeholder="Search within the verse...">
-                <button id="search-button"><i class="fas fa-search"></i></button>
+        <div class="container">
+            <div class="header">
+                <h1 class="title">Ayat Al-Kursi</h1>
+                <p class="subtitle">The Verse of the Throne</p>
+                <i id="dark-mode-toggle" class="fas fa-moon"></i>
             </div>
-            <i id="dark-mode-toggle" class="fas fa-moon"></i>
-        </div>
 
-        <div class="content-card animate__animated animate__fadeIn">
-            <div class="content-wrapper" id="content-wrapper">
-                <div id="ayat-content"></div>
+            <div class="content-card animate__animated animate__fadeIn">
+                <div class="content-wrapper" id="content-wrapper">
+                    <div id="ayat-content"></div>
+                </div>
             </div>
-        </div>
 
-        <div class="buttons">
-            <button class="button" id="repeat-ayat">
-                <i class="fas fa-redo"></i> Repeat Verse
-            </button>
-            <button class="button" id="play-audio">
-                <i class="fas fa-play"></i> Play Audio
-            </button>
-            <button class="button" id="copy-ayat">
-                <i class="fas fa-copy"></i> Copy Text
-            </button>
+            <div class="buttons">
+                <button class="button" id="repeat-ayat">
+                    <i class="fas fa-redo"></i> Repeat Verse
+                </button>
+                <button class="button" id="copy-ayat">
+                    <i class="fas fa-copy"></i> Copy Text
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-    function openNav() {
-        document.getElementById("mySidebar").classList.add("open");
-        document.getElementById("sidebarOverlay").classList.add("active");
-    }
+            function openNav() {
+                document.getElementById("mySidebar").classList.add("open");
+                document.getElementById("sidebarOverlay").classList.add("active");
+            }
 
-    function closeNav() {
-        document.getElementById("mySidebar").classList.remove("open");
-        document.getElementById("sidebarOverlay").classList.remove("active");
-    }
+            function closeNav() {
+                document.getElementById("mySidebar").classList.remove("open");
+                document.getElementById("sidebarOverlay").classList.remove("active");
+            }
 
-    document.getElementById('openSidebarBtn').addEventListener('click', openNav);
-    document.getElementById('closeSidebarBtn').addEventListener('click', closeNav);
-    document.getElementById('sidebarOverlay').addEventListener('click', closeNav);
+            document.getElementById('openSidebarBtn').addEventListener('click', openNav);
+            document.getElementById('closeSidebarBtn').addEventListener('click', closeNav);
+            document.getElementById('sidebarOverlay').addEventListener('click', closeNav);
 
-    let lastScrollTop = 0;
-    const header = document.querySelector('header');
-    const sidebar = document.getElementById('mySidebar');
-    let scrollTimeout;
+            let lastScrollTop = 0;
+            const header = document.querySelector('header');
+            const sidebar = document.getElementById('mySidebar');
+            let scrollTimeout;
 
-    function applyScrollEffects() {
-        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            function applyScrollEffects() {
+                const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-        if (currentScrollTop > lastScrollTop) {
-            header.classList.remove('header-visible');
-            header.classList.add('header-hidden');
-            sidebar.classList.add('blur-effect');
-        } else {
-            header.classList.remove('header-hidden');
-            header.classList.add('header-visible');
-            sidebar.classList.remove('blur-effect');
-        }
+                if (currentScrollTop > lastScrollTop) {
+                    if (header) {
+                        header.classList.remove('header-visible');
+                        header.classList.add('header-hidden');
+                    }
+                    sidebar.classList.add('blur-effect');
+                } else {
+                    if (header) {
+                        header.classList.remove('header-hidden');
+                        header.classList.add('header-visible');
+                    }
+                    sidebar.classList.remove('blur-effect');
+                }
 
-        lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
+                lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
 
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            header.classList.remove('header-hidden');
-            header.classList.add('header-visible');
-            sidebar.classList.remove('blur-effect');
-        }, 200);
-    }
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    if (header) {
+                        header.classList.remove('header-hidden');
+                        header.classList.add('header-visible');
+                    }
+                    sidebar.classList.remove('blur-effect');
+                }, 200);
+            }
 
-    window.addEventListener('scroll', applyScrollEffects);
-});
-        document.addEventListener('DOMContentLoaded', function () {
+            window.addEventListener('scroll', applyScrollEffects);
+            
             const ayatContent = document.getElementById('ayat-content');
-            const searchInput = document.getElementById('search-input');
-            const searchButton = document.getElementById('search-button');
             const darkModeToggle = document.getElementById('dark-mode-toggle');
             const repeatAyatButton = document.getElementById('repeat-ayat');
-            const playAudioButton = document.getElementById('play-audio');
             const copyAyatButton = document.getElementById('copy-ayat');
             const contentWrapper = document.getElementById('content-wrapper');
             
@@ -584,36 +570,44 @@
                     <div class="translation animate__animated animate__fadeIn animate__delay-1s">${translationText}</div>
                     <div class="translation animate__animated animate__fadeIn animate__delay-1s" style="text-align: center; font-style: italic; color: var(--primary-color);">${ayahInfo}</div>
                 `;
-            }
-
-            // Add pulse animation to search results
-            function highlightSearchResults(query) {
-                const ayah = document.querySelector('.ayah');
-                if (!query) return;
                 
-                if (ayah.textContent.toLowerCase().includes(query)) {
-                    ayah.classList.add('animate__animated', 'animate__pulse');
-                    setTimeout(() => {
-                        ayah.classList.remove('animate__animated', 'animate__pulse');
-                    }, 1000);
-                    
-                    ayah.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
+                // Add mouse-following highlight effect for text
+                setupScrollHighlightEffect();
             }
-
-            // Search functionality
-            searchButton.addEventListener('click', function() {
-                const query = searchInput.value.toLowerCase();
-                highlightSearchResults(query);
-            });
-
-            // Allow search on Enter key press
-            searchInput.addEventListener('keyup', function(event) {
-                if (event.key === 'Enter') {
-                    const query = searchInput.value.toLowerCase();
-                    highlightSearchResults(query);
-                }
-            });
+            
+            // Function to handle the scroll highlight effect
+            function setupScrollHighlightEffect() {
+                const contentElements = document.querySelectorAll('.ayah, .translation');
+                
+                contentWrapper.addEventListener('mousemove', function(e) {
+                    // Get mouse position relative to the wrapper
+                    const wrapperRect = contentWrapper.getBoundingClientRect();
+                    const mouseY = e.clientY - wrapperRect.top + contentWrapper.scrollTop;
+                    
+                    // Remove highlight from all elements
+                    contentElements.forEach(element => {
+                        element.classList.remove('highlight');
+                    });
+                    
+                    // Find element under mouse pointer
+                    contentElements.forEach(element => {
+                        const elementRect = element.getBoundingClientRect();
+                        const elementTop = elementRect.top - wrapperRect.top + contentWrapper.scrollTop;
+                        const elementBottom = elementTop + elementRect.height;
+                        
+                        if (mouseY >= elementTop && mouseY <= elementBottom) {
+                            element.classList.add('highlight');
+                        }
+                    });
+                });
+                
+                // Remove highlight when mouse leaves the wrapper
+                contentWrapper.addEventListener('mouseleave', function() {
+                    contentElements.forEach(element => {
+                        element.classList.remove('highlight');
+                    });
+                });
+            }
 
             // Dark mode toggle with animation
             darkModeToggle.addEventListener('click', function() {
@@ -649,19 +643,6 @@
                 }, 1000);
             });
 
-            // Play audio button (simulated functionality)
-            playAudioButton.addEventListener('click', function() {
-                const ayah = document.querySelector('.ayah');
-                ayah.classList.add('playing');
-                playAudioButton.innerHTML = '<i class="fas fa-pause"></i> Pause Audio';
-                
-                // Simulate audio playing (just for UI demo)
-                setTimeout(() => {
-                    ayah.classList.remove('playing');
-                    playAudioButton.innerHTML = '<i class="fas fa-play"></i> Play Audio';
-                }, 5000);
-            });
-
             // Copy text functionality
             copyAyatButton.addEventListener('click', function() {
                 const ayah = document.querySelector('.ayah');
@@ -683,28 +664,39 @@
                 }, 2000);
             });
 
-            // Add scroll animation to content
-            contentWrapper.addEventListener('scroll', function() {
-                const scrollPosition = contentWrapper.scrollTop;
-                const ayah = document.querySelector('.ayah');
-                const translation = document.querySelector('.translation');
-                
-                // Parallax-like effect on scroll
-                ayah.style.transform = `translateY(${scrollPosition * 0.05}px)`;
-                translation.style.transform = `translateY(${scrollPosition * 0.02}px)`;
-            });
-
-            // Initialize
-            loadAyat();
-
-            // Add a subtle animation to the background
+            // Add subtle animation to the background
             document.body.addEventListener('mousemove', function(e) {
                 const x = e.clientX / window.innerWidth;
                 const y = e.clientY / window.innerHeight;
                 
-                document.body.style.background = `linear-gradient(135deg, 
-                    rgba(106, 17, 203, ${0.8 + y * 0.2}), 
-                    rgba(37, 117, 252, ${0.8 + x * 0.2}))`;
+                if (!document.body.classList.contains('dark-mode')) {
+                    document.body.style.background = `linear-gradient(135deg, 
+                        rgba(127, 27, 242, ${0.8 + y * 0.2}), 
+                        rgba(149, 67, 245, ${0.8 + x * 0.2}))`;
+                } else {
+                    document.body.style.background = `linear-gradient(135deg, 
+                        rgba(74, 20, 140, ${0.8 + y * 0.2}), 
+                        rgba(26, 35, 126, ${0.8 + x * 0.2}))`;
+                }
+            });
+
+            // Initialize
+            loadAyat();
+            
+            // Check for saved dark mode preference
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+                darkModeToggle.classList.remove('fa-moon');
+                darkModeToggle.classList.add('fa-sun');
+            }
+            
+            // Save dark mode preference
+            darkModeToggle.addEventListener('click', function() {
+                if (document.body.classList.contains('dark-mode')) {
+                    localStorage.setItem('darkMode', 'enabled');
+                } else {
+                    localStorage.setItem('darkMode', 'disabled');
+                }
             });
         });
     </script>
