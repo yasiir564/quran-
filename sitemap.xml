@@ -1,82 +1,73 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset
-      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
-
-
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!--  created with Free Online Sitemap Generator www.xml-sitemaps.com  -->
 <url>
-  <loc>https://quranproo.com/</loc>
-  <lastmod>2024-08-08T20:50:49+00:00</lastmod>
-  <priority>1.00</priority>
+<loc>https://quranproo.com/</loc>
+<lastmod>2025-04-20T23:12:04+00:00</lastmod>
+<priority>1.00</priority>
 </url>
 <url>
-  <loc>https://quranproo.com/login.html</loc>
-  <lastmod>2024-08-08T20:50:49+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://quranproo.com/login</loc>
+<lastmod>2025-04-20T23:12:05+00:00</lastmod>
+<priority>0.80</priority>
 </url>
 <url>
-  <loc>https://quranproo.com/profile.html</loc>
-  <lastmod>2024-08-08T20:50:49+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://quranproo.com/profile</loc>
+<lastmod>2025-04-20T23:12:05+00:00</lastmod>
+<priority>0.80</priority>
 </url>
 <url>
-  <loc>https://quranproo.com/index.html</loc>
-  <lastmod>2024-08-08T20:50:49+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://quranproo.com/index</loc>
+<lastmod>2025-04-20T23:12:06+00:00</lastmod>
+<priority>0.80</priority>
 </url>
 <url>
-  <loc>https://quranproo.com/juzz.html</loc>
-  <lastmod>2024-08-08T20:50:49+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://quranproo.com/read-quran-by-juzz</loc>
+<lastmod>2025-04-20T23:12:06+00:00</lastmod>
+<priority>0.80</priority>
 </url>
 <url>
-  <loc>https://quranproo.com/audio.html</loc>
-  <lastmod>2024-08-08T20:50:49+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://quranproo.com/tracks</loc>
+<lastmod>2025-04-20T23:12:07+00:00</lastmod>
+<priority>0.80</priority>
 </url>
 <url>
-  <loc>https://quranproo.com/prayer.html</loc>
-  <lastmod>2024-08-08T20:50:49+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://quranproo.com/prayer-times</loc>
+<lastmod>2025-04-20T23:12:07+00:00</lastmod>
+<priority>0.80</priority>
 </url>
 <url>
-  <loc>https://quranproo.com/donate.html</loc>
-  <lastmod>2024-08-08T20:50:49+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://quranproo.com/donate</loc>
+<lastmod>2025-04-20T23:12:08+00:00</lastmod>
+<priority>0.80</priority>
 </url>
 <url>
-  <loc>https://quranproo.com/Tasbih.html</loc>
-  <lastmod>2024-08-08T20:50:49+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://quranproo.com/tasbih-counter</loc>
+<lastmod>2025-04-20T23:12:08+00:00</lastmod>
+<priority>0.80</priority>
 </url>
 <url>
-  <loc>https://quranproo.com/surah-yaseen.html</loc>
-  <lastmod>2024-08-08T20:50:49+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://quranproo.com/surah-yaseen</loc>
+<lastmod>2025-04-20T23:12:08+00:00</lastmod>
+<priority>0.80</priority>
 </url>
 <url>
-  <loc>https://quranproo.com/ayat-al-kursi.html</loc>
-  <lastmod>2024-08-08T20:50:49+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://quranproo.com/ayat-al-kursi</loc>
+<lastmod>2025-04-20T23:12:09+00:00</lastmod>
+<priority>0.80</priority>
 </url>
 <url>
-  <loc>https://quranproo.com/surah-al-kahf.html</loc>
-  <lastmod>2024-08-08T20:50:49+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://quranproo.com/surah-al-kahf</loc>
+<lastmod>2025-04-20T23:12:09+00:00</lastmod>
+<priority>0.80</priority>
 </url>
 <url>
-  <loc>https://quranproo.com/privacypolicy.html</loc>
-  <lastmod>2024-08-08T20:50:49+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://quranproo.com/termsandconditions</loc>
+<lastmod>2025-04-20T23:12:10+00:00</lastmod>
+<priority>0.64</priority>
 </url>
 <url>
-  <loc>https://quranproo.com/termsandconditions.html</loc>
-  <lastmod>2024-08-08T20:50:49+00:00</lastmod>
-  <priority>0.80</priority>
+<loc>https://quranproo.com/privacypolicy</loc>
+<lastmod>2025-04-20T23:12:11+00:00</lastmod>
+<priority>0.64</priority>
 </url>
-
-
 </urlset>
