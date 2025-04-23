@@ -1,9 +1,9 @@
-{
+ {
   "rewrites": [
     { "source": "/:path", "destination": "/:path.html" }
   ],
   "redirects": [
+    { "source": "/", "destination": "/quranproo.com", "permanent": true },
     { "source": "/:path.html", "destination": "/:path", "permanent": true }
   ]
 }
-
