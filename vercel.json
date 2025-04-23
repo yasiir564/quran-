@@ -1,0 +1,20 @@
+{
+  "redirects": [
+    {
+      "source": "/:path*.html",
+      "destination": "/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "quranproo.com"
+        }
+      ],
+      "destination": "https://www.quranproo.com/:path*",
+      "permanent": true
+    }
+  ]
+}
